@@ -1,0 +1,42 @@
+
+mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!){
+    messengerConnect (brandCode: $brandCode,
+    email: $email,
+    phone: $phone){
+        integrationId
+        uiOptions
+        languageCode
+        messengerData
+        customerId
+    }
+}
+mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String!,$conversationId: String!)
+{
+    insertMessage(integrationId:$integrationId,
+    customerId: $customerId,message: $message,conversationId: $conversationId)
+   {
+     conversationId,
+     createdAt,
+     internal,
+     _id
+   }
+ }
+ query Conversations($integrationId: String!,$customerId: String!){
+   conversations(integrationId: $integrationId,customerId: $customerId) {
+         _id
+         status
+         content
+         createdAt
+   }
+ }
+
+query Messages($conversationId: String!){
+  messages(conversationId: $conversationId) {
+    _id
+    customerId
+    content
+    createdAt
+    internal
+  }
+}
+

@@ -1,0 +1,19 @@
+subscription ConversationMessageInserted($_id: String!){
+  conversationMessageInserted(_id: $_id) {
+    _id
+    content
+    conversationId
+    internal
+    customerId
+    userId
+    createdAt
+    isCustomerRead
+    formWidgetData
+  }
+}
+subscription ConversationsChanged($customerId: String!){
+  conversationsChanged(customerId: $customerId){
+    type
+    customerId
+  }
+}
