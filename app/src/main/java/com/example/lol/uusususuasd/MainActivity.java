@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.newmedia.erxeslibrary.*;
+import com.newmedia.erxeslibrary.Configuration.Config;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -14,14 +16,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        Api3100 connect = new Api3100();
 //        connect.test();
-        this.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent a = new Intent(MainActivity.this,ErxesActivity.class);
-                a.putExtra("brandcode","YDEdKj");
-                startActivity(a);
-            }
-        });
+        Config.Init(this,"YDEdKj","192.168.86.29");
+//        Config.Init(this,"YDEdKj","192.168.86.39");
+
+        Config.Start();
 
 
     }

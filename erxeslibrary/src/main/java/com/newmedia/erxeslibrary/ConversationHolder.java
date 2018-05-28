@@ -9,13 +9,15 @@ import android.widget.TextView;
 
 public class ConversationHolder extends RecyclerView.ViewHolder {
     ImageView circleImageView;
-    TextView date,content;
-    View parent;
+    TextView date,content,name;
+    View parent ,isonline;
     public ConversationHolder(View itemView) {
         super(itemView);
         parent=itemView;
         circleImageView =  itemView.findViewById(R.id.profile_image);
         date = itemView.findViewById(R.id.date);
         content = itemView.findViewById(R.id.content);
+        name = itemView.findViewById(R.id.name);
+        isonline = itemView.findViewById(R.id.isonline);
     }
 }

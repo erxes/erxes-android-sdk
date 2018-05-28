@@ -5,10 +5,18 @@ subscription ConversationMessageInserted($_id: String!){
     conversationId
     internal
     customerId
-    userId
     createdAt
+    attachments
     isCustomerRead
     formWidgetData
+    user{
+         _id
+             details
+             {
+                    avatar
+                    fullName
+             }
+      }
   }
 }
 subscription ConversationsChanged($customerId: String!){

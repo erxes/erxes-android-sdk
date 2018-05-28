@@ -29,6 +29,7 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxes.subscription.ConversationsChangedSubscription;
+import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
 
@@ -57,19 +58,25 @@ public class ListenerService extends Service{
 
     static OkHttpClient okHttpClient;
     static ApolloClient apolloClient;
+     ;
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("erxesservice","oncreat??");
 //        startListen();
+        DataManager dataManager;
+        dataManager = new DataManager(this);
+
 
         okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
-                .serverUrl(Config.HOST_3100)
+                .serverUrl(dataManager.getDataS("HOST3100"))
                 .okHttpClient(okHttpClient)
-                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(Config.HOST_3300, okHttpClient))
+                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("HOST3300"), okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
+                .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
+
         Realm.init(this);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Conversation> list=
@@ -119,7 +126,7 @@ public class ListenerService extends Service{
                             @Override public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
                                 if(!response.hasErrors()){
 
-                                    Config.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
+                                    ErxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
 
                                 }
                                 Log.d("erxesservice","onnext"+conversationId);
@@ -158,7 +165,7 @@ public class ListenerService extends Service{
 
 
 
-        ApolloSubscriptionCall<ConversationsChangedSubscription.Data> subscriptionCall1 = Config.getApolloClient()
+        ApolloSubscriptionCall<ConversationsChangedSubscription.Data> subscriptionCall1 = apolloClient
                 .subscribe(ConversationsChangedSubscription.builder().customerId(Config.customerId).build());
         disposables.add(Rx2Apollo.from(subscriptionCall1)
                 .subscribeOn(Schedulers.io())

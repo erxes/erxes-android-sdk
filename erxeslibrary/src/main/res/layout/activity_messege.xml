@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/container"
     tools:context=".MessageActivity">
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -12,14 +13,59 @@
         android:background="#6569DF"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginRight="50dp"
+            android:layout_height="wrap_content">
+            <android.support.constraint.ConstraintLayout
+                android:layout_gravity="center"
+                android:layout_width="40dp"
+                android:layout_height="40dp">
+                <ImageView
+                    android:id="@+id/isonline"
+                    android:layout_gravity="end|bottom"
+                    android:layout_width="12dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:layout_height="12dp"
+                    android:translationZ="20dp"
+                    android:src="@drawable/online" />
+                <android.support.v7.widget.CardView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:elevation="12dp"
+                    android:id="@+id/view2"
+                    app:cardCornerRadius="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:innerRadius="0dp"
+                    android:shape="ring"
+                    android:thicknessRatio="1.9">
+                    <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/avatar" />
+                </android.support.v7.widget.CardView>
+            </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:layout_marginLeft="6dp"
+                android:id="@+id/fullname"
+                android:textColor="#fff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""/>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -31,15 +77,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"></android.support.v7.widget.RecyclerView>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <!-- A horizontal line between the chatbox and RecyclerView -->
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:background="#dfdfdf"
-        app:layout_constraintBottom_toTopOf="@+id/layout_chatbox"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+
 
     <LinearLayout
         android:id="@+id/layout_chatbox"
@@ -47,14 +85,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:minHeight="48dp"
-        android:background="#ffffff"
+        android:background="#ccc"
+        android:paddingLeft="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintLeft_toLeftOf="parent">
 
+        <ImageButton
+            android:id="@+id/attach"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/metal_paper_clip_"
+            android:clickable="true"
+            android:onClick="onBrowse"
+            android:textSize="14dp" />
         <EditText
             android:id="@+id/edittext_chatbox"
-            android:hint="Enter message"
+            android:hint="Message"
             android:background="@android:color/transparent"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
@@ -64,14 +112,23 @@
             android:layout_height="wrap_content"
             android:maxLines="6"/>
 
+        <View
+            android:layout_width="1dp"
+            android:id="@+id/oneline"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="#6569DF"
+            android:layout_height="fill_parent"/>
         <Button
             android:id="@+id/button_chatbox_send"
-            android:text="SEND"
+            android:text="Send"
             android:textSize="14dp"
-
             android:clickable="true"
+            android:textAllCaps="false"
             android:layout_width="64dp"
             android:layout_height="48dp"
+            android:textColor="#6569DF"
+            android:background="#ccc"
             android:gravity="center"
             android:layout_gravity="bottom" />
 

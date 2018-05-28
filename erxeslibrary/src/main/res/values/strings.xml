@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ErxesLibrary</string>
+    <string name="cantconnect">Can\'t connect right now</string>
 </resources>

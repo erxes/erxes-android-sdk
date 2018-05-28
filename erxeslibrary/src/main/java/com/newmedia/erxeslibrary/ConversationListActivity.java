@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 
 public class ConversationListActivity extends AppCompatActivity  implements ErxesObserver {
@@ -34,13 +35,13 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     @Override
     protected void onPause() {
         super.onPause();
-        Config.remove(this);
+        ErxesRequest.remove(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Config.add(this);
+        ErxesRequest.add(this);
 
         if(recyclerView!=null)
             if(recyclerView.getAdapter()!=null){
@@ -99,7 +100,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
 
 
-        Config.getConversations();
+        ErxesRequest.getConversations();
 
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);

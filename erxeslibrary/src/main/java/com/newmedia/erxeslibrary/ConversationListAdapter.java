@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Model.Conversation;
+import com.newmedia.erxeslibrary.Model.ConversationMessage;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +24,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
     private Context context;
@@ -28,10 +33,11 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     public void setConversationList(List<Conversation> conversationList) {
         this.conversationList = conversationList;
     }
-    Realm realm =Realm.getDefaultInstance();
+    Realm realm;;
     public ConversationListAdapter(Context context) {
         this.context = context;
-
+        Realm.init(context);
+        realm=Realm.getDefaultInstance();
         this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",Config.customerId).equalTo("integrationId",Config.integrationId).findAll();
     }
     public void update_position(String conversationId){
@@ -69,17 +75,43 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     public void onBindViewHolder(@NonNull ConversationHolder holder, int position) {
 //        conversationList.get(position).get
         if(conversationList.get(position).isIsread()) {
-
+            if(conversationList.get(position).getContent()!=null)
             holder.content.setText(Html.fromHtml(conversationList.get(position).getContent()));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
+            holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
+            holder.content.setTextColor(Color.parseColor("#808080"));
         }
         else{
             holder.content.setText(Html.fromHtml(conversationList.get(position).getContent()));
-            holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD_ITALIC);
+            holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
+            holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
+            holder.content.setTextColor(Color.BLACK);
         }
-        Long createDate = Long.valueOf(conversationList.get(position).getDate());
-        holder.date.setText( Config.convert_datetime(createDate));
-        holder.parent.setTag(position);
+        if(!Config.isMessengerOnline)
+            holder.isonline.setVisibility(View.GONE);
+        else
+            holder.isonline.setVisibility(View.VISIBLE);
+        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position).get_id()).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
+        holder.circleImageView.setImageResource(R.drawable.avatar);
+        holder.name.setText("");
+        if(message!=null&&message.getUser() !=null){
+            String myString = message.getUser().fullName;
+            String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
+            holder.name.setText(upperString);
+
+            GlideApp.with(context).load(message.getUser().avatar).placeholder(R.drawable.avatar)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.circleImageView);
+
+            Long createDate = Long.valueOf(message.getCreatedAt());
+            holder.date.setText(Config.convert_datetime(createDate));
+            holder.parent.setTag(position);
+        }else {
+            Long createDate = Long.valueOf(conversationList.get(position).getDate());
+            holder.date.setText(Config.convert_datetime(createDate));
+            holder.parent.setTag(position);
+        }
+
     }
 
     @Override

@@ -118,6 +118,7 @@ public class Conversation extends RealmObject {
             this_o.setStatus(item.status());
             this_o.setCustomerId(Config.customerId);
             this_o.setIntegrationId(Config.integrationId);
+
             data_converted.add(this_o);
 
         }

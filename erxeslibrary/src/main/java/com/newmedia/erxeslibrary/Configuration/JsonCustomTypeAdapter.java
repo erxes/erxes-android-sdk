@@ -1,7 +1,12 @@
 package com.newmedia.erxeslibrary.Configuration;
 
-import com.apollographql.apollo.CustomTypeAdapter;
+import android.util.Log;
 
+
+import com.apollographql.apollo.response.CustomTypeAdapter;
+import com.apollographql.apollo.response.CustomTypeValue;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -14,19 +19,29 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
     }
 
     @Override
-    public JSONObject decode(@Nonnull String value) {
+    public JSONObject decode(@Nonnull CustomTypeValue value) {
+
         try {
-            return new JSONObject(value);
+            return new JSONObject(value.value.toString());
         } catch (JSONException e) {
             e.printStackTrace();
+            return new JSONObject();
         }
-        return new JSONObject();
 
     }
 
+
+//    @Nonnull
+//    @Override
+//    public String encode(@Nonnull Object value) {
+//        return value.toString();
+//    }
+//
+
+
     @Nonnull
     @Override
-    public String encode(@Nonnull JSONObject value) {
-        return value.toString();
+    public CustomTypeValue encode(@Nonnull JSONObject value) {
+        return new CustomTypeValue.GraphQLJsonString(value.toString());
     }
 }

@@ -10,15 +10,17 @@ mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!)
         customerId
     }
 }
-mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String!,$conversationId: String!)
+mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String!,$conversationId: String!, $attachments: [JSON])
 {
     insertMessage(integrationId:$integrationId,
-    customerId: $customerId,message: $message,conversationId: $conversationId)
+    customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments)
    {
      conversationId,
      createdAt,
      internal,
-     _id
+     _id,
+     attachments,
+
    }
  }
  query Conversations($integrationId: String!,$customerId: String!){
@@ -32,11 +34,24 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
 
 query Messages($conversationId: String!){
   messages(conversationId: $conversationId) {
-    _id
-    customerId
-    content
-    createdAt
-    internal
+        _id
+        customerId
+        content
+        createdAt
+        internal
+        attachments
+        user{
+             _id
+             details
+             {
+                    avatar
+                    fullName
+             }
+     }
   }
+}
+query IsMessengerOnline($integrationId: String!){
+  isMessengerOnline(integrationId: $integrationId)
+
 }
 

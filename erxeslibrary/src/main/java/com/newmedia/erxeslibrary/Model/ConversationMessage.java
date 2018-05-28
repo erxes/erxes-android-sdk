@@ -98,10 +98,20 @@ public class ConversationMessage extends RealmObject {
             this_o.setCustomerId(item.customerId());
             this_o.setContent(item.content());
             this_o.setInternal(item.internal());
+            if(item.user()!=null){
+                Log.d("message","user"+item.user().details().avatar());
+                User user = new User();
+                user.convert(item.user());
+                this_o.setUser(user);
+            }
+            if(item.attachments()!=null) {
+                this_o.setAttachments(item.attachments().toString());
+            }
             this_o.setConversationId(ConversationId);
+
+
             data_converted.add(this_o);
         }
-        Log.d("erxex","rawdata"+data_converted.size());
         return data_converted;
 
     }
