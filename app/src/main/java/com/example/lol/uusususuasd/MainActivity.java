@@ -19,7 +19,15 @@ public class MainActivity extends AppCompatActivity {
         Config.Init(this,"YDEdKj","192.168.86.29");
 //        Config.Init(this,"YDEdKj","192.168.86.39");
 
-        Config.Start();
+
+//        Intent a  = new Intent(this,DeleteActivity.class);
+//        startActivity(a);
+        this.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Config.Start();
+            }
+        });
 
 
     }

@@ -158,8 +158,7 @@ public class Config {
         Intent a = new Intent(context,ErxesActivity.class);
         context.startActivity(a);
     }
-    static public void LoggedInDefault(){
-        Config.customerId = dataManager.getDataS(DataManager.customerId);
+    static public void LoadDefaultValues(){
         Config.integrationId = dataManager.getDataS(DataManager.integrationId);
         Config.welcomeMessage = dataManager.getDataS("welcomeMessage");
         Config.color= dataManager.getDataS(DataManager.color);
@@ -167,6 +166,11 @@ public class Config {
         Config.language = dataManager.getDataS(DataManager.language);
         if(Config.language!=null)
             ErxesRequest.changeLanguage(Config.language);
+    }
+    static public void LoggedInDefault(){
+        Config.customerId = dataManager.getDataS(DataManager.customerId);
+        LoadDefaultValues();
+
     }
     static public boolean isLoggedIn(){
         if(dataManager.getDataS(DataManager.customerId)==null)

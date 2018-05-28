@@ -50,6 +50,7 @@ import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.util.FixedPreloadSizeProvider;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErrorType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
@@ -111,7 +112,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private ViewGroup container;
     private final String TAG="MESSAGEACTIVITY";
     @Override
-    public void notify(boolean status,String conversationId) {
+    public void notify(boolean status,String conversationId,ErrorType errorType) {
         if(status){
 
             this.runOnUiThread(new Runnable() {
@@ -150,6 +151,28 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
                 }
             });
+        }
+        else{
+            if(errorType !=null){
+                if(errorType == ErrorType.SERVERERROR)
+                {
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
+                            return;
+                        }});
+                }
+                else if(errorType == ErrorType.CONNECTIONFAILED){
+
+                    this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                            return;
+                        }});
+                }
+            }
         }
     }
     @Override
@@ -399,6 +422,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     } catch ( IOException e) {
                         e.printStackTrace();
                         Log.d("erxes_api", "output stream error" );
+                        Snackbar.make(container, R.string.fileerror, Snackbar.LENGTH_SHORT).show();
                     }
                 }
                 else
@@ -440,6 +464,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     @Override
                     public void run() {
                         senddrawable.stop();
+                        Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -462,6 +487,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     Log.i("erxes_api", "upload complete");
 
 
+                }
+                else{
+                    MessageActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 button_chatbox_send.setClickable(true);
                 MessageActivity.this.runOnUiThread(new Runnable() {

@@ -2,4 +2,10 @@
 <resources>
     <string name="app_name">Эрхэс</string>
     <string name="cantconnect">Холбогдох боломжгүй байна</string>
+    <string name="serverror">Буруу мэдээлэл</string>
+    <string name="fileerror">Илгээх боломжгүй файл байна</string>
+    <string name="logout">Гарах</string>
+    <string name="email">и-мейл</string>
+    <string name="phone">утас</string>
+    <string name="connnect">Холбогдох</string>
 </resources>

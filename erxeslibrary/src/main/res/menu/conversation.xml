@@ -5,7 +5,6 @@
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/logout"
-        android:title="гарах"
-        android:icon="@drawable/turn_off"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/logout"
+        app:showAsAction="collapseActionView"/>
 </menu>

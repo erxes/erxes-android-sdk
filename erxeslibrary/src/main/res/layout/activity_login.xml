@@ -5,12 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#6569DF"
+    android:gravity="center"
+    android:padding="64dp"
     android:id="@+id/linearlayout"
     tools:context=".ErxesActivity">
 
 
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        app:srcCompat="@drawable/erxes" />
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
+        android:textColorHint="#fff"
+        android:backgroundTint="#fff"
+        android:foregroundTint="#fff"
+        app:counterTextAppearance="@android:style/TextAppearance"
         android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
@@ -19,8 +33,11 @@
             android:maxLines="1"
             android:id="@+id/email"
             android:text="yagg@yahoo.com"
+            android:textColorHighlight="#fff"
+            android:textColorHint="#fff"
+            android:textColorLink="#fff"
             android:inputType="textEmailAddress"
-            android:hint="и-мейл" />
+            android:hint="@string/email" />
     </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -33,13 +50,16 @@
             android:text="99881111"
             android:inputType="phone"
             android:id="@+id/phone"
-            android:hint="утас" />
+            android:hint="@string/phone" />
 
     </android.support.design.widget.TextInputLayout>
-    <Button
+    <TextView
         android:id="@+id/connect"
+        android:textColor="#fff"
+        android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="холбогдох" />
+        android:layout_marginTop="30dp"
+        android:text="@string/connnect" />
 
 </LinearLayout>

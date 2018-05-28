@@ -54,4 +54,10 @@ query IsMessengerOnline($integrationId: String!){
   isMessengerOnline(integrationId: $integrationId)
 
 }
-
+query GetMessengerIntegration($brandCode: String!){
+  getMessengerIntegration(brandCode: $brandCode) {
+    languageCode
+    uiOptions
+    messengerData
+  }
+}

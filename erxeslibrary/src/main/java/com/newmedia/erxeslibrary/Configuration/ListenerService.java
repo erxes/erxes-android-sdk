@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -58,7 +59,8 @@ public class ListenerService extends Service{
 
     static OkHttpClient okHttpClient;
     static ApolloClient apolloClient;
-     ;
+
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -66,7 +68,6 @@ public class ListenerService extends Service{
 //        startListen();
         DataManager dataManager;
         dataManager = new DataManager(this);
-
 
         okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
@@ -77,15 +78,10 @@ public class ListenerService extends Service{
                 .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
 
-        Realm.init(this);
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Conversation> list=
-        realm.where(Conversation.class).equalTo("status","open").findAll();
-        for(int i = 0; i< list.size();i++) {
-            Log.d("erxesservice","--"+list.get(i).get_id());
-            conversation_listen(list.get(i).get_id());
-        }
+
     }
+
+
 
 
     @Override
@@ -94,10 +90,60 @@ public class ListenerService extends Service{
     }
 
 
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
+    }
 
-    private static  CompositeDisposable disposables = new CompositeDisposable();
+    private   CompositeDisposable disposables = new CompositeDisposable();
 
-    static public void conversation_listen(final String conversationId){
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+        String id = null;
+        if(intent != null) {
+            Bundle bundle = intent.getExtras();
+            if (bundle != null)
+                id = bundle.getString("id", null);
+        }
+        if(id==null){
+            Realm.init(this);
+            Realm realm = Realm.getDefaultInstance();
+            RealmResults<Conversation> list=
+                    realm.where(Conversation.class).equalTo("status","open").findAll();
+            for(int i = 0; i< list.size();i++) {
+                Log.d("erxesservice","--"+list.get(i).get_id());
+                conversation_listen(list.get(i).get_id());
+            }
+        }else{
+            conversation_listen(id);
+
+        }
+        Log.d("erxesservice","onstartcommand");
+        return super.onStartCommand(intent, flags, startId);
+
+
+    }
+
+    public void conversation_listen(final String conversationId){
+        if(!isNetworkConnected()){
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+
+                    conversation_listen(conversationId);
+
+
+
+                }
+            }).start();
+            return;
+        }
         ApolloSubscriptionCall<ConversationMessageInsertedSubscription.Data> subscriptionCall;
         if(apolloClient==null)
             return;
@@ -106,6 +152,7 @@ public class ListenerService extends Service{
                         .subscribe(ConversationMessageInsertedSubscription.builder()
                                 ._id(conversationId)
                                 .build());
+
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -120,6 +167,21 @@ public class ListenerService extends Service{
 
                             @Override public void onError(Throwable e) {
                                 Log.d("erxesservice","onerror");
+                                disposables.delete(this);
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(5000);
+                                        } catch (InterruptedException e1) {
+                                            e1.printStackTrace();
+                                        }
+                                        Log.e("erxesservice","runnable" );
+
+                                        conversation_listen(conversationId);
+
+
+                                    }
+                                }).start();
                                 e.printStackTrace();
                             }
 

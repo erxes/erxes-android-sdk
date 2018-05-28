@@ -99,7 +99,7 @@ public class ConversationMessage extends RealmObject {
             this_o.setContent(item.content());
             this_o.setInternal(item.internal());
             if(item.user()!=null){
-                Log.d("message","user"+item.user().details().avatar());
+//                Log.d("message","user"+item.user().details().avatar());
                 User user = new User();
                 user.convert(item.user());
                 this_o.setUser(user);

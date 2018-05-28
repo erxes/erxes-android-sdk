@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.Configuration;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.newmedia.erxes.basic.ConversationsQuery;
+import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.MessagesQuery;
@@ -138,17 +140,99 @@ public class ErxesRequest {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    notefyAll(true,null);
+                    notefyAll(true,null,null);
                 }
                 else{
                     Log.d(TAG, "errors " + response.errors().toString());
-                    notefyAll(false,null);
+                    notefyAll(false,null,ErrorType.SERVERERROR);
                 }
             }
 
             @Override
             public void onFailure(@Nonnull ApolloException e) {
-                notefyAll(false,null);
+                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                Log.d(TAG, "failed ");
+                e.printStackTrace();
+
+            }
+        });
+    }
+
+    static public void getIntegration(String brandCode){
+        if(!isNetworkConnected()){
+            return;
+        }
+        apolloClient.query(GetMessengerIntegrationQuery.builder().brandCode(Config.brandCode).build())
+                .enqueue(new ApolloCall.Callback<GetMessengerIntegrationQuery.Data>() {
+            @Override
+            public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
+                if(!response.hasErrors()) {
+
+//
+
+                    Config.language = response.data().getMessengerIntegration().languageCode();
+
+                    dataManager.setData(DataManager.language, Config.language);
+
+                    if(Config.language!=null)
+                        changeLanguage(Config.language);
+                    try {
+
+                        if(response.data().getMessengerIntegration().uiOptions()!=null) {
+                            JSONObject js = new JSONObject(response.data().getMessengerIntegration().uiOptions().toString());
+                            String color = js.getString("color");
+                            dataManager.setData(DataManager.color, color);
+
+                            Config.color = color;
+
+                            color = js.getString("wallpaper");
+                            dataManager.setData("wallpaper", color);
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        if(response.data().getMessengerIntegration().messengerData()!=null) {
+                            JSONObject js = new JSONObject(response.data().getMessengerIntegration().messengerData().toString());
+                            String temp = js.getString("thankYouMessage");
+                            dataManager.setData("thankYouMessage", temp);
+                            Config.thankYouMessage = temp;
+                            temp = js.getString("awayMessage");
+                            dataManager.setData("awayMessage", temp);
+                            Config.awayMessage = temp;
+                            temp = js.getString("welcomeMessage");
+                            dataManager.setData("welcomeMessage", temp);
+                            Config.welcomeMessage = temp;
+                            temp = js.getString("timezone");
+                            dataManager.setData("timezone", temp);
+                            Config.timezone = temp;
+
+                            temp = js.getString("availabilityMethod");
+                            dataManager.setData("availabilityMethod", temp);
+                            Config.availabilityMethod = temp;
+
+                            boolean bool = js.getBoolean("isOnline");
+                            dataManager.setData("isOnline", bool);
+                            Config.isMessengerOnline = bool;
+                            bool = js.getBoolean("notifyCustomer");
+                            dataManager.setData("notifyCustomer", bool);
+                            Config.notifyCustomer = bool;
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    notefyAll(true,null,null);
+                }
+                else{
+                    Log.d(TAG, "errors " + response.errors().toString());
+                    notefyAll(false,null,ErrorType.SERVERERROR);
+                }
+            }
+
+            @Override
+            public void onFailure(@Nonnull ApolloException e) {
+                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
                 Log.d(TAG, "failed ");
                 e.printStackTrace();
 
@@ -195,12 +279,13 @@ public class ErxesRequest {
                     inner.insertOrUpdate(a);
                     inner.commitTransaction();
                     inner.close();
-                    notefyAll(true,conversationId);
+                    notefyAll(true,conversationId,ErrorType.SERVERERROR);
                 }
             }
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 e.printStackTrace();
+                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
                 Log.d(TAG, "failed ");
             }
         });
@@ -215,7 +300,7 @@ public class ErxesRequest {
             public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
                 if(response.hasErrors()) {
                     Log.d(TAG, "errors " + response.errors().toString());
-                    notefyAll(false,null);
+                    notefyAll(false,null,ErrorType.SERVERERROR);
                 }
                 else {
                     Log.d(TAG, "cid " + response.data().insertMessage().conversationId());
@@ -248,9 +333,12 @@ public class ErxesRequest {
                     inner.commitTransaction();
                     inner.close();
 
-                    ListenerService.conversation_listen(Config.conversationId);
+                    Intent intent2 = new Intent(context, ListenerService.class);
+                    intent2.putExtra("id",Config.conversationId);
+                    context.startService(intent2);
+//                    ListenerService.conversation_listen(Config.conversationId);
 
-                    notefyAll(true,response.data().insertMessage().conversationId());
+                    notefyAll(true,response.data().insertMessage().conversationId(),null);
 
 
                 }
@@ -258,7 +346,7 @@ public class ErxesRequest {
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 e.printStackTrace();
-                notefyAll(false,null);
+                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
                 Log.d(TAG, "failed ");
             }
         });
@@ -282,7 +370,7 @@ public class ErxesRequest {
                     inner.copyToRealm(data);
                     inner.commitTransaction();
                     inner.close();
-                    notefyAll(true,null);
+                    notefyAll(true,null,null);
                     Log.d(TAG,"getconversation ok ");
                 }
                 else
@@ -314,7 +402,7 @@ public class ErxesRequest {
                     inner.copyToRealmOrUpdate(data);
                     inner.commitTransaction();
                     inner.close();
-                    notefyAll(true,conversationid);
+                    notefyAll(true,conversationid,null);
 
                 }
 
@@ -360,7 +448,7 @@ public class ErxesRequest {
             inner.insertOrUpdate(conversation);
             inner.commitTransaction();
             inner.close();
-            notefyAll(true,conversation.get_id());
+            notefyAll(true,conversation.get_id(),null);
         }
         else{
             inner.close();
@@ -403,10 +491,10 @@ public class ErxesRequest {
         observers.clear();
     }
 
-    private static void notefyAll(boolean status,String conversationId){
+    private static void notefyAll(boolean status,String conversationId,ErrorType errorType){
         if(observers == null) return;
         for( int i = 0; i < observers.size(); i++ ){
-            observers.get(i).notify(status,conversationId);
+            observers.get(i).notify(status,conversationId,errorType);
         }
     }
 }
