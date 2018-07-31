@@ -18,6 +18,7 @@ import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxes.basic.MessengerConnectMutation;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
+import com.newmedia.erxeslibrary.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.Model.Conversation;
@@ -110,36 +111,61 @@ public class ErxesRequest {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    try {
+
                         if(response.data().messengerConnect().messengerData()!=null) {
-                            JSONObject js = new JSONObject(response.data().messengerConnect().messengerData().toString());
-                            String temp = js.getString("thankYouMessage");
-                            dataManager.setData("thankYouMessage", temp);
-                            Config.thankYouMessage = temp;
-                            temp = js.getString("awayMessage");
-                            dataManager.setData("awayMessage", temp);
-                            Config.awayMessage = temp;
-                            temp = js.getString("welcomeMessage");
-                            dataManager.setData("welcomeMessage", temp);
-                            Config.welcomeMessage = temp;
-                            temp = js.getString("timezone");
-                            dataManager.setData("timezone", temp);
-                            Config.timezone = temp;
+                            JSONObject js = new JSONObject();
+                            try {
+                                js = new JSONObject(response.data().messengerConnect().messengerData().toString());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            String temp = null;
+                            try {
+                                temp = js.getString("thankYouMessage");
+                                dataManager.setData("thankYouMessage", temp);
+                                Config.thankYouMessage = temp;
+                            } catch (JSONException e) {
+                            }
 
-                            temp = js.getString("availabilityMethod");
-                            dataManager.setData("availabilityMethod", temp);
-                            Config.availabilityMethod = temp;
+                            try {
+                                temp = js.getString("awayMessage");
+                                dataManager.setData("awayMessage", temp);
+                                Config.awayMessage = temp;
+                            } catch (JSONException e) {
+                            }
+                            try {
+                                temp = js.getString("welcomeMessage");
+                                dataManager.setData("welcomeMessage", temp);
+                                Config.welcomeMessage = temp;
+                            } catch (JSONException e) {
+                            }
+                            try {
+                                temp = js.getString("timezone");
+                                dataManager.setData("timezone", temp);
+                                Config.timezone = temp;
+                            } catch (JSONException e) {
+                            }
+                            try {
+                                temp = js.getString("availabilityMethod");
+                                dataManager.setData("availabilityMethod", temp);
+                                Config.availabilityMethod = temp;
+                            } catch (JSONException e) {
+                            }
+                            try {
+                                boolean bool = js.getBoolean("isOnline");
+                                dataManager.setData("isOnline", bool);
+                                Config.isMessengerOnline = bool;
+                            } catch (JSONException e) {
+                            }
 
-                            boolean bool = js.getBoolean("isOnline");
-                            dataManager.setData("isOnline", bool);
-                            Config.isMessengerOnline = bool;
-                            bool = js.getBoolean("notifyCustomer");
-                            dataManager.setData("notifyCustomer", bool);
-                            Config.notifyCustomer = bool;
+                            try {
+                                boolean bool = js.getBoolean("notifyCustomer");
+                                dataManager.setData("notifyCustomer", bool);
+                                Config.notifyCustomer = bool;
+                            } catch (JSONException e) {
+                            }
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+
                     notefyAll(true,null,null);
                 }
                 else{
@@ -164,80 +190,105 @@ public class ErxesRequest {
         }
         apolloClient.query(GetMessengerIntegrationQuery.builder().brandCode(Config.brandCode).build())
                 .enqueue(new ApolloCall.Callback<GetMessengerIntegrationQuery.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
-                if(!response.hasErrors()) {
+                    @Override
+                    public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
+                        if(!response.hasErrors()) {
 
 //
 
-                    Config.language = response.data().getMessengerIntegration().languageCode();
+                            Config.language = response.data().getMessengerIntegration().languageCode();
 
-                    dataManager.setData(DataManager.language, Config.language);
+                            dataManager.setData(DataManager.language, Config.language);
 
-                    if(Config.language!=null)
-                        changeLanguage(Config.language);
-                    try {
+                            if(Config.language!=null)
+                                changeLanguage(Config.language);
+                            try {
 
-                        if(response.data().getMessengerIntegration().uiOptions()!=null) {
-                            JSONObject js = new JSONObject(response.data().getMessengerIntegration().uiOptions().toString());
-                            String color = js.getString("color");
-                            dataManager.setData(DataManager.color, color);
+                                if(response.data().getMessengerIntegration().uiOptions()!=null) {
+                                    JSONObject js = new JSONObject(response.data().getMessengerIntegration().uiOptions().toString());
+                                    String color = js.getString("color");
+                                    dataManager.setData(DataManager.color, color);
 
-                            Config.color = color;
+                                    Config.color = color;
 
-                            color = js.getString("wallpaper");
-                            dataManager.setData("wallpaper", color);
+                                    color = js.getString("wallpaper");
+                                    dataManager.setData("wallpaper", color);
 
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+                            if(response.data().getMessengerIntegration().messengerData()!=null) {
+                                JSONObject js = new JSONObject();
+                                try {
+                                    js = new JSONObject(response.data().getMessengerIntegration().messengerData().toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                String temp = null;
+                                try {
+                                    temp = js.getString("thankYouMessage");
+                                    dataManager.setData("thankYouMessage", temp);
+                                    Config.thankYouMessage = temp;
+                                } catch (JSONException e) {
+                                }
+
+                                try {
+                                    temp = js.getString("awayMessage");
+                                    dataManager.setData("awayMessage", temp);
+                                    Config.awayMessage = temp;
+                                } catch (JSONException e) {
+                                }
+                                try {
+                                    temp = js.getString("welcomeMessage");
+                                    dataManager.setData("welcomeMessage", temp);
+                                    Config.welcomeMessage = temp;
+                                } catch (JSONException e) {
+                                }
+                                try {
+                                    temp = js.getString("timezone");
+                                    dataManager.setData("timezone", temp);
+                                    Config.timezone = temp;
+                                } catch (JSONException e) {
+                                }
+                                try {
+                                    temp = js.getString("availabilityMethod");
+                                    dataManager.setData("availabilityMethod", temp);
+                                    Config.availabilityMethod = temp;
+                                } catch (JSONException e) {
+                                }
+                                try {
+                                    boolean bool = js.getBoolean("isOnline");
+                                    dataManager.setData("isOnline", bool);
+                                    Config.isMessengerOnline = bool;
+                                } catch (JSONException e) {
+                                }
+
+                                try {
+                                    boolean bool = js.getBoolean("notifyCustomer");
+                                    dataManager.setData("notifyCustomer", bool);
+                                    Config.notifyCustomer = bool;
+                                } catch (JSONException e) {
+                                }
+                            }
+
+                            notefyAll(true,null,null);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        if(response.data().getMessengerIntegration().messengerData()!=null) {
-                            JSONObject js = new JSONObject(response.data().getMessengerIntegration().messengerData().toString());
-                            String temp = js.getString("thankYouMessage");
-                            dataManager.setData("thankYouMessage", temp);
-                            Config.thankYouMessage = temp;
-                            temp = js.getString("awayMessage");
-                            dataManager.setData("awayMessage", temp);
-                            Config.awayMessage = temp;
-                            temp = js.getString("welcomeMessage");
-                            dataManager.setData("welcomeMessage", temp);
-                            Config.welcomeMessage = temp;
-                            temp = js.getString("timezone");
-                            dataManager.setData("timezone", temp);
-                            Config.timezone = temp;
-
-                            temp = js.getString("availabilityMethod");
-                            dataManager.setData("availabilityMethod", temp);
-                            Config.availabilityMethod = temp;
-
-                            boolean bool = js.getBoolean("isOnline");
-                            dataManager.setData("isOnline", bool);
-                            Config.isMessengerOnline = bool;
-                            bool = js.getBoolean("notifyCustomer");
-                            dataManager.setData("notifyCustomer", bool);
-                            Config.notifyCustomer = bool;
+                        else{
+                            Log.d(TAG, "errors " + response.errors().toString());
+                            notefyAll(false,null,ErrorType.SERVERERROR);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                    notefyAll(true,null,null);
-                }
-                else{
-                    Log.d(TAG, "errors " + response.errors().toString());
-                    notefyAll(false,null,ErrorType.SERVERERROR);
-                }
-            }
 
-            @Override
-            public void onFailure(@Nonnull ApolloException e) {
-                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
-                Log.d(TAG, "failed ");
-                e.printStackTrace();
+                    @Override
+                    public void onFailure(@Nonnull ApolloException e) {
+                        notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                        Log.d(TAG, "failed ");
+                        e.printStackTrace();
 
-            }
-        });
+                    }
+                });
     }
     static public void InsertMessage(final String message, final String conversationId,List<JSONObject> list){
         if(!isNetworkConnected()){
@@ -414,7 +465,7 @@ public class ErxesRequest {
             }
         });
     }
-    static public void ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
+    static public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
         ConversationMessage converted = new ConversationMessage();
         converted.set_id(data._id());
         converted.setContent(data.content());
@@ -453,6 +504,7 @@ public class ErxesRequest {
         else{
             inner.close();
         }
+        return ConversationListActivity.chat_is_going;
 
     }
     static public void add(ErxesObserver e){

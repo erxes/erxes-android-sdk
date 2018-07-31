@@ -16,8 +16,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 //        Api3100 connect = new Api3100();
 //        connect.test();
-        Config.Init(this,"YDEdKj","192.168.86.29");
-//        Config.Init(this,"YDEdKj","192.168.86.39");
+        Config.Init(this,"yPv5aN","192.168.1.15");
+//
 
 
 //        Intent a  = new Intent(this,DeleteActivity.class);

@@ -147,11 +147,28 @@ public class Config {
         dataManager.setData("HOST",ip);
         dataManager.setData("HOST3100",HOST_3100);
         dataManager.setData("HOST3300",HOST_3300);
+        dataManager.setData("BRANDCODE",brandcode);
 
 
         ErxesRequest.init(context);
         Config.context = context;
         Config.brandCode = brandcode;
+
+    }
+    static public void Init(Context context){
+        if(dataManager != null)
+            return;
+        dataManager = new DataManager(context);
+        Config.HOST = dataManager.getDataS("HOST");
+        HOST_3100="http://"+HOST+":3100/graphql";
+        HOST_3300="ws://"+HOST+":3300/subscriptions";
+        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
+
+
+
+        ErxesRequest.init(context);
+        Config.context = context;
+        Config.brandCode = dataManager.getDataS("BRANDCODE");
 
     }
     static public void Start(){

@@ -8,4 +8,6 @@
     <string name="email">и-мейл</string>
     <string name="phone">утас</string>
     <string name="connnect">Холбогдох</string>
+    <string name="contact">Холбогдох</string>
+    <string name="contact_info">Холбоо барих мэдээллээ үлдээнэ үү</string>
 </resources>

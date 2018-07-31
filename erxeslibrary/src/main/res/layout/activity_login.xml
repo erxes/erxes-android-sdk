@@ -5,31 +5,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#6569DF"
     android:gravity="center"
-    android:padding="64dp"
     android:id="@+id/linearlayout"
     tools:context=".ErxesActivity">
 
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="30dp"
-        app:srcCompat="@drawable/erxes" />
-
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
+        android:id="@+id/info_header"
         android:layout_width="match_parent"
-        android:textColorHint="#fff"
-        android:backgroundTint="#fff"
-        android:foregroundTint="#fff"
-        app:counterTextAppearance="@android:style/TextAppearance"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical">
+        <TextView
+            android:text="@string/contact"
+            android:textColor="#fff"
+            android:layout_gravity="center_horizontal"
+            android:textSize="20sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="@string/contact_info"
+            android:textColor="#fff"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:background="@drawable/rounded_rectangle"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/email_button"
+            android:text="@string/email"
+            android:background="@color/colorPrimary"
+            android:textColor="#fff"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/sms_button"
+            android:text="@string/sms"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="center"
+        android:background="@drawable/rounded_rectangle"
+        android:orientation="horizontal">
 
         <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="9"
+            android:layout_height="40dp"
             android:maxLines="1"
             android:id="@+id/email"
             android:text="yagg@yahoo.com"
@@ -38,28 +84,29 @@
             android:textColorLink="#fff"
             android:inputType="textEmailAddress"
             android:hint="@string/email" />
-    </android.support.design.widget.TextInputLayout>
-    <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
         <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:visibility="gone"
+            android:layout_weight="9"
+            android:layout_height="40dp"
             android:maxLines="1"
             android:text="99881111"
             android:inputType="phone"
             android:id="@+id/phone"
             android:hint="@string/phone" />
+        <ImageView
+            android:id="@+id/connect"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:layout_weight="2"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
+            android:background="@color/colorPrimary"
+            android:text="@string/connnect" />
 
-    </android.support.design.widget.TextInputLayout>
-    <TextView
-        android:id="@+id/connect"
-        android:textColor="#fff"
-        android:textSize="20sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="@string/connnect" />
+    </LinearLayout>
+
 
 </LinearLayout>

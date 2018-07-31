@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErrorType;
@@ -26,6 +28,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
     static private String TAG="ConversationListActivity";
     private Toolbar myToolbar;
+    static public boolean chat_is_going = false;
     private FloatingActionButton fab;
     @Override
     public void notify(boolean status,final String conversationId,ErrorType errorType) {
@@ -35,7 +38,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
                 public void run() {
                     recyclerView.getAdapter().notifyDataSetChanged();
                     if(Config.color!=null) {
-                        myToolbar.setBackgroundColor(Color.parseColor(Config.color));
+//                        myToolbar.setBackgroundColor(Color.parseColor(Config.color));
                         fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(Config.color)));
                     }
                 }
@@ -63,24 +66,39 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
             }
         Config.conversationId = null;
         ErxesRequest.getIntegration(Config.brandCode);
-
+        chat_is_going = true;
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chat_is_going =false;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_delete);
         myToolbar =  findViewById(R.id.toolbar);
 
-//        setSupportActionBar(myToolbar);
+
+
+//        setSupportActionBar(null);
 //        getSupportActionBar().setTitle(null);
 
         setSupportActionBar(myToolbar);
 
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(this.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
+        this.getWindow().setAttributes(lp);
+
+
         fab =  findViewById(R.id.fab);
         if(Config.color!=null){
+            Log.d(TAG,"toolbar color");
             myToolbar.setBackgroundColor(Color.parseColor(Config.color));
             fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(Config.color)));
 

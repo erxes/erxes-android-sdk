@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.Configuration;
 
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -15,6 +16,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 //import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -31,11 +35,14 @@ import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxes.subscription.ConversationsChangedSubscription;
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.ErxesActivity;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.R;
 
 
 import java.lang.ref.PhantomReference;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -188,8 +195,13 @@ public class ListenerService extends Service{
                             @Override public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
                                 if(!response.hasErrors()){
 
-                                    ErxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
+                                    if(!ErxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted()))
+                                    {
+                                        String chat_message = response.data().conversationMessageInserted().content();
+                                        String name = response.data().conversationMessageInserted().user().details().fullName();
 
+                                        createNotificationChannel(chat_message,name,response.data().conversationMessageInserted().conversationId());
+                                    }
                                 }
                                 Log.d("erxesservice","onnext"+conversationId);
 
@@ -203,7 +215,22 @@ public class ListenerService extends Service{
                 )
         );
     }
+    private void createNotificationChannel(String chat_message,String name,String conversion_id) {
+        Intent intent = new Intent(this, ErxesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "123")
+                .setSmallIcon(R.drawable.icon)
+                .setContentTitle(name)
+                .setContentText( chat_message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, mBuilder.build());
+    }
     public void startListen(){
 
         if (!Config.isNetworkConnected()){
@@ -264,4 +291,6 @@ public class ListenerService extends Service{
                 )
         );
     }
+
+
 }
