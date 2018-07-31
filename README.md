@@ -19,7 +19,7 @@ Step 2. Add the dependency
 	
 Step 3. Add in your own code
 
-	Config.Init(this,"yPv5aN","your_host_address"); // like 103.90.1.2
+	Config.Init(this,"brand_code","your_host_address"); 
 	Config.Start();
 	
 	
