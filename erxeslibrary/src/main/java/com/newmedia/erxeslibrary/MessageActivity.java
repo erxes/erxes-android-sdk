@@ -178,22 +178,22 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             }
         }
     }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_messege);
+    void load_findViewByid(){
+        // for dialog size
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(this.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;
         lp.height = WindowManager.LayoutParams.MATCH_PARENT;
         this.getWindow().setAttributes(lp);
+
+        // toolbar
         Toolbar toolbar =  findViewById(R.id.my_toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-//
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        // load views
         container = this.findViewById(R.id.container);
 //        uploadImage = this.findViewById(R.id.uploadImage);
         button_chatbox_send = this.findViewById(R.id.button_chatbox_send);
@@ -201,8 +201,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         profileImage = this.findViewById(R.id.profile_image);
         isMessenOnlineImage = this.findViewById(R.id.isonline);
         fullname = this.findViewById(R.id.fullname);
+
         senddrawable = new CircularProgressDrawable(this);
-        Log.d(TAG,"color"+Config.color);
+
         if(Config.color!=null) {
 
             this.findViewById(R.id.oneline).setBackgroundColor(Color.parseColor(Config.color));
@@ -226,21 +227,30 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         mMessageRecycler =  findViewById(R.id.reyclerview_message_list);
         if(Config.wallpaper!=null)
-        if(Config.wallpaper.equalsIgnoreCase("1"))
-            mMessageRecycler.setBackgroundResource(R.drawable.bitmap1);
-        else if(Config.wallpaper.equalsIgnoreCase("2"))
-            mMessageRecycler.setBackgroundResource(R.drawable.bitmap2);
-        else if(Config.wallpaper.equalsIgnoreCase("3"))
-            mMessageRecycler.setBackgroundResource(R.drawable.bitmap3);
-        else if(Config.wallpaper.equalsIgnoreCase("4"))
-            mMessageRecycler.setBackgroundResource(R.drawable.bitmap4);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+            if(Config.wallpaper.equalsIgnoreCase("1"))
+                mMessageRecycler.setBackgroundResource(R.drawable.bitmap1);
+            else if(Config.wallpaper.equalsIgnoreCase("2"))
+                mMessageRecycler.setBackgroundResource(R.drawable.bitmap2);
+            else if(Config.wallpaper.equalsIgnoreCase("3"))
+                mMessageRecycler.setBackgroundResource(R.drawable.bitmap3);
+            else if(Config.wallpaper.equalsIgnoreCase("4"))
+                mMessageRecycler.setBackgroundResource(R.drawable.bitmap4);
 
-        mMessageRecycler.setLayoutManager(linearLayoutManager);
 
 
         if(!Config.isMessengerOnline)
             isMessenOnlineImage.setVisibility(View.GONE);
+
+    }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_messege);
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+
+        mMessageRecycler.setLayoutManager(linearLayoutManager);
 
 
         if(Config.conversationId != null) {

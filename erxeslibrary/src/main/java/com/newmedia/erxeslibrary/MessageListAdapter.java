@@ -274,69 +274,30 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             String size = o.getString("size");
             String name = o.getString("name");
             String url = o.getString("url");
-
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+            circularProgressDrawable.setStrokeWidth(  5f);
+            circularProgressDrawable.setCenterRadius(  30f);
+            circularProgressDrawable.start();
+            final float scale = context.getResources().getDisplayMetrics().density;
+            int pixels = (int) (200 * scale + 0.5f);
+            inputImage.getLayoutParams().width = pixels;
+            inputImage.setImageDrawable(circularProgressDrawable);
+            GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(inputImage);
+            fileview.setOnClickListener(null);
+            filename.setVisibility(View.GONE);
             if(type.contains("image")){
-                CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-                circularProgressDrawable.setStrokeWidth(  5f);
-                circularProgressDrawable.setCenterRadius(  30f);
-                circularProgressDrawable.start();
-                final float scale = context.getResources().getDisplayMetrics().density;
-                int pixels = (int) (200 * scale + 0.5f);
-                inputImage.getLayoutParams().width = pixels;
-                inputImage.setImageDrawable(circularProgressDrawable);
-                GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(inputImage);
-                fileview.setOnClickListener(null);
-                filename.setVisibility(View.GONE);
+
             }
             else if(type.contains("application/pdf")){
-                final float scale = context.getResources().getDisplayMetrics().density;
-                int pixels = (int) (20 * scale + 0.5f);
-                inputImage.getLayoutParams().width = pixels;
-                inputImage.requestLayout();
                 inputImage.setImageResource(R.drawable.filepdf);
-                if(Config.color!=null){
-                    inputImage.getDrawable().setColorFilter(Color.parseColor(Config.color), PorterDuff.Mode.SRC_ATOP);
-                }
-                fileview.setTag(url);
-                fileview.setOnClickListener(fileDownload);
-                filename.setText(name);
-                filename.setVisibility(View.VISIBLE);
-
-                filename.setPaintFlags(filename.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
             }
             else if(type.contains("application")&&type.contains("word")){
-                final float scale = context.getResources().getDisplayMetrics().density;
-                int pixels = (int) (20 * scale + 0.5f);
-                inputImage.getLayoutParams().width = pixels;
-                inputImage.requestLayout();
                 inputImage.setImageResource(R.drawable.fileword);
-                if(Config.color!=null){
-                    inputImage.getDrawable().setColorFilter(Color.parseColor(Config.color), PorterDuff.Mode.SRC_ATOP);
-                }
-                fileview.setTag(url);
-                fileview.setOnClickListener(fileDownload);
-                filename.setText(name);
-                filename.setVisibility(View.VISIBLE);
-                filename.setPaintFlags(filename.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
             }
             else{
-                final float scale = context.getResources().getDisplayMetrics().density;
-                int pixels = (int) (20 * scale + 0.5f);
-                inputImage.getLayoutParams().width = pixels;
-                inputImage.requestLayout();
                 inputImage.setImageResource(R.drawable.file);
-                if(Config.color!=null){
-                    inputImage.getDrawable().setColorFilter(Color.parseColor(Config.color), PorterDuff.Mode.SRC_ATOP);
-                }
-                fileview.setTag(url);
-                fileview.setOnClickListener(fileDownload);
-                filename.setText(name);
-                filename.setVisibility(View.VISIBLE);
-                filename.setPaintFlags(filename.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-
             }
         } catch (JSONException e) {
             e.printStackTrace();
