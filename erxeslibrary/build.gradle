@@ -58,7 +58,7 @@ dependencies {
 }
 apollo {
     customTypeMapping['Date'] = "String"
-    customTypeMapping['JSON'] = "org.json.JSONObject"
+    customTypeMapping['JSON'] = "String"
 
 
 }

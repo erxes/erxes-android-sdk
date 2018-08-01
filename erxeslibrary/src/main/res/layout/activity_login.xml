@@ -13,7 +13,7 @@
         android:id="@+id/info_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="#5629B6"
         android:orientation="vertical">
         <TextView
             android:text="@string/contact"
@@ -42,7 +42,7 @@
         <TextView
             android:id="@+id/email_button"
             android:text="@string/email"
-            android:background="@color/colorPrimary"
+            android:background="#5629B6"
             android:textColor="#fff"
             android:textSize="20sp"
             android:gravity="center"
@@ -68,6 +68,7 @@
         android:layout_marginLeft="32dp"
         android:layout_marginRight="32dp"
         android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:gravity="center"
         android:background="@drawable/rounded_rectangle"
         android:orientation="horizontal">
@@ -78,10 +79,6 @@
             android:layout_height="40dp"
             android:maxLines="1"
             android:id="@+id/email"
-            android:text="yagg@yahoo.com"
-            android:textColorHighlight="#fff"
-            android:textColorHint="#fff"
-            android:textColorLink="#fff"
             android:inputType="textEmailAddress"
             android:hint="@string/email" />
 
@@ -91,7 +88,6 @@
             android:layout_weight="9"
             android:layout_height="40dp"
             android:maxLines="1"
-            android:text="99881111"
             android:inputType="phone"
             android:id="@+id/phone"
             android:hint="@string/phone" />
@@ -103,7 +99,7 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:src="@drawable/ic_keyboard_arrow_right_black_24dp"
-            android:background="@color/colorPrimary"
+            android:background="#5629B6"
             android:text="@string/connnect" />
 
     </LinearLayout>

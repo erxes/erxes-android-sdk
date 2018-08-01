@@ -85,10 +85,10 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
 
 //        setSupportActionBar(null);
-//        getSupportActionBar().setTitle(null);
+
 
         setSupportActionBar(myToolbar);
-
+        getSupportActionBar().setTitle(null);
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(this.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.MATCH_PARENT;

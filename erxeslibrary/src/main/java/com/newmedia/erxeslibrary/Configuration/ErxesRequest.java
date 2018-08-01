@@ -55,7 +55,7 @@ public class ErxesRequest {
                 .serverUrl(Config.HOST_3100)
                 .okHttpClient(okHttpClient)
                 .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(Config.HOST_3300, okHttpClient))
-                .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
+//                .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
 
 
@@ -95,76 +95,14 @@ public class ErxesRequest {
                     Log.d(TAG,"init data "+Config.integrationId+" "+Config.customerId+" "+Config.language);
                     if(Config.language!=null)
                         changeLanguage(Config.language);
-                    try {
+                    if(response.data().messengerConnect().uiOptions()!=null) {
+                        load_uiOptions(response.data().messengerConnect().uiOptions());
 
-                        if(response.data().messengerConnect().uiOptions()!=null) {
-                            JSONObject js = new JSONObject(response.data().messengerConnect().uiOptions().toString());
-                            String color = js.getString("color");
-                            dataManager.setData(DataManager.color, color);
-
-                            Config.color = color;
-
-                            color = js.getString("wallpaper");
-                            dataManager.setData("wallpaper", color);
-
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
 
-                        if(response.data().messengerConnect().messengerData()!=null) {
-                            JSONObject js = new JSONObject();
-                            try {
-                                js = new JSONObject(response.data().messengerConnect().messengerData().toString());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            String temp = null;
-                            try {
-                                temp = js.getString("thankYouMessage");
-                                dataManager.setData("thankYouMessage", temp);
-                                Config.thankYouMessage = temp;
-                            } catch (JSONException e) {
-                            }
-
-                            try {
-                                temp = js.getString("awayMessage");
-                                dataManager.setData("awayMessage", temp);
-                                Config.awayMessage = temp;
-                            } catch (JSONException e) {
-                            }
-                            try {
-                                temp = js.getString("welcomeMessage");
-                                dataManager.setData("welcomeMessage", temp);
-                                Config.welcomeMessage = temp;
-                            } catch (JSONException e) {
-                            }
-                            try {
-                                temp = js.getString("timezone");
-                                dataManager.setData("timezone", temp);
-                                Config.timezone = temp;
-                            } catch (JSONException e) {
-                            }
-                            try {
-                                temp = js.getString("availabilityMethod");
-                                dataManager.setData("availabilityMethod", temp);
-                                Config.availabilityMethod = temp;
-                            } catch (JSONException e) {
-                            }
-                            try {
-                                boolean bool = js.getBoolean("isOnline");
-                                dataManager.setData("isOnline", bool);
-                                Config.isMessengerOnline = bool;
-                            } catch (JSONException e) {
-                            }
-
-                            try {
-                                boolean bool = js.getBoolean("notifyCustomer");
-                                dataManager.setData("notifyCustomer", bool);
-                                Config.notifyCustomer = bool;
-                            } catch (JSONException e) {
-                            }
-                        }
+                    if(response.data().messengerConnect().messengerData()!=null) {
+                        load_messengerData( response.data().messengerConnect().messengerData());
+                    }
 
                     notefyAll(true,null,null);
                 }
@@ -194,83 +132,18 @@ public class ErxesRequest {
                     public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
                         if(!response.hasErrors()) {
 
-//
-
                             Config.language = response.data().getMessengerIntegration().languageCode();
-
                             dataManager.setData(DataManager.language, Config.language);
 
                             if(Config.language!=null)
                                 changeLanguage(Config.language);
-                            try {
 
-                                if(response.data().getMessengerIntegration().uiOptions()!=null) {
-                                    JSONObject js = new JSONObject(response.data().getMessengerIntegration().uiOptions().toString());
-                                    String color = js.getString("color");
-                                    dataManager.setData(DataManager.color, color);
-
-                                    Config.color = color;
-
-                                    color = js.getString("wallpaper");
-                                    dataManager.setData("wallpaper", color);
-
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            if(response.data().getMessengerIntegration().uiOptions()!=null) {
+                                load_uiOptions(response.data().getMessengerIntegration().uiOptions());
                             }
 
                             if(response.data().getMessengerIntegration().messengerData()!=null) {
-                                JSONObject js = new JSONObject();
-                                try {
-                                    js = new JSONObject(response.data().getMessengerIntegration().messengerData().toString());
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                String temp = null;
-                                try {
-                                    temp = js.getString("thankYouMessage");
-                                    dataManager.setData("thankYouMessage", temp);
-                                    Config.thankYouMessage = temp;
-                                } catch (JSONException e) {
-                                }
-
-                                try {
-                                    temp = js.getString("awayMessage");
-                                    dataManager.setData("awayMessage", temp);
-                                    Config.awayMessage = temp;
-                                } catch (JSONException e) {
-                                }
-                                try {
-                                    temp = js.getString("welcomeMessage");
-                                    dataManager.setData("welcomeMessage", temp);
-                                    Config.welcomeMessage = temp;
-                                } catch (JSONException e) {
-                                }
-                                try {
-                                    temp = js.getString("timezone");
-                                    dataManager.setData("timezone", temp);
-                                    Config.timezone = temp;
-                                } catch (JSONException e) {
-                                }
-                                try {
-                                    temp = js.getString("availabilityMethod");
-                                    dataManager.setData("availabilityMethod", temp);
-                                    Config.availabilityMethod = temp;
-                                } catch (JSONException e) {
-                                }
-                                try {
-                                    boolean bool = js.getBoolean("isOnline");
-                                    dataManager.setData("isOnline", bool);
-                                    Config.isMessengerOnline = bool;
-                                } catch (JSONException e) {
-                                }
-
-                                try {
-                                    boolean bool = js.getBoolean("notifyCustomer");
-                                    dataManager.setData("notifyCustomer", bool);
-                                    Config.notifyCustomer = bool;
-                                } catch (JSONException e) {
-                                }
+                                load_messengerData( response.data().getMessengerIntegration().messengerData());
                             }
 
                             notefyAll(true,null,null);
@@ -290,15 +163,76 @@ public class ErxesRequest {
                     }
                 });
     }
-    static public void InsertMessage(final String message, final String conversationId,List<JSONObject> list){
+    static public void load_uiOptions(JSONObject js){
+        String color = null;
+        try {
+            color = js.getString("color");
+            dataManager.setData(DataManager.color, color);
+            Config.color = color;
+        }catch (JSONException e){
+        }
+        try {
+            color = js.getString("wallpaper");
+            dataManager.setData("wallpaper", color);
+        }catch (JSONException e){
+        }
+
+    }
+    static public void load_messengerData(JSONObject js){
+        String temp = null;
+        try {
+            temp = js.getString("thankYouMessage");
+            dataManager.setData("thankYouMessage", temp);
+            Config.thankYouMessage = temp;
+        } catch (JSONException e) {
+        }
+
+        try {
+            temp = js.getString("awayMessage");
+            dataManager.setData("awayMessage", temp);
+            Config.awayMessage = temp;
+        } catch (JSONException e) {
+        }
+        try {
+            temp = js.getString("welcomeMessage");
+            dataManager.setData("welcomeMessage", temp);
+            Config.welcomeMessage = temp;
+        } catch (JSONException e) {
+        }
+        try {
+            temp = js.getString("timezone");
+            dataManager.setData("timezone", temp);
+            Config.timezone = temp;
+        } catch (JSONException e) {
+        }
+        try {
+            temp = js.getString("availabilityMethod");
+            dataManager.setData("availabilityMethod", temp);
+            Config.availabilityMethod = temp;
+        } catch (JSONException e) {
+        }
+        try {
+            boolean bool = js.getBoolean("isOnline");
+            dataManager.setData("isOnline", bool);
+            Config.isMessengerOnline = bool;
+        } catch (JSONException e) {
+        }
+
+        try {
+            boolean bool = js.getBoolean("notifyCustomer");
+            dataManager.setData("notifyCustomer", bool);
+            Config.notifyCustomer = bool;
+        } catch (JSONException e) {
+        }
+    }
+    static public void InsertMessage(final String message, final String conversationId,List<String> list){
         if(!isNetworkConnected()){
             return;
         }
         InsertMessageMutation.Builder temp =InsertMessageMutation.builder().
                 integrationId(Config.integrationId).
                 customerId(Config.customerId).
-                message(message).
-                attachments(list).
+                message(message).attachments(list).
                 conversationId(conversationId);
 //        if(list.size() > 0 )
 //        {
@@ -341,7 +275,7 @@ public class ErxesRequest {
             }
         });
     }
-    static public void InsertNewMessage(final String message,List<JSONObject> list){
+    static public void InsertNewMessage(final String message,List<String> list){
         if(!isNetworkConnected()){
             return;
         }

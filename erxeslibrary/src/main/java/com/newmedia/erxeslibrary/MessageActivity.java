@@ -112,6 +112,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private TextView fullname;
     private CircularProgressDrawable senddrawable;
     private ViewGroup container;
+//    private ImageView uploadImage;
     private final String TAG="MESSAGEACTIVITY";
     @Override
     public void notify(boolean status,String conversationId,ErrorType errorType) {
@@ -194,6 +195,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         container = this.findViewById(R.id.container);
+//        uploadImage = this.findViewById(R.id.uploadImage);
         button_chatbox_send = this.findViewById(R.id.button_chatbox_send);
         swipeRefreshLayout = this.findViewById(R.id.swipeRefreshLayout);
         profileImage = this.findViewById(R.id.profile_image);
@@ -291,18 +293,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 return;
             }
             if(!edittext_chatbox.getText().toString().equalsIgnoreCase("")) {
-                List<JSONObject> temp = null;
+                List<String> temp = null;
                 if(jsonObject!=null)
                 {
                     temp = new ArrayList<>();
-                    try
-                    {
-                        temp.add(new JSONObject(jsonObject.toString()));
-                        jsonObject = null;
-                    } catch (JSONException e) {
-                        temp = null;
-                        e.printStackTrace();
-                    }
+
+                    temp.add(jsonObject.toString());
+                    jsonObject = null;
+
                 }
                 if (Config.conversationId != null) {
                     ErxesRequest.InsertMessage(edittext_chatbox.getText().toString(), Config.conversationId, temp);
@@ -444,9 +442,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
 
     public void upload( File file)  {
-
+        if(!Config.isNetworkConnected()) {
+            Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
+            return;
+        }
         senddrawable.start();
-        button_chatbox_send.setBackgroundDrawable(senddrawable);
+//        uploadImage.setImageResource(R.drawable.file);
+//        uploadImage.setBackgroundDrawable(senddrawable);
 
         button_chatbox_send.setClickable(false);
         OkHttpClient client = new OkHttpClient.Builder().writeTimeout(3,TimeUnit.MINUTES)
@@ -462,6 +464,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
 
         client.newCall(request).enqueue(new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
                 Log.i("erxes_api", "failed" );
@@ -512,8 +515,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     }
                 });
                 Log.i("erxes_api", "upload false");
-
             }
+
         });
     }
     String filepath,size,name,type,attachments;

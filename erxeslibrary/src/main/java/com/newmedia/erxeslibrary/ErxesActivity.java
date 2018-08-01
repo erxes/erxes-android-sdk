@@ -56,10 +56,10 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                     email_button.setTextColor(Color.parseColor(Config.color));
                 }
                 else{
-                    sms_button.setBackgroundResource(R.color.colorPrimary);
+                    sms_button.setBackgroundColor(Color.parseColor("#5629B6"));
                     sms_button.setTextColor(Color.WHITE);
                     email_button.setBackgroundColor(Color.WHITE);
-                    email_button.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    email_button.setTextColor(Color.parseColor("#5629B6"));
                 }
 
             }
@@ -78,10 +78,10 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                     sms_button.setTextColor(Color.parseColor(Config.color));
                 }
                 else{
-                    email_button.setBackgroundResource(R.color.colorPrimary);
+                    email_button.setBackgroundColor(Color.parseColor("#5629B6"));
                     email_button.setTextColor(Color.WHITE);
                     sms_button.setBackgroundColor(Color.WHITE);
-                    sms_button.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    sms_button.setTextColor(Color.parseColor("#5629B6"));
                 }
             }
         });
@@ -145,7 +145,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             });
         }
         else {
-
+            Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
 //            Toast.makeText(this,"амжилтгүй",Toast.LENGTH_SHORT).show();
         }
 
