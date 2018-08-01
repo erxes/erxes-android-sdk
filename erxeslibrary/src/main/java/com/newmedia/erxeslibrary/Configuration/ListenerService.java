@@ -120,8 +120,8 @@ public class ListenerService extends Service{
             RealmResults<Conversation> list=
                     realm.where(Conversation.class).equalTo("status","open").findAll();
             for(int i = 0; i< list.size();i++) {
-                Log.d("erxesservice","--"+list.get(i).get_id());
-                conversation_listen(list.get(i).get_id());
+                Log.d("erxesservice","--"+list.get(i)._id);
+                conversation_listen(list.get(i)._id);
             }
         }else{
             conversation_listen(id);

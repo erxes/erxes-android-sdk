@@ -49,7 +49,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:onClick="email_click"/>
         <TextView
             android:id="@+id/sms_button"
             android:text="@string/sms"
@@ -59,7 +60,8 @@
             android:layout_gravity="center_horizontal"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:onClick="sms_click"/>
     </LinearLayout>
 
     <LinearLayout

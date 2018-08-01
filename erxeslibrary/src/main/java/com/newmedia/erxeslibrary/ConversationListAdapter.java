@@ -42,7 +42,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     }
     public void update_position(String conversationId){
         for(int i = 0 ; i< conversationList.size();i++){
-            if(conversationList.get(i).get_id().equalsIgnoreCase(conversationId)){
+            if(conversationList.get(i)._id.equalsIgnoreCase(conversationId)){
                 this.notifyItemChanged(i);
                 return;
             }
@@ -67,22 +67,22 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         @Override
         public void onClick(View view) {
             Intent a = new Intent(context,MessageActivity.class);
-            Config.conversationId = conversationList.get((int)view.getTag()).get_id();
+            Config.conversationId = conversationList.get((int)view.getTag())._id;
             context.startActivity(a);
         }
     };
     @Override
     public void onBindViewHolder(@NonNull ConversationHolder holder, int position) {
 //        conversationList.get(position).get
-        if(conversationList.get(position).isIsread()) {
-            if(conversationList.get(position).getContent()!=null)
-            holder.content.setText(Html.fromHtml(conversationList.get(position).getContent()));
+        if(conversationList.get(position).isread) {
+            if(conversationList.get(position).content!=null)
+            holder.content.setText(Html.fromHtml(conversationList.get(position).content));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.content.setTextColor(Color.parseColor("#808080"));
         }
         else{
-            holder.content.setText(Html.fromHtml(conversationList.get(position).getContent()));
+            holder.content.setText(Html.fromHtml(conversationList.get(position).content));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
@@ -91,23 +91,23 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.isonline.setVisibility(View.GONE);
         else
             holder.isonline.setVisibility(View.VISIBLE);
-        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position).get_id()).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
+        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
         holder.circleImageView.setImageResource(R.drawable.avatar);
         holder.name.setText("");
-        if(message!=null&&message.getUser() !=null){
-            String myString = message.getUser().fullName;
+        if(message!=null&&message.user !=null){
+            String myString = message.user.fullName;
             String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
 
-            GlideApp.with(context).load(message.getUser().avatar).placeholder(R.drawable.avatar)
+            GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
 
-            Long createDate = Long.valueOf(message.getCreatedAt());
+            Long createDate = Long.valueOf(message.createdAt);
             holder.date.setText(Config.convert_datetime(createDate));
             holder.parent.setTag(position);
         }else {
-            Long createDate = Long.valueOf(conversationList.get(position).getDate());
+            Long createDate = Long.valueOf(conversationList.get(position).date);
             holder.date.setText(Config.convert_datetime(createDate));
             holder.parent.setTag(position);
         }

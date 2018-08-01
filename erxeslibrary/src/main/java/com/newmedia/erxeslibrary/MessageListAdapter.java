@@ -110,7 +110,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         if(Config.welcomeMessage!=null)
             position = position - 1;
 
-        if( mMessageList.get(position).getCustomerId() == null)
+        if( mMessageList.get(position).customerId == null)
             return 1;
         else
             return 0;
@@ -124,8 +124,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         if(Config.welcomeMessage!=null && (position == 0)){
             message = new ConversationMessage();
-            message.setContent(Config.welcomeMessage);
-            message.setCreatedAt("");
+            message.content = (Config.welcomeMessage);
+            message.createdAt = ("");
         }
         else if(Config.welcomeMessage != null)
             message = mMessageList.get(position - 1);
@@ -178,8 +178,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.getContent()));;
-            timeText.setText(Config.Message_datetime(message.getCreatedAt()));
+            messageText.setText(Html.fromHtml(message.content));;
+            timeText.setText(Config.Message_datetime(message.createdAt));
             inputImage.setImageResource(0);
             fileview.setVisibility(View.GONE);
             filename.setText("");
@@ -189,11 +189,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 a.setColor(Color.parseColor(Config.color));
 //                messageText.setBackgroundColor(Color.parseColor(Config.color));
             }
-            timeText.setText(Config.Message_datetime(message.getCreatedAt()));
-            if(message.getAttachments() !=null) {
+            timeText.setText(Config.Message_datetime(message.createdAt));
+            if(message.attachments !=null) {
                 try {
 
-                    JSONArray a = new JSONArray(message.getAttachments());
+                    JSONArray a = new JSONArray(message.attachments);
                     for (int i = 0; i < a.length(); i++) {
                         fileview.setVisibility(View.VISIBLE);
                         draw_file(a.getJSONObject(i), inputImage, fileview, filename);
@@ -224,24 +224,24 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.getContent()));;
-            timeText.setText(Config.Message_datetime(message.getCreatedAt()));
+            messageText.setText(Html.fromHtml(message.content));;
+            timeText.setText(Config.Message_datetime(message.createdAt));
             inputImage.setImageResource(0);
             fileview.setVisibility(View.GONE);
             filename.setText("");
 
-            if(message.getUser()!=null){
+            if(message.user!=null){
 
-                GlideApp.with(context).load(message.getUser().avatar).placeholder(R.drawable.avatar)
+                GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
             else
                 profileImage.setImageResource(R.drawable.avatar);
 
-            if(message.getAttachments() !=null)
+            if(message.attachments !=null)
                 try {
-                    JSONArray a = new JSONArray(message.getAttachments());
+                    JSONArray a = new JSONArray(message.attachments);
                     for(int i=0;i< a.length();i++) {
                         fileview.setVisibility(View.VISIBLE);
                         draw_file(a.getJSONObject(i), inputImage, fileview, filename);
@@ -263,7 +263,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.getContent()));;
+            messageText.setText(Html.fromHtml(message.content));;
         }
     }
     private void draw_file(JSONObject o,ImageView inputImage,View fileview,TextView filename){

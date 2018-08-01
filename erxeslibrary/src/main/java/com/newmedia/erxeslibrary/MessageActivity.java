@@ -143,10 +143,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     ConversationMessage lastmessage = realm.where(ConversationMessage.class).equalTo("conversationId",Config.conversationId).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
                     if(lastmessage!=null )
                     {
-                        String myString = lastmessage.getUser().fullName;
+                        String myString = lastmessage.user.fullName;
                         String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
                         fullname.setText(upperString);
-                        GlideApp.with(MessageActivity.this).load(lastmessage.getUser().avatar).placeholder(R.drawable.avatar)
+                        GlideApp.with(MessageActivity.this).load(lastmessage.user.avatar).placeholder(R.drawable.avatar)
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                                 .into(profileImage);
 
@@ -252,11 +252,11 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         mMessageRecycler.setLayoutManager(linearLayoutManager);
 
-
+        load_findViewByid();
         if(Config.conversationId != null) {
             Conversation conversation = realm.where(Conversation.class).equalTo("_id",Config.conversationId).findFirst();
             realm.beginTransaction();
-            conversation.setIsread(true);
+            conversation.isread = true;
             realm.insertOrUpdate(conversation);
             realm.commitTransaction();
             realm.close();
@@ -266,10 +266,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             ConversationMessage lastmessage =realm.where(ConversationMessage.class).equalTo("conversationId",Config.conversationId).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
             if(lastmessage!=null )
             {
-                GlideApp.with(this).load(lastmessage.getUser().avatar).placeholder(R.drawable.avatar)
+                GlideApp.with(this).load(lastmessage.user.avatar).placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
-                String myString = lastmessage.getUser().fullName;
+                String myString = lastmessage.user.fullName;
                 String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
                 fullname.setText(upperString);
             }
@@ -304,12 +304,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             }
             if(!edittext_chatbox.getText().toString().equalsIgnoreCase("")) {
                 List<String> temp = null;
-                if(jsonObject!=null)
+                if(fIleInfo.get()!=null)
                 {
                     temp = new ArrayList<>();
 
-                    temp.add(jsonObject.toString());
-                    jsonObject = null;
+                    temp.add(fIleInfo.get().toString());
+                    fIleInfo = null;
 
                 }
                 if (Config.conversationId != null) {
@@ -372,8 +372,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         if (requestCode == 444 && resultCode == Activity.RESULT_OK) {
             Uri returnUri = resultData.getData();
-
-            filepath = null;
+            fIleInfo = new FIleInfo();
+            fIleInfo.filepath = null;
 
 
             //Now fetch the new URI
@@ -398,18 +398,19 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             }, null, null, null);
 
                     cursor.moveToFirst();
+                    fIleInfo = new FIleInfo();
+                    fIleInfo.filepath =  cursor.getString(0);
+                    fIleInfo.size = cursor.getString(1);
+                    fIleInfo.name = cursor.getString(2);
+                    fIleInfo.type = cursor.getString(3);
 
-                    filepath = cursor.getString(0);
-                    size = cursor.getString(1);
-                    name = cursor.getString(2);
-                    type = cursor.getString(3);
 //                    Log.d("erxes_api", "info = " + cursor.getString(0) + " " + cursor.getString(1) + " ?" + cursor.getString(2) + cursor.getString(3));
                     cursor.close();
                 } else {
-                    filepath = returnUri.getPath();
+                    fIleInfo.filepath = returnUri.getPath();
                 }
 
-                if(filepath == null) {
+                if(fIleInfo.filepath == null) {
                     File root = android.os.Environment.getExternalStorageDirectory();
                     File tempFile = new File(root.getAbsolutePath()+"/Download", "temp_image");
                     FileOutputStream outputStream =null;
@@ -442,7 +443,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     }
                 }
                 else
-                    upload(new File(filepath));
+                    upload(new File(fIleInfo.filepath));
             }
 
         }
@@ -465,8 +466,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 .readTimeout(3,TimeUnit.MINUTES).build();
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", name, RequestBody.create(MediaType.parse(type), file))
-                .addFormDataPart("name", name )
+                .addFormDataPart("file", fIleInfo.name, RequestBody.create(MediaType.parse(fIleInfo.type), file))
+                .addFormDataPart("name", fIleInfo.name )
                 .build();
 
         Request request = new Request.Builder().url(Config.HOST_UPLOAD).addHeader("Authorization","")
@@ -494,20 +495,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()) {
 //                    Log.i("erxes_api", "yes" + response.body().string());
-                    filepath = response.body().string();
-                    jsonObject = new JSONObject();
-                    try {
-                        jsonObject.put("type",type);
-                        jsonObject.put("size",size);
-                        jsonObject.put("name",name);
-                        jsonObject.put("url",filepath);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    fIleInfo.filepath = response.body().string();
                     Log.i("erxes_api", "upload complete");
-
-
                 }
                 else{
                     MessageActivity.this.runOnUiThread(new Runnable() {
@@ -529,8 +518,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         });
     }
-    String filepath,size,name,type,attachments;
-    JSONObject jsonObject;
+    FIleInfo fIleInfo;
+
     protected boolean shouldAskPermissions() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }

@@ -97,7 +97,7 @@ public class ErxesRequest {
                     Log.d(TAG,"init data "+Config.integrationId+" "+Config.customerId+" "+Config.language);
                     if(Config.language!=null)
                         changeLanguage(Config.language);
-                    
+
                     load_uiOptions(response.data().messengerConnect().uiOptions());
                     load_messengerData( response.data().messengerConnect().messengerData());
 
