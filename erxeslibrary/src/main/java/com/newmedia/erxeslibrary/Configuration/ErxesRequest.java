@@ -35,6 +35,8 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
+import io.realm.RealmModel;
+import io.realm.RealmObject;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
@@ -95,14 +97,10 @@ public class ErxesRequest {
                     Log.d(TAG,"init data "+Config.integrationId+" "+Config.customerId+" "+Config.language);
                     if(Config.language!=null)
                         changeLanguage(Config.language);
-                    if(response.data().messengerConnect().uiOptions()!=null) {
-                        load_uiOptions(response.data().messengerConnect().uiOptions());
+                    
+                    load_uiOptions(response.data().messengerConnect().uiOptions());
+                    load_messengerData( response.data().messengerConnect().messengerData());
 
-                    }
-
-                    if(response.data().messengerConnect().messengerData()!=null) {
-                        load_messengerData( response.data().messengerConnect().messengerData());
-                    }
 
                     notefyAll(true,null,null);
                 }
@@ -137,14 +135,8 @@ public class ErxesRequest {
 
                             if(Config.language!=null)
                                 changeLanguage(Config.language);
-
-                            if(response.data().getMessengerIntegration().uiOptions()!=null) {
-                                load_uiOptions(response.data().getMessengerIntegration().uiOptions());
-                            }
-
-                            if(response.data().getMessengerIntegration().messengerData()!=null) {
-                                load_messengerData( response.data().getMessengerIntegration().messengerData());
-                            }
+                            load_uiOptions(response.data().getMessengerIntegration().uiOptions());
+                            load_messengerData( response.data().getMessengerIntegration().messengerData());
 
                             notefyAll(true,null,null);
                         }
@@ -164,6 +156,8 @@ public class ErxesRequest {
                 });
     }
     static public void load_uiOptions(JSONObject js){
+        if(js == null)
+            return;
         String color = null;
         try {
             color = js.getString("color");
@@ -179,6 +173,8 @@ public class ErxesRequest {
 
     }
     static public void load_messengerData(JSONObject js){
+        if(js == null)
+            return;
         String temp = null;
         try {
             temp = js.getString("thankYouMessage");
@@ -239,31 +235,14 @@ public class ErxesRequest {
 //            temp.attachments(list);
 //        }
 
-        apolloClient.mutate(temp
-                .build()).enqueue(new ApolloCall.Callback<InsertMessageMutation.Data>() {
+        apolloClient.mutate(temp.build()).enqueue(new ApolloCall.Callback<InsertMessageMutation.Data>() {
             @Override
             public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
                 if(response.hasErrors())
                     Log.d(TAG, "errors " + response.errors().toString());
                 else {
-
-                    ConversationMessage a = new ConversationMessage();
-                    a.setConversationId(response.data().insertMessage().conversationId());
-                    a.setCreatedAt(response.data().insertMessage().createdAt());
-                    a.set_id( response.data().insertMessage()._id());
-                    a.setContent(message);
-                    if(response.data().insertMessage().attachments()!=null)
-                    a.setAttachments(response.data().insertMessage().attachments().toString());
-                    a.setInternal(false);
-                    a.setCustomerId(Config.customerId);
-
-
-
-                    Realm inner = Realm.getDefaultInstance();
-                    inner.beginTransaction();
-                    inner.insertOrUpdate(a);
-                    inner.commitTransaction();
-                    inner.close();
+                    ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message);
+                    async_update_database(a);
                     notefyAll(true,conversationId,ErrorType.SERVERERROR);
                 }
             }
@@ -290,33 +269,10 @@ public class ErxesRequest {
                 else {
                     Log.d(TAG, "cid " + response.data().insertMessage().conversationId());
 
-                    Config.conversationId = response.data().insertMessage().conversationId();
-                    Conversation conversation = new Conversation();
-                    conversation.set_id(Config.conversationId);
-                    conversation.setContent(message);
-                    conversation.setStatus("open");
-                    conversation.setDate(response.data().insertMessage().createdAt());
-                    conversation.setCustomerId(Config.customerId);
-                    conversation.setIntegrationId(Config.integrationId);
-
-
-                    ConversationMessage a = new ConversationMessage();
-                    a.setConversationId(Config.conversationId);
-                    a.setCreatedAt(response.data().insertMessage().createdAt());
-                    a.set_id( response.data().insertMessage()._id());
-                    a.setContent(message);
-                    a.setInternal(false);
-                    a.setCustomerId(Config.customerId);
-                    if(response.data().insertMessage().attachments()!=null)
-                        a.setAttachments(response.data().insertMessage().attachments().toString());
-
-
-                    Realm inner = Realm.getDefaultInstance();
-                    inner.beginTransaction();
-                    inner.insertOrUpdate(a);
-                    inner.insertOrUpdate(conversation);
-                    inner.commitTransaction();
-                    inner.close();
+                    Conversation conversation = Conversation.update(response.data().insertMessage(),message);
+                    ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message);
+                    async_update_database(conversation);
+                    async_update_database(a);
 
                     Intent intent2 = new Intent(context, ListenerService.class);
                     intent2.putExtra("id",Config.conversationId);
@@ -335,6 +291,13 @@ public class ErxesRequest {
                 Log.d(TAG, "failed ");
             }
         });
+    }
+    private static void async_update_database(RealmModel realmModel){
+        Realm inner = Realm.getDefaultInstance();
+        inner.beginTransaction();
+        inner.insertOrUpdate(realmModel);
+        inner.commitTransaction();
+        inner.close();
     }
     static public void getConversations(){
         if(!isNetworkConnected()){
@@ -400,24 +363,12 @@ public class ErxesRequest {
         });
     }
     static public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-        ConversationMessage converted = new ConversationMessage();
-        converted.set_id(data._id());
-        converted.setContent(data.content());
-        converted.setConversationId( data.conversationId());
-        converted.setCreatedAt( data.createdAt());
-        converted.setCustomerId( data.customerId());
-        converted.setInternal(data.internal());
-        if(data.user() != null) {
-            User a = new User();
-            a.convert(data.user());
-            converted.setUser(a);
-        }
-        if(data.attachments()!=null)
-            converted.setAttachments(data.attachments().toString());
+
+      ;
 
         Realm inner = Realm.getDefaultInstance();
         inner.beginTransaction();
-        inner.insertOrUpdate(converted);
+        inner.insertOrUpdate(ConversationMessage.convert(data));
         inner.commitTransaction();
 
 
@@ -425,15 +376,12 @@ public class ErxesRequest {
 
         if(conversation!=null) {
             inner.beginTransaction();
-            conversation.setContent(data.content());
-            conversation.setIsread(false);
-
-
-
+            conversation.content = (data.content());
+            conversation.isread = false;
             inner.insertOrUpdate(conversation);
             inner.commitTransaction();
             inner.close();
-            notefyAll(true,conversation.get_id(),null);
+            notefyAll(true,conversation._id,null);
         }
         else{
             inner.close();
