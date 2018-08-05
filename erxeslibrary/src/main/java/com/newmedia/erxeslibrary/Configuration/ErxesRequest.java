@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.Configuration;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -23,9 +24,8 @@ import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
-import com.newmedia.erxeslibrary.Model.User;
+import com.newmedia.erxeslibrary.R;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -36,7 +36,6 @@ import javax.annotation.Nonnull;
 
 import io.realm.Realm;
 import io.realm.RealmModel;
-import io.realm.RealmObject;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
@@ -44,7 +43,6 @@ public class ErxesRequest {
     static private OkHttpClient okHttpClient;
     final static private String TAG="erxesrequest";
     static private DataManager dataManager;
-    static private Realm realm ;
     static private Context context;
     static private List<ErxesObserver> observers;
     static public void init(Context context){
@@ -57,20 +55,28 @@ public class ErxesRequest {
                 .serverUrl(Config.HOST_3100)
                 .okHttpClient(okHttpClient)
                 .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(Config.HOST_3300, okHttpClient))
-//                .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
+                .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
 
 
-        dataManager = new DataManager(context);
+        dataManager =  DataManager.getInstance(context);
         ErxesRequest.context=context;
         Realm.init(context);
-        realm = Realm.getDefaultInstance();
+        Helper.Init(context);
+
+
     }
     static public void changeLanguage(String lang) {
-        Locale myLocale;
-        if (lang.equalsIgnoreCase(""))
+        if(lang == null || lang.equalsIgnoreCase("") )
             return;
+
+
+        Config.language = lang ;
+        dataManager.setData(DataManager.language, Config.language);
+
+        Locale myLocale;
         myLocale = new Locale(lang);
+
         Locale.setDefault(myLocale);
         android.content.res.Configuration config = new android.content.res.Configuration();
         config.locale = myLocale;
@@ -82,37 +88,35 @@ public class ErxesRequest {
         if(!isNetworkConnected()){
             return;
         }
-        apolloClient.mutate(MessengerConnectMutation.builder().brandCode(Config.brandCode).email(email).phone(phone).build()).enqueue(new ApolloCall.Callback<MessengerConnectMutation.Data>() {
+        apolloClient.mutate(MessengerConnectMutation.builder().brandCode(Config.brandCode).email(email).phone(phone).build()).enqueue(
+                new ApolloCall.Callback<MessengerConnectMutation.Data>() {
             @Override
             public void onResponse(@Nonnull Response<MessengerConnectMutation.Data> response) {
                 if(!response.hasErrors()) {
 
                     Config.customerId = response.data().messengerConnect().customerId();
                     Config.integrationId = response.data().messengerConnect().integrationId();
-                    Config.language = response.data().messengerConnect().languageCode();
 
                     dataManager.setData(DataManager.customerId, Config.customerId);
                     dataManager.setData(DataManager.integrationId, Config.integrationId);
-                    dataManager.setData(DataManager.language, Config.language);
-                    Log.d(TAG,"init data "+Config.integrationId+" "+Config.customerId+" "+Config.language);
-                    if(Config.language!=null)
-                        changeLanguage(Config.language);
 
-                    load_uiOptions(response.data().messengerConnect().uiOptions());
-                    load_messengerData( response.data().messengerConnect().messengerData());
+                    changeLanguage(response.data().messengerConnect().languageCode());
+                    Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
+                    Helper.load_messengerData( response.data().messengerConnect().messengerData());
 
 
-                    notefyAll(true,null,null);
+                    notefyAll(ReturnType.LOGIN_SUCCESS,null,null);
                 }
                 else{
+
                     Log.d(TAG, "errors " + response.errors().toString());
-                    notefyAll(false,null,ErrorType.SERVERERROR);
+                    notefyAll(ReturnType.SERVERERROR,null, response.errors().get(0).message());
                 }
             }
 
             @Override
             public void onFailure(@Nonnull ApolloException e) {
-                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                notefyAll(ReturnType.CONNECTIONFAILED,null ,e.getMessage());
                 Log.d(TAG, "failed ");
                 e.printStackTrace();
 
@@ -130,98 +134,30 @@ public class ErxesRequest {
                     public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
                         if(!response.hasErrors()) {
 
-                            Config.language = response.data().getMessengerIntegration().languageCode();
-                            dataManager.setData(DataManager.language, Config.language);
 
-                            if(Config.language!=null)
-                                changeLanguage(Config.language);
-                            load_uiOptions(response.data().getMessengerIntegration().uiOptions());
-                            load_messengerData( response.data().getMessengerIntegration().messengerData());
+                            changeLanguage(response.data().getMessengerIntegration().languageCode());
+                            Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
+                            Helper.load_messengerData( response.data().getMessengerIntegration().messengerData());
 
-                            notefyAll(true,null,null);
+                            notefyAll(ReturnType.INTEGRATION_CHANGED,null ,null);
                         }
                         else{
                             Log.d(TAG, "errors " + response.errors().toString());
-                            notefyAll(false,null,ErrorType.SERVERERROR);
+                            notefyAll(ReturnType.SERVERERROR,null,response.errors().get(0).message());
                         }
                     }
 
                     @Override
                     public void onFailure(@Nonnull ApolloException e) {
-                        notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                        notefyAll(ReturnType.CONNECTIONFAILED,null, e.getMessage());
                         Log.d(TAG, "failed ");
                         e.printStackTrace();
 
                     }
                 });
     }
-    static public void load_uiOptions(JSONObject js){
-        if(js == null)
-            return;
-        String color = null;
-        try {
-            color = js.getString("color");
-            dataManager.setData(DataManager.color, color);
-            Config.color = color;
-        }catch (JSONException e){
-        }
-        try {
-            color = js.getString("wallpaper");
-            dataManager.setData("wallpaper", color);
-        }catch (JSONException e){
-        }
 
-    }
-    static public void load_messengerData(JSONObject js){
-        if(js == null)
-            return;
-        String temp = null;
-        try {
-            temp = js.getString("thankYouMessage");
-            dataManager.setData("thankYouMessage", temp);
-            Config.thankYouMessage = temp;
-        } catch (JSONException e) {
-        }
-
-        try {
-            temp = js.getString("awayMessage");
-            dataManager.setData("awayMessage", temp);
-            Config.awayMessage = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("welcomeMessage");
-            dataManager.setData("welcomeMessage", temp);
-            Config.welcomeMessage = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("timezone");
-            dataManager.setData("timezone", temp);
-            Config.timezone = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("availabilityMethod");
-            dataManager.setData("availabilityMethod", temp);
-            Config.availabilityMethod = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            boolean bool = js.getBoolean("isOnline");
-            dataManager.setData("isOnline", bool);
-            Config.isMessengerOnline = bool;
-        } catch (JSONException e) {
-        }
-
-        try {
-            boolean bool = js.getBoolean("notifyCustomer");
-            dataManager.setData("notifyCustomer", bool);
-            Config.notifyCustomer = bool;
-        } catch (JSONException e) {
-        }
-    }
-    static public void InsertMessage(final String message, final String conversationId,List<String> list){
+    static public void InsertMessage(final String message, final String conversationId,List<JSONObject> list){
         if(!isNetworkConnected()){
             return;
         }
@@ -230,41 +166,45 @@ public class ErxesRequest {
                 customerId(Config.customerId).
                 message(message).attachments(list).
                 conversationId(conversationId);
-//        if(list.size() > 0 )
-//        {
-//            temp.attachments(list);
-//        }
+
 
         apolloClient.mutate(temp.build()).enqueue(new ApolloCall.Callback<InsertMessageMutation.Data>() {
             @Override
             public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
-                if(response.hasErrors())
+                if(response.hasErrors()) {
                     Log.d(TAG, "errors " + response.errors().toString());
+                    notefyAll(ReturnType.SERVERERROR,conversationId,response.errors().get(0).message());
+                }
                 else {
                     ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message);
                     async_update_database(a);
-                    notefyAll(true,conversationId,ErrorType.SERVERERROR);
+                    notefyAll(ReturnType.Mutation,conversationId,null);
                 }
             }
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 e.printStackTrace();
-                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
                 Log.d(TAG, "failed ");
             }
         });
     }
-    static public void InsertNewMessage(final String message,List<String> list){
+    static public void InsertNewMessage(final String message,List<JSONObject> list){
         if(!isNetworkConnected()){
             return;
         }
-        apolloClient.mutate(InsertMessageMutation.builder().integrationId(Config.integrationId).
-                customerId(Config.customerId).message(message).conversationId("").attachments(list).build()).enqueue(new ApolloCall.Callback<InsertMessageMutation.Data>() {
+        apolloClient.mutate(InsertMessageMutation.builder()
+                .integrationId(Config.integrationId)
+                .customerId(Config.customerId)
+                .message(message)
+                .conversationId("")
+                .attachments(list).build())
+                .enqueue(new ApolloCall.Callback<InsertMessageMutation.Data>() {
             @Override
             public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
                 if(response.hasErrors()) {
                     Log.d(TAG, "errors " + response.errors().toString());
-                    notefyAll(false,null,ErrorType.SERVERERROR);
+                    notefyAll(ReturnType.SERVERERROR,null,response.errors().get(0).message());
                 }
                 else {
                     Log.d(TAG, "cid " + response.data().insertMessage().conversationId());
@@ -273,13 +213,12 @@ public class ErxesRequest {
                     ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message);
                     async_update_database(conversation);
                     async_update_database(a);
-
                     Intent intent2 = new Intent(context, ListenerService.class);
                     intent2.putExtra("id",Config.conversationId);
                     context.startService(intent2);
 //                    ListenerService.conversation_listen(Config.conversationId);
 
-                    notefyAll(true,response.data().insertMessage().conversationId(),null);
+                    notefyAll(ReturnType.Mutation_new,response.data().insertMessage().conversationId(),null);
 
 
                 }
@@ -287,7 +226,7 @@ public class ErxesRequest {
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 e.printStackTrace();
-                notefyAll(false,null,ErrorType.CONNECTIONFAILED);
+                notefyAll( ReturnType.CONNECTIONFAILED,null,e.getMessage());
                 Log.d(TAG, "failed ");
             }
         });
@@ -318,17 +257,19 @@ public class ErxesRequest {
                     inner.copyToRealm(data);
                     inner.commitTransaction();
                     inner.close();
-                    notefyAll(true,null,null);
+
                     Log.d(TAG,"getconversation ok ");
                 }
                 else
                     Log.d(TAG,"getconversation 0 ");
+                notefyAll(ReturnType.getconversation,null,null);
             }
 
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 Log.d(TAG,"getconversation failed ");
                 e.printStackTrace();
+                notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
             }
         });
     }
@@ -350,9 +291,8 @@ public class ErxesRequest {
                     inner.copyToRealmOrUpdate(data);
                     inner.commitTransaction();
                     inner.close();
-                    notefyAll(true,conversationid,null);
-
                 }
+                notefyAll(ReturnType.getmessages,conversationid,null);
 
             }
 
@@ -381,7 +321,7 @@ public class ErxesRequest {
             inner.insertOrUpdate(conversation);
             inner.commitTransaction();
             inner.close();
-            notefyAll(true,conversation._id,null);
+            notefyAll(ReturnType.subscription,conversation._id,null);
         }
         else{
             inner.close();
@@ -395,23 +335,27 @@ public class ErxesRequest {
         observers.clear();
         observers.add(e);
     }
-    static public void isMessengerOnline(String integration){
+    static public void isMessengerOnline(){
         if(!isNetworkConnected()){
             return;
         }
 
-        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(integration)
+        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(Config.integrationId)
                 .build()).enqueue(new ApolloCall.Callback<IsMessengerOnlineQuery.Data>() {
             @Override
             public void onResponse(@Nonnull Response<IsMessengerOnlineQuery.Data> response) {
                 if(!response.hasErrors()){
                     Config.isMessengerOnline =  response.data().isMessengerOnline();
+                    notefyAll(ReturnType.isMessengerOnline,null,null);
                 }
+                else
+                    notefyAll(ReturnType.SERVERERROR,null,null);
             }
 
             @Override
             public void onFailure(@Nonnull ApolloException e) {
                 Log.d(TAG,"isMessengerOnline failed ");
+                notefyAll(ReturnType.CONNECTIONFAILED,null,null);
             }
         });
     }
@@ -425,10 +369,10 @@ public class ErxesRequest {
         observers.clear();
     }
 
-    private static void notefyAll(boolean status,String conversationId,ErrorType errorType){
+    private static void notefyAll( ReturnType returnType,String conversationId, String message){
         if(observers == null) return;
         for( int i = 0; i < observers.size(); i++ ){
-            observers.get(i).notify(status,conversationId,errorType);
+            observers.get(i).notify(returnType,conversationId,message);
         }
     }
 }

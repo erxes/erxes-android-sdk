@@ -16,6 +16,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="20dp"
+        android:textSize="@dimen/header_small"
         android:textColor="#686868"
         android:layout_marginTop="4dp" />
 

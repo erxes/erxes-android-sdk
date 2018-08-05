@@ -74,7 +74,7 @@ public class ListenerService extends Service{
         Log.d("erxesservice","oncreat??");
 //        startListen();
         DataManager dataManager;
-        dataManager = new DataManager(this);
+        dataManager =  DataManager.getInstance(this);
 
         okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
@@ -223,7 +223,7 @@ public class ListenerService extends Service{
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "123")
                 .setSmallIcon(R.drawable.icon)
                 .setContentTitle(name)
-                .setContentText( chat_message)
+                .setContentText(Html.fromHtml( chat_message))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 // Set the intent that will fire when the user taps the notification
                 .setContentIntent(pendingIntent)

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:background="#80000000"
+    android:id="@+id/linearlayout"
+    tools:context=".ErxesActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="#f5f5f5"
+        android:layout_height="wrap_content">
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/info_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_bar_height"
+            android:background="#5629B6"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/imageView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile1"
+                    android:layout_width="@dimen/image_size"
+                    android:layout_height="@dimen/image_size"
+                    android:layout_alignLeft="@id/profile2"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/avatar"
+                    android:layout_marginLeft="20dp"
+                    android:visibility="invisible"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="#000000"
+                    app:civ_circle_background_color="#fff"/>
+
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/profile2"
+                    android:layout_width="@dimen/image_size"
+                    android:layout_height="@dimen/image_size"
+                    android:src="@drawable/avatar"
+                    android:visibility="invisible"
+                    app:civ_border_width="1dp"
+                    app:civ_border_color="#f0f"
+                    app:civ_circle_background_color="#fff"/>
+
+
+                <LinearLayout
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/profile1"
+                    android:layout_centerVertical="true"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="#fff"
+                        android:textStyle="bold"
+                        android:visibility="invisible"
+                        android:textSize="@dimen/header_big"
+                        android:id="@+id/names"
+                        android:text="Mendorshih, Amartaivan"/>
+                    <TextView
+                        android:id="@+id/isOnline"
+                        android:textSize="@dimen/header_small"
+                        android:textColor="#c1c1c1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/offline"/>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="25dp"
+                android:src="@drawable/ic_close_black_24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+        <TextView
+            android:layout_marginTop="@dimen/margin_top"
+            android:text="@string/contact_info"
+            android:textColor="#686666"
+            android:textSize="@dimen/chooser_font_size"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:id="@+id/selector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/selector"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:padding="1dp"
+            android:layout_marginTop="@dimen/margin_top">
+            <View android:id="@+id/strut"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginLeft="25dp"
+                android:layout_centerHorizontal="true"/>
+            <android.support.v7.widget.CardView
+                android:id="@+id/smsgroup"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/chooser_height"
+                android:onClick="sms_click"
+                android:shape="ring"
+                app:cardCornerRadius="@dimen/chooser_raduis"
+                android:layout_marginLeft="@dimen/chooser_offset"
+                android:layout_alignLeft="@id/strut"
+                android:layout_alignParentRight="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+                    <ImageView
+                        android:id="@+id/phonezurag"
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:src="@drawable/phone_call"
+                        android:layout_marginRight="14dp"/>
+
+                    <TextView
+                        android:id="@+id/sms_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_horizontal"
+                        android:text="@string/sms"
+                        android:textColor="#000"
+                        android:textSize="@dimen/chooser_font_size" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:id="@+id/mailgroup"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/chooser_height"
+                android:shape="ring"
+                android:onClick="email_click"
+                android:layout_alignRight="@id/strut"
+                android:layout_alignParentLeft="true"
+                app:cardBackgroundColor="#5629B6"
+                app:cardCornerRadius="@dimen/chooser_raduis">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/mail_zurag"
+                        android:layout_width="@dimen/icon_size"
+                        android:layout_height="@dimen/icon_size"
+                        android:src="@drawable/ic_mail_outline_black_24dp"
+                        android:layout_marginRight="14dp"/>
+
+                    <TextView
+                        android:id="@+id/email_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/email"
+                        android:textColor="#fff"
+                        android:textSize="@dimen/chooser_font_size" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/login_bar_height"
+            android:layout_marginLeft="@dimen/fab_margin"
+            android:layout_marginRight="@dimen/fab_margin"
+            android:layout_marginTop="@dimen/fab_margin"
+            android:gravity="center"
+            android:background="#fff"
+            android:orientation="horizontal">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight="9"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:maxLines="1"
+                android:id="@+id/email"
+                android:background="#fff"
+                android:inputType="textEmailAddress"
+                android:hint="@string/email_hint" />
+
+            <EditText
+                android:layout_width="0dp"
+                android:visibility="gone"
+                android:layout_weight="9"
+                android:layout_marginLeft="30dp"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="phone"
+                android:id="@+id/phone"
+                android:hint="@string/sms" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal"
+                android:layout_height="fill_parent"
+                android:onClick="Connect_click"
+                android:gravity="center">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_send_black_28dp"
+                    android:text="@string/connnect"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

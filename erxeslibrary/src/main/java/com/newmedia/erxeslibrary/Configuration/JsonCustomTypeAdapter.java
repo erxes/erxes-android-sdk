@@ -12,20 +12,25 @@ import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
 
-public class JsonCustomTypeAdapter implements CustomTypeAdapter<String> {
+public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
 
     public JsonCustomTypeAdapter() {
 
     }
 
     @Override
-    public String decode(@Nonnull CustomTypeValue value) {
-        return value.value.toString();
+    public JSONObject decode(@Nonnull CustomTypeValue value) {
+        try {
+            return new JSONObject(value.value.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Nonnull
     @Override
-    public CustomTypeValue encode(@Nonnull String value) {
-        return new CustomTypeValue.GraphQLString(value);
+    public CustomTypeValue encode(@Nonnull JSONObject value) {
+        return CustomTypeValue.fromRawValue(value);
     }
 }

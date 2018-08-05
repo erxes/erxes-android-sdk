@@ -1,7 +1,7 @@
 package com.newmedia.erxeslibrary;
 
-import com.newmedia.erxeslibrary.Configuration.ErrorType;
+import com.newmedia.erxeslibrary.Configuration.ReturnType;
 
 public interface ErxesObserver {
-    void notify(boolean status, String conversationId, ErrorType errorType);
+    void notify(ReturnType returnType, String conversationId, String message);
 }

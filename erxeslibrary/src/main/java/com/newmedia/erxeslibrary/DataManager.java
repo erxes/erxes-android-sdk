@@ -21,9 +21,16 @@ public class DataManager {
     public static final String language = "language";
 
 
+    static private DataManager dataManager;
+    static public DataManager getInstance(Context context){
+        if(dataManager == null)
+            dataManager = new DataManager(context);
+
+        return dataManager;
+    }
     // Context
     Context _context;
-    public DataManager(Context context) {
+    private DataManager(Context context) {
         this._context = context;
         pref = _context.getSharedPreferences(PREFER_NAME, PRIVATE_MODE);
         editor = pref.edit();

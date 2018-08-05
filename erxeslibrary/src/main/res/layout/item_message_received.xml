@@ -5,40 +5,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingTop="8dp">
-    <android.support.v7.widget.CardView
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image_message_profile"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:elevation="12dp"
+        android:src="@drawable/avatar"
         android:layout_marginLeft="8dp"
-        android:id="@+id/view2"
-        app:cardCornerRadius="25dp"
-        android:layout_centerHorizontal="true"
-        android:innerRadius="0dp"
-        android:shape="ring"
-        app:layout_constraintTop_toTopOf="parent"
+        app:civ_border_width="1dp"
+        app:civ_border_color="#000000"
+        app:civ_circle_background_color="#fff"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:thicknessRatio="1">
-        <ImageView
-            android:id="@+id/image_message_profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@drawable/avatar"
-           />
-    </android.support.v7.widget.CardView>
-
-
+        app:layout_constraintBottom_toBottomOf="@+id/text_message_body"/>
     <TextView
+        android:layout_marginLeft="8dp"
+        android:paddingTop="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:background="@drawable/rounded_rectangle_orange"
         android:id="@+id/text_message_body"
         android:text="hi man, how are you?"
-        android:background="@drawable/rounded_rectangle_orange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="240dp"
-        android:padding="8dp"
         android:textColor="#444"
-        android:layout_marginTop="4dp"
-        app:layout_constraintLeft_toRightOf="@+id/view2"
-        android:layout_marginLeft="8dp" />
+        app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
+         />
+
 
     <TextView
         android:id="@+id/text_message_time"
@@ -47,21 +42,19 @@
         android:layout_height="wrap_content"
         android:textColor="#AAAEB3"
         android:textSize="10sp"
-        app:layout_constraintLeft_toRightOf="@+id/text_message_body"
-        android:layout_marginLeft="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body" />
+        app:layout_constraintLeft_toLeftOf="@+id/text_message_body"
+        app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
     <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
         android:id="@+id/fileview"
         app:cardCornerRadius="15dp"
         android:layout_centerHorizontal="true"
         android:innerRadius="0dp"
         android:shape="oval"
-        app:layout_constraintStart_toStartOf="@+id/text_message_body"
-        app:layout_constraintTop_toBottomOf="@+id/text_message_body"
+        app:layout_constraintStart_toStartOf="@+id/text_message_time"
+        app:layout_constraintTop_toBottomOf="@+id/text_message_time"
         android:thicknessRatio="1">
         <LinearLayout
             android:layout_width="match_parent"
@@ -89,4 +82,5 @@
                 android:textStyle="bold" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
+
 </android.support.constraint.ConstraintLayout>

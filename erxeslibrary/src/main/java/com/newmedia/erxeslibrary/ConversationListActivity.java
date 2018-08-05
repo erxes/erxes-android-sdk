@@ -1,24 +1,23 @@
 package com.newmedia.erxeslibrary;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Display;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ErrorType;
+import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 
@@ -27,23 +26,37 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     private RecyclerView recyclerView;
 
     static private String TAG="ConversationListActivity";
-    private Toolbar myToolbar;
+    private ViewGroup addnew_conversation;
+    private ViewGroup info_header;
     static public boolean chat_is_going = false;
-    private FloatingActionButton fab;
+
     @Override
-    public void notify(boolean status,final String conversationId,ErrorType errorType) {
-        if(status){
-            this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                    if(Config.color!=null) {
-//                        myToolbar.setBackgroundColor(Color.parseColor(Config.color));
-                        fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(Config.color)));
-                    }
-                }
-            });
-        }
+    public void notify(final ReturnType returnType, final String conversationId, String message) {
+
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (returnType){
+                    case subscription:
+                    case getconversation:
+                        recyclerView.getAdapter().notifyDataSetChanged();
+                        break;
+                    case INTEGRATION_CHANGED:
+                        info_header.setBackgroundColor(Config.colorCode);
+                        addnew_conversation.getBackground().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+                        break;
+                    case CONNECTIONFAILED:
+                        break;
+                    case SERVERERROR:
+                        break;
+
+                        default:break;
+                };
+
+
+            }
+        });
+
     }
     @Override
     protected void onPause() {
@@ -66,6 +79,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
             }
         Config.conversationId = null;
         ErxesRequest.getIntegration(Config.brandCode);
+        info_header.setBackgroundColor(Config.colorCode);
         chat_is_going = true;
     }
 
@@ -79,62 +93,33 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_delete);
-        myToolbar =  findViewById(R.id.toolbar);
 
 
 
-//        setSupportActionBar(null);
+        setContentView(R.layout.activity_conversation);
+
+        addnew_conversation = findViewById(R.id.newconversation);
+        info_header = findViewById(R.id.info_header);
 
 
-        setSupportActionBar(myToolbar);
-        getSupportActionBar().setTitle(null);
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(this.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        this.getWindow().setAttributes(lp);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = (int)( size.y *0.8);
 
+        getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
+        Window window = getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#66000000")));
+        wlp.gravity = Gravity.BOTTOM;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
 
-        fab =  findViewById(R.id.fab);
-        if(Config.color!=null){
-            Log.d(TAG,"toolbar color");
-            myToolbar.setBackgroundColor(Color.parseColor(Config.color));
-            fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor(Config.color)));
-
-        }
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Config.conversationId = null;
-                Intent a = new Intent(ConversationListActivity.this,MessageActivity.class);
-                startActivity(a);
-            }
-        });
-
+        addnew_conversation.getBackground().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
 
         recyclerView = this.findViewById(R.id.chat_recycler_view);
-//        this.findViewById(R.id.toolbar_add).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Config.conversationId = null;
-//                Intent a = new Intent(ConversationListActivity.this,MessageActivity.class);
-//                startActivity(a);
-//
-//            }
-//        });
-//        this.findViewById(R.id.toolbar_logout).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Config.Logout();
-//                Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
-//                startActivity(a);
-//                finish();
-//
-//
-//            }
-//        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
@@ -142,35 +127,24 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         recyclerView.setAdapter(
                 new ConversationListAdapter(ConversationListActivity.this));
 
-
-
         ErxesRequest.getConversations();
-
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
 
 
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.conversation,menu);
-        return true;
+    public void start_new_conversation(View v){
+        Config.conversationId = null;
+        Intent a = new Intent(ConversationListActivity.this,MessageActivity.class);
+        startActivity(a);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if(i == R.id.logout){
 
-            Config.Logout();
-            Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
-            startActivity(a);
-            finish();
-            return true;
+    public void logout(View v){
 
-        }
-        return super.onOptionsItemSelected(item);
+        Config.Logout();
+        Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
+        startActivity(a);
+        finish();
     }
 }

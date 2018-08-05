@@ -10,7 +10,7 @@
     <application>
         <activity
             android:name=".ErxesActivity"
-            android:theme="@style/Theme.AppCompat.Light.Dialog.Alert"/>
+            android:theme="@style/Theme_erxes_dialog"/>
         <activity
             android:name=".ConversationListActivity"
             android:theme="@style/Theme_erxes_dialog" />

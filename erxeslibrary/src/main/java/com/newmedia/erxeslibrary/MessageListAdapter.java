@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
@@ -9,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +28,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Model.*;
@@ -53,6 +59,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     public void setmMessageList(List<ConversationMessage> mMessageList) {
         this.mMessageList = mMessageList;
+    }
+    public boolean IsBeginningChat(){
+        if(mMessageList.size() == 0)
+            return true;
+        else
+            return false;
     }
 
     public boolean refresh_data(){
@@ -110,10 +122,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         if(Config.welcomeMessage!=null)
             position = position - 1;
 
-        if( mMessageList.get(position).customerId == null)
-            return 1;
-        else
+        if( Config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId ))
             return 0;
+        else
+            return 1;
     }
 
     @Override
@@ -184,11 +196,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             fileview.setVisibility(View.GONE);
             filename.setText("");
 
-            if(Config.color!=null) {
-                GradientDrawable a = (GradientDrawable) messageText.getBackground();
-                a.setColor(Color.parseColor(Config.color));
+
+            GradientDrawable a1 = (GradientDrawable) messageText.getBackground();
+            a1.setColor(Config.colorCode);
 //                messageText.setBackgroundColor(Color.parseColor(Config.color));
-            }
+
             timeText.setText(Config.Message_datetime(message.createdAt));
             if(message.attachments !=null) {
                 try {
@@ -208,7 +220,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText,filename;
+        TextView  timeText,filename;
+        TextView messageText;
         ImageView profileImage,inputImage;
         View fileview;
 
@@ -224,7 +237,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.content));;
+//            messageText.loadData(message.content,"text/html","utf-8");
+            messageText.setText(Html.fromHtml(message.content.replace("\n","")));;
+//            messageText.setText(message.content);;
             timeText.setText(Config.Message_datetime(message.createdAt));
             inputImage.setImageResource(0);
             fileview.setVisibility(View.GONE);
@@ -278,17 +293,40 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             circularProgressDrawable.setStrokeWidth(  5f);
             circularProgressDrawable.setCenterRadius(  30f);
             circularProgressDrawable.start();
-            final float scale = context.getResources().getDisplayMetrics().density;
-            int pixels = (int) (200 * scale + 0.5f);
-            inputImage.getLayoutParams().width = pixels;
-            inputImage.setImageDrawable(circularProgressDrawable);
-            GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(inputImage);
-            fileview.setOnClickListener(null);
-            filename.setVisibility(View.GONE);
-            if(type.contains("image")){
 
+            float scale = context.getResources().getDisplayMetrics().density;
+            int pixels = (int) (20 * scale + 0.5f);
+            inputImage.getLayoutParams().width = pixels;
+            inputImage.requestLayout();
+
+            inputImage.setImageDrawable(circularProgressDrawable);
+
+            inputImage.getDrawable().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+
+            fileview.setTag(url);
+            fileview.setOnClickListener(fileDownload);
+
+            filename.setText(name);
+            filename.setVisibility(View.VISIBLE);
+
+
+
+            if(type.contains("image")) {
+                pixels = (int) (200 * scale + 0.5f);
+                inputImage.getLayoutParams().width = pixels;
+//                inputImage.getLayoutParams().height = pixels;
+                inputImage.requestLayout();
+
+                GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL).override(pixels,Target.SIZE_ORIGINAL)
+                        .into(inputImage).getSize(new SizeReadyCallback() {
+                    @Override
+                    public void onSizeReady(int width, int height) {
+                        Log.d("test","image size "+width+" "+height);
+                    }
+                });
+                fileview.setOnClickListener(null);
+                filename.setVisibility(View.GONE);
             }
             else if(type.contains("application/pdf")){
                 inputImage.setImageResource(R.drawable.filepdf);
@@ -303,4 +341,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             e.printStackTrace();
         }
     }
+//    private SimpleTarget target = new SimpleTarget<Bitmap>() {
+//        @Override
+//        public void onResourceReady(Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
+//            // do something with the bitmap
+//            // set it to an ImageView
+//            inputImage.setImageBitmap(bitmap);
+//        }
+//    };
 }

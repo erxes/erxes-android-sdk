@@ -1,8 +1,11 @@
 package com.newmedia.erxeslibrary.Configuration;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -22,6 +25,7 @@ import com.newmedia.erxeslibrary.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,14 +53,14 @@ public class Config {
     static public String HOST_UPLOAD="http://"+HOST+":3300/upload-file";
     static  public String customerId;
     static  public String integrationId;
-    static  public String color,wallpaper;
-    static  public String language;
+    static  private String color;
+    static  public String language,wallpaper;;
     static  public String thankYouMessage;
     static  public String awayMessage;
     static  public String welcomeMessage;
     static  public String timezone;
     static  public String availabilityMethod;
-
+    static  public  int colorCode;
     static  public String conversationId=null; ///public
     static  public String brandCode;
     static  public boolean isMessengerOnline = false,notifyCustomer;
@@ -138,7 +142,7 @@ public class Config {
 
     }
     static public void Init(Context context,String brandcode,String ip){
-        dataManager = new DataManager(context);
+        dataManager =  DataManager.getInstance(context);
         Config.HOST = ip;
         HOST_3100="http://"+HOST+":3100/graphql";
         HOST_3300="ws://"+HOST+":3300/subscriptions";
@@ -158,7 +162,7 @@ public class Config {
     static public void Init(Context context){
         if(dataManager != null)
             return;
-        dataManager = new DataManager(context);
+        dataManager =  DataManager.getInstance(context);
         Config.HOST = dataManager.getDataS("HOST");
         HOST_3100="http://"+HOST+":3100/graphql";
         HOST_3300="ws://"+HOST+":3300/subscriptions";
@@ -173,16 +177,28 @@ public class Config {
     }
     static public void Start(){
         Intent a = new Intent(context,ErxesActivity.class);
-        context.startActivity(a);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
+            context.startActivity(a,options.toBundle());
+        }
+        else
+            context.startActivity(a);
+
     }
     static public void LoadDefaultValues(){
+
         Config.integrationId = dataManager.getDataS(DataManager.integrationId);
         Config.welcomeMessage = dataManager.getDataS("welcomeMessage");
         Config.color= dataManager.getDataS(DataManager.color);
+        if(Config.color !=null)
+            Config.colorCode = Color.parseColor(Config.color);
+        else
+            Config.colorCode = Color.parseColor("#5629B6");
         Config.wallpaper= dataManager.getDataS("wallpaper");
         Config.language = dataManager.getDataS(DataManager.language);
-        if(Config.language!=null)
-            ErxesRequest.changeLanguage(Config.language);
+        ErxesRequest.changeLanguage(Config.language);
     }
     static public void LoggedInDefault(){
         Config.customerId = dataManager.getDataS(DataManager.customerId);
@@ -205,6 +221,12 @@ public class Config {
         return cm.getActiveNetworkInfo() != null;
     }
 
+    static public boolean messenger_status_check(){
+        if(Config.isNetworkConnected()&& Config.isMessengerOnline){
+            return true;
+        }
+        return false;
+    }
 
 
 

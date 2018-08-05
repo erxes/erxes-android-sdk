@@ -5,11 +5,16 @@
     <string name="fileerror">Can\'t send this file</string>
     <string name="title_activity_delete">DeleteActivity</string>
     <string name="logout">Logout</string>
-    <string name="email">e-mail</string>
+    <string name="email">Email</string>
+    <string name="email_hint">email@domain.com</string>
     <string name="phone">phone</string>
     <string name="connnect">Connect</string>
     <string name="contact">Contact</string>
     <string name="contact_info">Give us your contact information</string>
-    <string name="sms">Sms</string>
+    <string name="sms">Phone number</string>
+    <string name="writereply">Write a reply</string>
+    <string name="newconversation">new conversation</string>
+    <string name="online">Online now</string>
+    <string name="offline">Offline now</string>
 
 </resources>

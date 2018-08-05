@@ -10,7 +10,7 @@ import android.widget.TextView;
 public class ConversationHolder extends RecyclerView.ViewHolder {
     ImageView circleImageView;
     TextView date,content,name;
-    View parent ,isonline;
+    View parent ;//,isonline;
     public ConversationHolder(View itemView) {
         super(itemView);
         parent=itemView;
@@ -18,6 +18,6 @@ public class ConversationHolder extends RecyclerView.ViewHolder {
         date = itemView.findViewById(R.id.date);
         content = itemView.findViewById(R.id.content);
         name = itemView.findViewById(R.id.name);
-        isonline = itemView.findViewById(R.id.isonline);
+//        isonline = itemView.findViewById(R.id.isonline);
     }
 }

@@ -87,10 +87,10 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
-        if(!Config.isMessengerOnline)
-            holder.isonline.setVisibility(View.GONE);
-        else
-            holder.isonline.setVisibility(View.VISIBLE);
+//        if(!Config.isMessengerOnline)
+//            holder.isonline.setVisibility(View.GONE);
+//        else
+//            holder.isonline.setVisibility(View.VISIBLE);
         ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
         holder.circleImageView.setImageResource(R.drawable.avatar);
         holder.name.setText("");
@@ -98,10 +98,10 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             String myString = message.user.fullName;
             String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
-
-            GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(holder.circleImageView);
+            if(message.user.avatar!=null)
+                GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.circleImageView);
 
             Long createDate = Long.valueOf(message.createdAt);
             holder.date.setText(Config.convert_datetime(createDate));

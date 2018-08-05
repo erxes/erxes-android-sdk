@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding_new_conv">14dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_top">32dp</dimen>
+    <dimen name="login_bar_height">100dp</dimen>
+    <dimen name="image_size">50dp</dimen>
+    <dimen name="image_raduis">25dp</dimen>
+    <dimen name="chooser_height">50dp</dimen>
+    <dimen name="chooser_raduis">25dp</dimen>
+    <dimen name="chooser_offset">-50dp</dimen>
+    <dimen name="radius">25dp</dimen>
+    <dimen name="chooser_font_size">15sp</dimen>
+    <dimen name="header_big">20sp</dimen>
+    <dimen name="header_small">16sp</dimen>
+    <dimen name="icon_size">25sp</dimen>
+    <dimen name="fontsize">18sp</dimen>
+    <dimen name="new_conv_image">20sp</dimen>
+    <dimen name="new_conv_font">17sp</dimen>
+    <dimen name="action_size">32dp</dimen>
+</resources>

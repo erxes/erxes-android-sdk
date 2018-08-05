@@ -6,5 +6,10 @@
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/logout"
         android:title="@string/logout"
-        app:showAsAction="collapseActionView"/>
+        android:icon="@drawable/ic_send_black_24dp"
+        app:showAsAction="always"/>
+    <item android:id="@+id/add"
+        android:title="add"
+        android:icon="@drawable/ic_send_black_24dp"
+        app:showAsAction="always"/>
 </menu>

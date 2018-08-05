@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:maxWidth="240dp"
-        android:padding="8dp"
+        android:padding="16dp"
         android:textColor="#ffffff"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
@@ -28,8 +28,8 @@
         android:textSize="10sp"
         android:textColor="#AAAEB3"
         android:layout_marginRight="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-        app:layout_constraintRight_toLeftOf="@+id/text_message_body" />
+        app:layout_constraintTop_toBottomOf="@+id/fileview"
+        app:layout_constraintRight_toRightOf="@+id/text_message_body" />
     <android.support.v7.widget.CardView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -64,7 +64,7 @@ public class ConversationMessage extends RealmObject {
         if(a.attachments()!=null)
             b.attachments = a.attachments().toString();
         b.internal = false;
-        b.customerId = Config.customerId;
+        b.customerId = Config.customerId;//Config.customerId;
         return b;
     }
     static public ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted a){
@@ -76,7 +76,12 @@ public class ConversationMessage extends RealmObject {
         if(a.attachments()!=null)
             b.attachments = a.attachments().toString();
         b.internal = false;
-        b.customerId = Config.customerId;
+        b.customerId = a.customerId();
+        if(a.user() != null) {
+            User user = new User();
+            user.convert(a.user());
+            b.user = user;
+        }
         return b;
     }
 
