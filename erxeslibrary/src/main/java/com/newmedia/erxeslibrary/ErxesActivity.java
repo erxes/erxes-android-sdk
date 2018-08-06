@@ -174,7 +174,10 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     }
     public void Connect_click(View v){
         if(Config.isNetworkConnected()) {
-            ErxesRequest.setConnect("" + email.getText().toString(), phone.getText().toString());
+            if(email.getVisibility() == View.GONE)
+                ErxesRequest.setConnect("", phone.getText().toString());
+            else
+                ErxesRequest.setConnect("" + email.getText().toString(),"");
         }
         else{
             Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();

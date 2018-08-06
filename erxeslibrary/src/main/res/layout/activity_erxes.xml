@@ -58,7 +58,7 @@
                     android:src="@drawable/avatar"
                     android:visibility="invisible"
                     app:civ_border_width="1dp"
-                    app:civ_border_color="#f0f"
+                    app:civ_border_color="#000000"
                     app:civ_circle_background_color="#fff"/>
 
 
@@ -239,7 +239,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
     </LinearLayout>
 
 </LinearLayout>

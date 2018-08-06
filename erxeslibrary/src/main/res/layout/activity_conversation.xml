@@ -1,88 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
     android:background="#80000000"
-    android:paddingTop="200dp"
+    android:id="@+id/linearlayout"
     tools:context=".ConversationListActivity">
-
-    <android.support.design.widget.AppBarLayout
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        android:background="#fff"
+        android:id="@+id/container">
 
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/info_header"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/login_bar_height"
-            android:background="#5629B6"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-            <LinearLayout
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="@dimen/fab_margin"
-                android:background="#30000000"
-                android:gravity="center"
-                android:onClick="logout"
-                android:padding="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/info_header"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_bar_height"
+                android:background="#5629B6"
+                android:orientation="horizontal">
 
-                <android.support.v7.widget.AppCompatImageView
-                    android:layout_width="@dimen/action_size"
-                    android:layout_height="@dimen/action_size"
-                    android:src="@drawable/ic_close_black_24dp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/start"
-                android:layout_width="50dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/fab_margin"
-                android:gravity="center"
-                android:onClick="start_new_conversation"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <android.support.v7.widget.AppCompatImageView
+                <LinearLayout
+                    android:id="@+id/logout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_action_add" />
-            </LinearLayout>
+                    android:layout_marginRight="@dimen/fab_margin"
+                    android:background="#30000000"
+                    android:gravity="center"
+                    android:onClick="logout"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintEnd_toEndOf="@id/logout"
-                app:layout_constraintStart_toStartOf="@id/start">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="@dimen/action_size"
+                        android:layout_height="@dimen/action_size"
+                        android:src="@drawable/ic_close_black_24dp" />
+                </LinearLayout>
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/start"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="@dimen/fab_margin"
+                    android:gravity="center"
+                    android:onClick="start_new_conversation"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_action_add" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Conversation"
-                    android:textColor="#fff"
-                    android:textSize="@dimen/header_big"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="@id/logout"
+                    app:layout_constraintStart_toStartOf="@id/start">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="with support stuffs"
-                    android:textSize="@dimen/header_small" />
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Conversation"
+                        android:textColor="#fff"
+                        android:textSize="@dimen/header_big"
+                        android:textStyle="bold" />
 
-        </android.support.constraint.ConstraintLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="with support stuffs"
+                        android:textSize="@dimen/header_small" />
+                </LinearLayout>
+
+            </android.support.constraint.ConstraintLayout>
 
 
-    </android.support.design.widget.AppBarLayout>
+        </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_conversation" />
+        <include layout="@layout/content_conversation" />
 
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

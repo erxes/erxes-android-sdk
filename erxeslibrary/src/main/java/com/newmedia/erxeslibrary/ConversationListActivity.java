@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -27,7 +28,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
     static private String TAG="ConversationListActivity";
     private ViewGroup addnew_conversation;
-    private ViewGroup info_header;
+    private ViewGroup info_header,container;
     static public boolean chat_is_going = false;
 
     @Override
@@ -67,6 +68,10 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     @Override
     protected void onResume() {
         super.onResume();
+        if(Config.customerId == null) {
+            logout(null);
+            return;
+        }
         ErxesRequest.add(this);
 
         if(recyclerView!=null)
@@ -100,6 +105,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
         addnew_conversation = findViewById(R.id.newconversation);
         info_header = findViewById(R.id.info_header);
+        container = findViewById(R.id.container);
 
 
         Display display = getWindowManager().getDefaultDisplay();
@@ -115,6 +121,10 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         wlp.gravity = Gravity.BOTTOM;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
+
+
+        container.getLayoutParams().height = height;
+        container.requestLayout();
 
         addnew_conversation.getBackground().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
@@ -141,7 +151,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
 
     public void logout(View v){
-
+        Log.d("myfo","logout conversation");
         Config.Logout();
         Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
         startActivity(a);

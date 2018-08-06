@@ -2,7 +2,10 @@ package com.newmedia.erxeslibrary;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -17,16 +20,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -35,6 +43,7 @@ import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.Configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
 import com.newmedia.erxeslibrary.Model.User;
@@ -75,8 +84,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private ImageView profile1,profile2;
     private TextView names,isMessenOnlineImage;
     private CircularProgressDrawable senddrawable;
-    private ViewGroup container;
-
+    private ViewGroup container,linearlayout;
+    Point size;
     FIleInfo fIleInfo;
 //    private ImageView uploadImage;
     private final String TAG="MESSAGEACTIVITY";
@@ -121,9 +130,11 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
                         case SERVERERROR:
                             Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
                             break;
                         case CONNECTIONFAILED:
                             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                            swipeRefreshLayout.setRefreshing(false);
                             break;
                     }
                 }
@@ -176,7 +187,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         this.getWindow().setAttributes(lp);
 
         Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
+        size = new Point();
         display.getSize(size);
 
 
@@ -189,8 +200,50 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         window.setAttributes(wlp);
 
 
+
         // load views
         container = this.findViewById(R.id.container);
+        linearlayout = this.findViewById(R.id.linearlayout);
+        container.getLayoutParams().height = size.y * 8 / 10; /// 80% ondortoi
+        container.requestLayout();
+
+        InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
+        SoftKeyboard softKeyboard;
+        softKeyboard = new SoftKeyboard(linearlayout, im);
+        softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged()
+        {
+
+            @Override
+            public void onSoftKeyboardHide()
+            {
+                // Code here
+                MessageActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("myfo","hide");
+                        container.getLayoutParams().height =size.y*8/10;
+                        container.requestLayout();
+                    }
+                });
+
+            }
+
+            @Override
+            public void onSoftKeyboardShow()
+            {
+                // Code here
+                // Code here
+                MessageActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("myfo","show");
+                        container.getLayoutParams().height= WindowManager.LayoutParams.MATCH_PARENT;
+                        container.requestLayout();
+                    }
+                });
+
+            }
+        });
 //        uploadImage = this.findViewById(R.id.uploadImage);
         button_chatbox_send = this.findViewById(R.id.button_chatbox_send);
         swipeRefreshLayout = this.findViewById(R.id.swipeRefreshLayout);
@@ -254,7 +307,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
             ErxesRequest.getMessages(Config.conversationId);
         }
-        else{
+        else {
             mMessageRecycler.setAdapter(new MessageListAdapter(this,new ArrayList<ConversationMessage>()));
         }
 
@@ -275,11 +328,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
     public void logout(View v){
         Config.Logout();
-        Intent a = new Intent(MessageActivity.this,ErxesActivity.class);
-        startActivity(a);
         finish();
     }
-
     public void send_message(View view) {
         if(!Config.isNetworkConnected()) {
             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
@@ -312,6 +362,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             swipeRefreshLayout.setRefreshing(false);
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -323,9 +374,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         super.onResume();
         ErxesRequest.add(this);
     }
+
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
-//
 //        getMenuInflater().inflate(R.menu.conversation,menu);
 //        return true;
 //    }
@@ -348,8 +399,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent resultData)
-    {
+    public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
 
         // The ACTION_OPEN_DOCUMENT intent was sent with the request code
         // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
@@ -515,4 +565,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         int requestCode = 200;
         requestPermissions(permissions, requestCode);
     }
+
+
+
+
+
 }
