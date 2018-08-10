@@ -20,11 +20,9 @@ public class GetInteg {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
     private Config config ;
-    private DataManager dataManager;
     public GetInteg(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
-        dataManager = DataManager.getInstance(context);
 
     }
     public void run(){

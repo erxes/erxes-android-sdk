@@ -23,16 +23,9 @@ import io.realm.Realm;
 public class Getmess {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
-    private Config config ;
-    private DataManager dataManager;
-    private Context context;
     private String conversationid;
     public Getmess(ErxesRequest ER, Context context) {
         this.ER = ER;
-        this.context = context;
-        config = Config.getInstance(context);
-        dataManager = DataManager.getInstance(context);
-
     }
 
     public void run(String conversationid){

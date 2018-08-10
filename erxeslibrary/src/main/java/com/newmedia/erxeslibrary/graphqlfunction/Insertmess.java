@@ -24,13 +24,10 @@ public class Insertmess {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
     private Config config ;
-    private DataManager dataManager;
     private String conversationId,message;
     public Insertmess(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
-        dataManager = DataManager.getInstance(context);
-
     }
     public void run( String message, final String conversationId,List<JSONObject> list){
         this.message = message;

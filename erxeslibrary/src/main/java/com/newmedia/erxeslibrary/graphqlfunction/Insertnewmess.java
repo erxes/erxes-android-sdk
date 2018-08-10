@@ -26,15 +26,12 @@ public class Insertnewmess {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
     private Config config ;
-    private DataManager dataManager;
     private Context context;
     private String message;
     public Insertnewmess(ErxesRequest ER, Context context) {
         this.ER = ER;
         this.context = context;
         config = Config.getInstance(context);
-        dataManager = DataManager.getInstance(context);
-
     }
     public void run( String message, List<JSONObject> list){
         this.message = message;
