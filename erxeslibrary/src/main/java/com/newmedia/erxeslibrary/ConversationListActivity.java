@@ -133,7 +133,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         container.getLayoutParams().height = height;
         container.requestLayout();
 
-//        addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
+        addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
 
         recyclerView = this.findViewById(R.id.chat_recycler_view);
