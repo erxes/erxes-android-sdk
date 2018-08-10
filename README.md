@@ -23,8 +23,11 @@ Step 3. Add in your own code
 	Config.Start();
 	
 	
-	
-	
+## Status <br>
+
+[![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
+
+
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
