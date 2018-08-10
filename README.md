@@ -14,13 +14,19 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation 'com.github.batorshih:erxes-android:v1.5'
+	        implementation com.github.erxes:erxes-android-sdk:v1.0
 	}
 	
 Step 3. Add in your own code
 
-	Config.Init(this,"brand_code","your_host_address"); 
-	Config.Start();
+	Config config;
+	config  = Config.getInstance(this);
+	config.Init("brand_code",
+		"http://your_host_address:3100/graphql",
+		"ws://your_host_address:3300/subscriptions",
+		"http://your_host_address:3300/upload-file" );
+	config.Start();
+	
 	
 	
 ## Status <br>
