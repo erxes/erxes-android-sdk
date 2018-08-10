@@ -134,7 +134,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                                 mMessageRecycler.smoothScrollToPosition(d.size()-1);
                             Intent intent2 = new Intent(MessageActivity.this, ListenerService.class);
                             startService(intent2);
-                            
+                            upload_files.clear();
+                            filelist.removeAllViews();
                             break;
                         case IsMessengerOnline:
                             header_profile_change();
