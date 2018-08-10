@@ -28,17 +28,15 @@ import io.realm.Sort;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
     private Context context;
-    private List<Conversation> conversationList;
-
-    public void setConversationList(List<Conversation> conversationList) {
-        this.conversationList = conversationList;
-    }
+    public List<Conversation> conversationList;
     Realm realm;;
+    Config config;
     public ConversationListAdapter(Context context) {
         this.context = context;
         Realm.init(context);
+        config = Config.getInstance(context);
         realm=Realm.getDefaultInstance();
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",Config.customerId).equalTo("integrationId",Config.integrationId).findAll();
+        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
     }
     public void update_position(String conversationId){
         for(int i = 0 ; i< conversationList.size();i++){
@@ -48,7 +46,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             }
         }
 //        int pre_size = conversationList.size();
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",Config.customerId).equalTo("integrationId",Config.integrationId).findAll();
+        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
 //        this.notifyItemInserted(0);
         Log.d("ConversationListActivit","size "+conversationList.size()+" ?");
 
@@ -67,7 +65,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         @Override
         public void onClick(View view) {
             Intent a = new Intent(context,MessageActivity.class);
-            Config.conversationId = conversationList.get((int)view.getTag())._id;
+            config.conversationId = conversationList.get((int)view.getTag())._id;
             context.startActivity(a);
         }
     };
@@ -87,7 +85,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
-//        if(!Config.isMessengerOnline)
+//        if(!Config.IsMessengerOnline)
 //            holder.isonline.setVisibility(View.GONE);
 //        else
 //            holder.isonline.setVisibility(View.VISIBLE);
@@ -104,11 +102,11 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                         .into(holder.circleImageView);
 
             Long createDate = Long.valueOf(message.createdAt);
-            holder.date.setText(Config.convert_datetime(createDate));
+            holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
         }else {
             Long createDate = Long.valueOf(conversationList.get(position).date);
-            holder.date.setText(Config.convert_datetime(createDate));
+            holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
         }
 

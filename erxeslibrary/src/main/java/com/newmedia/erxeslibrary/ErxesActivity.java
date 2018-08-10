@@ -13,6 +13,7 @@ import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -24,9 +25,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Model.User;
 
 import io.realm.Realm;
@@ -41,11 +42,14 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     ImageView mailzurag, phonezurag,profile1,profile2;
     private Realm realm = Realm.getDefaultInstance();
     private CardView mailgroup,smsgroup;
+    private Config config;
+    private ErxesRequest erxesRequest;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Config.Init(this);
-        Config.LoadDefaultValues();
+//        Config.Init(this);
+        config = Config.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(this);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_erxes);
 
@@ -75,33 +79,34 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         profile2 = this.findViewById(R.id.profile2);
         names = this.findViewById(R.id.names);
         isOnline = this.findViewById(R.id.isOnline);
+        this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
-        if(Config.isLoggedIn()){
-            Config.LoggedInDefault();
+        if(config.isLoggedIn()){
+            config.LoadDefaultValues();
             Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
             ErxesActivity.this.startActivity(a);
             finish();
         }
         else{
-            ErxesRequest.getIntegration(Config.brandCode);
+            erxesRequest.getIntegration();
         }
 //        if(Config.isNetworkConnected()){
 //            if(Config.integrationId != null)
-//                ErxesRequest.isMessengerOnline(Config.integrationId);
+//                ErxesRequest.IsMessengerOnline(Config.integrationId);
 //        }
     }
 
     private void change_color(){
-        this.findViewById(R.id.info_header).setBackgroundColor(Config.colorCode);
-        mailgroup.setCardBackgroundColor(Config.colorCode);
-        sms_button.setTextColor(Config.colorCode);
-        changeBitmapColor(phonezurag,Config.colorCode);
+        this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
+        mailgroup.setCardBackgroundColor(config.colorCode);
+        sms_button.setTextColor(config.colorCode);
+        changeBitmapColor(phonezurag,config.colorCode);
 
         Drawable drawable =  this.findViewById(R.id.selector).getBackground();
-        drawable.setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+        drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
         RealmResults<User> users =  realm.where(User.class).findAll();
-        Log.d("test","size users "+users.size());
+
         if(users.size()>0){
             if(users.get(0).avatar!=null)
                 GlideApp.with(this).load(users.get(0).avatar).placeholder(R.drawable.avatar)
@@ -131,31 +136,24 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         else {
             profile2.setVisibility(View.INVISIBLE);
         }
-        isOnline.setText(Config.messenger_status_check()?R.string.online:R.string.offline);
+        isOnline.setText(config.messenger_status_check()?R.string.online:R.string.offline);
 
 
 
     }
     public void email_click(View v){
-
-
-
         email.setVisibility(View.VISIBLE);
         phone.setVisibility(View.GONE);
         /////
         smsgroup.setCardBackgroundColor(Color.WHITE);
         email_button.setTextColor(Color.WHITE);
         changeBitmapColor( mailzurag, Color.WHITE);
-
-
-
-        sms_button.setTextColor(Config.colorCode);
-        ((CardView)v).setCardBackgroundColor(Config.colorCode);
-        changeBitmapColor(phonezurag, Config.colorCode);
+        sms_button.setTextColor(config.colorCode);
+        ((CardView)v).setCardBackgroundColor(config.colorCode);
+        changeBitmapColor(phonezurag, config.colorCode);
 
     }
     public  void changeBitmapColor( ImageView image, int color){
-
         image.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
     }
     public void sms_click(View v){
@@ -167,17 +165,21 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         sms_button.setTextColor(Color.WHITE);
         changeBitmapColor( phonezurag, Color.WHITE);
 
-        email_button.setTextColor(Config.colorCode);
-        ((CardView)v).setCardBackgroundColor(Config.colorCode);
-        changeBitmapColor( mailzurag, Config.colorCode);
+        email_button.setTextColor(config.colorCode);
+        ((CardView)v).setCardBackgroundColor(config.colorCode);
+        changeBitmapColor( mailzurag, config.colorCode);
 
     }
+    public void logout(View v){
+        this.finish();
+    }
     public void Connect_click(View v){
-        if(Config.isNetworkConnected()) {
-            if(email.getVisibility() == View.GONE)
-                ErxesRequest.setConnect("", phone.getText().toString());
-            else
-                ErxesRequest.setConnect("" + email.getText().toString(),"");
+        if(config.isNetworkConnected()) {
+            if(email.getVisibility() == View.GONE) {
+                erxesRequest.setConnect("",phone.getText().toString());
+            }else{
+                erxesRequest.setConnect("" + email.getText().toString(), "");
+            }
         }
         else{
             Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
@@ -188,13 +190,13 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     @Override
     protected void onPause() {
         super.onPause();
-        ErxesRequest.remove(this);
+        erxesRequest.remove(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ErxesRequest.add(this);
+        erxesRequest.add(this);
     }
 
     @Override
@@ -220,4 +222,29 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
 
     }
+    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(final View v, MotionEvent event) {
+
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                ErxesActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setBackgroundResource(R.drawable.action_background);
+                    }
+                });
+            }
+            else if(event.getAction() == MotionEvent.ACTION_UP){
+                ErxesActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setBackgroundColor(Color.parseColor("#00000000"));
+                        if(v.getId() == R.id.logout)
+                            logout(null);
+                    }
+                });
+            }
+            return true;
+        }
+    };
 }

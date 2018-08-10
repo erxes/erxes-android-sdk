@@ -3,7 +3,7 @@ package com.newmedia.erxeslibrary.Model;
 import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
-import com.newmedia.erxes.basic.ConversationsQuery;
+
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
@@ -55,7 +55,7 @@ public class ConversationMessage extends RealmObject {
         return data_converted;
 
     }
-    static public ConversationMessage convert(InsertMessageMutation.InsertMessage a,String message){
+    static public ConversationMessage convert(InsertMessageMutation.InsertMessage a, String message,Config config){
         ConversationMessage b = new ConversationMessage();
         b.conversationId = a.conversationId();
         b.createdAt = a.createdAt();
@@ -64,7 +64,7 @@ public class ConversationMessage extends RealmObject {
         if(a.attachments()!=null)
             b.attachments = a.attachments().toString();
         b.internal = false;
-        b.customerId = Config.customerId;//Config.customerId;
+        b.customerId = config.customerId;//Config.customerId;
         return b;
     }
     static public ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted a){

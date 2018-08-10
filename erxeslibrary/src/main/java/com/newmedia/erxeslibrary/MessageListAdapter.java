@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.media.Image;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,8 +52,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private List<ConversationMessage> mMessageList;
     private Context context;
     private int previous_size = 0;
+    private Config config;
     public MessageListAdapter( Context context,List<ConversationMessage> mMessageList) {
         this.context = context;
+        this.config = Config.getInstance(context);
         this.mMessageList =  mMessageList;
         this.previous_size = this.mMessageList.size();
     }
@@ -74,7 +77,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             int zoruu = mMessageList.size() - previous_size;
 
             previous_size = mMessageList.size();
-            if(Config.welcomeMessage!=null) {
+            if(config.welcomeMessage!=null) {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size());
                 else
@@ -116,13 +119,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0 && Config.welcomeMessage!=null)
+        if(position == 0 && config.welcomeMessage!=null)
             return 2; //welcomeMessage
 
-        if(Config.welcomeMessage!=null)
+        if(config.welcomeMessage!=null)
             position = position - 1;
 
-        if( Config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId ))
+        if( config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId ))
             return 0;
         else
             return 1;
@@ -134,12 +137,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         ConversationMessage message ;
 
-        if(Config.welcomeMessage!=null && (position == 0)){
+        if(config.welcomeMessage!=null && (position == 0)){
             message = new ConversationMessage();
-            message.content = (Config.welcomeMessage);
+            message.content = (config.welcomeMessage);
             message.createdAt = ("");
         }
-        else if(Config.welcomeMessage != null)
+        else if(config.welcomeMessage != null)
             message = mMessageList.get(position - 1);
         else
             message = mMessageList.get(position);
@@ -159,7 +162,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        if(Config.welcomeMessage != null)
+        if(config.welcomeMessage != null)
             return mMessageList.size() + 1;
         else
             return mMessageList.size() ;
@@ -176,39 +179,37 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
     };
     private class SentMessageHolder extends RecyclerView.ViewHolder {
-        TextView messageText, timeText,filename;
-        ImageView inputImage;
-        View fileview;
+        TextView messageText, timeText;
+        ViewGroup filelist;
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText =  itemView.findViewById(R.id.text_message_body);
             timeText =  itemView.findViewById(R.id.text_message_time);
-            inputImage = itemView.findViewById(R.id.image_input);
-            fileview = itemView.findViewById(R.id.fileview);
-            filename = itemView.findViewById(R.id.filename);
+            filelist = itemView.findViewById(R.id.filelist);
         }
 
         void bind(ConversationMessage message) {
             messageText.setText(Html.fromHtml(message.content));;
-            timeText.setText(Config.Message_datetime(message.createdAt));
-            inputImage.setImageResource(0);
-            fileview.setVisibility(View.GONE);
-            filename.setText("");
-
-
+            timeText.setText(config.Message_datetime(message.createdAt));
             GradientDrawable a1 = (GradientDrawable) messageText.getBackground();
-            a1.setColor(Config.colorCode);
+            a1.setColor(config.colorCode);
 //                messageText.setBackgroundColor(Color.parseColor(Config.color));
-
-            timeText.setText(Config.Message_datetime(message.createdAt));
+            filelist.removeAllViews();
+            timeText.setText(config.Message_datetime(message.createdAt));
             if(message.attachments !=null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
+
                 try {
 
                     JSONArray a = new JSONArray(message.attachments);
                     for (int i = 0; i < a.length(); i++) {
-                        fileview.setVisibility(View.VISIBLE);
-                        draw_file(a.getJSONObject(i), inputImage, fileview, filename);
+                        View view = layoutInflater.inflate(R.layout.file_item, filelist, false);
+                        draw_file(a.getJSONObject(i),
+                                (ImageView) view.findViewById(R.id.image_input),
+                                view,
+                                (TextView) view.findViewById(R.id.filename));
+                        filelist.addView(view);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -220,30 +221,28 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView  timeText,filename;
+        TextView  timeText;
         TextView messageText;
-        ImageView profileImage,inputImage;
-        View fileview;
+        ImageView profileImage;
+        ViewGroup filelist;
+
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
             messageText =  itemView.findViewById(R.id.text_message_body);
             timeText =  itemView.findViewById(R.id.text_message_time);
-            inputImage = itemView.findViewById(R.id.image_input);
             profileImage = itemView.findViewById(R.id.image_message_profile);
-            filename = itemView.findViewById(R.id.filename);
-            fileview = itemView.findViewById(R.id.fileview);
+            filelist = itemView.findViewById(R.id.filelist);
+
         }
 
         void bind(ConversationMessage message) {
 //            messageText.loadData(message.content,"text/html","utf-8");
             messageText.setText(Html.fromHtml(message.content.replace("\n","")));;
 //            messageText.setText(message.content);;
-            timeText.setText(Config.Message_datetime(message.createdAt));
-            inputImage.setImageResource(0);
-            fileview.setVisibility(View.GONE);
-            filename.setText("");
+            timeText.setText(config.Message_datetime(message.createdAt));
+
 
             if(message.user!=null){
 
@@ -254,17 +253,26 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             else
                 profileImage.setImageResource(R.drawable.avatar);
 
-            if(message.attachments !=null)
-                try {
-                    JSONArray a = new JSONArray(message.attachments);
-                    for(int i=0;i< a.length();i++) {
-                        fileview.setVisibility(View.VISIBLE);
-                        draw_file(a.getJSONObject(i), inputImage, fileview, filename);
-                    }
+            filelist.removeAllViews();
+            timeText.setText(config.Message_datetime(message.createdAt));
+            if(message.attachments !=null) {
+                LayoutInflater layoutInflater = LayoutInflater.from(context);
 
+                try {
+
+                    JSONArray a = new JSONArray(message.attachments);
+                    for (int i = 0; i < a.length(); i++) {
+                        View view = layoutInflater.inflate(R.layout.file_item, filelist, false);
+                        draw_file(a.getJSONObject(i),
+                                (ImageView) view.findViewById(R.id.image_input),
+                                view,
+                                (TextView) view.findViewById(R.id.filename));
+                        filelist.addView(view);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
 
         }
     }
@@ -301,7 +309,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
             inputImage.setImageDrawable(circularProgressDrawable);
 
-            inputImage.getDrawable().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+            inputImage.getDrawable().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
             fileview.setTag(url);
             fileview.setOnClickListener(fileDownload);
@@ -319,12 +327,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
                 GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).override(pixels,Target.SIZE_ORIGINAL)
-                        .into(inputImage).getSize(new SizeReadyCallback() {
-                    @Override
-                    public void onSizeReady(int width, int height) {
-                        Log.d("test","image size "+width+" "+height);
-                    }
-                });
+                        .into(inputImage);
                 fileview.setOnClickListener(null);
                 filename.setVisibility(View.GONE);
             }

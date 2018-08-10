@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.Model;
 
+
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 

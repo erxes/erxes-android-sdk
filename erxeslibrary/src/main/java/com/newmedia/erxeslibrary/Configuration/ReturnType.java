@@ -7,8 +7,8 @@ public enum ReturnType {
     LOGIN_SUCCESS,
     Mutation,
     Mutation_new,
-    subscription,
-    getmessages,
-    getconversation,
-    isMessengerOnline
+    Subscription,
+    Getmessages,
+    Getconversation,
+    IsMessengerOnline
 }

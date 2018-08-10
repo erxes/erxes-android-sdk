@@ -12,8 +12,7 @@ mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!)
 }
 mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String!,$conversationId: String!, $attachments: [JSON])
 {
-    insertMessage(integrationId:$integrationId,
-    customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments)
+    insertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments)
    {
      conversationId,
      createdAt,

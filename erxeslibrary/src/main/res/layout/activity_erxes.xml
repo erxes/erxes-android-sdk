@@ -21,7 +21,6 @@
             android:layout_height="@dimen/login_bar_height"
             android:background="#5629B6"
             android:orientation="horizontal">
-
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -30,7 +29,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/imageView"
+                app:layout_constraintEnd_toEndOf="@id/logout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
@@ -89,19 +88,20 @@
                 </LinearLayout>
 
             </RelativeLayout>
-
-            <ImageView
-                android:id="@+id/imageView"
+            <LinearLayout
+                android:id="@+id/logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginRight="25dp"
-                android:src="@drawable/ic_close_black_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginRight="25dp"
+                android:padding="8dp">
+                <ImageView
+                    android:layout_width="@dimen/action_size"
+                    android:layout_height="@dimen/action_size"
+                    android:src="@drawable/erxes_cancel" />
+            </LinearLayout>
         </android.support.constraint.ConstraintLayout>
         <TextView
             android:layout_marginTop="@dimen/margin_top"
@@ -118,7 +118,6 @@
             android:background="@drawable/selector"
             android:layout_marginLeft="@dimen/fab_margin"
             android:layout_marginRight="@dimen/fab_margin"
-            android:padding="1dp"
             android:layout_marginTop="@dimen/margin_top">
             <View android:id="@+id/strut"
                 android:layout_width="0dp"
@@ -193,51 +192,52 @@
 
         </RelativeLayout>
         <LinearLayout
+            android:layout_marginTop="@dimen/margin_top"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/login_bar_height"
-            android:layout_marginLeft="@dimen/fab_margin"
-            android:layout_marginRight="@dimen/fab_margin"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:gravity="center"
-            android:background="#fff"
-            android:orientation="horizontal">
-
-            <EditText
-                android:layout_width="0dp"
-                android:layout_weight="9"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:maxLines="1"
-                android:id="@+id/email"
-                android:background="#fff"
-                android:inputType="textEmailAddress"
-                android:hint="@string/email_hint" />
-
-            <EditText
-                android:layout_width="0dp"
-                android:visibility="gone"
-                android:layout_weight="9"
-                android:layout_marginLeft="30dp"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:inputType="phone"
-                android:id="@+id/phone"
-                android:hint="@string/sms" />
+            android:layout_height="wrap_content"
+            android:background="@drawable/shadow_relpy">
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:orientation="horizontal"
-                android:layout_height="fill_parent"
-                android:onClick="Connect_click"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/reply_height"
+                android:gravity="center"
+                android:background="#fff"
+                android:orientation="horizontal">
+                <EditText
+                    android:layout_width="0dp"
+                    android:layout_weight="9"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_send_black_28dp"
-                    android:text="@string/connnect"
-                    />
-            </LinearLayout>
+                    android:layout_marginLeft="30dp"
+                    android:maxLines="1"
+                    android:id="@+id/email"
+                    android:background="#fff"
+                    android:inputType="textEmailAddress"
+                    android:hint="@string/email_hint" />
 
+                <EditText
+                    android:layout_width="0dp"
+                    android:visibility="gone"
+                    android:layout_weight="9"
+                    android:layout_marginLeft="30dp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:inputType="phone"
+                    android:id="@+id/phone"
+                    android:hint="@string/sms" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:orientation="horizontal"
+                    android:layout_height="fill_parent"
+                    android:onClick="Connect_click"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/send"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

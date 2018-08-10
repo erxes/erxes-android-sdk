@@ -19,8 +19,10 @@ import java.util.List;
 
 public class Helper {
     static DataManager dataManager;
+    static Config config;
     static void Init(Context context){
         dataManager =  DataManager.getInstance(context);
+        config = Config.getInstance(context);
     }
     static public void load_uiOptions(JSONObject js){
         if(js == null)
@@ -30,9 +32,9 @@ public class Helper {
             color = js.getString("color");
             dataManager.setData(DataManager.color, color);
             if(color != null)
-                Config.colorCode = Color.parseColor(color);
+                config.colorCode = Color.parseColor(color);
             else{
-                Config.colorCode = Color.parseColor("#5629B6");
+                config.colorCode = Color.parseColor("#5629B6");
             }
         }catch (JSONException e){
         }
@@ -50,45 +52,45 @@ public class Helper {
         try {
             temp = js.getString("thankYouMessage");
             dataManager.setData("thankYouMessage", temp);
-            Config.thankYouMessage = temp;
+            config.thankYouMessage = temp;
         } catch (JSONException e) {
         }
 
         try {
             temp = js.getString("awayMessage");
             dataManager.setData("awayMessage", temp);
-            Config.awayMessage = temp;
+            config.awayMessage = temp;
         } catch (JSONException e) {
         }
         try {
             temp = js.getString("welcomeMessage");
             dataManager.setData("welcomeMessage", temp);
-            Config.welcomeMessage = temp;
+            config.welcomeMessage = temp;
         } catch (JSONException e) {
         }
         try {
             temp = js.getString("timezone");
             dataManager.setData("timezone", temp);
-            Config.timezone = temp;
+            config.timezone = temp;
         } catch (JSONException e) {
         }
         try {
             temp = js.getString("availabilityMethod");
             dataManager.setData("availabilityMethod", temp);
-            Config.availabilityMethod = temp;
+            config.availabilityMethod = temp;
         } catch (JSONException e) {
         }
         try {
             boolean bool = js.getBoolean("isOnline");
             dataManager.setData("isOnline", bool);
-            Config.isMessengerOnline = bool;
+            config.isMessengerOnline = bool;
         } catch (JSONException e) {
         }
 
         try {
             boolean bool = js.getBoolean("notifyCustomer");
             dataManager.setData("notifyCustomer", bool);
-            Config.notifyCustomer = bool;
+            config.notifyCustomer = bool;
         } catch (JSONException e) {
         }
     }

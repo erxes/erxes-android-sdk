@@ -1,8 +1,53 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#5629B6"></solid>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <corners android:radius="23dp"/>
-    <padding android:left="0dip" android:top="0dip"
-        android:right="0dip" android:bottom="0dip" />
-</shape>
+    <!-- solids that simulate shadow_old !-->
+    <item android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="1dp">
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#10ffffff" />
+
+        </shape>
+    </item>
+
+    <item android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="1dp">
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#20ffffff" />
+
+        </shape>
+    </item>
+
+    <item android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="1dp">
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#40ffffff" />
+
+        </shape>
+    </item>
+
+    <item android:top="0dp" android:right="1dp" android:bottom="1dp" android:left="1dp" >
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#50ffffff" />
+        </shape>
+    </item>
+
+    <item android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp">
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#60ffffff" />
+            <padding  />
+        </shape>
+    </item>
+
+    <!-- main background !-->
+    <item>
+        <shape>
+            <corners android:radius="@dimen/radius_corner"></corners>
+            <solid android:color="#5629B6" />
+        </shape>
+    </item>
+
+
+</layer-list>

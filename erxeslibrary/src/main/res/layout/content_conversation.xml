@@ -4,49 +4,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".ConversationListActivity"
     android:background="#fff"
     tools:showIn="@layout/activity_conversation">
 
     <android.support.v7.widget.RecyclerView
+        android:background="#fff"
+        android:paddingLeft="@dimen/main_margin"
+        android:paddingRight="@dimen/main_margin"
         android:id="@+id/chat_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
     </android.support.v7.widget.RecyclerView>
-
     <LinearLayout
-        android:id="@+id/newconversation"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/newconversation"
-        android:paddingStart="40dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
-        android:paddingEnd="40dp"
-        android:paddingBottom="@dimen/padding_new_conv"
-        android:paddingTop="@dimen/padding_new_conv"
-        android:orientation="horizontal"
         android:gravity="center"
-        android:onClick="start_new_conversation"
+        android:padding="@dimen/main_margin"
+        android:background="#6dffffff"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
-
-        <ImageView
-            android:src="@drawable/edit_regular"
-            android:layout_width="@dimen/new_conv_image"
-            android:layout_height="@dimen/new_conv_image"
-            android:text="@string/newconversation" />
-
-        <TextView
-            android:layout_marginLeft="10dp"
-            android:textColor="#fff"
-            android:gravity="center"
-            android:textSize="@dimen/new_conv_font"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="new conversation" />
+            android:orientation="vertical"
+            android:background="@drawable/shadow_con5">
+            <LinearLayout
+                android:id="@+id/newconversation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/newconversation"
+                android:paddingStart="40dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingEnd="40dp"
+                android:paddingBottom="@dimen/padding_new_conv"
+                android:paddingTop="@dimen/padding_new_conv_bottom"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:onClick="start_new_conversation">
+                <ImageView
+                    android:src="@drawable/erxes_edit"
+                    android:layout_width="@dimen/new_conv_image"
+                    android:layout_height="@dimen/new_conv_image"
+                    android:gravity="center_vertical"/>
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:textColor="#fff"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/new_conv_font"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/newconversation"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

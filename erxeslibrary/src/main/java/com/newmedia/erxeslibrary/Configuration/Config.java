@@ -14,12 +14,6 @@ import com.apollographql.apollo.api.Input;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
-import com.newmedia.erxes.basic.ConversationsQuery;
-import com.newmedia.erxes.basic.InsertMessageMutation;
-import com.newmedia.erxes.basic.MessagesQuery;
-import com.newmedia.erxes.basic.MessengerConnectMutation;
-import com.newmedia.erxes.basic.type.CustomType;
-import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
@@ -44,29 +38,33 @@ import okhttp3.OkHttpClient;
 
 
 
-public class Config {
-//    final static public String HOST="192.168.1.6";
-//    final static private String HOST="192.168.86.39";
-    static private String HOST="";
-    static public String HOST_3100="http://"+HOST+":3100/graphql";
-    static public String HOST_3300="ws://"+HOST+":3300/subscriptions";
-    static public String HOST_UPLOAD="http://"+HOST+":3300/upload-file";
-    static  public String customerId;
-    static  public String integrationId;
-    static  private String color;
-    static  public String language,wallpaper;;
-    static  public String thankYouMessage;
-    static  public String awayMessage;
-    static  public String welcomeMessage;
-    static  public String timezone;
-    static  public String availabilityMethod;
-    static  public  int colorCode;
-    static  public String conversationId=null; ///public
-    static  public String brandCode;
-    static  public boolean isMessengerOnline = false,notifyCustomer;
-    static private DataManager dataManager;
-    static private Context context;
-    static public String convert_datetime(Long createDate) {
+public class Config implements ErxesObserver{
+
+
+    //    final  public String HOST="192.168.1.6";
+//    final  private String HOST="192.168.86.39";
+    private String HOST="";
+    public String HOST_3100="http://"+HOST+":3100/graphql";
+    public String HOST_3300="ws://"+HOST+":3300/subscriptions";
+    public String HOST_UPLOAD="http://"+HOST+":3300/upload-file";
+    public String customerId;
+    public String integrationId;
+    private String color;
+    public String language,wallpaper;;
+    public String thankYouMessage;
+    public String awayMessage;
+    public String welcomeMessage;
+    public String timezone;
+    public String availabilityMethod;
+    public int colorCode;
+    public String conversationId=null; ///public
+    public String brandCode;
+    public boolean isMessengerOnline = false,notifyCustomer;
+    private DataManager dataManager;
+    private Context context;
+    private ErxesRequest erxesRequest;
+    static private Config config;
+    public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis()  - createDate;
 
         diffTime = diffTime/1000;
@@ -75,7 +73,7 @@ public class Config {
         long hours = ((diffTime % 604800) % 86400) / 3600;
         long minutes = (((diffTime % 604800) % 86400) % 3600) / 60;
         long seconds = (((diffTime % 604800) % 86400) % 3600) % 60;
-        if(Config.language == null || Config.language.equalsIgnoreCase("en")){
+        if(language == null || language.equalsIgnoreCase("en")){
             if (weeks > 0) {
                 return ("" + weeks + " weeks ago");
             } else if (days > 0) {
@@ -101,7 +99,7 @@ public class Config {
             }
         }
     }
-    static  public String Message_datetime(String createDate_s) {
+    public String Message_datetime(String createDate_s) {
 
         Long createDate = null;
         try {
@@ -141,44 +139,56 @@ public class Config {
         }
 
     }
-    static public void Init(Context context,String brandcode,String ip){
-        dataManager =  DataManager.getInstance(context);
-        Config.HOST = ip;
-        HOST_3100="http://"+HOST+":3100/graphql";
-        HOST_3300="ws://"+HOST+":3300/subscriptions";
-        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
+    @Override
+    public void notify(ReturnType returnType, String conversationId, String message) {
+        if(ReturnType.LOGIN_SUCCESS == returnType)
+        {
 
-        dataManager.setData("HOST",ip);
+        }
+    }
+
+    static public Config getInstance(Context context){
+        if(config == null)
+            config = new Config(context);
+
+        return config;
+    }
+    private Config(Context context) {
+        dataManager = DataManager.getInstance(context);
+        this.context = context;
+    }
+
+    public void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
+//        HOST_3100="http://"+HOST+":3100/graphql";
+//        HOST_3300="ws://"+HOST+":3300/subscriptions";
+//        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
+
+        HOST_3100 = ip_3100;
+        HOST_3300 = ip_3300;
+        HOST_UPLOAD = ip_upload_file;
+        this.brandCode  = brandcode;
         dataManager.setData("HOST3100",HOST_3100);
         dataManager.setData("HOST3300",HOST_3300);
+        dataManager.setData("HOSTUPLOAD",HOST_UPLOAD);
         dataManager.setData("BRANDCODE",brandcode);
-
-
-        ErxesRequest.init(context);
-        Config.context = context;
-        Config.brandCode = brandcode;
+        erxesRequest =  ErxesRequest.getInstance(this.context);
+        LoadDefaultValues();
 
     }
-    static public void Init(Context context){
-        if(dataManager != null)
-            return;
-        dataManager =  DataManager.getInstance(context);
-        Config.HOST = dataManager.getDataS("HOST");
-        HOST_3100="http://"+HOST+":3100/graphql";
-        HOST_3300="ws://"+HOST+":3300/subscriptions";
-        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
-
-
-
-        ErxesRequest.init(context);
-        Config.context = context;
-        Config.brandCode = dataManager.getDataS("BRANDCODE");
+    public void Init(Context context){
+        this.context = context;
+        dataManager = DataManager.getInstance(context);
+        HOST = dataManager.getDataS("HOST");
+        HOST_3100 = dataManager.getDataS("HOST3100");
+        HOST_3300 = dataManager.getDataS("HOST3300");
+        HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
+        brandCode = dataManager.getDataS("BRANDCODE");
+        erxesRequest =  ErxesRequest.getInstance(this.context);
+        LoadDefaultValues();
 
     }
-    static public void Start(){
+    public void Start(){
         Intent a = new Intent(context,ErxesActivity.class);
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
             context.startActivity(a,options.toBundle());
@@ -187,51 +197,63 @@ public class Config {
             context.startActivity(a);
 
     }
-    static public void LoadDefaultValues(){
-
-        Config.integrationId = dataManager.getDataS(DataManager.integrationId);
-        Config.welcomeMessage = dataManager.getDataS("welcomeMessage");
-        Config.color= dataManager.getDataS(DataManager.color);
-        if(Config.color !=null)
-            Config.colorCode = Color.parseColor(Config.color);
+    public void Start_login_email(String email){
+        erxesRequest.add(this);
+        erxesRequest.setConnect(email,"");
+        Intent a = new Intent(context,ErxesActivity.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
+            context.startActivity(a,options.toBundle());
+        }
         else
-            Config.colorCode = Color.parseColor("#5629B6");
-        Config.wallpaper= dataManager.getDataS("wallpaper");
-        Config.language = dataManager.getDataS(DataManager.language);
-        ErxesRequest.changeLanguage(Config.language);
-    }
-    static public void LoggedInDefault(){
-        Config.customerId = dataManager.getDataS(DataManager.customerId);
-        LoadDefaultValues();
+            context.startActivity(a);
 
     }
-    static public boolean isLoggedIn(){
+    public void Start_login_phone(String phone){
+        erxesRequest.setConnect("",phone);
+        Intent a = new Intent(context,ErxesActivity.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
+            context.startActivity(a,options.toBundle());
+        }
+        else
+            context.startActivity(a);
+
+    }
+    public void LoadDefaultValues(){
+        customerId = dataManager.getDataS(DataManager.customerId);
+        integrationId = dataManager.getDataS(DataManager.integrationId);
+        welcomeMessage = dataManager.getDataS("welcomeMessage");
+        color= dataManager.getDataS(DataManager.color);
+        if(color !=null)
+            colorCode = Color.parseColor(color);
+        else
+            colorCode = Color.parseColor("#5629B6");
+        wallpaper= dataManager.getDataS("wallpaper");
+        language = dataManager.getDataS(DataManager.language);
+        erxesRequest.changeLanguage(language);
+    }
+
+    public boolean isLoggedIn(){
         if(dataManager.getDataS(DataManager.customerId)==null)
             return false;
         return true;
     }
-    static public boolean Logout(){
-        Config.customerId = null;
+    public boolean Logout(){
+        customerId = null;
         dataManager.setData(DataManager.customerId,null);
         dataManager.setData(DataManager.integrationId,null);
         return true;
     }
-    static public boolean isNetworkConnected() {
+    public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
-    static public boolean messenger_status_check(){
-        if(Config.isNetworkConnected()&& Config.isMessengerOnline){
+    public boolean messenger_status_check(){
+        if(isNetworkConnected()&& isMessengerOnline){
             return true;
         }
         return false;
     }
-
-
-
-
-
-
-
 }

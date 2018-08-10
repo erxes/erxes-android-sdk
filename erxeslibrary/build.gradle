@@ -39,9 +39,11 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
     implementation 'com.apollographql.apollo:apollo-runtime:0.5.0'
     implementation 'com.apollographql.apollo:apollo-android-support:0.5.0'
     implementation 'com.apollographql.apollo:apollo-rx2-support:0.5.0'
+
     implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
     implementation 'io.reactivex.rxjava2:rxjava:2.0.5'
 
@@ -59,8 +61,5 @@ dependencies {
 }
 apollo {
     customTypeMapping['Date'] = "String"
-    customTypeMapping['[]'] = "String"
     customTypeMapping['JSON'] = "org.json.JSONObject"
-
-
 }

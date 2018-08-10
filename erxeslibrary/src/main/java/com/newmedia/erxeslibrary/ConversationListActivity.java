@@ -9,9 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -30,7 +30,8 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     private ViewGroup addnew_conversation;
     private ViewGroup info_header,container;
     static public boolean chat_is_going = false;
-
+    private Config config;
+    private ErxesRequest erxesRequest;
     @Override
     public void notify(final ReturnType returnType, final String conversationId, String message) {
 
@@ -38,13 +39,13 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
             @Override
             public void run() {
                 switch (returnType){
-                    case subscription:
-                    case getconversation:
+                    case Subscription:
+                    case Getconversation:
                         recyclerView.getAdapter().notifyDataSetChanged();
                         break;
                     case INTEGRATION_CHANGED:
-                        info_header.setBackgroundColor(Config.colorCode);
-                        addnew_conversation.getBackground().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+                        info_header.setBackgroundColor(config.colorCode);
+                        addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
                         break;
                     case CONNECTIONFAILED:
                         break;
@@ -62,29 +63,34 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     @Override
     protected void onPause() {
         super.onPause();
-        ErxesRequest.remove(this);
+
+        erxesRequest.remove(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if(Config.customerId == null) {
-            logout(null);
+        config = Config.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(this);
+        if(config.customerId == null) {
+            this.finish();
+            Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
+            startActivity(a);
             return;
         }
-        ErxesRequest.add(this);
+        erxesRequest.add(this);
 
         if(recyclerView!=null)
             if(recyclerView.getAdapter()!=null){
 
-                ((ConversationListAdapter)recyclerView.getAdapter()).update_position(Config.conversationId);
+                ((ConversationListAdapter)recyclerView.getAdapter()).update_position(config.conversationId);
 //                recyclerView.getAdapter().notifyDataSetChanged();
 //                recyclerView.invalidate();
 
             }
-        Config.conversationId = null;
-        ErxesRequest.getIntegration(Config.brandCode);
-        info_header.setBackgroundColor(Config.colorCode);
+        config.conversationId = null;
+        erxesRequest.getIntegration();
+        info_header.setBackgroundColor(config.colorCode);
         chat_is_going = true;
     }
 
@@ -98,16 +104,17 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-
-
-
+        config = Config.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(this);
         setContentView(R.layout.activity_conversation);
 
         addnew_conversation = findViewById(R.id.newconversation);
         info_header = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
+        this.findViewById(R.id.logout).setOnTouchListener(touchListener);
+        this.findViewById(R.id.start).setOnTouchListener(touchListener);
 
-
+//        ((TextView)this.findViewById(R.id.dp)).setText(""+getResources().getDisplayMetrics().density);
         Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -126,35 +133,60 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         container.getLayoutParams().height = height;
         container.requestLayout();
 
-        addnew_conversation.getBackground().setColorFilter(Config.colorCode, PorterDuff.Mode.SRC_ATOP);
+//        addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
 
 
         recyclerView = this.findViewById(R.id.chat_recycler_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
+//        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
 
-
-        recyclerView.setAdapter(
-                new ConversationListAdapter(ConversationListActivity.this));
-
-        ErxesRequest.getConversations();
+        ConversationListAdapter adapter=new ConversationListAdapter(this);
+        recyclerView.setAdapter(adapter);
+        if( 0 == adapter.getItemCount() ){
+            start_new_conversation(null);
+        }
+        erxesRequest.getConversations();
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
 
 
     }
     public void start_new_conversation(View v){
-        Config.conversationId = null;
+        config.conversationId = null;
         Intent a = new Intent(ConversationListActivity.this,MessageActivity.class);
         startActivity(a);
     }
 
 
     public void logout(View v){
-        Log.d("myfo","logout conversation");
-        Config.Logout();
-        Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
-        startActivity(a);
         finish();
     }
+    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(final View v, MotionEvent event) {
+
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                ConversationListActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setBackgroundResource(R.drawable.action_background);
+                    }
+                });
+            }
+            else if(event.getAction() == MotionEvent.ACTION_UP){
+                ConversationListActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        v.setBackgroundColor(Color.parseColor("#00000000"));
+                        if(v.getId() == R.id.logout)
+                            logout(null);
+                        else if(v.getId() == R.id.start)
+                            start_new_conversation(null);
+                    }
+                });
+            }
+            return true;
+        }
+    };
 }

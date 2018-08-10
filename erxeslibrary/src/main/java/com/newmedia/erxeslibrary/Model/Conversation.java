@@ -28,7 +28,7 @@ public class Conversation extends RealmObject {
     public RealmList<String> readUserIds;
     public RealmList<User> participatedUsers;
 
-    static public List<Conversation> convert(Response<ConversationsQuery.Data> response){
+    static public List<Conversation> convert(Response<ConversationsQuery.Data> response, Config config){
         List<ConversationsQuery.Conversation> data = response.data().conversations();
         List<Conversation> data_converted = new ArrayList<>();
         Conversation this_o;
@@ -38,8 +38,8 @@ public class Conversation extends RealmObject {
             this_o.date = item.createdAt();
             this_o.content = item.content();
             this_o.status = item.status();
-            this_o.customerId = Config.customerId;
-            this_o.integrationId = Config.integrationId;
+            this_o.customerId = config.customerId;
+            this_o.integrationId = config.integrationId;
 
             data_converted.add(this_o);
 
@@ -47,15 +47,15 @@ public class Conversation extends RealmObject {
         return data_converted;
 
     }
-    static public Conversation update(InsertMessageMutation.InsertMessage a,String message){
-        Config.conversationId = a.conversationId();
+    static public Conversation update(InsertMessageMutation.InsertMessage a, String message,Config config){
+        config.conversationId = a.conversationId();
         Conversation conversation = new Conversation();
-        conversation._id = Config.conversationId;
+        conversation._id = config.conversationId;
         conversation.content = message;
         conversation.status = ("open");
         conversation.date = a.createdAt();
-        conversation.customerId = Config.customerId;
-        conversation.integrationId = Config.integrationId;
+        conversation.customerId = config.customerId;
+        conversation.integrationId = config.integrationId;
         return conversation;
     }
 

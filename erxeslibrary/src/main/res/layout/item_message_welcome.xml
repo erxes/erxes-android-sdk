@@ -4,10 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="16dp"
     android:paddingTop="8dp">
-
-
     <TextView
         android:id="@+id/text_message_body"
         android:text="hi man, how are you?"
@@ -19,6 +16,4 @@
         android:textSize="@dimen/header_small"
         android:textColor="#686868"
         android:layout_marginTop="4dp" />
-
-
 </android.support.constraint.ConstraintLayout>
