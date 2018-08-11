@@ -74,7 +74,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
 
     //    private List<Message> mMessageList;
-    private ImageView button_chatbox_send;
+    private ViewGroup button_chatbox_send;
     private EditText edittext_chatbox;
     private RecyclerView mMessageRecycler;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -357,6 +357,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         finish();
     }
     public void send_message(View view) {
+        Log.d("myfo","clicked");
         if(!config.isNetworkConnected()) {
             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
             return;
@@ -364,14 +365,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         if(!edittext_chatbox.getText().toString().equalsIgnoreCase("")) {
             List<JSONObject> temp = null;
             if(upload_files.size() > 0) {
+
                 temp = upload_files;
+//                temp.add(upload_files.toString());
                 Log.d("myfo","data "+temp.toString());
             }
-            Log.d("myfo","size is "+upload_files.size());
-            if( 2 == upload_files.size()) {
-                Log.d("myfo", "1 " + upload_files.get(0).toString());
-                Log.d("myfo", "2 " + upload_files.get(0).toString());
-            }
+
+
             if (config.conversationId != null) {
                 erxesRequest.InsertMessage(edittext_chatbox.getText().toString(), config.conversationId, temp);
                 edittext_chatbox.setText("");

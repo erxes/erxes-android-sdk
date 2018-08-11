@@ -109,6 +109,7 @@
                     android:src="@drawable/erxes_left_arrow" />
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="0dp"
@@ -128,6 +129,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
         </android.support.v4.widget.SwipeRefreshLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@drawable/toolbarshadow"
+            app:layout_constraintTop_toBottomOf="@+id/info_header" />
         <LinearLayout
             android:id="@+id/filelist"
             app:layout_constraintBottom_toTopOf="@+id/simpleProgressBar"
@@ -180,13 +186,14 @@
                         android:src="@drawable/clip" />
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/button_chatbox_send"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:gravity="center"
                     android:onClick="send_message">
                     <ImageView
-                        android:id="@+id/button_chatbox_send"
+
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/tools_size"
                         android:src="@drawable/send" />

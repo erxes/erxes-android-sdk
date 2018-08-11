@@ -24,14 +24,14 @@ public class MainActivity extends AppCompatActivity {
 //        Config.Init(this,"yPv5aN","172.20.10.3");
 //        Config.Init(this,"yPv5aN","192.168.100.185");
         config  = Config.getInstance(this);
-//        config.Init("yPv5aN",
-//                "http://192.168.50.57:3100/graphql",
-//                "ws://192.168.50.57:3300/subscriptions",
-//                "http://192.168.50.57:3300/upload-file" );
         config.Init("yPv5aN",
-                "http://192.168.100.185:3100/graphql",
-                "ws://192.168.100.185:3300/subscriptions",
-                "http://192.168.100.185:3300/upload-file" );
+                "http://192.168.50.57:3100/graphql",
+                "ws://192.168.50.57:3300/subscriptions",
+                "http://192.168.50.57:3300/upload-file" );
+//        config.Init("yPv5aN",
+//                "http://192.168.100.185:3100/graphql",
+//                "ws://192.168.100.185:3300/subscriptions",
+//                "http://192.168.100.185:3300/upload-file" );
 
 //        HOST_3100="http://"+HOST+":3100/graphql";
 //        HOST_3300="ws://"+HOST+":3300/subscriptions";

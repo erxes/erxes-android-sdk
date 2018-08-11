@@ -40,7 +40,8 @@ public class Insertnewmess {
                 .customerId(config.customerId)
                 .message(message)
                 .conversationId("")
-                .attachments(list).build())
+//                .attachments(list)
+                .build())
                 .enqueue(request);
     }
     private ApolloCall.Callback<InsertMessageMutation.Data> request = new ApolloCall.Callback<InsertMessageMutation.Data>() {

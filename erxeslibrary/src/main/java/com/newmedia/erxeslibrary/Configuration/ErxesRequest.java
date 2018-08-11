@@ -66,7 +66,7 @@ public class ErxesRequest {
                 .okHttpClient(okHttpClient)
                 .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
-                .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
+//                .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
 
 

@@ -10,7 +10,7 @@
     android:id="@+id/linearlayout"
     tools:context=".ErxesActivity">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:background="#f5f5f5"
@@ -104,6 +104,8 @@
             </LinearLayout>
         </android.support.constraint.ConstraintLayout>
         <TextView
+            android:id="@+id/information"
+            app:layout_constraintTop_toBottomOf="@+id/info_header"
             android:layout_marginTop="@dimen/margin_top"
             android:text="@string/contact_info"
             android:textColor="#686666"
@@ -111,7 +113,14 @@
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@drawable/toolbarshadow"
+            app:layout_constraintTop_toBottomOf="@+id/info_header" />
+
         <RelativeLayout
+            app:layout_constraintTop_toBottomOf="@+id/information"
             android:id="@+id/selector"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -192,6 +201,7 @@
 
         </RelativeLayout>
         <LinearLayout
+            app:layout_constraintTop_toBottomOf="@id/selector"
             android:layout_marginTop="@dimen/margin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -238,6 +248,6 @@
 
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </LinearLayout>

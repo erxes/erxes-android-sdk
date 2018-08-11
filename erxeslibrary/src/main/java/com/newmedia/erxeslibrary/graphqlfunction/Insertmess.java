@@ -14,6 +14,7 @@ import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -35,7 +36,8 @@ public class Insertmess {
         InsertMessageMutation.Builder temp =InsertMessageMutation.builder().
                 integrationId(config.integrationId).
                 customerId(config.customerId).
-                message(message).attachments(list).
+                message(message).
+                attachments(list).
                 conversationId(conversationId);
         ER.apolloClient.mutate(temp.build()).enqueue(request);
     }
@@ -43,6 +45,7 @@ public class Insertmess {
     private ApolloCall.Callback<InsertMessageMutation.Data> request = new ApolloCall.Callback<InsertMessageMutation.Data>() {
         @Override
         public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
+
             if(response.hasErrors()) {
                 Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,conversationId,response.errors().get(0).message());

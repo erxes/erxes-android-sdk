@@ -20,17 +20,21 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
 
     @Override
     public JSONObject decode(@Nonnull CustomTypeValue value) {
+
         try {
-            return new JSONObject(value.value.toString());
+            return new JSONObject( value.value.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return null;
+
     }
 
     @Nonnull
     @Override
     public CustomTypeValue encode(@Nonnull JSONObject value) {
-        return CustomTypeValue.fromRawValue(value);
+//        return new CustomTypeValue.GraphQLString(value);
+//        return CustomTypeValue.fromRawValue(value);
+        return new CustomTypeValue.GraphQLJsonString(value.toString());
     }
 }
