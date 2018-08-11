@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -176,9 +177,19 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     public void Connect_click(View v){
         if(config.isNetworkConnected()) {
             if(email.getVisibility() == View.GONE) {
-                erxesRequest.setConnect("",phone.getText().toString());
+                if(phone.getText().toString().length()>7) {
+                    erxesRequest.setConnect("", phone.getText().toString());
+                    phone.setError(null);
+                }
+                else
+                    phone.setError(getResources().getString(R.string.no_correct_phone));
             }else{
-                erxesRequest.setConnect("" + email.getText().toString(), "");
+                if(isValidEmail(email.getText().toString())) {
+                    email.setError(null);
+                    erxesRequest.setConnect("" + email.getText().toString(), "");
+                }
+                else
+                    email.setError(getResources().getString( R.string.no_correct_mail));
             }
         }
         else{
@@ -247,4 +258,11 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             return true;
         }
     };
+    public final static boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
 }
