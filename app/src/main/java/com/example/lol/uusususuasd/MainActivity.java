@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 //                config.Start();
                 config.Start_login_email("orshih_bat@yahoo.com");
+//                config.Start_login_phone("99001100");
             }
         });
 

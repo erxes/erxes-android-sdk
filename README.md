@@ -26,12 +26,18 @@ Step 3. Add in your own code
 		"ws://your_host_address:3300/subscriptions",
 		"http://your_host_address:3300/upload-file" );
 	config.Start();
+	// or you can start with 
+	config.Start_login_email("email@example.com");
+	//or 
+	config.Start_login_phone("99001100");
 	
 	
 	
 ## Status <br>
 
 [![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3025bab0be4547639a9baa0fdc5e61f5)](https://www.codacy.com/project/orshih_bat/erxes-android-sdk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=erxes/erxes-android-sdk&amp;utm_campaign=Badge_Grade_Dashboard)
+[![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
 
 
 ## Contributors
