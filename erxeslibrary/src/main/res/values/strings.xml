@@ -16,8 +16,8 @@
     <string name="newconversation">NEW CONVERSATION</string>
     <string name="online">Online now</string>
     <string name="offline">Offline now</string>
-    <string name="no_correct_mail">Pleas enter a valid email address</string>
-    <string name="no_correct_phone">Pleas enter a valid phone number</string>
+    <string name="no_correct_mail">Please enter a valid email address</string>
+    <string name="no_correct_phone">Please enter a valid phone number</string>
 
 
 

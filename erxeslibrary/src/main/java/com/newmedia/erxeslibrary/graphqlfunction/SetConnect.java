@@ -45,7 +45,7 @@ public class SetConnect {
                 dataManager.setData(DataManager.customerId, config.customerId);
                 dataManager.setData(DataManager.integrationId, config.integrationId);
 
-                ER.changeLanguage(response.data().messengerConnect().languageCode());
+                config.changeLanguage(response.data().messengerConnect().languageCode());
                 Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
                 Helper.load_messengerData(response.data().messengerConnect().messengerData());
 

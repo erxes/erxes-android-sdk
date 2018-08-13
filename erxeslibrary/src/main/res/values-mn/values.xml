@@ -1,13 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Эрхэс</string>
-    <string name="cantconnect">Холбогдох боломжгүй байна</string>
-    <string name="serverror">Буруу мэдээлэл</string>
-    <string name="fileerror">Илгээх боломжгүй файл байна</string>
-    <string name="logout">Гарах</string>
-    <string name="email">и-мейл</string>
-    <string name="phone">утас</string>
-    <string name="connnect">Холбогдох</string>
-    <string name="contact">Холбогдох</string>
-    <string name="contact_info">Холбоо барих мэдээллээ үлдээнэ үү</string>
 </resources>

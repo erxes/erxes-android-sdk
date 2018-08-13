@@ -32,6 +32,7 @@ import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Model.User;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 
@@ -41,7 +42,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     TextView  sms_button,email_button,names,isOnline;
     LinearLayout container;
     ImageView mailzurag, phonezurag,profile1,profile2;
-    private Realm realm = Realm.getDefaultInstance();
+    private Realm realm ;
     private CardView mailgroup,smsgroup;
     private Config config;
     private ErxesRequest erxesRequest;
@@ -49,8 +50,15 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        Config.Init(this);
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(ErxesRequest.database_name)
+                .schemaVersion(ErxesRequest.database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.init(this);
+        realm = Realm.getInstance(myConfig);
         config = Config.getInstance(this);
-        erxesRequest = ErxesRequest.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(config);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_erxes);
 

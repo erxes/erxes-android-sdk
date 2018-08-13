@@ -35,12 +35,14 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmModel;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
-    final  private String TAG = "erxesrequest";
-
+    final private String TAG = "erxesrequest";
+    final static public String database_name = "erxes.realm";
+    final static public int database_version = 1;
     public ApolloClient apolloClient;
     private OkHttpClient okHttpClient;
     private DataManager dataManager;
@@ -49,17 +51,20 @@ public class ErxesRequest {
     private Config config;
 
     static public ErxesRequest erxesRequest;
-    static public ErxesRequest getInstance(Context context){
+    static public ErxesRequest getInstance(Config config){
         if(erxesRequest == null)
-            erxesRequest = new ErxesRequest(context);
+            erxesRequest = new ErxesRequest(config);
         return erxesRequest;
     }
-    private ErxesRequest(Context context){
-        if(this.context != null)
-            return;
-        this.context = context;
-        config = Config.getInstance(this.context);
-
+    private ErxesRequest(Config config){
+        this.context = config.context;
+        this.config = config;
+        dataManager =  DataManager.getInstance(context);
+        Realm.init(context);
+        Helper.Init(context);
+    }
+    public void set_client(){
+        if(config.HOST_3100!=null)
         okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
                 .serverUrl(config.HOST_3100)
@@ -68,33 +73,8 @@ public class ErxesRequest {
                 .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter())
 //                .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
                 .build();
-
-
-        dataManager =  DataManager.getInstance(context);
-        Realm.init(context);
-        Helper.Init(context);
-
-
     }
- 
-    public void changeLanguage(String lang) {
-        if(lang == null || lang.equalsIgnoreCase("") )
-            return;
 
-
-        config.language = lang ;
-        dataManager.setData(DataManager.language, config.language);
-
-        Locale myLocale;
-        myLocale = new Locale(lang);
-
-        Locale.setDefault(myLocale);
-        android.content.res.Configuration config = new android.content.res.Configuration();
-        config.locale = myLocale;
-        context.getResources().updateConfiguration(config,
-                context.getResources().getDisplayMetrics());
-
-    }
     public void setConnect(String email ,String phone){
         if(!isNetworkConnected()){
             return;
@@ -145,7 +125,12 @@ public class ErxesRequest {
 
     }
     public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-        Realm inner = Realm.getDefaultInstance();
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(database_name)
+                .schemaVersion(database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm inner = Realm.getInstance(myConfig);
         inner.beginTransaction();
         inner.insertOrUpdate(ConversationMessage.convert(data));
         inner.commitTransaction();
@@ -170,7 +155,12 @@ public class ErxesRequest {
 
     }
     public void async_update_database(RealmModel realmModel){
-        Realm inner = Realm.getDefaultInstance();
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(database_name)
+                .schemaVersion(database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm inner = Realm.getInstance(myConfig);
         inner.beginTransaction();
         inner.insertOrUpdate(realmModel);
         inner.commitTransaction();

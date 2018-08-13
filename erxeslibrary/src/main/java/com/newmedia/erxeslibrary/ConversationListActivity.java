@@ -71,7 +71,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     protected void onResume() {
         super.onResume();
         config = Config.getInstance(this);
-        erxesRequest = ErxesRequest.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(config);
         if(config.customerId == null) {
             this.finish();
             Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
@@ -105,7 +105,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         config = Config.getInstance(this);
-        erxesRequest = ErxesRequest.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(config);
         setContentView(R.layout.activity_conversation);
 
         addnew_conversation = findViewById(R.id.newconversation);
@@ -143,10 +143,10 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 
         ConversationListAdapter adapter=new ConversationListAdapter(this);
         recyclerView.setAdapter(adapter);
-        if( 0 == adapter.getItemCount() ){
+        if( 0 == adapter.conversationList.size() ){
             start_new_conversation(null);
         }
-        erxesRequest.getConversations();
+//        erxesRequest.getConversations();
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
 

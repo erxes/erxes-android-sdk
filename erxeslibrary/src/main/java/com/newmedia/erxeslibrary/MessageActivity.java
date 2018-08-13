@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -302,11 +303,15 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         super.onCreate(savedInstanceState);
         Realm.init(this);
 
-        realm = Realm.getDefaultInstance();
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(ErxesRequest.database_name)
+                .schemaVersion(ErxesRequest.database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        realm = Realm.getInstance(myConfig);
 
         config = Config.getInstance(this);
-
-        erxesRequest = ErxesRequest.getInstance(this);
+        erxesRequest = ErxesRequest.getInstance(config);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_messege);
 
@@ -354,6 +359,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     }
     public void logout(View v){
         config.Logout();
+        realm.beginTransaction();
+        realm.delete(Conversation.class);
+        realm.delete(ConversationMessage.class);
+        realm.commitTransaction();
         finish();
     }
     public void send_message(View view) {
@@ -402,12 +411,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     protected void onResume() {
         super.onResume();
         erxesRequest.add(this);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
     }
 
     //Android 4.4 (API level 19)

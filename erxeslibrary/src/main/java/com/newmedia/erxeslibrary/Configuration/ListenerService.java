@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-//import android.support.v7.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
@@ -36,6 +35,7 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 //import com.newmedia.erxes.subscription.ConversationsChangedSubscription;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
+import com.newmedia.erxeslibrary.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesActivity;
 import com.newmedia.erxeslibrary.Model.Conversation;
@@ -55,6 +55,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 
@@ -118,7 +119,11 @@ public class ListenerService extends Service{
         }
         if(id==null){
             Realm.init(this);
-            Realm realm = Realm.getDefaultInstance();
+            RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                    .name(ErxesRequest.database_name)
+                    .schemaVersion(ErxesRequest.database_version)
+                    .deleteRealmIfMigrationNeeded().build();
+            Realm realm = Realm.getInstance(myConfig);
             RealmResults<Conversation> list=
                     realm.where(Conversation.class).equalTo("status","open").findAll();
             for(int i = 0; i< list.size();i++) {
@@ -200,6 +205,9 @@ public class ListenerService extends Service{
                                         ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
                                         Log.d("erxesservice","alive");
                                     }
+                                    if(ConversationListActivity.chat_is_going==true) {
+
+                                    }
                                     else{
                                         Log.d("erxesservice","dead");
                                         String chat_message = response.data().conversationMessageInserted().content();
@@ -207,9 +215,7 @@ public class ListenerService extends Service{
 
                                         createNotificationChannel(chat_message,name,response.data().conversationMessageInserted().conversationId());
                                     }
-//                                    if(!ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted()))
-//                                    {
-//                                    }
+//
                                 }
                                 Log.d("erxesservice","onnext"+conversationId);
 
@@ -224,20 +230,31 @@ public class ListenerService extends Service{
         );
     }
     private void createNotificationChannel(String chat_message,String name,String conversion_id) {
+
+
         Intent intent = new Intent(this, ErxesActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "123")
-                .setBadgeIconType(R.drawable.icon)
+//        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "erxeschannel")
+//                .setBadgeIconType(R.drawable.icon)
+//                .setContentTitle(name)
+//                .setContentText(Html.fromHtml( chat_message))
+//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+//                // Set the intent that will fire when the user taps the notification
+//                .setContentIntent(pendingIntent)
+//                .setAutoCancel(true);
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//        notificationManager.notify(0, mBuilder.build());
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Notification notification = new Notification.Builder(this)
                 .setContentTitle(name)
                 .setContentText(Html.fromHtml( chat_message))
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                // Set the intent that will fire when the user taps the notification
-                .setContentIntent(pendingIntent)
-                .setAutoCancel(true);
+                .setSmallIcon(R.drawable.icon)
+                .setSound(alarmSound)
+                .setContentIntent(pendingIntent).getNotification();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(1, mBuilder.build());
+        notificationManager.notify(0, notification);
         Log.d("erxes","notification can");
     }
 //    public void startListen(){

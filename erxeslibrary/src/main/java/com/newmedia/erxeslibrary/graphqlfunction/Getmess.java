@@ -19,6 +19,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class Getmess {
     final static String TAG = "SETCONNECT";
@@ -39,9 +40,11 @@ public class Getmess {
 
             if(response.data().messages().size() > 0) {
                 List<ConversationMessage> data = ConversationMessage.convert(response,conversationid);
-
-
-                Realm inner = Realm.getDefaultInstance();
+                RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                        .name(ErxesRequest.database_name)
+                        .schemaVersion(ErxesRequest.database_version)
+                        .deleteRealmIfMigrationNeeded().build();
+                Realm inner = Realm.getInstance(myConfig);
                 inner.beginTransaction();
                 inner.copyToRealmOrUpdate(data);
                 inner.commitTransaction();

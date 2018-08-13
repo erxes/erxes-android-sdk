@@ -19,6 +19,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 public class Getconv {
     final static String TAG = "SETCONNECT";
@@ -43,8 +44,11 @@ public class Getconv {
 
             if(response.data().conversations().size()>0) {
                 final List<Conversation> data = Conversation.convert(response,config);
-
-                Realm inner = Realm.getDefaultInstance();
+                RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                        .name(ErxesRequest.database_name)
+                        .schemaVersion(ErxesRequest.database_version)
+                        .deleteRealmIfMigrationNeeded().build();
+                Realm inner = Realm.getInstance(myConfig);
                 inner.beginTransaction();
                 inner.delete(Conversation.class);
                 inner.copyToRealm(data);

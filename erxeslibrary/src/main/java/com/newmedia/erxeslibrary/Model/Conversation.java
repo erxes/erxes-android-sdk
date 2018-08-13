@@ -23,6 +23,7 @@ public class Conversation extends RealmObject {
     public String status;
     public String content;
     public String date;
+    public boolean xaxa_tet;
     public boolean isread = true;
     public RealmList<ConversationMessage> conversationMessages;
     public RealmList<String> readUserIds;
@@ -52,7 +53,7 @@ public class Conversation extends RealmObject {
         Conversation conversation = new Conversation();
         conversation._id = config.conversationId;
         conversation.content = message;
-        conversation.status = ("open");
+        conversation.status = "open";
         conversation.date = a.createdAt();
         conversation.customerId = config.customerId;
         conversation.integrationId = config.integrationId;

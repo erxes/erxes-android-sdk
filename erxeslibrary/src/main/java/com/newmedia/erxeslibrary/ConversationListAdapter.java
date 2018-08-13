@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -35,8 +37,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         this.context = context;
         Realm.init(context);
         config = Config.getInstance(context);
-        realm=Realm.getDefaultInstance();
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(ErxesRequest.database_name)
+                .schemaVersion(ErxesRequest.database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        realm = Realm.getInstance(myConfig);
         this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
+
     }
     public void update_position(String conversationId){
         for(int i = 0 ; i< conversationList.size();i++){
@@ -48,9 +56,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
 //        int pre_size = conversationList.size();
         this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
 //        this.notifyItemInserted(0);
-        Log.d("ConversationListActivit","size "+conversationList.size()+" ?");
-
-
     }
 
     @NonNull
