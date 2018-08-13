@@ -1,5 +1,8 @@
 # erxes-android
 
+#### The latest Gradle plugin version is [![GitHub (pre-)release](https://img.shields.io/github/release/erxes/erxes-android-sdk/all.svg?style=flat-square)](https://github.com/erxes/erxes-android-sdk/)
+<br>
+
 Step 1. Add the JitPack repository to your build file
 
 Add it in your root build.gradle at the end of repositories:
@@ -14,7 +17,7 @@ Add it in your root build.gradle at the end of repositories:
 Step 2. Add the dependency
 
 	dependencies {
-	        implementation com.github.erxes:erxes-android-sdk:v1.0
+	        implementation com.github.erxes:erxes-android-sdk:v{release version}
 	}
 	
 Step 3. Add in your own code
