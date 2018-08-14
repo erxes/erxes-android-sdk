@@ -69,11 +69,16 @@ public class ListenerService extends Service{
 
     private OkHttpClient okHttpClient;
     private ApolloClient apolloClient;
+    private RealmConfiguration myConfig;
     @Override
     public void onCreate() {
         super.onCreate();
 
-
+        Realm.init(this);
+        myConfig = new RealmConfiguration.Builder()
+                .name(ErxesRequest.database_name)
+                .schemaVersion(ErxesRequest.database_version)
+                .deleteRealmIfMigrationNeeded().build();
 
 //        startListen();
         DataManager dataManager;
@@ -118,16 +123,11 @@ public class ListenerService extends Service{
                 id = bundle.getString("id", null);
         }
         if(id==null){
-            Realm.init(this);
-            RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                    .name(ErxesRequest.database_name)
-                    .schemaVersion(ErxesRequest.database_version)
-                    .deleteRealmIfMigrationNeeded().build();
+
             Realm realm = Realm.getInstance(myConfig);
             RealmResults<Conversation> list=
                     realm.where(Conversation.class).equalTo("status","open").findAll();
             for(int i = 0; i< list.size();i++) {
-                Log.d("erxesservice","--"+list.get(i)._id);
                 conversation_listen(list.get(i)._id);
             }
         }else{
@@ -205,15 +205,29 @@ public class ListenerService extends Service{
                                         ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
                                         Log.d("erxesservice","alive");
                                     }
-                                    if(ConversationListActivity.chat_is_going==true) {
-
-                                    }
-                                    else{
+                                    if(ConversationListActivity.chat_is_going==false) {
                                         Log.d("erxesservice","dead");
                                         String chat_message = response.data().conversationMessageInserted().content();
                                         String name = response.data().conversationMessageInserted().user().details().fullName();
 
                                         createNotificationChannel(chat_message,name,response.data().conversationMessageInserted().conversationId());
+                                        Realm inner = Realm.getInstance(myConfig);
+                                        inner.beginTransaction();
+                                        inner.insertOrUpdate(ConversationMessage.convert(response.data().conversationMessageInserted()));
+                                        inner.commitTransaction();
+
+
+                                        Conversation conversation = inner.where(Conversation.class).equalTo("_id",response.data().conversationMessageInserted().conversationId()).findFirst();
+
+                                        if(conversation!=null) {
+                                            inner.beginTransaction();
+                                            conversation.content = (response.data().conversationMessageInserted().content());
+                                            conversation.isread = false;
+                                            inner.insertOrUpdate(conversation);
+                                            inner.commitTransaction();
+
+                                        }
+                                        inner.close();
                                     }
 //
                                 }
