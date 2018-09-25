@@ -25,13 +25,13 @@ public class MainActivity extends AppCompatActivity {
 //        Config.Init(this,"yPv5aN","192.168.100.185");
         config  = Config.getInstance(this);
         config.Init("yPv5aN",
-                "http://192.168.50.57:3100/graphql",
-                "ws://192.168.50.57:3300/subscriptions",
-                "http://192.168.50.57:3300/upload-file" );
+                "http://192.168.1.8:3100/graphql",
+                "ws://192.168.1.8:3300/subscriptions",
+                "http://192.168.1.8:3300/upload-file" );
 //        config.Init("yPv5aN",
-//                "http://192.168.100.185:3100/graphql",
-//                "ws://192.168.100.185:3300/subscriptions",
-//                "http://192.168.100.185:3300/upload-file" );
+//                "http://192.168.100.177:3100/graphql",
+//                "ws://192.168.100.177:3300/subscriptions",
+//                "http://192.168.100.177:3300/upload-file" );
 
 //        HOST_3100="http://"+HOST+":3100/graphql";
 //        HOST_3300="ws://"+HOST+":3300/subscriptions";
@@ -48,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
         this.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                config.Start();
-                config.Start_login_email("orshih_bat@yahoo.com");
+                config.Start();
+//                config.Start_login_email("orshih_bat@yahoo.com");
 //                config.Start_login_phone("99001100");
             }
         });

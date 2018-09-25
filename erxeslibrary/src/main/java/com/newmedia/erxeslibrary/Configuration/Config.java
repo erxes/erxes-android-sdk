@@ -138,7 +138,7 @@ public class Config implements ErxesObserver{
 
     }
     @Override
-    public void notify(ReturnType returnType, String conversationId, String message) {
+    public void notify(int returnType, String conversationId, String message) {
         if(ReturnType.LOGIN_SUCCESS == returnType)
         {
             Intent a = new Intent(context,ErxesActivity.class);

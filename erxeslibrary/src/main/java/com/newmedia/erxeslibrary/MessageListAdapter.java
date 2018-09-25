@@ -243,7 +243,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 //            messageText.setText(message.content);;
             timeText.setText(config.Message_datetime(message.createdAt));
 
-
+/**/
             if(message.user!=null){
 
                 GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)

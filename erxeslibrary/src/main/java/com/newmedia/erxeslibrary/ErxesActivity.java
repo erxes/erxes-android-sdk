@@ -26,6 +26,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
@@ -52,6 +53,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 //        Config.Init(this);
         RealmConfiguration myConfig = new RealmConfiguration.Builder()
                 .name(ErxesRequest.database_name)
+                .modules(new ErxesRealmModule())
                 .schemaVersion(ErxesRequest.database_version)
                 .deleteRealmIfMigrationNeeded()
                 .build();
@@ -219,23 +221,32 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     }
 
     @Override
-    public void notify(final ReturnType returnType,  String conversationId, final String message) {
+    public void notify(final int returnType,  String conversationId, final String message) {
 
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(returnType == ReturnType.LOGIN_SUCCESS) {
-                        Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-                        ErxesActivity.this.startActivity(a);
-                        finish();
-                    }else if(returnType == ReturnType.INTEGRATION_CHANGED){
-                        change_color();
-                    }
-                    else if(returnType == ReturnType.CONNECTIONFAILED)
-                        Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
+                    switch (returnType) {
+                        case ReturnType.LOGIN_SUCCESS:
+                            Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
+                            ErxesActivity.this.startActivity(a);
+                            finish();
+                            break;
 
-                    else if(returnType == ReturnType.SERVERERROR)
-                        Snackbar.make(container,message,Snackbar.LENGTH_SHORT).show();
+                        case ReturnType.INTEGRATION_CHANGED:
+                            change_color();
+                            break;
+
+                        case ReturnType.CONNECTIONFAILED:
+                            Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                            break;
+
+                        case ReturnType.SERVERERROR:
+                            Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            break;
+                    }
                 }
             });
 

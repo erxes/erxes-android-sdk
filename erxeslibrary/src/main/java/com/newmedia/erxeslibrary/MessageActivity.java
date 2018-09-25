@@ -37,6 +37,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.ProgressRequestBody;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
@@ -93,7 +94,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     //    private ImageView uploadImage;
     private final String TAG="MESSAGEACTIVITY";
     @Override
-    public void notify(final ReturnType returnType, String conversationId,  String message) {
+    public void notify(final int returnType, String conversationId,  String message) {
 
 
             this.runOnUiThread(new Runnable() {
@@ -101,7 +102,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                 public void run() {
                     MessageListAdapter adapter = (MessageListAdapter)mMessageRecycler.getAdapter();
                     switch (returnType){
-                        case Subscription:
+                        case ReturnType.Subscription:
 
                             header_profile_change();
                             isMessenOnlineImage.setText(R.string.online);
@@ -110,12 +111,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                             swipeRefreshLayout.setRefreshing(false);
                             break;
                             //without break
-                        case Getmessages:
+                        case ReturnType.Getmessages:
                             if(adapter.getItemCount() > 2 && adapter.refresh_data())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                             swipeRefreshLayout.setRefreshing(false);
                             break;
-                        case Mutation:
+                        case ReturnType.Mutation:
 
                             if(adapter.getItemCount() > 2 && adapter.refresh_data())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
@@ -124,7 +125,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                             upload_files.clear();
                             filelist.removeAllViews();
                             break;
-                        case Mutation_new:
+                        case ReturnType.Mutation_new:
                             RealmResults<ConversationMessage> d = null;
 
                             d = realm.where(ConversationMessage.class).equalTo("conversationId",config.conversationId).findAll();
@@ -138,17 +139,21 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                             upload_files.clear();
                             filelist.removeAllViews();
                             break;
-                        case IsMessengerOnline:
+                        case ReturnType.IsMessengerOnline:
                             header_profile_change();
                             break;
 
-                        case SERVERERROR:
+                        case ReturnType.SERVERERROR:
                             Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
                             swipeRefreshLayout.setRefreshing(false);
                             break;
-                        case CONNECTIONFAILED:
+                        case ReturnType.CONNECTIONFAILED:
                             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
                             swipeRefreshLayout.setRefreshing(false);
+                            break;
+                        case ReturnType.GetSupporters:
+                            Log.d("setconnect","yeahhhh");
+                            header_profile_change();
                             break;
                     }
                 }
@@ -191,6 +196,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         progressBar.getProgressDrawable().mutate().setColorFilter(config.colorCode,PorterDuff.Mode.SRC_IN);
 //        isMessenOnlineImage.setVisibility(
 //                (Config.isNetworkConnected()&&Config.IsMessengerOnline) ?View.VISIBLE:View.INVISIBLE);
+
     }
     void load_findViewByid(){
         // for dialog size
@@ -305,6 +311,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
         RealmConfiguration myConfig = new RealmConfiguration.Builder()
                 .name(ErxesRequest.database_name)
+                .modules(new ErxesRealmModule())
                 .schemaVersion(ErxesRequest.database_version)
                 .deleteRealmIfMigrationNeeded()
                 .build();

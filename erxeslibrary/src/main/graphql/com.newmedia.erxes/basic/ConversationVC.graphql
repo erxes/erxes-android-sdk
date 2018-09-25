@@ -10,7 +10,7 @@ mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!)
         customerId
     }
 }
-mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String!,$conversationId: String!, $attachments: [JSON])
+mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [JSON])
 {
     insertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments)
    {
@@ -49,10 +49,8 @@ query Messages($conversationId: String!){
      }
   }
 }
-query IsMessengerOnline($integrationId: String!){
-  isMessengerOnline(integrationId: $integrationId)
 
-}
+
 query GetMessengerIntegration($brandCode: String!){
   getMessengerIntegration(brandCode: $brandCode) {
     languageCode
@@ -60,3 +58,5 @@ query GetMessengerIntegration($brandCode: String!){
     messengerData
   }
 }
+
+

@@ -33,23 +33,23 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     private Config config;
     private ErxesRequest erxesRequest;
     @Override
-    public void notify(final ReturnType returnType, final String conversationId, String message) {
+    public void notify(final int  returnType, final String conversationId, String message) {
 
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 switch (returnType){
-                    case Subscription:
-                    case Getconversation:
+                    case ReturnType.Subscription:
+                     case ReturnType.Getconversation:
                         recyclerView.getAdapter().notifyDataSetChanged();
                         break;
-                    case INTEGRATION_CHANGED:
+                     case ReturnType.INTEGRATION_CHANGED:
                         info_header.setBackgroundColor(config.colorCode);
                         addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
                         break;
-                    case CONNECTIONFAILED:
+                    case ReturnType.CONNECTIONFAILED:
                         break;
-                    case SERVERERROR:
+                    case ReturnType.SERVERERROR:
                         break;
 
                         default:break;

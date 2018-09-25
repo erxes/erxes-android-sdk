@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Model.Conversation;
@@ -39,6 +40,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         config = Config.getInstance(context);
         RealmConfiguration myConfig = new RealmConfiguration.Builder()
                 .name(ErxesRequest.database_name)
+                .modules(new ErxesRealmModule())
                 .schemaVersion(ErxesRequest.database_version)
                 .deleteRealmIfMigrationNeeded()
                 .build();

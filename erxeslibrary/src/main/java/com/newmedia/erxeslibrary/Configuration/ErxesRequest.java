@@ -10,7 +10,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
-import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
+//import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.ConversationListActivity;
@@ -30,7 +30,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.annotation.Nonnull;
 
@@ -124,6 +123,7 @@ public class ErxesRequest {
         getmess.run(conversationid);
 
     }
+
     public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
         RealmConfiguration myConfig = new RealmConfiguration.Builder()
                 .name(database_name)
@@ -172,30 +172,30 @@ public class ErxesRequest {
         observers.clear();
         observers.add(e);
     }
-    public void isMessengerOnline(){
-        if(!isNetworkConnected()){
-            return;
-        }
-
-        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(config.integrationId)
-                .build()).enqueue(new ApolloCall.Callback<IsMessengerOnlineQuery.Data>() {
-            @Override
-            public void onResponse(@Nonnull Response<IsMessengerOnlineQuery.Data> response) {
-                if(!response.hasErrors()){
-                    config.isMessengerOnline =  response.data().isMessengerOnline();
-                    notefyAll(ReturnType.IsMessengerOnline,null,null);
-                }
-                else
-                    notefyAll(ReturnType.SERVERERROR,null,null);
-            }
-
-            @Override
-            public void onFailure(@Nonnull ApolloException e) {
-                Log.d(TAG,"IsMessengerOnline failed ");
-                notefyAll(ReturnType.CONNECTIONFAILED,null,null);
-            }
-        });
-    }
+//    public void isMessengerOnline(){
+//        if(!isNetworkConnected()){
+//            return;
+//        }
+//
+//        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(config.integrationId)
+//                .build()).enqueue(new ApolloCall.Callback<IsMessengerOnlineQuery.Data>() {
+//            @Override
+//            public void onResponse(@Nonnull Response<IsMessengerOnlineQuery.Data> response) {
+//                if(!response.hasErrors()){
+//                    config.isMessengerOnline =  response.data().isMessengerOnline();
+//                    notefyAll(ReturnType.IsMessengerOnline,null,null);
+//                }
+//                else
+//                    notefyAll(ReturnType.SERVERERROR,null,null);
+//            }
+//
+//            @Override
+//            public void onFailure(@Nonnull ApolloException e) {
+//                Log.d(TAG,"IsMessengerOnline failed ");
+//                notefyAll(ReturnType.CONNECTIONFAILED,null,null);
+//            }
+//        });
+//    }
     public boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
@@ -206,7 +206,7 @@ public class ErxesRequest {
         observers.clear();
     }
 
-    public void notefyAll( ReturnType returnType,String conversationId, String message){
+    public void notefyAll( int returnType,String conversationId, String message){
         if(observers == null) return;
         for( int i = 0; i < observers.size(); i++ ){
             observers.get(i).notify(returnType,conversationId,message);
