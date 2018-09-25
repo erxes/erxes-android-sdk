@@ -1,47 +1,18 @@
-# erxes-android
+# erxes Inc - erxes for Android SDK
 
-#### The latest Gradle plugin version is [![GitHub (pre-)release](https://img.shields.io/github/release/erxes/erxes-android-sdk/all.svg?style=flat-square)](https://github.com/erxes/erxes-android-sdk/)
-<br>
+erxes is an open source growth marketing platform. Marketing, sales, and customer service platform designed to help your business attract more engaged customers. Replace Hubspot and Intercom with the mission and community-driven ecosystem.
 
-Step 1. Add the JitPack repository to your build file
-
-Add it in your root build.gradle at the end of repositories:
-
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-  
-Step 2. Add the dependency
-
-	dependencies {
-	        implementation com.github.erxes:erxes-android-sdk:v{release version}
-	}
-	
-Step 3. Add in your own code
-
-	Config config;
-	config  = Config.getInstance(this);
-	config.Init("brand_code",
-		"http://your_host_address:3100/graphql",
-		"ws://your_host_address:3300/subscriptions",
-		"http://your_host_address:3300/upload-file" );
-	config.Start();
-	// or you can start with 
-	config.Start_login_email("email@example.com");
-	//or 
-	config.Start_login_phone("99001100");
-	
-	
+<a href="https://demohome.erxes.io/">View demo</a> <b>| </b> <a href="https://github.com/erxes/erxes-android-sdk/archive/master.zip">Download ZIP </a> <b> | </b> <a href="https://gitter.im/erxes/Lobby">Join us on Gitter</a>
 	
 ## Status <br>
-
-[![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3025bab0be4547639a9baa0fdc5e61f5)](https://www.codacy.com/project/orshih_bat/erxes-android-sdk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=erxes/erxes-android-sdk&amp;utm_campaign=Badge_Grade_Dashboard)
+[![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
+[![CocoaPods](https://img.shields.io/cocoapods/l/AFNetworking.svg)](https://github.com/erxes/erxes-android-sdk/)
 
+## Documentation
+
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation-with-Java">Java Installation Guide</a>
 
 ## Contributors
 
