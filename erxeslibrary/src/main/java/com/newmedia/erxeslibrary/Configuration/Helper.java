@@ -17,6 +17,8 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import io.realm.RealmConfiguration;
+
 public class Helper {
     static DataManager dataManager;
     static Config config;
@@ -93,6 +95,15 @@ public class Helper {
             config.notifyCustomer = bool;
         } catch (JSONException e) {
         }
+    }
+    static public RealmConfiguration getRealmConfig(){
+        RealmConfiguration myConfig = new RealmConfiguration.Builder()
+                .name(ErxesRequest.database_name)
+                .modules(new ErxesRealmModule())
+                .schemaVersion(ErxesRequest.database_version)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        return myConfig;
     }
 
 }

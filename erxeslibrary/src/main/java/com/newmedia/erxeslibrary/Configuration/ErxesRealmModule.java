@@ -13,7 +13,7 @@ import com.newmedia.erxeslibrary.Model.User;
 
 import io.realm.annotations.RealmModule;
 
-@RealmModule(classes = {Conversation.class, ConversationMessage.class,
+@RealmModule(library = true,classes = {Conversation.class, ConversationMessage.class,
         EngageData.class, Integration.class, User.class, KnowledgeBaseArticle.class, KnowledgeBaseCategory.class,
         KnowledgeBaseLoader.class, KnowledgeBaseTopic.class,Supporter.class})
 public class ErxesRealmModule {

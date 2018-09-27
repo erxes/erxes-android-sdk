@@ -17,6 +17,7 @@ import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
+import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
 
@@ -38,13 +39,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         this.context = context;
         Realm.init(context);
         config = Config.getInstance(context);
-        RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                .name(ErxesRequest.database_name)
-                .modules(new ErxesRealmModule())
-                .schemaVersion(ErxesRequest.database_version)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        realm = Realm.getInstance(myConfig);
+        realm = Realm.getInstance(Helper.getRealmConfig());
         this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
 
     }

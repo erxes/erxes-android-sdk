@@ -28,6 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
+import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Model.User;
@@ -51,14 +52,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 //        Config.Init(this);
-        RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                .name(ErxesRequest.database_name)
-                .modules(new ErxesRealmModule())
-                .schemaVersion(ErxesRequest.database_version)
-                .deleteRealmIfMigrationNeeded()
-                .build();
+
         Realm.init(this);
-        realm = Realm.getInstance(myConfig);
+        realm = Realm.getInstance(Helper.getRealmConfig());
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
