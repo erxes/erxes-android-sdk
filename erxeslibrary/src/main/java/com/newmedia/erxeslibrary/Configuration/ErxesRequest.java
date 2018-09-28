@@ -19,6 +19,7 @@ import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.Model.Conversation;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
+import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
 import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
 import com.newmedia.erxeslibrary.graphqlfunction.Getmess;
 import com.newmedia.erxeslibrary.graphqlfunction.Insertmess;
@@ -123,14 +124,16 @@ public class ErxesRequest {
         getmess.run(conversationid);
 
     }
+    public void getSupporters( ){
+        if(!isNetworkConnected()){
+            return;
+        }
+        GetSup getSup = new GetSup(this,context);
+        getSup.run();
+    }
 
     public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-        RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                .name(database_name)
-                .schemaVersion(database_version)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm inner = Realm.getInstance(myConfig);
+        Realm inner = Realm.getInstance(Helper.getRealmConfig());
         inner.beginTransaction();
         inner.insertOrUpdate(ConversationMessage.convert(data));
         inner.commitTransaction();
@@ -155,12 +158,8 @@ public class ErxesRequest {
 
     }
     public void async_update_database(RealmModel realmModel){
-        RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                .name(database_name)
-                .schemaVersion(database_version)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm inner = Realm.getInstance(myConfig);
+
+        Realm inner = Realm.getInstance(Helper.getRealmConfig());
         inner.beginTransaction();
         inner.insertOrUpdate(realmModel);
         inner.commitTransaction();

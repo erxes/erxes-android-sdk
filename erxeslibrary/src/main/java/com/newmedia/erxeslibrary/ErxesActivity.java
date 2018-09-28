@@ -41,9 +41,9 @@ import io.realm.RealmResults;
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     EditText email,phone;
-    TextView  sms_button,email_button,names,isOnline;
+    TextView  sms_button,email_button,names;
     LinearLayout container;
-    ImageView mailzurag, phonezurag,profile1,profile2;
+    ImageView mailzurag, phonezurag;
     private Realm realm ;
     private CardView mailgroup,smsgroup;
     private Config config;
@@ -82,10 +82,8 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         smsgroup = this.findViewById(R.id.smsgroup);
         mailzurag = this.findViewById(R.id.mail_zurag);
         phonezurag = this.findViewById(R.id.phonezurag);
-        profile1 = this.findViewById(R.id.profile1);
-        profile2 = this.findViewById(R.id.profile2);
         names = this.findViewById(R.id.names);
-        isOnline = this.findViewById(R.id.isOnline);
+
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
         if(config.isLoggedIn()){
@@ -111,41 +109,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
         Drawable drawable =  this.findViewById(R.id.selector).getBackground();
         drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
-
-        RealmResults<User> users =  realm.where(User.class).findAll();
-
-        if(users.size()>0){
-            if(users.get(0).avatar!=null)
-                GlideApp.with(this).load(users.get(0).avatar).placeholder(R.drawable.avatar)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(profile1);
-
-            profile1.setVisibility(View.VISIBLE);
-            String myString = users.get(0).fullName;
-            String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
-            names.setText(upperString);
-            names.setVisibility(View.VISIBLE);
-        }
-        else {
-            profile1.setVisibility(View.INVISIBLE);
-            names.setVisibility(View.INVISIBLE);
-        }
-        if(users.size()>1){
-            if(users.get(1).avatar!=null)
-                GlideApp.with(this).load(users.get(1).avatar).placeholder(R.drawable.avatar)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into((ImageView)this.findViewById(R.id.profile2));
-            profile2.setVisibility(View.VISIBLE);
-            String myString = users.get(1).fullName;
-            String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
-            names.setText(names.getText().toString()+", "+upperString);
-        }
-        else {
-            profile2.setVisibility(View.INVISIBLE);
-        }
-        isOnline.setText(config.messenger_status_check()?R.string.online:R.string.offline);
-
-
 
     }
     public void email_click(View v){

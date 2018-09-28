@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -149,6 +150,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
 //        erxesRequest.getConversations();
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
+
 
 
     }

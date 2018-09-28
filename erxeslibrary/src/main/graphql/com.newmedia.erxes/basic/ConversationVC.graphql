@@ -50,6 +50,18 @@ query Messages($conversationId: String!){
   }
 }
 
+query ConversationDetail($integ : String!){
+  conversationDetail(integrationId: $integ) {
+    isOnline
+    supporters{
+      _id
+      details {
+        avatar
+        fullName
+      }
+    }
+  }
+}
 
 query GetMessengerIntegration($brandCode: String!){
   getMessengerIntegration(brandCode: $brandCode) {

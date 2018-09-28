@@ -21,73 +21,29 @@
             android:layout_height="@dimen/login_bar_height"
             android:background="#5629B6"
             android:orientation="horizontal">
-            <RelativeLayout
+
+
+            <TextView
+                android:id="@+id/names"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:text="@string/contact"
+                android:textColor="#fff"
+                android:textSize="@dimen/header_big"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/logout"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent" />
 
 
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile1"
-                    android:layout_width="@dimen/image_size"
-                    android:layout_height="@dimen/image_size"
-                    android:layout_alignLeft="@id/profile2"
-                    android:layout_centerHorizontal="true"
-                    android:src="@drawable/avatar"
-                    android:layout_marginLeft="20dp"
-                    android:visibility="invisible"
-                    app:civ_border_width="1dp"
-                    app:civ_border_color="#000000"
-                    app:civ_circle_background_color="#fff"/>
-
-
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/profile2"
-                    android:layout_width="@dimen/image_size"
-                    android:layout_height="@dimen/image_size"
-                    android:src="@drawable/avatar"
-                    android:visibility="invisible"
-                    app:civ_border_width="1dp"
-                    app:civ_border_color="#000000"
-                    app:civ_circle_background_color="#fff"/>
-
-
-                <LinearLayout
-                    android:layout_marginLeft="10dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/profile1"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#fff"
-                        android:textStyle="bold"
-                        android:visibility="invisible"
-                        android:textSize="@dimen/header_big"
-                        android:id="@+id/names"
-                        android:text="Mendorshih, Amartaivan"/>
-                    <TextView
-                        android:id="@+id/isOnline"
-                        android:textSize="@dimen/header_small"
-                        android:textColor="#c1c1c1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/offline"/>
-                </LinearLayout>
-
-            </RelativeLayout>
             <LinearLayout
                 android:id="@+id/logout"
                 android:layout_width="wrap_content"

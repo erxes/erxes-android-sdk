@@ -10,6 +10,7 @@ import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.Model.ConversationMessage;
@@ -40,11 +41,7 @@ public class Getmess {
 
             if(response.data().messages().size() > 0) {
                 List<ConversationMessage> data = ConversationMessage.convert(response,conversationid);
-                RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                        .name(ErxesRequest.database_name)
-                        .schemaVersion(ErxesRequest.database_version)
-                        .deleteRealmIfMigrationNeeded().build();
-                Realm inner = Realm.getInstance(myConfig);
+                Realm inner = Realm.getInstance(Helper.getRealmConfig());
                 inner.beginTransaction();
                 inner.copyToRealmOrUpdate(data);
                 inner.commitTransaction();

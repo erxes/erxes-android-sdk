@@ -75,10 +75,7 @@ public class ListenerService extends Service{
         super.onCreate();
 
         Realm.init(this);
-        myConfig = new RealmConfiguration.Builder()
-                .name(ErxesRequest.database_name)
-                .schemaVersion(ErxesRequest.database_version)
-                .deleteRealmIfMigrationNeeded().build();
+        myConfig = Helper.getRealmConfig();
 
 //        startListen();
         DataManager dataManager;
