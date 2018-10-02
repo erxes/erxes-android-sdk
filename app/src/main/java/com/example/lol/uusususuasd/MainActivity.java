@@ -14,37 +14,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        Api3100 connect = new Api3100();
-//        connect.test();
-//        Config.Init(this,"yPv5aN","192.168.1.15");
-//        Config config = Config.getInstance(this);
-//        config.Init("","","","");
-//        config.Start_login_email("orshih_bat@uahoo.com");
-//        Config.Init(this,"YDEdKj","192.168.1.6");
-//        Config.Init(this,"yPv5aN","172.20.10.3");
-//        Config.Init(this,"yPv5aN","192.168.100.185");
-        config  = Config.getInstance(this);
-        config.Init("yPv5aN",
-                "http://192.168.1.8:3100/graphql",
-                "ws://192.168.1.8:3300/subscriptions",
-                "http://192.168.1.8:3300/upload-file" );
+
+//        config  = Config.getInstance(this);
 //        config.Init("yPv5aN",
-//                "http://192.168.100.177:3100/graphql",
-//                "ws://192.168.100.177:3300/subscriptions",
-//                "http://192.168.100.177:3300/upload-file" );
+//                "http://192.168.1.8:3100/graphql",
+//                "ws://192.168.1.8:3300/subscriptions",
+//                "http://192.168.1.8:3300/upload-file" );
 
-//        HOST_3100="http://"+HOST+":3100/graphql";
-//        HOST_3300="ws://"+HOST+":3300/subscriptions";
-//        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
+        config  = Config.getInstance(this);
+        config.Init("Wtmpph",
+                "https://api.crm.nmma.co/graphql",
+                "wss://app-api.crm.nmma.co/subscriptions",
+                "https://api.crm.nmma.co/upload-file" );
 
-//        Config.Init(this,"yPv5aN","192.168.86.43");
-
-
-
-
-
-//        Intent a  = new Intent(this,DeleteActivity.class);
-//        startActivity(a);
         this.findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -163,12 +163,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     }
     void header_profile_change(){
         RealmResults<User> users =  realm.where(User.class).findAll();
-        if(users.size() == 0){
-            erxesRequest.getSupporters();
-        }
-        else {
+        if(users.size() > 0)
             isMessenOnlineImage.setVisibility(View.VISIBLE);
-        }
+
         if(users.size()>0){
             if(users.get(0).avatar!=null)
                 GlideApp.with(this).load(users.get(0).avatar).placeholder(R.drawable.avatar)
@@ -349,6 +346,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
 
         header_profile_change();
+        erxesRequest.getSupporters();
 
         if (shouldAskPermissions()) {
             askPermissions();
