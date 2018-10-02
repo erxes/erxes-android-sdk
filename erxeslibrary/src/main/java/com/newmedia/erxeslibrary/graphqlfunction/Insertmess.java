@@ -6,15 +6,12 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.List;

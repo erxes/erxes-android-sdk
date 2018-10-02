@@ -8,7 +8,7 @@
     android:gravity="bottom"
     android:background="#00000000"
     android:id="@+id/linearlayout"
-    tools:context=".MessageActivity">
+    tools:context=".ui.message.MessageActivity">
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -30,8 +30,8 @@
                 android:layout_marginRight="@dimen/fab_margin"
                 android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@id/logout"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/logout"
+                app:layout_constraintStart_toEndOf="@id/back"
                 app:layout_constraintTop_toTopOf="parent">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile1"
@@ -95,6 +95,7 @@
                     android:src="@drawable/erxes_logout" />
             </LinearLayout>
             <LinearLayout
+
                 android:id="@+id/back"
                 android:onClick="Click_back"
                 android:layout_width="wrap_content"

@@ -8,7 +8,7 @@
     android:gravity="bottom"
     android:background="#80000000"
     android:id="@+id/linearlayout"
-    tools:context=".ConversationListActivity">
+    tools:context=".ui.conversations.ConversationListActivity">
     <android.support.constraint.ConstraintLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"

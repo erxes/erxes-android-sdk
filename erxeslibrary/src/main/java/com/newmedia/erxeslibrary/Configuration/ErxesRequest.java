@@ -4,20 +4,17 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
-import com.newmedia.erxeslibrary.ConversationListActivity;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
 import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
 import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
@@ -32,10 +29,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmModel;
 import okhttp3.OkHttpClient;
 

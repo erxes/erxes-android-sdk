@@ -1,6 +1,4 @@
-package com.newmedia.erxeslibrary.Model;
-
-import android.util.Log;
+package com.newmedia.erxeslibrary.model;
 
 import com.apollographql.apollo.api.Response;
 

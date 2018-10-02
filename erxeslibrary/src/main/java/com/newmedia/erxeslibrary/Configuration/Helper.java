@@ -1,27 +1,29 @@
 package com.newmedia.erxeslibrary.Configuration;
 
-import android.app.ActivityManager;
+import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.LightingColorFilter;
-import android.graphics.Paint;
-import android.widget.ImageView;
+import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
+import com.newmedia.erxeslibrary.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.List;
 
 import io.realm.RealmConfiguration;
 
 public class Helper {
     static DataManager dataManager;
     static Config config;
+    static public int[] backgrounds ={R.drawable.bitmap1,R.drawable.bitmap2,R.drawable.bitmap3,R.drawable.bitmap4};
     static void Init(Context context){
         dataManager =  DataManager.getInstance(context);
         config = Config.getInstance(context);
@@ -104,6 +106,28 @@ public class Helper {
                 .deleteRealmIfMigrationNeeded()
                 .build();
         return myConfig;
+    }
+    static public void display_configure(Activity context, View container,String color){
+        Display display = context.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = (int)( size.y *0.8);
+
+        context.getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
+        Window window = context.getWindow();
+        WindowManager.LayoutParams wlp = window.getAttributes();
+        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
+        wlp.gravity = Gravity.BOTTOM;
+        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+        window.setAttributes(wlp);
+
+        if(!(context instanceof ErxesActivity)) {
+            container.getLayoutParams().height = height;
+            container.requestLayout();
+        }
+
+
     }
 
 }

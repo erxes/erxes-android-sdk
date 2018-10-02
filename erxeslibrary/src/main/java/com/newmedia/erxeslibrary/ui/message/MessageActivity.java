@@ -1,17 +1,14 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.ui.message;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
-import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,8 +17,6 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -37,7 +32,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ProgressRequestBody;
@@ -45,23 +39,23 @@ import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.Configuration.SoftKeyboard;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
-import com.newmedia.erxeslibrary.Model.User;
+import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.FileInfo;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.User;
+import com.newmedia.erxeslibrary.R;
 
 
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -91,7 +85,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     private Config config;
     private ErxesRequest erxesRequest;
     Point size;
-    FIleInfo fIleInfo;
+    FileInfo fileInfo;
     //    private ImageView uploadImage;
     private final String TAG="MESSAGEACTIVITY";
     @Override
@@ -202,33 +196,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
     }
     void load_findViewByid(){
-        // for dialog size
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(this.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.MATCH_PARENT;
-        this.getWindow().setAttributes(lp);
-
-        Display display = getWindowManager().getDefaultDisplay();
-        size = new Point();
-        display.getSize(size);
-
-
-        getWindow().setLayout(size.x, WindowManager.LayoutParams.MATCH_PARENT);
-        Window window = getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#00000000")));
-        wlp.gravity = Gravity.BOTTOM;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-
-
-
-        // load views
         container = this.findViewById(R.id.container);
         linearlayout = this.findViewById(R.id.linearlayout);
-        container.getLayoutParams().height = size.y * 8 / 10; /// 80% ondortoi
-        container.requestLayout();
+        Helper.display_configure(this,container,"#00000000");
 
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
         SoftKeyboard softKeyboard;
@@ -239,7 +209,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
             @Override
             public void onSoftKeyboardHide()
             {
-                // Code here
                 MessageActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -247,14 +216,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                         container.requestLayout();
                     }
                 });
-
             }
-
             @Override
             public void onSoftKeyboardShow()
             {
-                // Code here
-                // Code here
                 MessageActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -262,7 +227,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                         container.requestLayout();
                     }
                 });
-
             }
         });
         upload_group = this.findViewById(R.id.upload_group);
@@ -295,15 +259,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
 
         mMessageRecycler =  findViewById(R.id.reyclerview_message_list);
-        if(config.wallpaper!=null)
-            if(config.wallpaper.equalsIgnoreCase("1"))
-                mMessageRecycler.setBackgroundResource(R.drawable.bitmap1);
-            else if(config.wallpaper.equalsIgnoreCase("2"))
-                mMessageRecycler.setBackgroundResource(R.drawable.bitmap2);
-            else if(config.wallpaper.equalsIgnoreCase("3"))
-                mMessageRecycler.setBackgroundResource(R.drawable.bitmap3);
-            else if(config.wallpaper.equalsIgnoreCase("4"))
-                mMessageRecycler.setBackgroundResource(R.drawable.bitmap4);
+        int index = Integer.valueOf(config.wallpaper,-1);
+        if(index > -1 && index < 5)
+            mMessageRecycler.setBackgroundResource(Helper.backgrounds[index]);
+
 
 
     }
@@ -433,71 +392,26 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
 
-        // The ACTION_OPEN_DOCUMENT intent was sent with the request code
-        // READ_REQUEST_CODE. If the request code seen here doesn't match, it's the
-        // response to some other intent, and the code below shouldn't run at all.
-
         if (requestCode == 444 && resultCode == Activity.RESULT_OK) {
+
             Uri returnUri = resultData.getData();
-            fIleInfo = new FIleInfo();
-            fIleInfo.filepath = null;
 
-                if (returnUri != null && "content".equals(returnUri.getScheme())) {
-                    Cursor cursor = this.getContentResolver().query(returnUri, new String[]
-                            {       MediaStore.Images.ImageColumns.DATA,
-                                    MediaStore.Images.ImageColumns.SIZE,
-                                    MediaStore.Images.ImageColumns.DISPLAY_NAME,
-                                    MediaStore.Images.ImageColumns.MIME_TYPE
-                            }, null, null, null);
+            fileInfo = new FileInfo(this,returnUri);
 
-                    cursor.moveToFirst();
-                    fIleInfo = new FIleInfo();
-                    fIleInfo.filepath =  cursor.getString(0);
-                    fIleInfo.size = cursor.getString(1);
-                    fIleInfo.name = cursor.getString(2);
-                    fIleInfo.type = cursor.getString(3);
-
-//                    Log.d("erxes_api", "info = " + cursor.getString(0) + " " + cursor.getString(1) + " ?" + cursor.getString(2) + cursor.getString(3));
-                    cursor.close();
-                } else {
-                    fIleInfo.filepath = returnUri.getPath();
-                }
-
-                if(fIleInfo.filepath == null) {
-                    File root = android.os.Environment.getExternalStorageDirectory();
-                    File tempFile = new File(root.getAbsolutePath()+"/Download", "temp_image");
-                    FileOutputStream outputStream =null;
-                    try {
-                        tempFile.createNewFile();
-                        //                this.getContentResolver().openInputStream(returnUri,new FileOutputStream(tempFile));
-                        outputStream = new FileOutputStream(tempFile);
-                    } catch ( IOException e) {
-                        e.printStackTrace();
-                        Log.d("erxes_api", "create file" );
-                    }
-                    if(outputStream != null)
-                    try{
-                        InputStream inputStream = this.getContentResolver().openInputStream(returnUri);
-
-
-                        byte[] buffer = new byte[8 * 1024];
-                        int bytesRead;
-                        while ((bytesRead = inputStream.read(buffer)) != -1) {
-                            outputStream.write(buffer, 0, bytesRead);
-                        }
-                        inputStream.close();
-                        outputStream.close();
-                        upload(tempFile);
-
-                    } catch ( IOException e) {
-                        e.printStackTrace();
-                        Log.d("erxes_api", "output stream error" );
-                        Snackbar.make(container, R.string.fileerror, Snackbar.LENGTH_SHORT).show();
-                    }
-                }
-                else
-                    upload(new File(fIleInfo.filepath));
+            if (returnUri != null && "content".equals(returnUri.getScheme())) {
+                fileInfo.init();
+            } else {
+                fileInfo.filepath = returnUri.getPath();
             }
+            //here
+            File upload_file = fileInfo.if_not_exist_create_file();
+            if(upload_file != null){
+                upload(upload_file);
+            }
+            else{
+                Snackbar.make(container, R.string.fileerror, Snackbar.LENGTH_SHORT).show();
+            }
+        }
         upload_group.setClickable(true);
 
     }
@@ -517,12 +431,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                 .readTimeout(2,TimeUnit.MINUTES).build();
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", fIleInfo.name, RequestBody.create(MediaType.parse(fIleInfo.type), file))
-                .addFormDataPart("name", fIleInfo.name )
+                .addFormDataPart("file", fileInfo.name, RequestBody.create(MediaType.parse(fileInfo.type), file))
+                .addFormDataPart("name", fileInfo.name )
                 .build();
 
         ;
-        Request request = new Request.Builder().url(config.HOST_UPLOAD).addHeader("Authorization","")
+        Request request = new Request.Builder()
+                .url(config.HOST_UPLOAD)
+                .addHeader("Authorization","")
                 .post(new ProgressRequestBody(formBody,this)).build();
 
 
@@ -549,8 +465,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()) {
 
-                    fIleInfo.filepath = response.body().string();
-                    upload_files.add(fIleInfo.get());
+                    fileInfo.filepath = response.body().string();
+                    upload_files.add(fileInfo.get());
                     Log.i("erxes_api", "upload complete");
                     MessageActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -560,7 +476,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
                             TextView filename = view.findViewById(R.id.filename);
                             view.findViewById(R.id.remove).setTag(upload_files.get(upload_files.size()-1));
                             view.findViewById(R.id.remove).setOnClickListener(remove_fun);
-                            filename.setText(""+fIleInfo.name);
+                            filename.setText(""+fileInfo.name);
                             filelist.addView(view);
                             progressBar.setProgress(0);
                         }

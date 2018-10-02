@@ -12,9 +12,8 @@ import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import org.json.JSONObject;
 

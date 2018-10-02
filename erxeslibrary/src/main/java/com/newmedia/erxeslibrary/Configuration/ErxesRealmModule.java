@@ -1,15 +1,15 @@
 package com.newmedia.erxeslibrary.Configuration;
 
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
-import com.newmedia.erxeslibrary.Model.EngageData;
-import com.newmedia.erxeslibrary.Model.Integration;
-import com.newmedia.erxeslibrary.Model.KnowledgeBaseArticle;
-import com.newmedia.erxeslibrary.Model.KnowledgeBaseCategory;
-import com.newmedia.erxeslibrary.Model.KnowledgeBaseLoader;
-import com.newmedia.erxeslibrary.Model.KnowledgeBaseTopic;
-import com.newmedia.erxeslibrary.Model.Supporter;
-import com.newmedia.erxeslibrary.Model.User;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.EngageData;
+import com.newmedia.erxeslibrary.model.Integration;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseLoader;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
+import com.newmedia.erxeslibrary.model.Supporter;
+import com.newmedia.erxeslibrary.model.User;
 
 import io.realm.annotations.RealmModule;
 
