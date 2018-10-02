@@ -1,10 +1,11 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.newmedia.erxeslibrary.R;
 
 
 public class ConversationHolder extends RecyclerView.ViewHolder {
@@ -18,6 +19,5 @@ public class ConversationHolder extends RecyclerView.ViewHolder {
         date = itemView.findViewById(R.id.date);
         content = itemView.findViewById(R.id.content);
         name = itemView.findViewById(R.id.name);
-//        isonline = itemView.findViewById(R.id.isonline);
     }
 }

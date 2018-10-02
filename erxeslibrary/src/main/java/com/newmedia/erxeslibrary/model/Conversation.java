@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.Model;
+package com.newmedia.erxeslibrary.model;
 
 
 

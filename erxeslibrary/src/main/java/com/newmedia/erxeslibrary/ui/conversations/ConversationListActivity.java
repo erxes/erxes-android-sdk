@@ -1,27 +1,26 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.ui.message.MessageActivity;
+import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 
 public class ConversationListActivity extends AppCompatActivity  implements ErxesObserver {
 
@@ -116,23 +115,8 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         this.findViewById(R.id.start).setOnTouchListener(touchListener);
 
 //        ((TextView)this.findViewById(R.id.dp)).setText(""+getResources().getDisplayMetrics().density);
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = (int)( size.y *0.8);
 
-        getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
-        Window window = getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#66000000")));
-        wlp.gravity = Gravity.BOTTOM;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
-
-
-        container.getLayoutParams().height = height;
-        container.requestLayout();
+        Helper.display_configure(this,container,"#66000000");
 
         addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
 

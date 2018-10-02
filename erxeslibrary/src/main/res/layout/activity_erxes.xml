@@ -8,7 +8,7 @@
     android:gravity="bottom"
     android:background="#80000000"
     android:id="@+id/linearlayout"
-    tools:context=".ErxesActivity">
+    tools:context=".ui.login.ErxesActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

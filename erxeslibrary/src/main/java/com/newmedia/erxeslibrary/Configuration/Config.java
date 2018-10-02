@@ -6,41 +6,23 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.util.Log;
 
-import com.apollographql.apollo.ApolloCall;
-import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Input;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
-import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.ErxesActivity;
+import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 public class Config implements ErxesObserver{
 
-
-    //    final  public String HOST="192.168.1.6";
-//    final  private String HOST="192.168.86.39";
     private String HOST="";
-    public String HOST_3100=""; //"http://"+HOST+":3100/graphql";
-    public String HOST_3300="";//"ws://"+HOST+":3300/subscriptions";
-    public String HOST_UPLOAD="";//"http://"+HOST+":3300/upload-file";
+    public String HOST_3100="";
+    public String HOST_3300="";
+    public String HOST_UPLOAD="";
     public String customerId;
     public String integrationId;
     private String color;
@@ -51,7 +33,7 @@ public class Config implements ErxesObserver{
     public String timezone;
     public String availabilityMethod;
     public int colorCode;
-    public String conversationId=null; ///public
+    public String conversationId=null;
     public String brandCode;
     public boolean isMessengerOnline = false,notifyCustomer;
     private DataManager dataManager;
@@ -125,7 +107,6 @@ public class Config implements ErxesObserver{
             format3 = new SimpleDateFormat("MMM сарын d,HH:mm");
             format2 = format3;
         }
-//        new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
         if(weeks > 0){
             return format3.format(date);
         }
@@ -167,10 +148,6 @@ public class Config implements ErxesObserver{
     }
 
     public void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
-//        HOST_3100="http://"+HOST+":3100/graphql";
-//        HOST_3300="ws://"+HOST+":3300/subscriptions";
-//        HOST_UPLOAD="http://"+HOST+":3300/upload-file";
-
         HOST_3100 = ip_3100;
         HOST_3300 = ip_3300;
         HOST_UPLOAD = ip_upload_file;
@@ -203,14 +180,6 @@ public class Config implements ErxesObserver{
     public void Start_login_phone(String phone){
         erxesRequest.add(this);
         erxesRequest.setConnect("",phone);
-//        Intent a = new Intent(context,ErxesActivity.class);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-//            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
-//            context.startActivity(a,options.toBundle());
-//        }
-//        else
-//            context.startActivity(a);
-
     }
     public void LoadDefaultValues(){
 
@@ -260,7 +229,6 @@ public class Config implements ErxesObserver{
     public void changeLanguage(String lang) {
         if(lang == null || lang.equalsIgnoreCase("") )
             return;
-
 
         this.language = lang ;
         dataManager.setData(DataManager.language, this.language);

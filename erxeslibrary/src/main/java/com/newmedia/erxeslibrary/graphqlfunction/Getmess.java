@@ -6,21 +6,17 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxes.basic.MessagesQuery;
-import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class Getmess {
     final static String TAG = "SETCONNECT";

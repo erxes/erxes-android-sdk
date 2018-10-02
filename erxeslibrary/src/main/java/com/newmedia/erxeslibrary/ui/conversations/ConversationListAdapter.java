@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,27 +7,22 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.ui.message.MessageActivity;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.R;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
@@ -50,9 +45,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                 return;
             }
         }
-//        int pre_size = conversationList.size();
         this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
-//        this.notifyItemInserted(0);
     }
 
     @NonNull
@@ -73,7 +66,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     };
     @Override
     public void onBindViewHolder(@NonNull ConversationHolder holder, int position) {
-//        conversationList.get(position).get
+
         if(conversationList.get(position).isread) {
             if(conversationList.get(position).content!=null)
             holder.content.setText(Html.fromHtml(conversationList.get(position).content));
@@ -87,10 +80,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
-//        if(!Config.IsMessengerOnline)
-//            holder.isonline.setVisibility(View.GONE);
-//        else
-//            holder.isonline.setVisibility(View.VISIBLE);
+
         ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
         holder.circleImageView.setImageResource(R.drawable.avatar);
         holder.name.setText("");

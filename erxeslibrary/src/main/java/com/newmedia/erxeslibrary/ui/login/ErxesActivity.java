@@ -1,41 +1,32 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.ui.login;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ErxesRealmModule;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Model.User;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
+import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.R;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
-import io.realm.RealmResults;
 
 
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
@@ -51,7 +42,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Config.Init(this);
+
 
         Realm.init(this);
         realm = Realm.getInstance(Helper.getRealmConfig());
@@ -60,19 +51,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_erxes);
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
-        Window window = getWindow();
-        WindowManager.LayoutParams wlp = window.getAttributes();
-        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#66000000")));
-        wlp.gravity = Gravity.BOTTOM;
-        wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-        window.setAttributes(wlp);
 
-//        this.getSupportActionBar().hide();
         email = this.findViewById(R.id.email);
         phone = this.findViewById(R.id.phone);
         container = findViewById(R.id.linearlayout);
@@ -83,7 +62,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         mailzurag = this.findViewById(R.id.mail_zurag);
         phonezurag = this.findViewById(R.id.phonezurag);
         names = this.findViewById(R.id.names);
-
+        Helper.display_configure(this,container,"#66000000");
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
         if(config.isLoggedIn()){
@@ -95,10 +74,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         else{
             erxesRequest.getIntegration();
         }
-//        if(Config.isNetworkConnected()){
-//            if(Config.integrationId != null)
-//                ErxesRequest.IsMessengerOnline(Config.integrationId);
-//        }
+
     }
 
     private void change_color(){
