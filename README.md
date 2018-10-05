@@ -9,7 +9,7 @@ erxes is an open source growth marketing platform. Marketing, sales, and custome
 [![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
 [![CocoaPods](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/erxes/erxes-android-sdk/)
-
+[![Backer](https://opencollective.com/erxes/backers/badge.svg?label=Backer&color=brightgreen)](https://opencollective.com/erxes/) [![Sponsor](https://opencollective.com/erxes/sponsors/badge.svg?label=Sponsor&color=brightgreen)](https://opencollective.com/erxes/)
 ## Documentation
 
 * <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation-with-Java">Java Installation Guide</a>
