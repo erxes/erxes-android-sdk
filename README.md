@@ -12,8 +12,9 @@ erxes is an open source growth marketing platform. Marketing, sales, and custome
 [![Backer](https://opencollective.com/erxes/backers/badge.svg?label=Backer&color=brightgreen)](https://opencollective.com/erxes/) [![Sponsor](https://opencollective.com/erxes/sponsors/badge.svg?label=Sponsor&color=brightgreen)](https://opencollective.com/erxes/)
 ## Documentation
 
-* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation-with-Java">Java Installation Guide</a>
-
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation">Installation Guide</a>
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Usage">Usage</a>
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Requirement">Requirement</a>
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
