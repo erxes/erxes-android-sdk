@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
@@ -33,9 +34,13 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     public ConversationListAdapter(Context context) {
         this.context = context;
         Realm.init(context);
+        realm = DB.getDB();
         config = Config.getInstance(context);
-        realm = Realm.getInstance(Helper.getRealmConfig());
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
+        this.conversationList = realm.where(Conversation.class)
+                .equalTo("status","open")
+                .equalTo("customerId",config.customerId)
+                .equalTo("integrationId",config.integrationId)
+                .findAll();
 
     }
     public void update_position(String conversationId){
@@ -45,7 +50,11 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                 return;
             }
         }
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
+        this.conversationList = realm.where(Conversation.class)
+                .equalTo("status","open")
+                .equalTo("customerId",config.customerId)
+                .equalTo("integrationId",config.integrationId)
+                .findAll();
     }
 
     @NonNull

@@ -9,7 +9,7 @@ import com.newmedia.erxeslibrary.Configuration.Config;
 
 
 public class MainActivity extends AppCompatActivity {
-     Config config;
+    Config config;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 config.Start();
-//                config.Start_login_email("orshih_bat@yahoo.com");
-//                config.Start_login_phone("99001100");
+//              config.Start_login_email("orshih_bat@yahoo.com");
+//              config.Start_login_phone("99001100");
             }
         });
 

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -98,16 +100,10 @@ public class Helper {
         } catch (JSONException e) {
         }
     }
-    static public RealmConfiguration getRealmConfig(){
-        RealmConfiguration myConfig = new RealmConfiguration.Builder()
-                .name(ErxesRequest.database_name)
-                .modules(new ErxesRealmModule())
-                .schemaVersion(ErxesRequest.database_version)
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        return myConfig;
-    }
-    static public void display_configure(Activity context, View container,String color){
+
+    static public void display_configure(AppCompatActivity context, View container, String color){
+
+
         Display display = context.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);

@@ -8,6 +8,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
@@ -49,7 +50,7 @@ public class Insertmess {
             }
             else {
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
-                ER.async_update_database(a);
+                DB.save(a);
                 ER.notefyAll(ReturnType.Mutation,conversationId,null);
             }
         }

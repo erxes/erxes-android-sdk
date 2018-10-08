@@ -19,7 +19,6 @@ import java.util.Locale;
 
 public class Config implements ErxesObserver{
 
-    private String HOST="";
     public String HOST_3100="";
     public String HOST_3300="";
     public String HOST_UPLOAD="";
@@ -184,7 +183,6 @@ public class Config implements ErxesObserver{
     public void LoadDefaultValues(){
 
         dataManager = DataManager.getInstance(context);
-        HOST = dataManager.getDataS("HOST");
         HOST_3100 = dataManager.getDataS("HOST3100");
         HOST_3300 = dataManager.getDataS("HOST3300");
         HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
@@ -242,5 +240,30 @@ public class Config implements ErxesObserver{
         context.getResources().updateConfiguration(config,
                 context.getResources().getDisplayMetrics());
 
+    }
+    public static class	Builder	{
+        private String brand;
+        private String apiHost;
+        private String subscriptionHost;
+        private String uploadHost;
+        public Builder(String brand) {
+            this.brand = brand;
+        }
+        public Builder setApiHost(String apiHost) {
+            this.apiHost = apiHost;
+            return this;
+        }
+        public Builder setSubscriptionHost(String subscriptionHost) {
+            this.subscriptionHost = subscriptionHost;
+            return this;
+        }
+
+        public Builder setUploadHost(String uploadHost) {
+            this.uploadHost = uploadHost;
+            return this;
+        }
+        public Config build(Context context1)	{
+            return new Config(context1);
+        }
     }
 }

@@ -1,9 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ErxesLibrary</string>
     <string name="cantconnect">Can\'t connect right now</string>
     <string name="serverror">Wrong data</string>
     <string name="fileerror">Can\'t send this file</string>
-    <string name="title_activity_delete">DeleteActivity</string>
     <string name="logout">Logout</string>
     <string name="email">Email</string>
     <string name="email_hint">email@domain.com</string>
@@ -18,7 +17,4 @@
     <string name="offline">Offline now</string>
     <string name="no_correct_mail">Please enter a valid email address</string>
     <string name="no_correct_phone">Please enter a valid phone number</string>
-
-
-
 </resources>

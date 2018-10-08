@@ -7,6 +7,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.MessagesQuery;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
@@ -37,11 +38,8 @@ public class Getmess {
 
             if(response.data().messages().size() > 0) {
                 List<ConversationMessage> data = ConversationMessage.convert(response,conversationid);
-                Realm inner = Realm.getInstance(Helper.getRealmConfig());
-                inner.beginTransaction();
-                inner.copyToRealmOrUpdate(data);
-                inner.commitTransaction();
-                inner.close();
+                DB.save(data);
+
             }
             ER.notefyAll(ReturnType.Getmessages,conversationid,null);
 

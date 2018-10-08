@@ -8,6 +8,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.ConversationDetailQuery;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
@@ -35,12 +36,11 @@ public class GetSup {
         @Override
         public void onResponse(@Nonnull Response<ConversationDetailQuery.Data> response) {
             if(!response.hasErrors()) {
+
                 config.isMessengerOnline = response.data().conversationDetail().isOnline();
-                Realm inner = Realm.getInstance(Helper.getRealmConfig());
-                inner.beginTransaction();
-                inner.copyToRealmOrUpdate(User.convert(response.data().conversationDetail().supporters()));
-                inner.commitTransaction();
-                inner.close();
+
+                DB.save(User.convert(response.data().conversationDetail().supporters()));
+
                 ER.notefyAll(ReturnType.GetSupporters,null ,null);
             }
             else{

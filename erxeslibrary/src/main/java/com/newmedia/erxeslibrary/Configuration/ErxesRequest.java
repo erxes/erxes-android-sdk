@@ -35,8 +35,7 @@ import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
-    final static public String database_name = "erxes.realm";
-    final static public int database_version = 1;
+
     public ApolloClient apolloClient;
     private OkHttpClient okHttpClient;
     private DataManager dataManager;
@@ -127,38 +126,23 @@ public class ErxesRequest {
     }
 
     public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-        Realm inner = Realm.getInstance(Helper.getRealmConfig());
-        inner.beginTransaction();
-        inner.insertOrUpdate(ConversationMessage.convert(data));
-        inner.commitTransaction();
 
+        DB.save(ConversationMessage.convert(data));
 
-        Conversation conversation = inner.where(Conversation.class).equalTo("_id",data.conversationId()).findFirst();
+        Conversation conversation = DB.getConversation(data.conversationId());
 
         if(conversation!=null) {
-            inner.beginTransaction();
             conversation.content = (data.content());
             conversation.isread = false;
-            inner.insertOrUpdate(conversation);
-            inner.commitTransaction();
-            inner.close();
+            DB.save(conversation);
             notefyAll(ReturnType.Subscription,conversation._id,null);
         }
-        else{
-            inner.close();
-        }
+
         Log.d("erxes","chat is goind"+ConversationListActivity.chat_is_going);
         return ConversationListActivity.chat_is_going;
 
     }
-    public void async_update_database(RealmModel realmModel){
 
-        Realm inner = Realm.getInstance(Helper.getRealmConfig());
-        inner.beginTransaction();
-        inner.insertOrUpdate(realmModel);
-        inner.commitTransaction();
-        inner.close();
-    }
     public void add(ErxesObserver e){
         if(observers == null)
             observers= new ArrayList<>();

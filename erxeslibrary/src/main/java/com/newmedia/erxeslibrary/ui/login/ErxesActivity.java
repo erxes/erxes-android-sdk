@@ -31,11 +31,10 @@ import io.realm.Realm;
 
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
-    EditText email,phone;
-    TextView  sms_button,email_button,names;
-    LinearLayout container;
-    ImageView mailzurag, phonezurag;
-    private Realm realm ;
+    private EditText email,phone;
+    private TextView  sms_button,email_button;
+    private LinearLayout container;
+    private ImageView mailzurag, phonezurag;
     private CardView mailgroup,smsgroup;
     private Config config;
     private ErxesRequest erxesRequest;
@@ -45,10 +44,10 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
 
         Realm.init(this);
-        realm = Realm.getInstance(Helper.getRealmConfig());
+
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
-        this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_erxes);
 
 
@@ -61,7 +60,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         smsgroup = this.findViewById(R.id.smsgroup);
         mailzurag = this.findViewById(R.id.mail_zurag);
         phonezurag = this.findViewById(R.id.phonezurag);
-        names = this.findViewById(R.id.names);
+        
         Helper.display_configure(this,container,"#66000000");
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
