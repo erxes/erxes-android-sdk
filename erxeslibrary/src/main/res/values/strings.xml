@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Erxes</string>
     <string name="cantconnect">Can\'t connect right now</string>
     <string name="serverror">Wrong data</string>
     <string name="fileerror">Can\'t send this file</string>

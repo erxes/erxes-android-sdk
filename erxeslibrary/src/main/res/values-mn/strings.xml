@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Эрхэс</string>
     <string name="cantconnect">Холбогдох боломжгүй байна</string>
     <string name="serverror">Буруу мэдээлэл</string>
     <string name="fileerror">Илгээх боломжгүй файл байна</string>
