@@ -25,6 +25,7 @@ import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.ui.message.GFilePart;
 
 import io.realm.Realm;
 
@@ -73,6 +74,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         else{
             erxesRequest.getIntegration();
         }
+
 
     }
 

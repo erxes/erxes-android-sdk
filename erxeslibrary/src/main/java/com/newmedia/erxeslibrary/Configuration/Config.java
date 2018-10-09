@@ -263,7 +263,9 @@ public class Config implements ErxesObserver{
             return this;
         }
         public Config build(Context context1)	{
-            return new Config(context1);
+            Config t = Config.getInstance(context1);
+            t.Init(this.brand,this.apiHost,this.subscriptionHost,this.uploadHost);
+            return t;
         }
     }
 }

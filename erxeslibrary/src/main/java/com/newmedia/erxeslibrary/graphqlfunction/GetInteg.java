@@ -17,7 +17,7 @@ import com.newmedia.erxeslibrary.DataManager;
 import javax.annotation.Nonnull;
 
 public class GetInteg {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "GETINTEG";
     private ErxesRequest ER;
     private Config config ;
     public GetInteg(ErxesRequest ER, Context context) {

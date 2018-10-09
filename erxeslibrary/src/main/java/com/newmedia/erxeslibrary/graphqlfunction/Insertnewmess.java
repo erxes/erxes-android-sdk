@@ -23,7 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 public class Insertnewmess {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "insertnew";
     private ErxesRequest ER;
     private Config config ;
     private Context context;

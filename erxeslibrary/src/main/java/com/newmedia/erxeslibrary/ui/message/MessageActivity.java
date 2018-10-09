@@ -55,7 +55,7 @@ import java.util.List;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class MessageActivity extends AppCompatActivity implements ErxesObserver,ProgressRequestBody.Listener {
+public class MessageActivity extends AppCompatActivity implements ErxesObserver {
 
     private EditText edittext_chatbox;
     private RecyclerView mMessageRecycler;
@@ -67,7 +67,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     private ProgressBar progressBar;
     private Config config;
     private ErxesRequest erxesRequest;
-    Point size;
+    private Point size;
 
     private GFilePart gFilePart;
 
@@ -167,7 +167,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         if(users.size() > 1)  bind(users.get(1),profile2); else profile2.setVisibility(View.INVISIBLE);
 
         isMessenOnlineImage.setText(config.messenger_status_check()?R.string.online:R.string.offline);
-        progressBar.getProgressDrawable().mutate().setColorFilter(config.colorCode,PorterDuff.Mode.SRC_IN);
+
 //        isMessenOnlineImage.setVisibility(
 //                (Config.isNetworkConnected()&&Config.IsMessengerOnline) ?View.VISIBLE:View.INVISIBLE);
 
@@ -175,7 +175,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
     void load_findViewByid(){
         container = this.findViewById(R.id.container);
 
-        Helper.display_configure(this,container,"#00000000");
+        size = Helper.display_configure(this,container,"#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;
@@ -239,7 +239,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
         erxesRequest = ErxesRequest.getInstance(config);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_messege);
-
+        gFilePart = new GFilePart(config,this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         load_findViewByid();
         mMessageRecycler.setLayoutManager(linearLayoutManager);
@@ -329,16 +329,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver,
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
-        gFilePart.ActivityResult(requestCode,requestCode,resultData);
+        gFilePart.ActivityResult(requestCode,resultCode,resultData);
         upload_group.setClickable(true);
     }
 
 
 
-    @Override
-    public void onProgress(int progress) {
-        progressBar.setProgress(progress);
-    }
+
 
     protected boolean shouldAskPermissions() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);

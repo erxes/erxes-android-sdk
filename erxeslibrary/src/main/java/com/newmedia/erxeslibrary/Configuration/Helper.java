@@ -101,7 +101,7 @@ public class Helper {
         }
     }
 
-    static public void display_configure(AppCompatActivity context, View container, String color){
+    static public Point display_configure(AppCompatActivity context, View container, String color){
 
 
         Display display = context.getWindowManager().getDefaultDisplay();
@@ -122,7 +122,7 @@ public class Helper {
             container.getLayoutParams().height = height;
             container.requestLayout();
         }
-
+        return size;
 
     }
 

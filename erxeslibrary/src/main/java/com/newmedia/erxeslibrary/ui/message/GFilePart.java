@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary.ui.message;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.CircularProgressDrawable;
@@ -35,14 +36,14 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class GFilePart {
-    private File file;
+public class GFilePart implements ProgressRequestBody.Listener {
+    static final String TAG = GFilePart.class.getName();
+    File file;
     private FileInfo fileInfo;
     private Config config;
     private MessageActivity AC;
     private ProgressBar progressBar;
-    private Button button_chatbox_send;
-    private ViewGroup container,filelist;
+    private ViewGroup container,filelist,button_chatbox_send;
     private CircularProgressDrawable senddrawable;
     private List<JSONObject> uploadJsons = new ArrayList<>();
 
@@ -54,6 +55,7 @@ public class GFilePart {
         senddrawable.setCenterRadius(  30f);
 
         progressBar = AC.findViewById(R.id.simpleProgressBar);
+        progressBar.getProgressDrawable().mutate().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_IN);
         progressBar.setMax(100);
         button_chatbox_send = AC.findViewById(R.id.button_chatbox_send);
         filelist = AC.findViewById(R.id.filelist);
@@ -71,9 +73,10 @@ public class GFilePart {
     public void test() {
         OkHttpClient client = new OkHttpClient.Builder().writeTimeout(2,TimeUnit.MINUTES)
                 .readTimeout(2,TimeUnit.MINUTES).build();
+        Log.d(TAG,"type "+fileInfo.type);
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
-                .addFormDataPart("file", fileInfo.name, RequestBody.create(MediaType.parse(fileInfo.type), file))
+                .addFormDataPart("file", fileInfo.name, RequestBody.create(MediaType.parse(fileInfo.type), getFile()))
                 .addFormDataPart("name", fileInfo.name )
                 .build();
 
@@ -81,7 +84,7 @@ public class GFilePart {
         Request request = new Request.Builder()
                 .url(config.HOST_UPLOAD)
                 .addHeader("Authorization","")
-                .post(new ProgressRequestBody(formBody,AC)).build();
+                .post(new ProgressRequestBody(formBody,this)).build();
 
 
         client.newCall(request).enqueue(new Callback() {
@@ -158,16 +161,16 @@ public class GFilePart {
 
         }
     };
-    public void upload(final File file)  {
+    public void upload()  {
         if(!config.isNetworkConnected()) {
             Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
             return;
         }
         senddrawable.start();
-//        button_chatbox_send.setImageResource(R.drawable.file);
         button_chatbox_send.setBackgroundDrawable(senddrawable);
         progressBar.setVisibility(View.VISIBLE);
         button_chatbox_send.setClickable(false);
+        test();
     }
     public void end_of(){
         uploadJsons.clear();
@@ -189,15 +192,27 @@ public class GFilePart {
                 fileInfo.filepath = returnUri.getPath();
             }
 
-            File upload_file = fileInfo.if_not_exist_create_file();
-            if(upload_file != null){
-                upload(upload_file);
+            file = fileInfo.if_not_exist_create_file();
+            if(file != null){
+                Log.i("erxes_api", "result1");
+                upload();
             }
             else{
+                Log.i("erxes_api", "result3");
                 Snackbar.make(container, R.string.fileerror, Snackbar.LENGTH_SHORT).show();
             }
         }
+        Log.i("erxes_api", "result2"+requestCode+" ?"+resultCode+" "+Activity.RESULT_OK);
 
     }
+
+    File getFile() {
+        return file;
+    }
+    @Override
+    public void onProgress(int progress) {
+        progressBar.setProgress(progress);
+    }
+
 }
 
