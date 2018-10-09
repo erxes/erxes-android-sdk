@@ -8,8 +8,9 @@ erxes is an open source growth marketing platform. Marketing, sales, and custome
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3025bab0be4547639a9baa0fdc5e61f5)](https://www.codacy.com/project/orshih_bat/erxes-android-sdk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=erxes/erxes-android-sdk&amp;utm_campaign=Badge_Grade_Dashboard)
 [![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
+[![CI Status](https://api.travis-ci.org/erxes/erxes-android-sdk.svg?branch=develop)](https://travis-ci.org/erxes/erxes-android-sdk)
 [![CocoaPods](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/erxes/erxes-android-sdk/)
-[![Backer](https://opencollective.com/erxes/backers/badge.svg?label=Backer&color=brightgreen)](https://opencollective.com/erxes/) [![Sponsor](https://opencollective.com/erxes/sponsors/badge.svg?label=Sponsor&color=brightgreen)](https://opencollective.com/erxes/)
+
 ## Documentation
 
 * <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation">Installation Guide</a>
