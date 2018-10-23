@@ -38,21 +38,22 @@ import okhttp3.OkHttpClient;
 
 public class ListenerService extends Service{
 
+    private static final String TAG = ListenerService.class.getName();
+    private OkHttpClient okHttpClient;
+    private ApolloClient apolloClient;
+    private CompositeDisposable disposables = new CompositeDisposable();
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
-    private OkHttpClient okHttpClient;
-    private ApolloClient apolloClient;
-    private RealmConfiguration myConfig;
     @Override
     public void onCreate() {
         super.onCreate();
 
         Realm.init(this);
-        myConfig = Helper.getRealmConfig();
 
 //        startListen();
         DataManager dataManager;
@@ -68,6 +69,7 @@ public class ListenerService extends Service{
                 .build();
 
 
+        Log.d(TAG,"oncreate");
     }
 
 
@@ -76,6 +78,7 @@ public class ListenerService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG,"destory");
     }
 
 
@@ -84,7 +87,7 @@ public class ListenerService extends Service{
         return cm.getActiveNetworkInfo() != null;
     }
 
-    private   CompositeDisposable disposables = new CompositeDisposable();
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -97,50 +100,60 @@ public class ListenerService extends Service{
                 id = bundle.getString("id", null);
         }
         if(id==null){
-
-            Realm realm = Realm.getInstance(myConfig);
-            RealmResults<Conversation> list=
-                    realm.where(Conversation.class).equalTo("status","open").findAll();
-            for(int i = 0; i< list.size();i++) {
-                conversation_listen(list.get(i)._id);
+            DataManager dataManager;
+            dataManager =  DataManager.getInstance(this);
+            Realm realm = DB.getDB();
+            RealmResults<Conversation> list =
+                            realm.where(Conversation.class)
+                            .equalTo("status","open")
+                            .equalTo("customerId",dataManager.getDataS(DataManager.customerId))
+                            .equalTo("integrationId",dataManager.getDataS(DataManager.integrationId)).findAll();
+            Log.d(TAG,"start "+list.size());
+            if(disposables.size() != list.size()) {
+                disposables.clear();
+                for(int i = 0; i< list.size();i++) {
+                    conversation_listen(list.get(i)._id);
+                }
             }
+
+
         }else{
             conversation_listen(id);
-
+            Log.d(TAG,"start only one");
         }
-        Log.d("erxesservice","onstartcommand");
+
         return super.onStartCommand(intent, flags, startId);
 
 
     }
-
-    public void conversation_listen(final String conversationId){
+    private boolean run_thread(final String conversationId){
         if(!isNetworkConnected()){
+            //internetgui yud gesen ug
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Thread.sleep(10000);
+                        Log.d(TAG,"subscribe thread running ");
+                        Thread.sleep(5000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
                     }
-
                     conversation_listen(conversationId);
-
-
-
                 }
             }).start();
-            return;
+            return true;
         }
-        ApolloSubscriptionCall<ConversationMessageInsertedSubscription.Data> subscriptionCall;
-        if(apolloClient==null)
+        return false;
+    }
+    public void conversation_listen(final String conversationId){
+        if(run_thread(conversationId))
             return;
-        subscriptionCall=
-                apolloClient
-                        .subscribe(ConversationMessageInsertedSubscription.builder()
+        ApolloSubscriptionCall<ConversationMessageInsertedSubscription.Data> subscriptionCall;
+        if(apolloClient == null)
+            return;
+        subscriptionCall = apolloClient
+                                .subscribe(ConversationMessageInsertedSubscription.builder()
                                 ._id(conversationId)
                                 .build());
-
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -150,68 +163,59 @@ public class ListenerService extends Service{
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.d("erxesservice","onstart"+conversationId);
+                                Log.d(TAG,"onstarted "+conversationId);
                             }
 
                             @Override public void onError(Throwable e) {
-                                Log.d("erxesservice","onerror");
-                                disposables.delete(this);
-                                new Thread(new Runnable() {
-                                    public void run() {
-                                        try {
-                                            Thread.sleep(5000);
-                                        } catch (InterruptedException e1) {
-                                            e1.printStackTrace();
-                                        }
-                                        Log.d("erxesservice","runnable" );
-
-                                        conversation_listen(conversationId);
-
-
-                                    }
-                                }).start();
+                                Log.d(TAG,"onerror "+conversationId);
                                 e.printStackTrace();
+//                                disposables.delete(this);
+                                run_thread(conversationId);
                             }
 
                             @Override public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
                                 if(!response.hasErrors()){
-                                    if(ErxesRequest.erxesRequest != null) {
-                                        ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
-                                        Log.d("erxesservice","alive");
-                                    }
+//                                    if(ErxesRequest.erxesRequest != null) {
+//                                        ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
+//                                        Log.d("erxesservice","alive");
+//                                    }
                                     if(ConversationListActivity.chat_is_going==false) {
-                                        Log.d("erxesservice","dead");
+                                        Log.d(TAG,"dead");
                                         String chat_message = response.data().conversationMessageInserted().content();
                                         String name = response.data().conversationMessageInserted().user().details().fullName();
 
                                         createNotificationChannel(chat_message,name,response.data().conversationMessageInserted().conversationId());
-                                        Realm inner = Realm.getInstance(myConfig);
-                                        inner.beginTransaction();
-                                        inner.insertOrUpdate(ConversationMessage.convert(response.data().conversationMessageInserted()));
-                                        inner.commitTransaction();
 
-
-                                        Conversation conversation = inner.where(Conversation.class).equalTo("_id",response.data().conversationMessageInserted().conversationId()).findFirst();
-
-                                        if(conversation!=null) {
-                                            inner.beginTransaction();
-                                            conversation.content = (response.data().conversationMessageInserted().content());
-                                            conversation.isread = false;
-                                            inner.insertOrUpdate(conversation);
-                                            inner.commitTransaction();
-
-                                        }
-                                        inner.close();
                                     }
+
+                                    Realm inner =  DB.getDB();
+
+                                    inner.beginTransaction();
+                                    inner.insertOrUpdate(ConversationMessage.convert(response.data().conversationMessageInserted()));
+                                    inner.commitTransaction();
+
+                                    Conversation conversation = inner.where(Conversation.class).equalTo("_id",response.data().conversationMessageInserted().conversationId()).findFirst();
+
+                                    Log.d(TAG,"insert to database");
+
+                                    if(conversation != null) {
+                                        Log.d(TAG,"parent change");
+                                        inner.beginTransaction();
+                                        conversation.content = (response.data().conversationMessageInserted().content());
+                                        conversation.isread = false;
+                                        inner.insertOrUpdate(conversation);
+                                        inner.commitTransaction();
+                                    }
+                                    inner.close();
 //
                                 }
-                                Log.d("erxesservice","onnext"+conversationId);
+                                Log.d(TAG,"onnext "+conversationId);
 
 
                             }
 
                             @Override public void onComplete() {
-                                Log.d("erxesservice","oncomplete");
+                                Log.d(TAG,"oncomplete");
                             }
                         }
                 )
@@ -243,7 +247,7 @@ public class ListenerService extends Service{
                 .setContentIntent(pendingIntent).getNotification();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(0, notification);
-        Log.d("erxes","notification can");
+        Log.d(TAG,"notification can");
     }
 
 

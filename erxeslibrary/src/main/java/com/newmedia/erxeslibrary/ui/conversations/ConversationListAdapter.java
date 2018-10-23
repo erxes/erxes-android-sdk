@@ -7,14 +7,17 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
 import com.newmedia.erxeslibrary.Configuration.Helper;
+import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
@@ -22,30 +25,55 @@ import com.newmedia.erxeslibrary.R;
 
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import io.realm.ObjectChangeSet;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmModel;
+import io.realm.RealmObjectChangeListener;
+import io.realm.RealmResults;
 import io.realm.Sort;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
     private Context context;
-    public List<Conversation> conversationList;
-    Realm realm;;
-    Config config;
+    public RealmResults<Conversation> conversationList;
+    private Realm realm;
+    private Config config;
     public ConversationListAdapter(Context context) {
         this.context = context;
         Realm.init(context);
+        realm = DB.getDB();
         config = Config.getInstance(context);
-        realm = Realm.getInstance(Helper.getRealmConfig());
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
+        this.conversationList = realm.where(Conversation.class)
+                .equalTo("status","open")
+                .equalTo("customerId",config.customerId)
+                .equalTo("integrationId",config.integrationId)
+                .findAll();
+
+        this.conversationList.addChangeListener(new RealmChangeListener<RealmResults<Conversation>>() {
+            @Override
+            public void onChange(RealmResults<Conversation> conversations) {
+                ConversationListAdapter.this.notifyDataSetChanged();
+                Log.d("Listener","changed all");
+            }
+        });
+
+
 
     }
     public void update_position(String conversationId){
-        for(int i = 0 ; i< conversationList.size();i++){
-            if(conversationList.get(i)._id.equalsIgnoreCase(conversationId)){
-                this.notifyItemChanged(i);
-                return;
-            }
-        }
-        this.conversationList =  realm.where(Conversation.class).equalTo("status","open").equalTo("customerId",config.customerId).equalTo("integrationId",config.integrationId).findAll();
+//        for(int i = 0 ; i< conversationList.size();i++){
+//            if(conversationList.get(i)._id.equalsIgnoreCase(conversationId)){
+//                this.notifyItemChanged(i);
+//                return;
+//            }
+//        }
+//        this.conversationList = realm.where(Conversation.class)
+//                .equalTo("status","open")
+//                .equalTo("customerId",config.customerId)
+//                .equalTo("integrationId",config.integrationId)
+//                .findAll();
     }
 
     @NonNull

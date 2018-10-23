@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
@@ -17,9 +18,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+
+
+
 public class Config implements ErxesObserver{
 
-    private String HOST="";
     public String HOST_3100="";
     public String HOST_3300="";
     public String HOST_UPLOAD="";
@@ -147,7 +150,7 @@ public class Config implements ErxesObserver{
         LoadDefaultValues();
     }
 
-    public void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
+    private void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
         HOST_3100 = ip_3100;
         HOST_3300 = ip_3300;
         HOST_UPLOAD = ip_upload_file;
@@ -184,7 +187,6 @@ public class Config implements ErxesObserver{
     public void LoadDefaultValues(){
 
         dataManager = DataManager.getInstance(context);
-        HOST = dataManager.getDataS("HOST");
         HOST_3100 = dataManager.getDataS("HOST3100");
         HOST_3300 = dataManager.getDataS("HOST3300");
         HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
@@ -242,5 +244,33 @@ public class Config implements ErxesObserver{
         context.getResources().updateConfiguration(config,
                 context.getResources().getDisplayMetrics());
 
+    }
+    public static class	Builder	{
+        private String brand;
+        private String apiHost;
+        private String subscriptionHost;
+        private String uploadHost;
+        public Builder(@NonNull String brand) {
+
+            this.brand = brand;
+        }
+        public Builder setApiHost(String apiHost) {
+            this.apiHost = apiHost;
+            return this;
+        }
+        public Builder setSubscriptionHost(String subscriptionHost) {
+            this.subscriptionHost = subscriptionHost;
+            return this;
+        }
+
+        public Builder setUploadHost(String uploadHost) {
+            this.uploadHost = uploadHost;
+            return this;
+        }
+        public Config build(Context context1)	{
+            Config t = Config.getInstance(context1);
+            t.Init(this.brand,this.apiHost,this.subscriptionHost,this.uploadHost);
+            return t;
+        }
     }
 }

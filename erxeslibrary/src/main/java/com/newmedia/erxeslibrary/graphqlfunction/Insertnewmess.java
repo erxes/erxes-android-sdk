@@ -9,6 +9,7 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
@@ -22,7 +23,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 public class Insertnewmess {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "insertnew";
     private ErxesRequest ER;
     private Config config ;
     private Context context;
@@ -55,8 +56,8 @@ public class Insertnewmess {
 
                 Conversation conversation = Conversation.update(response.data().insertMessage(),message,config);
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
-                ER.async_update_database(conversation);
-                ER.async_update_database(a);
+                DB.save(conversation);
+                DB.save(a);
                 Intent intent2 = new Intent(context, ListenerService.class);
                 intent2.putExtra("id",config.conversationId);
                 context.startService(intent2);
