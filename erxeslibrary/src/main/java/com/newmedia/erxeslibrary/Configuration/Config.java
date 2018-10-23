@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
@@ -16,6 +17,9 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+
+
 
 public class Config implements ErxesObserver{
 
@@ -146,7 +150,7 @@ public class Config implements ErxesObserver{
         LoadDefaultValues();
     }
 
-    public void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
+    private void Init(String brandcode, String ip_3100,String ip_3300,String ip_upload_file){
         HOST_3100 = ip_3100;
         HOST_3300 = ip_3300;
         HOST_UPLOAD = ip_upload_file;
@@ -246,7 +250,8 @@ public class Config implements ErxesObserver{
         private String apiHost;
         private String subscriptionHost;
         private String uploadHost;
-        public Builder(String brand) {
+        public Builder(@NonNull String brand) {
+
             this.brand = brand;
         }
         public Builder setApiHost(String apiHost) {

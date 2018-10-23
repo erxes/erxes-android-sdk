@@ -189,6 +189,7 @@
                     android:id="@+id/phone"
                     android:hint="@string/sms" />
                 <LinearLayout
+                    android:id="@+id/loginclick"
                     android:layout_width="0dp"
                     android:layout_weight="2"
                     android:orientation="horizontal"

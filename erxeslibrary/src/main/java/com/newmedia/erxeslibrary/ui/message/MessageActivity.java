@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 public class MessageActivity extends AppCompatActivity implements ErxesObserver {
@@ -82,13 +83,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     MessageListAdapter adapter = (MessageListAdapter)mMessageRecycler.getAdapter();
                     switch (returnType){
                         case ReturnType.Subscription:
-
-                            header_profile_change();
-                            isMessenOnlineImage.setText(R.string.online);
-                            if(adapter.getItemCount() > 2 && adapter.refresh_data())
-                                mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
-                            swipeRefreshLayout.setRefreshing(false);
-                            Log.d("obss","here");
+                            subscription();
                             break;
                             //without break
                         case ReturnType.Getmessages:
@@ -105,15 +100,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             gFilePart.end_of();
                             break;
                         case ReturnType.Mutation_new:
-                            RealmResults<ConversationMessage> d = realm.where(ConversationMessage.class).equalTo("conversationId",config.conversationId).findAll();
-                            adapter.setmMessageList(d);
-                            adapter.notifyDataSetChanged();
-
-                            if(d.size()>1)
-                                mMessageRecycler.smoothScrollToPosition(d.size()-1);
-                            Intent intent2 = new Intent(MessageActivity.this, ListenerService.class);
-                            startService(intent2);
-
+                            subscribe_conversation();
                             gFilePart.end_of();
                             break;
                         case ReturnType.IsMessengerOnline:
@@ -137,7 +124,15 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
 
     }
-    void bind(User user,ImageView por){
+    private void subscription(){
+        MessageListAdapter adapter = (MessageListAdapter)mMessageRecycler.getAdapter();
+        header_profile_change();
+        isMessenOnlineImage.setText(R.string.online);
+        if(adapter.getItemCount() > 2 && adapter.refresh_data())
+            mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
+        swipeRefreshLayout.setRefreshing(false);
+    }
+    private void bind(User user,ImageView por){
         if(user.avatar!=null) {
             GlideApp.with(this)
                     .load(user.avatar)
@@ -154,7 +149,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         names.setText( previous.length() == 0 ? upperString : previous +","+ upperString);
         names.setVisibility(View.VISIBLE);
     }
-    void header_profile_change(){
+    private void header_profile_change(){
         RealmResults<User> users =  realm.where(User.class).findAll();
         if(users.size() > 0)
             isMessenOnlineImage.setVisibility(View.VISIBLE);
@@ -246,18 +241,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
 
         if(config.conversationId != null) {
-
+            linearLayoutManager.setStackFromEnd(true);
             Conversation conversation = DB.getConversation(config.conversationId);
             realm.beginTransaction();
             conversation.isread = true;
             realm.commitTransaction();
-
-            RealmResults<ConversationMessage> d =
-                    realm.where(ConversationMessage.class).
-                            equalTo("conversationId",config.conversationId).findAll();
-            mMessageRecycler.setAdapter(new MessageListAdapter(this,d));
-            linearLayoutManager.setStackFromEnd(true);
-            erxesRequest.getMessages(config.conversationId);
+            subscribe_conversation();
         }
         else {
             mMessageRecycler.setAdapter(new MessageListAdapter(this,new ArrayList<ConversationMessage>()));
@@ -268,7 +257,19 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             askPermissions();
         }
     }
-
+    private void subscribe_conversation(){
+        RealmResults<ConversationMessage> d =
+                realm.where(ConversationMessage.class).
+                        equalTo("conversationId",config.conversationId).findAll();
+        d.addChangeListener(new RealmChangeListener<RealmResults<ConversationMessage>>() {
+            @Override
+            public void onChange(RealmResults<ConversationMessage> conversationMessages) {
+                subscription();
+            }
+        });
+        mMessageRecycler.setAdapter(new MessageListAdapter(this,d));
+        erxesRequest.getMessages(config.conversationId);
+    }
     public void Click_back(View v){
         finish();
     }
@@ -294,12 +295,17 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         }
     };
     public void refreshItems() {
-        if(config.conversationId!=null) {
+        if(config.conversationId != null)
             erxesRequest.getMessages(config.conversationId);
-        }
         else
             swipeRefreshLayout.setRefreshing(false);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
     @Override

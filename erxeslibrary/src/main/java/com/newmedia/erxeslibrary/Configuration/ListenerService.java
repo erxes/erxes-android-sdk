@@ -38,7 +38,7 @@ import okhttp3.OkHttpClient;
 
 public class ListenerService extends Service{
 
-
+    private static final String TAG = ListenerService.class.getName();
     private OkHttpClient okHttpClient;
     private ApolloClient apolloClient;
     private CompositeDisposable disposables = new CompositeDisposable();
@@ -69,7 +69,7 @@ public class ListenerService extends Service{
                 .build();
 
 
-        Log.d("erxesservice","oncreate");
+        Log.d(TAG,"oncreate");
     }
 
 
@@ -78,7 +78,7 @@ public class ListenerService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("erxesservice","destory");
+        Log.d(TAG,"destory");
     }
 
 
@@ -103,17 +103,23 @@ public class ListenerService extends Service{
             DataManager dataManager;
             dataManager =  DataManager.getInstance(this);
             Realm realm = DB.getDB();
-            RealmResults<Conversation> list=
-                    realm.where(Conversation.class).equalTo("status","open")
+            RealmResults<Conversation> list =
+                            realm.where(Conversation.class)
+                            .equalTo("status","open")
                             .equalTo("customerId",dataManager.getDataS(DataManager.customerId))
                             .equalTo("integrationId",dataManager.getDataS(DataManager.integrationId)).findAll();
-            for(int i = 0; i< list.size();i++) {
-                conversation_listen(list.get(i)._id);
+            Log.d(TAG,"start "+list.size());
+            if(disposables.size() != list.size()) {
+                disposables.clear();
+                for(int i = 0; i< list.size();i++) {
+                    conversation_listen(list.get(i)._id);
+                }
             }
-            Log.d("erxesservice","start "+list.size());
+
+
         }else{
             conversation_listen(id);
-            Log.d("erxesservice","start only one");
+            Log.d(TAG,"start only one");
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -126,7 +132,7 @@ public class ListenerService extends Service{
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Log.d("erxesservice","fucked up");
+                        Log.d(TAG,"subscribe thread running ");
                         Thread.sleep(5000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
@@ -148,7 +154,6 @@ public class ListenerService extends Service{
                                 .subscribe(ConversationMessageInsertedSubscription.builder()
                                 ._id(conversationId)
                                 .build());
-
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -158,13 +163,13 @@ public class ListenerService extends Service{
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.d("erxesservice","onstarted "+conversationId);
+                                Log.d(TAG,"onstarted "+conversationId);
                             }
 
                             @Override public void onError(Throwable e) {
-                                Log.d("erxesservice","onerror");
+                                Log.d(TAG,"onerror "+conversationId);
                                 e.printStackTrace();
-                                disposables.delete(this);
+//                                disposables.delete(this);
                                 run_thread(conversationId);
                             }
 
@@ -175,7 +180,7 @@ public class ListenerService extends Service{
 //                                        Log.d("erxesservice","alive");
 //                                    }
                                     if(ConversationListActivity.chat_is_going==false) {
-                                        Log.d("erxesservice","dead");
+                                        Log.d(TAG,"dead");
                                         String chat_message = response.data().conversationMessageInserted().content();
                                         String name = response.data().conversationMessageInserted().user().details().fullName();
 
@@ -191,9 +196,10 @@ public class ListenerService extends Service{
 
                                     Conversation conversation = inner.where(Conversation.class).equalTo("_id",response.data().conversationMessageInserted().conversationId()).findFirst();
 
-                                    Log.d("erxesservice","insert to database");
+                                    Log.d(TAG,"insert to database");
 
                                     if(conversation != null) {
+                                        Log.d(TAG,"parent change");
                                         inner.beginTransaction();
                                         conversation.content = (response.data().conversationMessageInserted().content());
                                         conversation.isread = false;
@@ -203,13 +209,13 @@ public class ListenerService extends Service{
                                     inner.close();
 //
                                 }
-                                Log.d("erxesservice","onnext "+conversationId);
+                                Log.d(TAG,"onnext "+conversationId);
 
 
                             }
 
                             @Override public void onComplete() {
-                                Log.d("erxesservice","oncomplete");
+                                Log.d(TAG,"oncomplete");
                             }
                         }
                 )
@@ -241,7 +247,7 @@ public class ListenerService extends Service{
                 .setContentIntent(pendingIntent).getNotification();
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(0, notification);
-        Log.d("erxes","notification can");
+        Log.d(TAG,"notification can");
     }
 
 

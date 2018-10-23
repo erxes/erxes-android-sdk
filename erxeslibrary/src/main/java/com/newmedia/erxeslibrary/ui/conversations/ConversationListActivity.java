@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
                 switch (returnType){
                     case ReturnType.Subscription:
                      case ReturnType.Getconversation:
+                         Log.d(TAG,"here changed");
                         recyclerView.getAdapter().notifyDataSetChanged();
                         break;
                      case ReturnType.INTEGRATION_CHANGED:
@@ -126,7 +128,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         recyclerView.setLayoutManager(linearLayoutManager);
 //        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this));
 
-        ConversationListAdapter adapter=new ConversationListAdapter(this);
+        ConversationListAdapter adapter = new ConversationListAdapter(this);
         recyclerView.setAdapter(adapter);
         if( 0 == adapter.conversationList.size() ){
             start_new_conversation(null);

@@ -62,6 +62,21 @@ query ConversationDetail($integ : String!){
     }
   }
 }
+query MessengerSupporters($integ : String!){
+  messengerSupporters(integrationId: $integ)
+  {
+    _id
+    details {
+      avatar
+      shortName
+      position
+      location
+      description
+      fullName
+    }
+  }
+
+}
 
 query GetMessengerIntegration($brandCode: String!){
   getMessengerIntegration(brandCode: $brandCode) {

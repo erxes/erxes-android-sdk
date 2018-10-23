@@ -7,6 +7,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.ConversationDetailQuery;
+import com.newmedia.erxes.basic.MessengerSupportersQuery;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
@@ -28,18 +29,16 @@ public class GetSup {
 
     }
     public void run(){
-        ER.apolloClient.query(ConversationDetailQuery.builder().integ(config.integrationId).build())
+        ER.apolloClient.query(MessengerSupportersQuery.builder().integ(config.integrationId).build())
                 .enqueue(request);
     }
 
-    private ApolloCall.Callback<ConversationDetailQuery.Data> request =  new ApolloCall.Callback<ConversationDetailQuery.Data>() {
+    private ApolloCall.Callback<MessengerSupportersQuery.Data> request =  new ApolloCall.Callback<MessengerSupportersQuery.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<ConversationDetailQuery.Data> response) {
+        public void onResponse(@Nonnull Response<MessengerSupportersQuery.Data> response) {
             if(!response.hasErrors()) {
 
-                config.isMessengerOnline = response.data().conversationDetail().isOnline();
-
-                DB.save(User.convert(response.data().conversationDetail().supporters()));
+                DB.save(User.convert(response.data().messengerSupporters()));
 
                 ER.notefyAll(ReturnType.GetSupporters,null ,null);
             }

@@ -38,7 +38,6 @@ public class ErxesRequest {
 
     public ApolloClient apolloClient;
     private OkHttpClient okHttpClient;
-    private DataManager dataManager;
     private Context context;
     private List<ErxesObserver> observers;
     private Config config;
@@ -52,7 +51,6 @@ public class ErxesRequest {
     private ErxesRequest(Config config){
         this.context = config.context;
         this.config = config;
-        dataManager =  DataManager.getInstance(context);
         Realm.init(context);
         Helper.Init(context);
     }
@@ -123,24 +121,6 @@ public class ErxesRequest {
         }
         GetSup getSup = new GetSup(this,context);
         getSup.run();
-    }
-
-    public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-
-        DB.save(ConversationMessage.convert(data));
-
-        Conversation conversation = DB.getConversation(data.conversationId());
-
-        if(conversation!=null) {
-            conversation.content = (data.content());
-            conversation.isread = false;
-            DB.save(conversation);
-            notefyAll(ReturnType.Subscription,conversation._id,null);
-        }
-
-        Log.d("erxes","chat is goind"+ConversationListActivity.chat_is_going);
-        return ConversationListActivity.chat_is_going;
-
     }
 
     public void add(ErxesObserver e){
