@@ -1,19 +1,21 @@
 # erxes Inc - erxes for Android SDK
 
-erxes is an open source growth marketing platform. Marketing, sales, and customer service platform designed to help your business attract more engaged customers. Replace Hubspot and Intercom with the mission and community-driven ecosystem.
+erxes is an open source growth marketing platform. Marketing, sales, and customer service platform designed to help your business attract more engaged customers. Replace Hubspot with the mission and community-driven ecosystem.
 
-<a href="https://demohome.erxes.io/">View demo</a> <b>| </b> <a href="https://github.com/erxes/erxes-android-sdk/archive/master.zip">Download ZIP </a> <b> | </b> <a href="https://gitter.im/erxes/Lobby">Join us on Gitter</a>
+<a href="https://demohome.erxes.io/">View demo</a> <b>| </b> <a href="https://github.com/erxes/erxes-android-sdk/archive/master.zip">Download ZIP </a> <b> | </b> <a href="https://erxes.slack.com">Join us on Slack</a>
 	
 ## Status <br>
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/3025bab0be4547639a9baa0fdc5e61f5)](https://www.codacy.com/project/orshih_bat/erxes-android-sdk/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=erxes/erxes-android-sdk&amp;utm_campaign=Badge_Grade_Dashboard)
 [![codebeat badge](https://codebeat.co/badges/34f9e085-fddf-4d54-af83-d5eacc1aa109)](https://codebeat.co/projects/github-com-erxes-erxes-android-sdk-master)
 [![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
-[![CocoaPods](https://img.shields.io/cocoapods/l/AFNetworking.svg)](https://github.com/erxes/erxes-android-sdk/)
+[![CI Status](https://api.travis-ci.org/erxes/erxes-android-sdk.svg?branch=develop)](https://travis-ci.org/erxes/erxes-android-sdk)
+[![CocoaPods](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/erxes/erxes-android-sdk/)
 
 ## Documentation
 
-* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation-with-Java">Java Installation Guide</a>
-
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Installation">Installation Guide</a>
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Usage">Usage</a>
+* <a href="https://github.com/erxes/erxes-android-sdk/wiki/Requirement">Requirement</a>
 ## Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute]](CONTRIBUTING.md).
