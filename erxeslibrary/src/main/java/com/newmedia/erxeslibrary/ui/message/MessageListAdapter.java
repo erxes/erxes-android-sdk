@@ -61,7 +61,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             int zoruu = mMessageList.size() - previous_size;
 
             previous_size = mMessageList.size();
-            if(config.welcomeMessage!=null) {
+            if(config.messengerdata.getWelcome(config.language)!=null) {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size());
                 else
@@ -103,10 +103,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0 && config.welcomeMessage!=null)
+        if(position == 0 && config.messengerdata.getWelcome(config.language)!=null)
             return 2; //welcomeMessage
 
-        if(config.welcomeMessage!=null)
+        if(config.messengerdata.getWelcome(config.language)!=null)
             position = position - 1;
 
         if( config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId ))
@@ -121,12 +121,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         ConversationMessage message ;
 
-        if(config.welcomeMessage!=null && (position == 0)){
+        if(config.messengerdata.getWelcome(config.language)!=null && (position == 0)){
             message = new ConversationMessage();
-            message.content = (config.welcomeMessage);
+            message.content = (config.messengerdata.getWelcome(config.language));
             message.createdAt = ("");
         }
-        else if(config.welcomeMessage != null)
+        else if(config.messengerdata.getWelcome(config.language) != null)
             message = mMessageList.get(position - 1);
         else
             message = mMessageList.get(position);
@@ -146,7 +146,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        if(config.welcomeMessage != null)
+        if(config.messengerdata.getWelcome(config.language) != null)
             return mMessageList.size() + 1;
         else
             return mMessageList.size() ;

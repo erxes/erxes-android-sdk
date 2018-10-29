@@ -4,9 +4,10 @@
     <dimen name="main_margin_half">16dp</dimen>
     <dimen name="padding_new_conv">14dp</dimen>
     <dimen name="padding_new_conv_bottom">16dp</dimen>
+    <dimen name="write_message_offset">2dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="margin_top">32dp</dimen>
-    <dimen name="login_bar_height">100dp</dimen>
+    <dimen name="login_bar_height">200dp</dimen>
     <dimen name="reply_height">80dp</dimen>
     <dimen name="image_size">50dp</dimen>
     <dimen name="image_raduis">25dp</dimen>
@@ -23,4 +24,5 @@
     <dimen name="new_conv_font">13sp</dimen>
     <dimen name="action_size">32dp</dimen>
     <dimen name="tools_size">24dp</dimen>
+    <dimen name="radius_corner">23dp</dimen>
 </resources>

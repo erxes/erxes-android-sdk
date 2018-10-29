@@ -10,6 +10,7 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
+import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
@@ -120,6 +121,13 @@ public class ErxesRequest {
             return;
         }
         GetSup getSup = new GetSup(this,context);
+        getSup.run();
+    }
+    public void getFAQ( ){
+        if(!isNetworkConnected()){
+            return;
+        }
+        GetKnowledge getSup = new GetKnowledge(this,context);
         getSup.run();
     }
 

@@ -23,5 +23,6 @@
     <dimen name="new_conv_image">16sp</dimen>
     <dimen name="new_conv_font">8sp</dimen>
     <dimen name="action_size">24dp</dimen>
-
+    <dimen name="tools_size">20dp</dimen>
+    <dimen name="radius_corner">23dp</dimen>
 </resources>

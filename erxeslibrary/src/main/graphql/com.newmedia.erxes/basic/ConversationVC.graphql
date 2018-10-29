@@ -86,4 +86,19 @@ query GetMessengerIntegration($brandCode: String!){
   }
 }
 
-
+query FaqGet($topicId: String!){
+  knowledgeBaseTopicsDetail(topicId: $topicId) {
+    _id
+    title
+    description
+    color
+    languageCode
+    categories{
+      _id
+      numOfArticles
+      title
+      description
+      icon
+    }
+  }
+}

@@ -7,12 +7,14 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.R;
@@ -54,51 +56,10 @@ public class Helper {
     static public void load_messengerData(JSONObject js){
         if(js == null)
             return;
-        String temp = null;
-        try {
-            temp = js.getString("thankYouMessage");
-            dataManager.setData("thankYouMessage", temp);
-            config.thankYouMessage = temp;
-        } catch (JSONException e) {
-        }
+        dataManager.setMessengerData(js.toString());
+        Gson gson = new Gson();
+        config.messengerdata = gson.fromJson(js.toString(),Messengerdata.class);
 
-        try {
-            temp = js.getString("awayMessage");
-            dataManager.setData("awayMessage", temp);
-            config.awayMessage = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("welcomeMessage");
-            dataManager.setData("welcomeMessage", temp);
-            config.welcomeMessage = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("timezone");
-            dataManager.setData("timezone", temp);
-            config.timezone = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            temp = js.getString("availabilityMethod");
-            dataManager.setData("availabilityMethod", temp);
-            config.availabilityMethod = temp;
-        } catch (JSONException e) {
-        }
-        try {
-            boolean bool = js.getBoolean("isOnline");
-            dataManager.setData("isOnline", bool);
-            config.isMessengerOnline = bool;
-        } catch (JSONException e) {
-        }
-
-        try {
-            boolean bool = js.getBoolean("notifyCustomer");
-            dataManager.setData("notifyCustomer", bool);
-            config.notifyCustomer = bool;
-        } catch (JSONException e) {
-        }
     }
 
     static public Point display_configure(AppCompatActivity context, View container, String color){
