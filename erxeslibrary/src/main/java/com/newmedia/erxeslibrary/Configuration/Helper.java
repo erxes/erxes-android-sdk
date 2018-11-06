@@ -22,12 +22,23 @@ import com.newmedia.erxeslibrary.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.realm.RealmConfiguration;
 
 public class Helper {
     static DataManager dataManager;
     static Config config;
     static public int[] backgrounds ={R.drawable.bitmap1,R.drawable.bitmap2,R.drawable.bitmap3,R.drawable.bitmap4};
+
+    static public final Map<String, Integer> ICON_MAP =
+            Collections.unmodifiableMap(new HashMap<String,Integer>() {{
+                put("paste", R.drawable.paste);
+                put("flag", R.drawable.flag);
+                put("laptop", R.drawable.laptop);
+            }});
     static void Init(Context context){
         dataManager =  DataManager.getInstance(context);
         config = Config.getInstance(context);

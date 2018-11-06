@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.GlideApp;
+import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
@@ -39,6 +41,12 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
         Realm realm = DB.getDB();
         knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id",config.messengerdata.knowledgeBaseTopicId).findFirst();
         this.categories = knowledgeBaseTopic.categories;
+        knowledgeBaseTopic.categories.addChangeListener(new RealmChangeListener<RealmList<KnowledgeBaseCategory>>() {
+            @Override
+            public void onChange(RealmList<KnowledgeBaseCategory> knowledgeBaseCategories) {
+                FaqAdapter.this.notifyDataSetChanged();
+            }
+        });
     }
 
     @NonNull
@@ -58,6 +66,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 //                    .diskCacheStrategy(DiskCacheStrategy.ALL)
 //                    .into(holder.circleImageView);
         Log.d("xaxa",""+categories.get(position).icon);
+        holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
         holder.title.setText(categories.get(position).title+"("+categories.get(position).numOfArticles+") ");
         holder.description.setText(categories.get(position).description);
     }

@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.SimpleDividerItemDecoration;
 import com.newmedia.erxeslibrary.ui.conversations.FaqAdapter;
 
 /**
@@ -32,6 +34,7 @@ public class FaqFragment extends Fragment {
         recyclerView.setAdapter(new FaqAdapter(this.getContext()));
         LinearLayoutManager ln = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(ln);
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this.getContext()));
         return v;
     }
 
