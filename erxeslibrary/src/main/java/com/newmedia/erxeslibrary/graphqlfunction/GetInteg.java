@@ -39,7 +39,7 @@ public class GetInteg {
                 config.changeLanguage(response.data().getMessengerIntegration().languageCode());
                 Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
                 Helper.load_messengerData( response.data().getMessengerIntegration().messengerData());
-
+                Log.d("xaxa","goodway"+response.data().getMessengerIntegration().messengerData().toString());
                 ER.notefyAll(ReturnType.INTEGRATION_CHANGED,null ,null);
             }
             else{

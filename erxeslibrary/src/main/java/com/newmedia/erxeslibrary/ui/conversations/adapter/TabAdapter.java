@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.ui.conversations;
+package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

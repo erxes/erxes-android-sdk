@@ -8,6 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="margin_top">32dp</dimen>
     <dimen name="login_bar_height">200dp</dimen>
+    <dimen name="login_bar_height_small">100dp</dimen>
     <dimen name="reply_height">80dp</dimen>
     <dimen name="image_size">50dp</dimen>
     <dimen name="image_raduis">25dp</dimen>

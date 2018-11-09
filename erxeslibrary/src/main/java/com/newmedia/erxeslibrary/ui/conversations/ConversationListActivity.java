@@ -2,9 +2,6 @@ package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.LayerDrawable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,11 +21,11 @@ import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
+import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ConversationListActivity extends AppCompatActivity  implements ErxesObserver {
 
@@ -89,17 +86,9 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
             return;
         }
         erxesRequest.add(this);
-
-//        if(recyclerView!=null)
-//            if(recyclerView.getAdapter()!=null){
-//
-//                ((ConversationListAdapter)recyclerView.getAdapter()).update_position(config.conversationId);
-////                recyclerView.getAdapter().notifyDataSetChanged();
-////                recyclerView.invalidate();
-//
-//            }
         config.conversationId = null;
         erxesRequest.getIntegration();
+
 //        LayerDrawable layerDrawable = (LayerDrawable) getResources()
 //                .getDrawable(R.drawable.pattern_color);
 //        GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable

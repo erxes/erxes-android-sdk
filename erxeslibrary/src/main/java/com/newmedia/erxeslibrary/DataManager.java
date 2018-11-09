@@ -71,8 +71,14 @@ public class DataManager {
         editor.commit();
     }
     public Messengerdata getMessenger(){
-        String a = pref.getString("message", "");
+        String a = pref.getString("message", null);
         Gson gson = new Gson();
-        return gson.fromJson(a,Messengerdata.class);
+        if( a != null )
+            try {
+                return gson.fromJson(a,Messengerdata.class);
+            }
+            catch (Exception e){}
+
+        return null;
     }
 }

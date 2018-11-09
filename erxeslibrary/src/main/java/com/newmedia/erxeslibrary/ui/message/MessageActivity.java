@@ -137,6 +137,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             GlideApp.with(this)
                     .load(user.avatar)
                     .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(por);
             por.setVisibility(View.VISIBLE);
@@ -264,7 +265,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         d.addChangeListener(new RealmChangeListener<RealmResults<ConversationMessage>>() {
             @Override
             public void onChange(RealmResults<ConversationMessage> conversationMessages) {
-                subscription();
+                MessageActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscription();
+                    }
+                });
+
             }
         });
         mMessageRecycler.setAdapter(new MessageListAdapter(this,d));

@@ -19,6 +19,7 @@ public class KnowledgeBaseCategory extends RealmObject {
     public String description;
     public int numOfArticles;
     public RealmList<User> authors;
+    public RealmList<KnowledgeBaseArticle> articles;
     public String icon;
     static public List<KnowledgeBaseCategory> convert(List<FaqGetQuery.Category> itemuser){
         KnowledgeBaseCategory temp;
@@ -30,6 +31,8 @@ public class KnowledgeBaseCategory extends RealmObject {
             temp.icon = itemuser.get(i).icon();
             temp.description = itemuser.get(i).description();
             temp.numOfArticles = itemuser.get(i).numOfArticles().intValue();
+            temp.articles = new RealmList<>();
+            temp.articles.addAll(KnowledgeBaseArticle.convert(itemuser.get(i).articles()));
             categories.add(temp);
         }
         return categories;

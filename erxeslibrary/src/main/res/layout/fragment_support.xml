@@ -28,7 +28,8 @@
                 android:text="@string/conversation"/>
             <LinearLayout
                 android:layout_marginTop="@dimen/main_margin_half"
-                android:layout_marginLeft="@dimen/main_margin_half"
+                android:layout_marginLeft="@dimen/main_margin"
+                android:layout_marginBottom="@dimen/main_margin_half"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"

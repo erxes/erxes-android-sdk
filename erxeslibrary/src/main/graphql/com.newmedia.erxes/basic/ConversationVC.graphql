@@ -99,6 +99,17 @@ query FaqGet($topicId: String!){
       title
       description
       icon
+    articles {
+      _id
+      title
+      summary
+      content
+      createdBy
+      createdDate
+      modifiedBy
+      modifiedDate
+    }
+
     }
   }
 }

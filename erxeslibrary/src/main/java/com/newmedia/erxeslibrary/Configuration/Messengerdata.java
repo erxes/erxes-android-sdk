@@ -11,7 +11,8 @@ public class Messengerdata {
     public String availabilityMethod;
 
 
-    public Map<String, Messages> messages;
+//    public Map<String, Messages> messages;
+    public Messages messages;
     public class Messages{
         public String welcome,away,thank;
         public Greetings greetings;
@@ -20,9 +21,6 @@ public class Messengerdata {
         public String message,title;
     }
     public String getWelcome(String lan){
-        if(messages.get(lan)!=null && messages.get(lan).welcome!=null){
-            return messages.get(lan).welcome;
-        }
-        return null;
+        return messages.welcome;
     }
 }
