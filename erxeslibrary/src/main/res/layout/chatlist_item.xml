@@ -41,6 +41,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="name"
+                    android:singleLine="true"
                     android:gravity="bottom"
                     android:textSize="16sp"
                     android:textColor="#000"/>
@@ -52,6 +53,7 @@
                     android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_gravity="bottom"
+                    android:singleLine="true"
                     android:layout_height="wrap_content"
                     android:text="date" />
             </LinearLayout>
@@ -59,6 +61,7 @@
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 android:layout_gravity="top"
                 android:layout_height="0dp"
                 android:text="date" />

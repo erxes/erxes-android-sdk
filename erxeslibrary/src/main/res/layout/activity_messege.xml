@@ -21,7 +21,8 @@
             android:layout_height="wrap_content">
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/login_bar_height_small"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/login_bar_height_small"
                 android:background="@drawable/pattern_repeat"
                 android:paddingLeft="@dimen/main_margin"
                 android:paddingRight="@dimen/main_margin"
