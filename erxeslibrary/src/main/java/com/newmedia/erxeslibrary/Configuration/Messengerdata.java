@@ -21,6 +21,8 @@ public class Messengerdata {
         public String message,title;
     }
     public String getWelcome(String lan){
+        if(messages==null || messages.welcome == null)
+            return "";
         return messages.welcome;
     }
 }
