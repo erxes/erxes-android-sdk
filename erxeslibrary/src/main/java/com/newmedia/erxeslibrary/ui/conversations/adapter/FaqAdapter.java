@@ -37,15 +37,18 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
         this.config = Config.getInstance(context);
         Realm.init(context);
         Realm realm = DB.getDB();
-        if(config.messengerdata.knowledgeBaseTopicId!=null) {
+        try {
+            if (config.messengerdata.knowledgeBaseTopicId != null) {
 
-            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id",config.messengerdata.knowledgeBaseTopicId).findFirst();
-            Log.d("nicetest","id = "+knowledgeBaseTopic);
-        }
-        else {
+                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.knowledgeBaseTopicId).findFirst();
+                Log.d("nicetest", "id = " + knowledgeBaseTopic);
+            } else {
 
-            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
-            Log.d("nicetest","findfirst "+knowledgeBaseTopic);
+                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
+                Log.d("nicetest", "findfirst " + knowledgeBaseTopic);
+            }
+        }catch (Exception e1){
+            
         }
         if(knowledgeBaseTopic!=null) {
             this.categories = knowledgeBaseTopic.categories;
