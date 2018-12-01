@@ -141,12 +141,7 @@ public class Config implements ErxesObserver{
         if(ReturnType.LOGIN_SUCCESS == returnType)
         {
             Intent a = new Intent(context,ErxesActivity.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
-                context.startActivity(a,options.toBundle());
-            }
-            else
-                context.startActivity(a);
+            context.startActivity(a);
         }
     }
 
@@ -181,12 +176,7 @@ public class Config implements ErxesObserver{
 
     public void Start(){
         Intent a = new Intent(context,ErxesActivity.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
-            context.startActivity(a,options.toBundle());
-        }
-        else
-            context.startActivity(a);
+        context.startActivity(a);
 
     }
     public void Start_login_email(String email){

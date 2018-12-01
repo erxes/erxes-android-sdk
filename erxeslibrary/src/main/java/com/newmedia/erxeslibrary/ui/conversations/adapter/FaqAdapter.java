@@ -48,7 +48,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
                 Log.d("nicetest", "findfirst " + knowledgeBaseTopic);
             }
         }catch (Exception e1){
-            
+
         }
         if(knowledgeBaseTopic!=null) {
             this.categories = knowledgeBaseTopic.categories;
