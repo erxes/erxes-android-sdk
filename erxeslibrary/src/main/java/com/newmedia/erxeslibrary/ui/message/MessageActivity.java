@@ -135,17 +135,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private void bind(User user,ImageView por){
         if(user.avatar!=null) {
             try {
-                GlideApp.with(this)
+                GlideApp.with(this.getApplicationContext())
                         .load(user.avatar)
                         .placeholder(R.drawable.avatar)
                         .error(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(por);
-            }
-            catch (Exception e){
-
-            }
-
+            }catch (Exception e){}
             por.setVisibility(View.VISIBLE);
         }
 
@@ -256,7 +252,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             subscribe_conversation();
         }
         else {
-            mMessageRecycler.setAdapter(new MessageListAdapter(this,new ArrayList<ConversationMessage>()));
+            mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),new ArrayList<ConversationMessage>()));
         }
         header_profile_change();
         erxesRequest.getSupporters();
@@ -280,7 +276,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
             }
         });
-        mMessageRecycler.setAdapter(new MessageListAdapter(this,d));
+        mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),d));
         erxesRequest.getMessages(config.conversationId);
     }
     public void Click_back(View v){

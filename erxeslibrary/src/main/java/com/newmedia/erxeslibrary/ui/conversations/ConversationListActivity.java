@@ -20,6 +20,7 @@ import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
@@ -38,6 +39,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     private ViewGroup info_header,container;
     private Config config;
     private ErxesRequest erxesRequest;
+    private DataManager dataManager;
     @Override
     public void notify(final int  returnType, final String conversationId, String message) {
 
@@ -88,6 +90,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         erxesRequest.add(this);
         config.conversationId = null;
         erxesRequest.getIntegration();
+        dataManager.setData("chat_is_going",true);
 
 //        LayerDrawable layerDrawable = (LayerDrawable) getResources()
 //                .getDrawable(R.drawable.pattern_color);
@@ -104,6 +107,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     protected void onDestroy() {
         super.onDestroy();
         chat_is_going =false;
+        dataManager.setData("chat_is_going",false);
     }
 
     @Override
@@ -121,6 +125,7 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
         date.setText(config.now());
+        dataManager = DataManager.getInstance(this);
 //        welcometext.setText(config.messengerdata.messages.greetings.message);
 
         supporterView.setAdapter(new SupportAdapter(this));
