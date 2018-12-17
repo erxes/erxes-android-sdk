@@ -46,8 +46,22 @@ public class ConversationMessage extends RealmObject {
                 user.convert(item.user());
                 this_o.user = user;
             }
-//            if(item.attachments()!=null)
-//                this_o.attachments = item.attachments();
+            if(item.attachments()!=null) {
+                JSONArray array = new JSONArray();
+                for(int i = 0 ; i < item.attachments().size();i++){
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("name",item.attachments().get(i).name());
+                        json.put("size",item.attachments().get(i).size());
+                        json.put("url",item.attachments().get(i).url());
+                        json.put("type",item.attachments().get(i).type());
+                        array.put(i,json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this_o.attachments = array.toString();
+            }
 
             this_o.conversationId = ConversationId;
 
