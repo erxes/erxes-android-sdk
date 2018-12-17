@@ -7,6 +7,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 
+import com.newmedia.erxes.basic.type.AttachmentInput;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,7 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class FileInfo {
-    public String filepath = null,size,name,type,attachments;
+    public String filepath = null,name,type,attachments;
+    public Double size;
     private Uri returnUri;
     private Context context;
     public FileInfo(Context context, Uri returnUri) {
@@ -24,18 +27,8 @@ public class FileInfo {
         this.returnUri = returnUri;
     }
 
-    public JSONObject get(){
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("type",type);
-            jsonObject.put("size",size);
-            jsonObject.put("name",name);
-            jsonObject.put("url",filepath);
-            return jsonObject;
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return null;
+    public AttachmentInput get(){
+        return AttachmentInput.builder().name(name).size(size).type(type).url(filepath).build();
     }
     public void init(){
         Cursor cursor = context.getContentResolver().query(returnUri, new String[]
@@ -48,7 +41,7 @@ public class FileInfo {
         cursor.moveToFirst();
 
         this.filepath = cursor.getString(0);
-        this.size = cursor.getString(1);
+        this.size = cursor.getDouble(1);
         this.name = cursor.getString(2);
         this.type = cursor.getString(3);
         cursor.close();

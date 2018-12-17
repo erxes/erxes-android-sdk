@@ -10,7 +10,7 @@ mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!)
         customerId
     }
 }
-mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [JSON])
+mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [AttachmentInput])
 {
     insertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments)
    {
@@ -18,7 +18,12 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
      createdAt,
      internal,
      _id,
-     attachments,
+     attachments {
+         size
+         url
+         type
+         name
+       },
 
    }
  }
@@ -38,7 +43,12 @@ query Messages($conversationId: String!){
         content
         createdAt
         internal
-        attachments
+         attachments {
+             size
+             url
+             type
+             name
+           },
         user{
              _id
              details

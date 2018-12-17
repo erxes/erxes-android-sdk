@@ -8,6 +8,7 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
+import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
@@ -83,14 +84,14 @@ public class ErxesRequest {
         getIntegration.run();
     }
 
-    public void InsertMessage( String message, String conversationId,List<JSONObject> list){
+    public void InsertMessage( String message, String conversationId,List<AttachmentInput> list){
         if(!isNetworkConnected()){
             return;
         }
         Insertmess insertmessage = new Insertmess(this,context);
         insertmessage.run(message,conversationId,list);
     }
-    public void InsertNewMessage(final String message,List<JSONObject> list){
+    public void InsertNewMessage(final String message,List<AttachmentInput> list){
         if(!isNetworkConnected()){
             return;
         }
