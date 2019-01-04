@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.ProgressRequestBody;
 import com.newmedia.erxeslibrary.FileInfo;
@@ -45,7 +46,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
     private ProgressBar progressBar;
     private ViewGroup container,filelist,button_chatbox_send;
     private CircularProgressDrawable senddrawable;
-    private List<JSONObject> uploadJsons = new ArrayList<>();
+    private List<AttachmentInput> uploadJsons = new ArrayList<>();
 
     public GFilePart(Config config,MessageActivity messageActivity) {
         this.AC = messageActivity;
@@ -176,7 +177,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
         uploadJsons.clear();
         filelist.removeAllViews();
     }
-    public List<JSONObject>  get(){
+    public List<AttachmentInput>  get(){
         return (uploadJsons.size() > 0) ? uploadJsons : null;
     }
     public void ActivityResult(int requestCode, int resultCode, Intent resultData){

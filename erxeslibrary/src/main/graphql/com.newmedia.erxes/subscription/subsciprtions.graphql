@@ -6,7 +6,12 @@ subscription ConversationMessageInserted($_id: String!){
     internal
     customerId
     createdAt
-    attachments
+    attachments{
+     size
+     url
+     name
+     type
+    }
     isCustomerRead
     formWidgetData
     user{
@@ -17,11 +22,5 @@ subscription ConversationMessageInserted($_id: String!){
                     fullName
              }
       }
-  }
-}
-subscription ConversationsChanged($customerId: String!){
-  conversationsChanged(customerId: $customerId){
-    type
-    customerId
   }
 }

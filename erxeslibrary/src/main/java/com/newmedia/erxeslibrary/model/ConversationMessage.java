@@ -7,6 +7,10 @@ import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.Configuration.Config;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,8 +47,22 @@ public class ConversationMessage extends RealmObject {
                 this_o.user = user;
             }
             if(item.attachments()!=null) {
-                this_o.attachments = item.attachments().toString();
+                JSONArray array = new JSONArray();
+                for(int i = 0 ; i < item.attachments().size();i++){
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("name",item.attachments().get(i).name());
+                        json.put("size",item.attachments().get(i).size());
+                        json.put("url",item.attachments().get(i).url());
+                        json.put("type",item.attachments().get(i).type());
+                        array.put(i,json);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                this_o.attachments = array.toString();
             }
+
             this_o.conversationId = ConversationId;
 
 
@@ -59,8 +77,22 @@ public class ConversationMessage extends RealmObject {
         b.createdAt = a.createdAt();
         b._id = a._id();
         b.content = message;
-        if(a.attachments()!=null)
-            b.attachments = a.attachments().toString();
+        if(a.attachments()!=null) {
+            JSONArray array = new JSONArray();
+            for(int i = 0 ; i < a.attachments().size();i++){
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("name",a.attachments().get(i).name());
+                    json.put("size",a.attachments().get(i).size());
+                    json.put("url",a.attachments().get(i).url());
+                    json.put("type",a.attachments().get(i).type());
+                    array.put(i,json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            b.attachments = array.toString();
+        }
         b.internal = false;
         b.customerId = config.customerId;//Config.customerId;
         return b;
@@ -71,8 +103,22 @@ public class ConversationMessage extends RealmObject {
         b.createdAt = a.createdAt();
         b._id = a._id();
         b.content = a.content();
-        if(a.attachments()!=null)
-            b.attachments = a.attachments().toString();
+        if(a.attachments()!=null) {
+            JSONArray array = new JSONArray();
+            for(int i = 0 ; i < a.attachments().size();i++){
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("name",a.attachments().get(i).name());
+                    json.put("size",a.attachments().get(i).size());
+                    json.put("url",a.attachments().get(i).url());
+                    json.put("type",a.attachments().get(i).type());
+                    array.put(i,json);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            b.attachments = array.toString();
+        }
         b.internal = false;
         b.customerId = a.customerId();
         if(a.user() != null) {

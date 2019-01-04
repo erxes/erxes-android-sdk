@@ -7,6 +7,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
+import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.Configuration.Config;
 import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
@@ -28,7 +29,7 @@ public class Insertmess {
         this.ER = ER;
         config = Config.getInstance(context);
     }
-    public void run( String message, final String conversationId,List<JSONObject> list){
+    public void run( String message, final String conversationId,List<AttachmentInput> list){
         this.message = message;
         this.conversationId = conversationId;
         InsertMessageMutation.Builder temp =InsertMessageMutation.builder().
