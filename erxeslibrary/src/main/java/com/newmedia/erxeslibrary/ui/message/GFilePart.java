@@ -74,7 +74,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
     public void test() {
         OkHttpClient client = new OkHttpClient.Builder().writeTimeout(2,TimeUnit.MINUTES)
                 .readTimeout(2,TimeUnit.MINUTES).build();
-        Log.d(TAG,"type "+fileInfo.type);
+
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("file", fileInfo.name, RequestBody.create(MediaType.parse(fileInfo.type), getFile()))
