@@ -72,7 +72,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     private GFilePart gFilePart;
 
-    private final String TAG="MESSAGEACTIVITY";
+    private final String TAG = "MESSAGEACTIVITY";
     @Override
     public void notify(final int returnType, String conversationId,  String message) {
 
@@ -134,11 +134,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
     private void bind(User user,ImageView por){
         if(user.avatar!=null) {
-            GlideApp.with(this)
-                    .load(user.avatar)
-                    .placeholder(R.drawable.avatar)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .into(por);
+            try {
+                GlideApp.with(this.getApplicationContext())
+                        .load(user.avatar)
+                        .placeholder(R.drawable.avatar)
+                        .error(R.drawable.avatar)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(por);
+            }catch (Exception e){}
             por.setVisibility(View.VISIBLE);
         }
 
@@ -150,7 +153,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         names.setVisibility(View.VISIBLE);
     }
     private void header_profile_change(){
-        RealmResults<User> users =  realm.where(User.class).findAll();
+        RealmResults<User> users =  DB.getDB().where(User.class).findAll();
         if(users.size() > 0)
             isMessenOnlineImage.setVisibility(View.VISIBLE);
         else
@@ -249,7 +252,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             subscribe_conversation();
         }
         else {
-            mMessageRecycler.setAdapter(new MessageListAdapter(this,new ArrayList<ConversationMessage>()));
+            mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),new ArrayList<ConversationMessage>()));
         }
         header_profile_change();
         erxesRequest.getSupporters();
@@ -264,10 +267,16 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         d.addChangeListener(new RealmChangeListener<RealmResults<ConversationMessage>>() {
             @Override
             public void onChange(RealmResults<ConversationMessage> conversationMessages) {
-                subscription();
+                MessageActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        subscription();
+                    }
+                });
+
             }
         });
-        mMessageRecycler.setAdapter(new MessageListAdapter(this,d));
+        mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),d));
         erxesRequest.getMessages(config.conversationId);
     }
     public void Click_back(View v){

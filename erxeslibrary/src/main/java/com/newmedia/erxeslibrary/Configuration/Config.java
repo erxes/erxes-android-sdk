@@ -29,12 +29,8 @@ public class Config implements ErxesObserver{
     public String customerId;
     public String integrationId;
     private String color;
-    public String language,wallpaper;;
-    public String thankYouMessage;
-    public String awayMessage;
-    public String welcomeMessage;
-    public String timezone;
-    public String availabilityMethod;
+    public String language,wallpaper;
+    public Messengerdata messengerdata;
     public int colorCode;
     public String conversationId=null;
     public String brandCode;
@@ -119,6 +115,25 @@ public class Config implements ErxesObserver{
         else {
             return format.format(date);
         }
+    }
+    public String now() {
+
+
+        Date date = new Date();
+
+        SimpleDateFormat format =
+                new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
+        SimpleDateFormat format2 =
+                new SimpleDateFormat("MMM dd / yyyy HH:mm");
+
+
+        if(this.language.equalsIgnoreCase("en")){
+            return format2.format(date);
+        }
+        else {
+            return format.format(date);
+        }
+
 
     }
     @Override
@@ -126,12 +141,7 @@ public class Config implements ErxesObserver{
         if(ReturnType.LOGIN_SUCCESS == returnType)
         {
             Intent a = new Intent(context,ErxesActivity.class);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
-                context.startActivity(a,options.toBundle());
-            }
-            else
-                context.startActivity(a);
+            context.startActivity(a);
         }
     }
 
@@ -166,12 +176,7 @@ public class Config implements ErxesObserver{
 
     public void Start(){
         Intent a = new Intent(context,ErxesActivity.class);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            ActivityOptions options = ActivityOptions.makeCustomAnimation(context, R.anim.push_down_in, R.anim.push_down_out);
-            context.startActivity(a,options.toBundle());
-        }
-        else
-            context.startActivity(a);
+        context.startActivity(a);
 
     }
     public void Start_login_email(String email){
@@ -194,7 +199,7 @@ public class Config implements ErxesObserver{
 
         customerId = dataManager.getDataS(DataManager.customerId);
         integrationId = dataManager.getDataS(DataManager.integrationId);
-        welcomeMessage = dataManager.getDataS("welcomeMessage");
+        messengerdata = dataManager.getMessenger();
         color= dataManager.getDataS(DataManager.color);
         if(color !=null)
             colorCode = Color.parseColor(color);

@@ -110,7 +110,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         }
 
         ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
-        holder.circleImageView.setImageResource(R.drawable.avatar);
+
         holder.name.setText("");
         if(message!=null&&message.user !=null){
             String myString = message.user.fullName;
@@ -125,6 +125,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
         }else {
+            holder.circleImageView.setImageResource(R.drawable.avatar);
             Long createDate = Long.valueOf(conversationList.get(position).date);
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);

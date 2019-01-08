@@ -13,9 +13,12 @@
     <string name="contact_info">Холбоо барих мэдээллээ үлдээнэ үү</string>
     <string name="sms">Утасны дугаар</string>
     <string name="writereply">Хариу бичих</string>
-    <string name="newconversation">ШИНЭ ХАРИЛЦАА</string>
+    <string name="newconversation">Шинэ харилцаа</string>
     <string name="online">онлайн</string>
     <string name="offline">офлайн</string>
     <string name="no_correct_mail">имейл хаяг буруу</string>
     <string name="no_correct_phone">утасны дугаар буруу</string>
+    <string name="conversation">Харилцан ярианууд</string>
+    <string name="SUPPORT">ТУСЛАМЖ</string>
+    <string name="FAQ">АСУУЛТ</string>
 </resources>

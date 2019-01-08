@@ -7,7 +7,8 @@
     <dimen name="write_message_offset">2dp</dimen>
     <dimen name="fab_margin">6dp</dimen>
     <dimen name="margin_top">16dp</dimen>
-    <dimen name="login_bar_height">70dp</dimen>
+    <dimen name="login_bar_height">200dp</dimen>
+    <dimen name="login_bar_height_small">70dp</dimen>
     <dimen name="reply_height">50dp</dimen>
     <dimen name="image_size">40dp</dimen>
     <dimen name="image_raduis">20dp</dimen>
@@ -23,5 +24,6 @@
     <dimen name="new_conv_image">16sp</dimen>
     <dimen name="new_conv_font">8sp</dimen>
     <dimen name="action_size">24dp</dimen>
-
+    <dimen name="tools_size">20dp</dimen>
+    <dimen name="radius_corner">23dp</dimen>
 </resources>
