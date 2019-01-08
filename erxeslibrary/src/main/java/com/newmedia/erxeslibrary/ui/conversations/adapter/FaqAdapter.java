@@ -42,11 +42,11 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             if (config.messengerdata.knowledgeBaseTopicId != null) {
 
                 knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.knowledgeBaseTopicId).findFirst();
-                Log.d("nicetest", "id = " + knowledgeBaseTopic);
+                Log.d("faq", "id = " + knowledgeBaseTopic);
             } else {
 
                 knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
-                Log.d("nicetest", "findfirst " + knowledgeBaseTopic);
+                Log.d("faq", "findfirst " + knowledgeBaseTopic);
             }
         }catch (Exception e1){
 
@@ -59,10 +59,10 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
                     FaqAdapter.this.notifyDataSetChanged();
                 }
             });
-            Log.d("nicetest","nicetest know");
+            Log.d("faq","nicetest know");
         }else{
             //run app without error
-            Log.d("nicetest","nicetest know else");
+            Log.d("faq","nicetest know else");
             this.categories = new RealmList<>();
 
         }
