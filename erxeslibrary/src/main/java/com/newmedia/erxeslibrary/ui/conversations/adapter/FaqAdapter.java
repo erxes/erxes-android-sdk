@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,11 +42,11 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             if (config.messengerdata.knowledgeBaseTopicId != null) {
 
                 knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.knowledgeBaseTopicId).findFirst();
-                Log.d("nicetest", "id = " + knowledgeBaseTopic);
+                Log.d("faq", "id = " + knowledgeBaseTopic);
             } else {
 
                 knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
-                Log.d("nicetest", "findfirst " + knowledgeBaseTopic);
+                Log.d("faq", "findfirst " + knowledgeBaseTopic);
             }
         }catch (Exception e1){
 
@@ -58,10 +59,10 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
                     FaqAdapter.this.notifyDataSetChanged();
                 }
             });
-            Log.d("nicetest","nicetest know");
+            Log.d("faq","nicetest know");
         }else{
             //run app without error
-            Log.d("nicetest","nicetest know else");
+            Log.d("faq","nicetest know else");
             this.categories = new RealmList<>();
 
         }
@@ -82,7 +83,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
         holder.title.setText(categories.get(position).title+"("+categories.get(position).numOfArticles+") ");
-        holder.description.setText(categories.get(position).description);
+        holder.description.setText(Html.fromHtml(categories.get(position).description));
         holder.parent.setTag(position);
         holder.parent.setOnClickListener(clickListener);
         if(selected_position==position) {

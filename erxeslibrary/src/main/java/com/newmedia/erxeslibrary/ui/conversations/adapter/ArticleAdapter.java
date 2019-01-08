@@ -3,6 +3,7 @@ package com.newmedia.erxeslibrary.ui.conversations.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
 //        holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
         holder.title.setText(articles.get(position).title);
-        holder.summary.setText(articles.get(position).content);
+        holder.summary.setText(Html.fromHtml(articles.get(position).content));
         holder.parent.setTag(position);
         holder.parent.setOnClickListener(clickListener);
 
