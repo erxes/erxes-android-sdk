@@ -8,13 +8,14 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
+import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.ListenerService;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import org.json.JSONObject;
 
@@ -23,7 +24,7 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 public class Insertnewmess {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "insertnew";
     private ErxesRequest ER;
     private Config config ;
     private Context context;
@@ -33,14 +34,14 @@ public class Insertnewmess {
         this.context = context;
         config = Config.getInstance(context);
     }
-    public void run( String message, List<JSONObject> list){
+    public void run( String message, List<AttachmentInput> list){
         this.message = message;
         ER.apolloClient.mutate(InsertMessageMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)
                 .message(message)
                 .conversationId("")
-//                .attachments(list)
+                .attachments(list)
                 .build())
                 .enqueue(request);
     }
@@ -56,8 +57,8 @@ public class Insertnewmess {
 
                 Conversation conversation = Conversation.update(response.data().insertMessage(),message,config);
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
-                ER.async_update_database(conversation);
-                ER.async_update_database(a);
+                DB.save(conversation);
+                DB.save(a);
                 Intent intent2 = new Intent(context, ListenerService.class);
                 intent2.putExtra("id",config.conversationId);
                 context.startService(intent2);

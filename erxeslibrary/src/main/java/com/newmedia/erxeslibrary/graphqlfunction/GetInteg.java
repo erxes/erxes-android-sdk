@@ -17,7 +17,7 @@ import com.newmedia.erxeslibrary.DataManager;
 import javax.annotation.Nonnull;
 
 public class GetInteg {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "GETINTEG";
     private ErxesRequest ER;
     private Config config ;
     public GetInteg(ErxesRequest ER, Context context) {
@@ -35,11 +35,11 @@ public class GetInteg {
         public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
             if(!response.hasErrors()) {
 
-
-                config.changeLanguage(response.data().getMessengerIntegration().languageCode());
-                Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
-                Helper.load_messengerData( response.data().getMessengerIntegration().messengerData());
-
+                try {
+                    config.changeLanguage(response.data().getMessengerIntegration().languageCode());
+                    Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
+                    Helper.load_messengerData( response.data().getMessengerIntegration().messengerData());
+                }catch (Exception e){}
                 ER.notefyAll(ReturnType.INTEGRATION_CHANGED,null ,null);
             }
             else{

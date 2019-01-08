@@ -6,21 +6,18 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxes.basic.MessagesQuery;
-import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class Getmess {
     final static String TAG = "SETCONNECT";
@@ -41,11 +38,8 @@ public class Getmess {
 
             if(response.data().messages().size() > 0) {
                 List<ConversationMessage> data = ConversationMessage.convert(response,conversationid);
-                Realm inner = Realm.getInstance(Helper.getRealmConfig());
-                inner.beginTransaction();
-                inner.copyToRealmOrUpdate(data);
-                inner.commitTransaction();
-                inner.close();
+                DB.save(data);
+
             }
             ER.notefyAll(ReturnType.Getmessages,conversationid,null);
 

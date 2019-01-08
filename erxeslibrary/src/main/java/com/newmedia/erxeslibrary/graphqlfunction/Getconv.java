@@ -7,20 +7,19 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.ConversationsQuery;
-import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.Configuration.DB;
 import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.Configuration.Helper;
 import com.newmedia.erxeslibrary.Configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.Model.Conversation;
+import com.newmedia.erxeslibrary.model.Conversation;
 
 import java.util.List;
 
 import javax.annotation.Nonnull;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 public class Getconv {
     final static String TAG = "SETCONNECT";
@@ -45,12 +44,7 @@ public class Getconv {
 
             if(response.data().conversations().size()>0) {
                 final List<Conversation> data = Conversation.convert(response,config);
-                Realm inner = Realm.getInstance(Helper.getRealmConfig());
-                inner.beginTransaction();
-                inner.delete(Conversation.class);
-                inner.copyToRealm(data);
-                inner.commitTransaction();
-                inner.close();
+                DB.save(data);
 
                 Log.d(TAG,"Getconversation ok ");
             }

@@ -33,8 +33,7 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
     @Nonnull
     @Override
     public CustomTypeValue encode(@Nonnull JSONObject value) {
-//        return new CustomTypeValue.GraphQLString(value);
-//        return CustomTypeValue.fromRawValue(value);
+
         return new CustomTypeValue.GraphQLJsonString(value.toString());
     }
 }

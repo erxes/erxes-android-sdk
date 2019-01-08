@@ -12,3 +12,5 @@
 .idea/
 /q
 hs_err_pid29975.log
+app/src/main/java/io/erxes/main/MainActivity.java
+

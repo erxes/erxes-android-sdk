@@ -4,20 +4,19 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.util.Log;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
+import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
-import com.newmedia.erxeslibrary.ConversationListActivity;
+import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.Model.Conversation;
-import com.newmedia.erxeslibrary.Model.ConversationMessage;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
 import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
 import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
@@ -32,20 +31,15 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nonnull;
-
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmModel;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
-    final static public String database_name = "erxes.realm";
-    final static public int database_version = 1;
+
     public ApolloClient apolloClient;
     private OkHttpClient okHttpClient;
-    private DataManager dataManager;
     private Context context;
     private List<ErxesObserver> observers;
     private Config config;
@@ -59,7 +53,6 @@ public class ErxesRequest {
     private ErxesRequest(Config config){
         this.context = config.context;
         this.config = config;
-        dataManager =  DataManager.getInstance(context);
         Realm.init(context);
         Helper.Init(context);
     }
@@ -91,14 +84,14 @@ public class ErxesRequest {
         getIntegration.run();
     }
 
-    public void InsertMessage( String message, String conversationId,List<JSONObject> list){
+    public void InsertMessage( String message, String conversationId,List<AttachmentInput> list){
         if(!isNetworkConnected()){
             return;
         }
         Insertmess insertmessage = new Insertmess(this,context);
         insertmessage.run(message,conversationId,list);
     }
-    public void InsertNewMessage(final String message,List<JSONObject> list){
+    public void InsertNewMessage(final String message,List<AttachmentInput> list){
         if(!isNetworkConnected()){
             return;
         }
@@ -131,40 +124,14 @@ public class ErxesRequest {
         GetSup getSup = new GetSup(this,context);
         getSup.run();
     }
-
-    public boolean ConversationMessageSubsribe_handmade(ConversationMessageInsertedSubscription.ConversationMessageInserted data){
-        Realm inner = Realm.getInstance(Helper.getRealmConfig());
-        inner.beginTransaction();
-        inner.insertOrUpdate(ConversationMessage.convert(data));
-        inner.commitTransaction();
-
-
-        Conversation conversation = inner.where(Conversation.class).equalTo("_id",data.conversationId()).findFirst();
-
-        if(conversation!=null) {
-            inner.beginTransaction();
-            conversation.content = (data.content());
-            conversation.isread = false;
-            inner.insertOrUpdate(conversation);
-            inner.commitTransaction();
-            inner.close();
-            notefyAll(ReturnType.Subscription,conversation._id,null);
+    public void getFAQ( ){
+        if(!isNetworkConnected()){
+            return;
         }
-        else{
-            inner.close();
-        }
-        Log.d("erxes","chat is goind"+ConversationListActivity.chat_is_going);
-        return ConversationListActivity.chat_is_going;
-
+        GetKnowledge getSup = new GetKnowledge(this,context);
+        getSup.run();
     }
-    public void async_update_database(RealmModel realmModel){
 
-        Realm inner = Realm.getInstance(Helper.getRealmConfig());
-        inner.beginTransaction();
-        inner.insertOrUpdate(realmModel);
-        inner.commitTransaction();
-        inner.close();
-    }
     public void add(ErxesObserver e){
         if(observers == null)
             observers= new ArrayList<>();

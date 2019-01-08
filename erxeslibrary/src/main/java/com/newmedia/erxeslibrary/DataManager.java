@@ -2,6 +2,10 @@ package com.newmedia.erxeslibrary;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.newmedia.erxeslibrary.Configuration.Messengerdata;
 
 /**
  * Created by lol on 3/23/16.
@@ -61,5 +65,20 @@ public class DataManager {
     public boolean getDataB(String key) {
         // Storing login value as TRUE
         return pref.getBoolean(key, true);
+    }
+    public void setMessengerData(String data){
+        editor.putString("message", data);
+        editor.commit();
+    }
+    public Messengerdata getMessenger(){
+        String a = pref.getString("message", null);
+        Gson gson = new Gson();
+        if( a != null )
+            try {
+                return gson.fromJson(a,Messengerdata.class);
+            }
+            catch (Exception e){}
+
+        return null;
     }
 }
