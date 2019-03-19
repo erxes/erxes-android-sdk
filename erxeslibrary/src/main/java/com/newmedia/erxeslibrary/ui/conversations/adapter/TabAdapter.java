@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -19,17 +20,21 @@ public class TabAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0)
-            return SupportFragment.newInstance("1","2");
+            return SupportFragment.newInstance();
         return new FaqFragment();
     }
 
+    @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        if(position == 0 )
-            return context.getString(R.string.SUPPORT);
-        else
-            return context.getString(R.string.FAQ);
+        switch (position){
+            case 0: return context.getResources().getString(R.string.SUPPORT);
+            case 1: return context.getResources().getString(R.string.FAQ);
+            default:
+                return context.getResources().getString(R.string.FAQ);
+        }
     }
+
 
     @Override
     public int getCount() {

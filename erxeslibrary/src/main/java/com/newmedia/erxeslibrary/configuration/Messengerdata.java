@@ -1,7 +1,6 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 import java.util.List;
-import java.util.Map;
 
 public class Messengerdata {
     public boolean isOnline;

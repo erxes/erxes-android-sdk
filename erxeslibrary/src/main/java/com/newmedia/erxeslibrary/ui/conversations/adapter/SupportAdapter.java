@@ -8,9 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
+import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.User;
 
@@ -43,7 +43,9 @@ public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
         if(list.get(position).avatar!=null)
-            GlideApp.with(context).load(list.get(position).avatar).placeholder(R.drawable.avatar)
+
+            Glide.with(context).load(list.get(position).avatar)
+                    .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
 

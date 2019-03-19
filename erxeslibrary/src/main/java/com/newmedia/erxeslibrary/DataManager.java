@@ -2,10 +2,9 @@ package com.newmedia.erxeslibrary;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.newmedia.erxeslibrary.Configuration.Messengerdata;
+import com.newmedia.erxeslibrary.configuration.Messengerdata;
 
 /**
  * Created by lol on 3/23/16.

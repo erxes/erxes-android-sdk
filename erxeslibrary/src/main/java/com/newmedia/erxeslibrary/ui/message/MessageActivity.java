@@ -1,13 +1,10 @@
 package com.newmedia.erxeslibrary.ui.message;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.net.Uri;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,7 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,29 +24,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
-import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Configuration.ProgressRequestBody;
-import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Configuration.ListenerService;
-import com.newmedia.erxeslibrary.Configuration.SoftKeyboard;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.DB;
+import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.FileInfo;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.R;
 
 
-import org.json.JSONObject;
-
-import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -135,7 +124,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private void bind(User user,ImageView por){
         if(user.avatar!=null) {
             try {
-                GlideApp.with(this.getApplicationContext())
+                Glide.with(this.getApplicationContext())
                         .load(user.avatar)
                         .placeholder(R.drawable.avatar)
                         .error(R.drawable.avatar)

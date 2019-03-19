@@ -1,14 +1,9 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 import com.newmedia.erxeslibrary.model.Conversation;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
-import com.newmedia.erxeslibrary.model.User;
-
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.RealmList;
 import io.realm.RealmModel;
 import io.realm.RealmObject;
 

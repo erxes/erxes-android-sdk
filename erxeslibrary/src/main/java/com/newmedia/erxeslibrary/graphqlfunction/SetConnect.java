@@ -7,10 +7,10 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.MessengerConnectMutation;
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
 
 import javax.annotation.Nonnull;
@@ -27,11 +27,12 @@ public class SetConnect {
         config = Config.getInstance(context);
         dataManager = DataManager.getInstance(context);
     }
-    public void run(String email,String phone){
+    public void run(String email,String phone,boolean isUser){
         ER.apolloClient.mutate(MessengerConnectMutation.builder()
                 .brandCode(config.brandCode)
                 .email(email)
                 .phone(phone)
+                .isUser(isUser)
                 .build()).enqueue(request);
     }
     private ApolloCall.Callback<MessengerConnectMutation.Data> request = new ApolloCall.Callback<MessengerConnectMutation.Data>() {

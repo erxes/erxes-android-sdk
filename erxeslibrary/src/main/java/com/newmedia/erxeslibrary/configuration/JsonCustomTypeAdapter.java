@@ -1,12 +1,9 @@
-package com.newmedia.erxeslibrary.Configuration;
-
-import android.util.Log;
+package com.newmedia.erxeslibrary.configuration;
 
 
 import com.apollographql.apollo.response.CustomTypeAdapter;
 import com.apollographql.apollo.response.CustomTypeValue;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

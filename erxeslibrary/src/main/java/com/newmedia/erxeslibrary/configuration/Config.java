@@ -1,17 +1,14 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -179,15 +176,15 @@ public class Config implements ErxesObserver{
         context.startActivity(a);
 
     }
-    public void Start_login_email(String email){
+    public void Start_login_email(String email,boolean isUser){
         erxesRequest.add(this);
-        erxesRequest.setConnect(email,"");
+        erxesRequest.setConnect(email,"",isUser);
 
 
     }
-    public void Start_login_phone(String phone){
+    public void Start_login_phone(String phone,boolean isUser){
         erxesRequest.add(this);
-        erxesRequest.setConnect("",phone);
+        erxesRequest.setConnect("",phone,isUser);
     }
     public void LoadDefaultValues(){
 

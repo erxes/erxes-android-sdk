@@ -9,15 +9,13 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Configuration.ListenerService;
-import com.newmedia.erxeslibrary.Configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.DB;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.configuration.ListenerService;
+import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
-
-import org.json.JSONObject;
 
 import java.util.List;
 

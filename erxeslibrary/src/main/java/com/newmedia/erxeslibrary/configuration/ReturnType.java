@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 // Adding a single ENUM will increase the size (13x times than the Integer constant) of final DEX file.
 // It also generates the problem of runtime overhead and your app will required more space.
