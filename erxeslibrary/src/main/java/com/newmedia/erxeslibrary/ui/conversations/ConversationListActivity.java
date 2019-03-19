@@ -133,15 +133,11 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         supporterView.setLayoutManager(supManager);
         Helper.display_configure(this,container,"#66000000");
 
-        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager());
+        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(),this);
         TabLayout tabLayout = findViewById(R.id.tabs);
         viewpager.setAdapter(tabAdapter);
-        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewpager));
-        viewpager.addOnPageChangeListener( new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setupWithViewPager(viewpager);
         tabLayout.setSelectedTabIndicatorColor(config.colorCode);
-
-//        viewpager.addOnPageChangeListener(tabLayout.TabLayoutOnPageChangeListener(tabLayout));
-//        tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(viewpager));
 
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);

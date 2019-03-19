@@ -25,14 +25,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * create an instance of this fragment.
  */
 public class SupportFragment extends Fragment {
-
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private String mParam1;
-    private String mParam2;
-
-//    private OnFragmentInteractionListener mListener;
-
     private CircleImageView addnew_conversation;
     private RecyclerView recyclerView;
     private Config config;
@@ -41,12 +33,8 @@ public class SupportFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static SupportFragment newInstance(String param1, String param2) {
+    public static SupportFragment newInstance() {
         SupportFragment fragment = new SupportFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -54,10 +42,6 @@ public class SupportFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         config = Config.getInstance(this.getContext());
     }
 
