@@ -16,10 +16,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.Target;
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
+import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.model.*;
 import com.newmedia.erxeslibrary.R;
 
@@ -230,7 +230,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 /**/
             if(message.user!=null){
 
-                GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
+                Glide.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             }
@@ -309,7 +309,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 //                inputImage.getLayoutParams().height = pixels;
                 inputImage.requestLayout();
 
-                GlideApp.with(context).load(url).placeholder(circularProgressDrawable)
+                Glide.with(context).load(url).placeholder(circularProgressDrawable)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).override(pixels,Target.SIZE_ORIGINAL)
                         .into(inputImage);
                 fileview.setOnClickListener(null);

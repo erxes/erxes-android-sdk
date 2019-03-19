@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 import android.os.Handler;
 import android.os.Message;

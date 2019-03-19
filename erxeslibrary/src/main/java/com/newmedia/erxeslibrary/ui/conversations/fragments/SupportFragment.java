@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations.fragments;
 
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,10 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListAdapter;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 

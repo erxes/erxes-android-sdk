@@ -12,15 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.DB;
+import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
-
-import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -59,10 +56,8 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
                     FaqAdapter.this.notifyDataSetChanged();
                 }
             });
-            Log.d("faq","nicetest know");
         }else{
             //run app without error
-            Log.d("faq","nicetest know else");
             this.categories = new RealmList<>();
 
         }

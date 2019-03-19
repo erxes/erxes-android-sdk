@@ -5,7 +5,7 @@ package com.newmedia.erxeslibrary.model;
 import com.apollographql.apollo.api.Response;
 import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxes.basic.InsertMessageMutation;
-import com.newmedia.erxeslibrary.Configuration.Config;
+import com.newmedia.erxeslibrary.configuration.Config;
 
 
 import java.util.ArrayList;

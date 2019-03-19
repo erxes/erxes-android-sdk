@@ -18,14 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.ui.message.GFilePart;
 
 import io.realm.Realm;
 
@@ -124,7 +123,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         if(config.isNetworkConnected()) {
             if(email.getVisibility() == View.GONE) {
                 if(phone.getText().toString().length()>7) {
-                    erxesRequest.setConnect("", phone.getText().toString());
+                    erxesRequest.setConnect("", phone.getText().toString(),false);
                     phone.setError(null);
                 }
                 else
@@ -132,7 +131,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             }else{
                 if(isValidEmail(email.getText().toString())) {
                     email.setError(null);
-                    erxesRequest.setConnect("" + email.getText().toString(), "");
+                    erxesRequest.setConnect("" + email.getText().toString(), "",false);
                 }
                 else
                     email.setError(getResources().getString( R.string.no_correct_mail));

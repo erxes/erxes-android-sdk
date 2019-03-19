@@ -15,11 +15,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Configuration.ReturnType;
-import com.newmedia.erxeslibrary.Configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.configuration.ListenerService;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
@@ -175,8 +175,6 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
                         v.setBackgroundColor(Color.parseColor("#00000000"));
                         if(v.getId() == R.id.logout)
                             logout(null);
-                        else if(v.getId() == R.id.start)
-                            start_new_conversation(null);
                     }
                 });
             }

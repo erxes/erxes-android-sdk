@@ -12,26 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.GlideApp;
-import com.newmedia.erxeslibrary.Configuration.Helper;
-import com.newmedia.erxeslibrary.Configuration.ListenerService;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import io.realm.ObjectChangeSet;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
-import io.realm.RealmModel;
-import io.realm.RealmObjectChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 
@@ -117,7 +108,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
             if(message.user.avatar!=null)
-                GlideApp.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
+                Glide.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
 

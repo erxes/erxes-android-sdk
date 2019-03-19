@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationManagerCompat;
 import android.text.Html;
 import android.util.Log;
 import com.apollographql.apollo.ApolloClient;
@@ -25,7 +24,6 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.model.Conversation;
@@ -36,7 +34,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import okhttp3.OkHttpClient;
 
@@ -223,7 +220,7 @@ public class ListenerService extends Service{
                             }
 
                             @Override public void onComplete() {
-                                Log.d(TAG,"oncomplete");
+                                Log.d(TAG,"subsrioption ehsouced");
                             }
                         }
                 )

@@ -1,8 +1,7 @@
-package com.newmedia.erxeslibrary.Configuration;
+package com.newmedia.erxeslibrary.configuration;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
@@ -10,13 +9,8 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
-import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
-import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.model.Conversation;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
 import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
 import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
@@ -26,13 +20,10 @@ import com.newmedia.erxeslibrary.graphqlfunction.Insertnewmess;
 import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.Realm;
-import io.realm.RealmModel;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
@@ -68,12 +59,12 @@ public class ErxesRequest {
                 .build();
     }
 
-    public void setConnect(String email ,String phone){
+    public void setConnect(String email ,String phone,boolean isUser){
         if(!isNetworkConnected()){
             return;
         }
         SetConnect setConnect = new SetConnect(this,context);
-        setConnect.run(email,phone);
+        setConnect.run(email,phone,isUser);
     }
 
     public void getIntegration(){

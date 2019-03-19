@@ -4,23 +4,16 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.newmedia.erxeslibrary.Configuration.Config;
-import com.newmedia.erxeslibrary.Configuration.DB;
-import com.newmedia.erxeslibrary.Configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
-import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
-import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder>  {
