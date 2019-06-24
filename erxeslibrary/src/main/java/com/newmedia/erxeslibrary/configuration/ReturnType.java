@@ -16,4 +16,5 @@ public class ReturnType {
     final static public int Getconversation = 8;
     final static public int IsMessengerOnline = 9;
     final static public int GetSupporters = 10;
+    final static public int LEAD = 11;
 }

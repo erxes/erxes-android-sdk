@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.configuration.Messengerdata;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by lol on 3/23/16.
  */
@@ -70,14 +73,11 @@ public class DataManager {
         editor.commit();
     }
     public Messengerdata getMessenger(){
-        String a = pref.getString("message", null);
-        Gson gson = new Gson();
-        if( a != null )
-            try {
-                return gson.fromJson(a,Messengerdata.class);
-            }
-            catch (Exception e){}
-
-        return null;
+        try {
+            return Messengerdata.convert(new JSONObject(pref.getString("message", null)),pref.getString(language, null));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

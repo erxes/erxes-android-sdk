@@ -59,12 +59,12 @@ public class ErxesRequest {
                 .build();
     }
 
-    public void setConnect(String email ,String phone,boolean isUser){
+    public void setConnect(String email ,String phone,boolean isUser, boolean isLogin){
         if(!isNetworkConnected()){
             return;
         }
         SetConnect setConnect = new SetConnect(this,context);
-        setConnect.run(email,phone,isUser);
+        setConnect.run(email,phone,isUser,isLogin);
     }
 
     public void getIntegration(){

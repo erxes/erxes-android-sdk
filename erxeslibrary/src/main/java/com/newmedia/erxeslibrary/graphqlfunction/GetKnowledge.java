@@ -26,8 +26,8 @@ public class GetKnowledge {
     }
     public void run(){
 
-        if(config.messengerdata != null && config.messengerdata.knowledgeBaseTopicId != null){
-            ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.knowledgeBaseTopicId).build())
+        if(config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null){
+            ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
                     .enqueue(request);
         }
 

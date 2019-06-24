@@ -32,8 +32,10 @@ public class Getconv {
 
     }
     public void run(){
-        ER.apolloClient.query(ConversationsQuery.builder().integrationId(config.integrationId).
-                customerId(config.customerId).build()).enqueue(request);
+        ER.apolloClient.query(ConversationsQuery.builder()
+                        .integrationId(config.integrationId)
+                        .customerId(config.customerId).build())
+                .enqueue(request);
     }
     private ApolloCall.Callback<ConversationsQuery.Data> request = new ApolloCall.Callback<ConversationsQuery.Data>() {
         @Override

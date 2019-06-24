@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.support.annotation.NonNull;
 
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 
@@ -36,6 +37,7 @@ public class Config implements ErxesObserver{
     public Context context;
     private ErxesRequest erxesRequest;
     static private Config config;
+    public FormConnect formConnect;
     public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis()  - createDate;
 
@@ -85,7 +87,7 @@ public class Config implements ErxesObserver{
         Date date = new Date();
         date.setTime(createDate);
 
-        Long diffTime = Calendar.getInstance().getTimeInMillis()  - createDate;
+        long diffTime = Calendar.getInstance().getTimeInMillis()  - createDate;
 
         diffTime = diffTime/1000;
         long weeks = diffTime / 604800;
@@ -176,16 +178,16 @@ public class Config implements ErxesObserver{
         context.startActivity(a);
 
     }
-    public void Start_login_email(String email,boolean isUser){
-        erxesRequest.add(this);
-        erxesRequest.setConnect(email,"",isUser);
-
-
-    }
-    public void Start_login_phone(String phone,boolean isUser){
-        erxesRequest.add(this);
-        erxesRequest.setConnect("",phone,isUser);
-    }
+//    public void Start_login_email(String email,boolean isUser){
+//        erxesRequest.add(this);
+//        erxesRequest.setConnect(email,"",isUser);
+//
+//
+//    }
+//    public void Start_login_phone(String phone,boolean isUser){
+//        erxesRequest.add(this);
+//        erxesRequest.setConnect("",phone,isUser);
+//    }
     public void LoadDefaultValues(){
 
         dataManager = DataManager.getInstance(context);
@@ -209,9 +211,7 @@ public class Config implements ErxesObserver{
     }
 
     public boolean isLoggedIn(){
-        if(dataManager.getDataS(DataManager.customerId)==null)
-            return false;
-        return true;
+        return dataManager.getDataS(DataManager.customerId) != null;
     }
     public boolean Logout(){
         customerId = null;
@@ -225,10 +225,7 @@ public class Config implements ErxesObserver{
     }
 
     public boolean messenger_status_check(){
-        if(isNetworkConnected()&& isMessengerOnline){
-            return true;
-        }
-        return false;
+        return isNetworkConnected() && isMessengerOnline;
     }
     public void changeLanguage(String lang) {
         if(lang == null || lang.equalsIgnoreCase("") )

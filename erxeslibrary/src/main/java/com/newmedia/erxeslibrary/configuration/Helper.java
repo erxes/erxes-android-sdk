@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -26,56 +27,63 @@ import java.util.Map;
 public class Helper {
     static DataManager dataManager;
     static Config config;
-    static public int[] backgrounds ={R.drawable.bitmap1,R.drawable.bitmap2,R.drawable.bitmap3,R.drawable.bitmap4};
+    static public int[] backgrounds = {R.drawable.bitmap1, R.drawable.bitmap2, R.drawable.bitmap3, R.drawable.bitmap4};
 
     static public final Map<String, Integer> ICON_MAP =
-            Collections.unmodifiableMap(new HashMap<String,Integer>() {{
+            Collections.unmodifiableMap(new HashMap<String, Integer>() {{
                 put("paste", R.drawable.paste);
                 put("flag", R.drawable.flag);
                 put("laptop", R.drawable.laptop);
             }});
-    static void Init(Context context){
-        dataManager =  DataManager.getInstance(context);
+
+    static void Init(Context context) {
+        dataManager = DataManager.getInstance(context);
         config = Config.getInstance(context);
     }
-    static public void load_uiOptions(JSONObject js){
-        if(js == null)
+
+    static public void load_uiOptions(JSONObject js) {
+        if (js == null)
             return;
-        String color = null;
+        String color;
         try {
             color = js.getString("color");
             dataManager.setData(DataManager.color, color);
-            if(color != null)
+            if (color != null)
                 config.colorCode = Color.parseColor(color);
-            else{
+            else {
                 config.colorCode = Color.parseColor("#5629B6");
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         try {
             color = js.getString("wallpaper");
             dataManager.setData("wallpaper", color);
-        }catch (JSONException e){
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
-    static public void load_messengerData(JSONObject js){
-        if(js == null)
+
+    static public void load_messengerData(JSONObject js) {
+        if (js == null)
             return;
         dataManager.setMessengerData(js.toString());
-        Gson gson = new Gson();
-        config.messengerdata = gson.fromJson(js.toString(),Messengerdata.class);
-
+//        Gson gson = new Gson();
+//        config.messengerdata = gson.fromJson(js.toString(), Messengerdata.class);
+        config.messengerdata = Messengerdata.convert(js,config.language);
+        Log.e("TAG", "load_messengerData: " + js.toString() );
+        Log.e("TAG", "load_messengerData: " + config.messengerdata.getFormCode() );
     }
 
-    static public Point display_configure(AppCompatActivity context, View container, String color){
+    static public Point display_configure(AppCompatActivity context, View container, String color) {
 
 
         Display display = context.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        int height = (int)( size.y *0.8);
+        int height = (int) (size.y * 0.8);
 
         context.getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
         Window window = context.getWindow();
@@ -85,7 +93,7 @@ public class Helper {
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);
 
-        if(!(context instanceof ErxesActivity)) {
+        if (!(context instanceof ErxesActivity)) {
             container.getLayoutParams().height = height;
             container.requestLayout();
         }

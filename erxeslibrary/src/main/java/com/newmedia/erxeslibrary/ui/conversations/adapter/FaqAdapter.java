@@ -30,25 +30,26 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
     private Context context;
     private Config config;
     private int selected_position = -1;
+
     public FaqAdapter(Context context) {
         this.context = context;
         this.config = Config.getInstance(context);
         Realm.init(context);
         Realm realm = DB.getDB();
         try {
-            if (config.messengerdata.knowledgeBaseTopicId != null) {
+            if (config.messengerdata.getKnowledgeBaseTopicId() != null) {
 
-                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.knowledgeBaseTopicId).findFirst();
+                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.getKnowledgeBaseTopicId()).findFirst();
                 Log.d("faq", "id = " + knowledgeBaseTopic);
             } else {
 
                 knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
                 Log.d("faq", "findfirst " + knowledgeBaseTopic);
             }
-        }catch (Exception e1){
+        } catch (Exception e1) {
 
         }
-        if(knowledgeBaseTopic!=null) {
+        if (knowledgeBaseTopic != null) {
             this.categories = knowledgeBaseTopic.categories;
             knowledgeBaseTopic.categories.addChangeListener(new RealmChangeListener<RealmList<KnowledgeBaseCategory>>() {
                 @Override
@@ -56,7 +57,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
                     FaqAdapter.this.notifyDataSetChanged();
                 }
             });
-        }else{
+        } else {
             //run app without error
             this.categories = new RealmList<>();
 
@@ -76,17 +77,17 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
-        holder.title.setText(categories.get(position).title+"("+categories.get(position).numOfArticles+") ");
+        if (Helper.ICON_MAP.get(categories.get(position).icon) != null)
+            holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
+        holder.title.setText(categories.get(position).title + "(" + categories.get(position).numOfArticles + ") ");
         holder.description.setText(Html.fromHtml(categories.get(position).description));
         holder.parent.setTag(position);
         holder.parent.setOnClickListener(clickListener);
-        if(selected_position==position) {
+        if (selected_position == position) {
             holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles));
             holder.recyclerView.setLayoutManager(new LinearLayoutManager(context));
             holder.recyclerView.setVisibility(View.VISIBLE);
-        }
-        else
+        } else
             holder.recyclerView.setVisibility(View.GONE);
     }
 
@@ -94,19 +95,19 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
     public int getItemCount() {
         return categories.size();
     }
+
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int position = (int)v.getTag();
-            if( selected_position == position){
+            int position = (int) v.getTag();
+            if (selected_position == position) {
                 int temp = selected_position;
                 selected_position = -1;
                 FaqAdapter.this.notifyItemChanged(temp);
-            }
-            else{
+            } else {
                 int temp = selected_position;
                 selected_position = -1;
-                if(temp > -1) {
+                if (temp > -1) {
                     FaqAdapter.this.notifyItemChanged(temp);
                 }
                 selected_position = position;
@@ -114,11 +115,13 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             }
         }
     };
+
     public class Holder extends RecyclerView.ViewHolder {
         ImageView icon;
-        TextView title,description;
-        View parent ;
+        TextView title, description;
+        View parent;
         RecyclerView recyclerView;
+
         public Holder(View itemView) {
             super(itemView);
             parent = itemView;

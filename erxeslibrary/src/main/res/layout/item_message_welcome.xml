@@ -7,7 +7,6 @@
     android:paddingTop="8dp">
     <TextView
         android:id="@+id/text_message_body"
-        android:text="hi man, how are you?"
         android:background="@drawable/rounded_rectangle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

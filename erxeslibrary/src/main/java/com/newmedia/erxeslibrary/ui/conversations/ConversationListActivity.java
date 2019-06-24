@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -24,51 +25,64 @@ import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
+import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 
-public class ConversationListActivity extends AppCompatActivity  implements ErxesObserver {
+public class ConversationListActivity extends AppCompatActivity implements ErxesObserver {
 
-    static private String TAG="ConversationListActivity";
+    static private String TAG = "ConversationListActivity";
     static public boolean chat_is_going = false;
 
     private RecyclerView supporterView;
-    private TextView welcometext,date;
+    private TextView welcometext, date, title;
     private ViewPager viewpager;
-    private ViewGroup info_header,container;
+    private ViewGroup info_header, container;
     private Config config;
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
+    private TabAdapter tabAdapter;
+    public boolean isFirstStart = false;
+
     @Override
-    public void notify(final int  returnType, final String conversationId, String message) {
+    public void notify(final int returnType, final String conversationId, String message) {
 
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                switch (returnType){
+                switch (returnType) {
                     case ReturnType.Subscription:
-                     case ReturnType.Getconversation:
-                         Log.d(TAG,"here changed");
+                    case ReturnType.Getconversation:
+                        Log.d(TAG, "here changed");
 //                        recyclerView.getAdapter().notifyDataSetChanged();
                         break;
-                     case ReturnType.INTEGRATION_CHANGED:
+                    case ReturnType.INTEGRATION_CHANGED:
 //                        info_header.setBackgroundColor(config.colorCode);
 //                        addnew_conversation.getBackground().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
                         break;
                     case ReturnType.CONNECTIONFAILED:
                         break;
+                    case ReturnType.LOGIN_SUCCESS:
+                        init();
+                        break;
                     case ReturnType.SERVERERROR:
                         break;
-
-                        default:break;
-                };
+                    case ReturnType.LEAD:
+                        if (tabAdapter != null)
+                            ((SupportFragment) tabAdapter.getItem(0)).setLead();
+                        break;
+                    default:
+                        break;
+                }
+                ;
 
 
             }
         });
 
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -76,21 +90,34 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         erxesRequest.remove(this);
     }
 
+    private void startActivity() {
+        this.finish();
+        Intent a = new Intent(ConversationListActivity.this, ErxesActivity.class);
+        startActivity(a);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
-        if(config.customerId == null) {
-            this.finish();
-            Intent a = new Intent(ConversationListActivity.this,ErxesActivity.class);
-            startActivity(a);
+        if (config.customerId == null) {
+            startActivity();
             return;
         }
+        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.email)) &&
+                !TextUtils.isEmpty(dataManager.getDataS(DataManager.phone))) {
+            dataManager.setData(DataManager.customerId, null);
+            startActivity();
+            return;
+        } else if (!TextUtils.isEmpty(dataManager.getDataS(DataManager.email)))
+            erxesRequest.setConnect(dataManager.getDataS(DataManager.email), null, false,false);
+        else erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false,false);
+
         erxesRequest.add(this);
         config.conversationId = null;
-        erxesRequest.getIntegration();
-        dataManager.setData("chat_is_going",true);
+
+        dataManager.setData("chat_is_going", true);
 
 //        LayerDrawable layerDrawable = (LayerDrawable) getResources()
 //                .getDrawable(R.drawable.pattern_color);
@@ -106,8 +133,8 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        chat_is_going =false;
-        dataManager.setData("chat_is_going",false);
+        chat_is_going = false;
+        dataManager.setData("chat_is_going", false);
     }
 
     @Override
@@ -121,19 +148,19 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         info_header = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
         welcometext = findViewById(R.id.welcometext);
+        title = findViewById(R.id.title);
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
-        date.setText(config.now());
+
         dataManager = DataManager.getInstance(this);
-//        welcometext.setText(config.messengerdata.messages.greetings.message);
 
         supporterView.setAdapter(new SupportAdapter(this));
-        LinearLayoutManager supManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
-        Helper.display_configure(this,container,"#66000000");
+        Helper.display_configure(this, container, "#66000000");
 
-        TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager(),this);
+        tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
         TabLayout tabLayout = findViewById(R.id.tabs);
         viewpager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewpager);
@@ -143,33 +170,42 @@ public class ConversationListActivity extends AppCompatActivity  implements Erxe
         startService(intent2);
         erxesRequest.getFAQ();
     }
-    public void start_new_conversation(View v){
+
+    private void init() {
+        date.setText(config.now());
+        if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
+            title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
+            welcometext.setText(config.messengerdata.getMessages().getGreetings().getMessage());
+        }
+    }
+
+    public void start_new_conversation(View v) {
         config.conversationId = null;
-        Intent a = new Intent(this,MessageActivity.class);
+        Intent a = new Intent(this, MessageActivity.class);
         startActivity(a);
     }
 
-    public void logout(View v){
+    public void logout(View v) {
         finish();
     }
-    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
+
+    private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
 
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 ConversationListActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         v.setBackgroundResource(R.drawable.action_background);
                     }
                 });
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP){
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 ConversationListActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         v.setBackgroundColor(Color.parseColor("#00000000"));
-                        if(v.getId() == R.id.logout)
+                        if (v.getId() == R.id.logout)
                             logout(null);
                     }
                 });

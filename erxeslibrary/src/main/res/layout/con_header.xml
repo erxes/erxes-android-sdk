@@ -49,15 +49,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.7"
-                android:text="September 30 / 2018"
                 android:textColor="#fff"
                 android:textSize="@dimen/header_small"
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome"
                 android:textColor="#fff"
                 android:textSize="@dimen/header_big"
                 android:textStyle="bold" />
@@ -67,7 +66,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.7"
-                android:text="Танд асуух асуулт байна уу? Бид танд туслахад бэлэн байна."
                 android:textColor="#f7f4f4"
                 android:textSize="@dimen/header_small" />
         </LinearLayout>
