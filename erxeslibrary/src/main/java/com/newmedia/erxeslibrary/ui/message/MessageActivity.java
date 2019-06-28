@@ -128,6 +128,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         .load(user.avatar)
                         .placeholder(R.drawable.avatar)
                         .error(R.drawable.avatar)
+                        .optionalCircleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(por);
             }catch (Exception e){}

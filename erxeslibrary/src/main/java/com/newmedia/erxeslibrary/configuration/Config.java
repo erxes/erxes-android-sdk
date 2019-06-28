@@ -135,6 +135,32 @@ public class Config implements ErxesObserver{
 
 
     }
+
+    public String full_date(String createDate_s) {
+
+        Long createDate = null;
+        try {
+            createDate =Long.valueOf(createDate_s);
+        }
+        catch (NumberFormatException e){
+            return "";
+        }
+
+
+        Date date = new Date();
+        date.setTime(createDate);
+
+        SimpleDateFormat format =
+                new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
+        SimpleDateFormat format2 =
+                new SimpleDateFormat("MMM dd / yyyy HH:mm");
+        if(this.language.equalsIgnoreCase("en")){
+            return format2.format(date);
+        }
+        else {
+            return format.format(date);
+        }
+    }
     @Override
     public void notify(int returnType, String conversationId, String message) {
         if(ReturnType.LOGIN_SUCCESS == returnType)

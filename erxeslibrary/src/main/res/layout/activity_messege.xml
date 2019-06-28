@@ -38,27 +38,19 @@
                     app:layout_constraintEnd_toStartOf="@id/logout"
                     app:layout_constraintStart_toEndOf="@id/back"
                     app:layout_constraintTop_toTopOf="parent">
-                    <de.hdodenhof.circleimageview.CircleImageView
+                    <ImageView
                         android:id="@+id/profile1"
                         android:layout_marginLeft="20dp"
                         android:layout_width="@dimen/image_size"
                         android:layout_height="@dimen/image_size"
-                        android:src="@drawable/avatar"
                         android:layout_alignLeft="@id/profile2"
                         android:layout_centerHorizontal="true"
-                        android:visibility="invisible"
-                        app:civ_border_width="1dp"
-                        app:civ_border_color="#000000"
-                        app:civ_circle_background_color="#fff"/>
-                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:visibility="invisible"/>
+                    <ImageView
                         android:id="@+id/profile2"
                         android:layout_width="@dimen/image_size"
                         android:layout_height="@dimen/image_size"
-                        android:src="@drawable/avatar"
-                        android:visibility="invisible"
-                        app:civ_border_width="1dp"
-                        app:civ_border_color="#000000"
-                        app:civ_circle_background_color="#fff"/>
+                        android:visibility="invisible"/>
                     <LinearLayout
                         android:layout_marginLeft="10dp"
                         android:layout_width="wrap_content"

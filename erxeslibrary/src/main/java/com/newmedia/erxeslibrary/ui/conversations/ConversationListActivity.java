@@ -2,6 +2,8 @@ package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +16,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.newmedia.erxeslibrary.configuration.Config;
@@ -44,6 +47,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private DataManager dataManager;
     private TabAdapter tabAdapter;
     public boolean isFirstStart = false;
+    private ImageView fb, tw, yt;
 
     @Override
     public void notify(final int returnType, final String conversationId, String message) {
@@ -147,11 +151,14 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         viewpager = findViewById(R.id.viewpager);
         info_header = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
-        welcometext = findViewById(R.id.welcometext);
-        title = findViewById(R.id.title);
+        welcometext = findViewById(R.id.greetingMessage);
+        title = findViewById(R.id.greetingTitle);
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
+        fb = findViewById(R.id.fb);
+        tw = findViewById(R.id.tw);
+        yt = findViewById(R.id.yt);
 
         dataManager = DataManager.getInstance(this);
 
@@ -169,6 +176,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
         erxesRequest.getFAQ();
+
+        fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
+        tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
+        yt.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
+        this.findViewById(R.id.fbcontainer).setOnTouchListener(touchListener);
+        this.findViewById(R.id.twcontainer).setOnTouchListener(touchListener);
+        this.findViewById(R.id.ytcontainer).setOnTouchListener(touchListener);
     }
 
     private void init() {
@@ -177,6 +191,17 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
             welcometext.setText(config.messengerdata.getMessages().getGreetings().getMessage());
         }
+        if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().startsWith("http"))
+            this.findViewById(R.id.fbcontainer).setVisibility(View.VISIBLE);
+        else this.findViewById(R.id.fbcontainer).setVisibility(View.GONE);
+
+        if (config.messengerdata.getTwitter() != null && config.messengerdata.getTwitter().startsWith("http"))
+            this.findViewById(R.id.twcontainer).setVisibility(View.VISIBLE);
+        else this.findViewById(R.id.twcontainer).setVisibility(View.GONE);
+
+        if (config.messengerdata.getYoutube() != null && config.messengerdata.getYoutube().startsWith("http"))
+            this.findViewById(R.id.ytcontainer).setVisibility(View.VISIBLE);
+        else this.findViewById(R.id.ytcontainer).setVisibility(View.GONE);
     }
 
     public void start_new_conversation(View v) {
@@ -205,12 +230,69 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                     @Override
                     public void run() {
                         v.setBackgroundColor(Color.parseColor("#00000000"));
-                        if (v.getId() == R.id.logout)
+                        if (v.getId() == R.id.logout) {
                             logout(null);
+                        } else if (v.getId() == R.id.fbcontainer) {
+                            if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().contains("http")) {
+                                startFacebook(config.messengerdata.getFacebook());
+                            }
+                        } else if (v.getId() == R.id.twcontainer) {
+                            if (config.messengerdata.getTwitter() != null && config.messengerdata.getTwitter().contains("http")) {
+                                startTwitter(config.messengerdata.getTwitter());
+                            }
+                        } else if (v.getId() == R.id.ytcontainer) {
+                            if (config.messengerdata.getYoutube() != null && config.messengerdata.getYoutube().contains("http")) {
+                                startYoutube(config.messengerdata.getYoutube());
+                            }
+                        }
                     }
                 });
             }
             return true;
         }
     };
+
+    private void startYoutube(String url) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        startActivity(intent);
+    }
+
+    private void startFacebook(String facebookUrl) {
+
+        try {
+            Uri uri;
+
+            int versionCode = getPackageManager()
+                    .getPackageInfo("com.facebook.katana", 0)
+                    .versionCode;
+
+            if (versionCode >= 3002850) {
+                facebookUrl = facebookUrl.toLowerCase().replace("www.", "m.");
+                if (!facebookUrl.startsWith("https")) {
+                    facebookUrl = "https://" + facebookUrl;
+                }
+                uri = Uri.parse("fb://facewebmodal/f?href=" + facebookUrl);
+            } else {
+                String pageID = facebookUrl.substring(facebookUrl.lastIndexOf("/"));
+
+                uri = Uri.parse("fb://page" + pageID);
+            }
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
+        } catch (Throwable e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl)));
+        }
+    }
+
+    private void startTwitter(String url) {
+        if (url.startsWith("https://twitter.com/")) {
+            url = url.replace("https://twitter.com/", "");
+        }
+        String Username = url;
+        try {
+            getPackageManager().getPackageInfo("com.twitter.android", 0);
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + Username)));
+        } catch (Exception e) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + Username)));
+        }
+    }
 }

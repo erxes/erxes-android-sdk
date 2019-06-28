@@ -90,7 +90,7 @@ public class SupportFragment extends Fragment{
     }
 
     public void setLead() {
-        if (config.formConnect != null) {
+        if (isAdded() && config.formConnect != null) {
             JSONObject leadObject = config.formConnect.getLead().getCallout();
             if (leadObject != null) {
                 leadCardView.setVisibility(View.VISIBLE);

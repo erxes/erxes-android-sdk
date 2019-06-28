@@ -1,48 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_marginTop="@dimen/margin_top"
-    android:layout_marginLeft="@dimen/main_margin"
-    android:layout_marginRight="@dimen/main_margin"
-    android:layout_marginBottom="@dimen/margin_top"
-    android:layout_height="wrap_content">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <ImageView
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_margin"
+        android:layout_marginTop="@dimen/margin_top"
+        android:layout_marginRight="@dimen/main_margin"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/main_margin"
-            android:id="@+id/icon"
-            android:layout_width="50dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitXY"
-            android:layout_height="50dp" />
+            android:background="@drawable/circle_black_10"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY" />
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/title"
-                android:textColor="#000"
-                android:textStyle="bold"
-                android:text="title"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="title"
+                android:textColor="#000"
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/description"
-                android:text="description"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="description" />
+
             <android.support.v7.widget.RecyclerView
-                android:layout_marginTop="16dp"
-                android:visibility="gone"
-                android:background="#fff"
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" >
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:background="#fff"
+                android:visibility="gone" />
         </LinearLayout>
+
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/main_margin">
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/main_margin">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginLeft="60dp"
+                android:layout_marginTop="@dimen/main_margin"
+                android:background="#19000000" />
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>
