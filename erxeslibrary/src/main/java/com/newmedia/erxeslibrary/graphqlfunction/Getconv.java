@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -24,7 +25,7 @@ public class Getconv {
     private Config config ;
     private DataManager dataManager;
     private Context context;
-    public Getconv(ErxesRequest ER, Context context) {
+    public Getconv(ErxesRequest ER, Activity context) {
         this.ER = ER;
         this.context = context;
         config = Config.getInstance(context);

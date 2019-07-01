@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.newmedia.erxeslibrary.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
@@ -28,6 +30,7 @@ import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
+import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.R;
@@ -40,18 +43,18 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
     private RecyclerView supporterView;
     private TextView welcometext, date, title;
-    private ViewPager viewpager;
+    private CustomViewPager viewpager;
     private ViewGroup info_header, container;
     private Config config;
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
     private TabAdapter tabAdapter;
+    private TabLayout tabLayout;
     public boolean isFirstStart = false;
     private ImageView fb, tw, yt;
 
     @Override
-    public void notify(final int returnType, final String conversationId, String message) {
-
+    public void notify(final int returnType, final String conversationId, final String message) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -71,26 +74,33 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         init();
                         break;
                     case ReturnType.SERVERERROR:
+                        Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
                     case ReturnType.LEAD:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLead();
                         break;
+                    case ReturnType.FAQ:
+                        if (tabLayout != null) {
+                            tabLayout.setVisibility(View.VISIBLE);
+                            if (tabAdapter != null)
+                                ((FaqFragment) tabAdapter.getItem(1)).init();
+                        }
+                        break;
+                    case ReturnType.savedLead:
+                        if (tabAdapter != null)
+                            ((SupportFragment) tabAdapter.getItem(0)).setLeadAgain();
+                        break;
                     default:
                         break;
                 }
-                ;
-
-
             }
         });
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
         erxesRequest.remove(this);
     }
 
@@ -100,25 +110,39 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         startActivity(a);
     }
 
+    public void sendLead() {
+        erxesRequest.sendLead();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
+        erxesRequest.add(this);
         if (config.customerId == null) {
             startActivity();
             return;
         }
         if (TextUtils.isEmpty(dataManager.getDataS(DataManager.email)) &&
-                !TextUtils.isEmpty(dataManager.getDataS(DataManager.phone))) {
+                TextUtils.isEmpty(dataManager.getDataS(DataManager.phone))) {
             dataManager.setData(DataManager.customerId, null);
             startActivity();
             return;
+        } else if (dataManager.getDataB(DataManager.isUser)) {
+            erxesRequest.setConnect(
+                    dataManager.getDataS(DataManager.email),
+                    dataManager.getDataS(DataManager.phone),
+                    true,
+                    false,
+                    dataManager.getDataS(DataManager.customData));
         } else if (!TextUtils.isEmpty(dataManager.getDataS(DataManager.email)))
-            erxesRequest.setConnect(dataManager.getDataS(DataManager.email), null, false,false);
-        else erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false,false);
+            erxesRequest.setConnect(
+                    dataManager.getDataS(DataManager.email), null, false, false, null
+            );
+        else
+            erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false, false, null);
 
-        erxesRequest.add(this);
         config.conversationId = null;
 
         dataManager.setData("chat_is_going", true);
@@ -159,23 +183,30 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         fb = findViewById(R.id.fb);
         tw = findViewById(R.id.tw);
         yt = findViewById(R.id.yt);
+        tabLayout = findViewById(R.id.tabs);
 
         dataManager = DataManager.getInstance(this);
+
+        viewpager.setPagingEnabled(false);
+        tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
+
+        viewpager.setAdapter(tabAdapter);
+        tabLayout.setupWithViewPager(viewpager);
+        tabLayout.setSelectedTabIndicatorColor(config.colorCode);
+
+        if (getIntent().getBooleanExtra("isFromLogin", false)) {
+            init();
+        }
 
         supporterView.setAdapter(new SupportAdapter(this));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
         Helper.display_configure(this, container, "#66000000");
 
-        tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        viewpager.setAdapter(tabAdapter);
-        tabLayout.setupWithViewPager(viewpager);
-        tabLayout.setSelectedTabIndicatorColor(config.colorCode);
 
         Intent intent2 = new Intent(this, ListenerService.class);
         startService(intent2);
-        erxesRequest.getFAQ();
+        erxesRequest.getSupporters();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
@@ -186,6 +217,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void init() {
+        if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
+            erxesRequest.getFAQ();
         date.setText(config.now());
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
             title.setText(config.messengerdata.getMessages().getGreetings().getTitle());

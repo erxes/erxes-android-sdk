@@ -6,4 +6,5 @@
     <color name="testcolor">#f00</color>
 
     <color name="buttonGreenColor">#3ccc38</color>
+    <color name="black_10">#19000000</color>
 </resources>

@@ -1,10 +1,12 @@
 package com.newmedia.erxeslibrary;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.configuration.Messengerdata;
+import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,9 +27,17 @@ public class DataManager {
     public static final String customerId = "customerId";
     public static final String color = "color";
     public static final String language = "language";
+    public static final String isUser = "isUser";
+    public static final String customData = "customData";
 
 
     static private DataManager dataManager;
+    static public DataManager getInstance(Activity activity){
+        if(dataManager == null)
+            dataManager = new DataManager(activity);
+
+        return dataManager;
+    }
     static public DataManager getInstance(Context context){
         if(dataManager == null)
             dataManager = new DataManager(context);
@@ -74,7 +84,7 @@ public class DataManager {
     }
     public Messengerdata getMessenger(){
         try {
-            return Messengerdata.convert(new JSONObject(pref.getString("message", null)),pref.getString(language, null));
+            return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))),pref.getString(language, null));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;

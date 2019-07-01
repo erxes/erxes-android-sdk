@@ -70,13 +70,12 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         if (config.isLoggedIn()) {
             config.LoadDefaultValues();
             Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
+            a.putExtra("isFromLogin",false);
             ErxesActivity.this.startActivity(a);
             finish();
         } else {
             erxesRequest.getIntegration();
         }
-
-
     }
 
     private void change_color() {
@@ -131,8 +130,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.phone, phone.getText().toString());
-                    dataManager.setData(DataManager.email, null);
-                    erxesRequest.setConnect("", phone.getText().toString(), false,true);
+                    erxesRequest.setConnect("", phone.getText().toString(), false,true,null);
                     phone.setError(null);
                 } else
                     phone.setError(getResources().getString(R.string.no_correct_phone));
@@ -140,8 +138,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.email, email.getText().toString());
-                    dataManager.setData(DataManager.phone, null);
-                    erxesRequest.setConnect("" + email.getText().toString(), "", false,true);
+                    erxesRequest.setConnect("" + email.getText().toString(), "", false,true,null);
                 } else
                     email.setError(getResources().getString(R.string.no_correct_mail));
             }
@@ -172,6 +169,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 switch (returnType) {
                     case ReturnType.LOGIN_SUCCESS:
                         Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
+                        a.putExtra("isFromLogin",true);
                         ErxesActivity.this.startActivity(a);
                         finish();
                         break;

@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -23,7 +24,7 @@ public class Insertmess {
     private ErxesRequest ER;
     private Config config ;
     private String conversationId,message;
-    public Insertmess(ErxesRequest ER, Context context) {
+    public Insertmess(ErxesRequest ER, Activity context) {
         this.ER = ER;
         config = Config.getInstance(context);
     }

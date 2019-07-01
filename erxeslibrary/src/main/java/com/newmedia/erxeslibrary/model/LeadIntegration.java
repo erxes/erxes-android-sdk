@@ -1,12 +1,13 @@
 package com.newmedia.erxeslibrary.model;
 
 import com.newmedia.erxes.basic.FormConnectMutation;
+import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONObject;
 
 public class LeadIntegration {
     private String id, name;
-    private JSONObject formData;
+    private Json formData;
 
     public static LeadIntegration convert(FormConnectMutation.Integration integration) {
         LeadIntegration leadIntegration = new LeadIntegration();
@@ -33,11 +34,11 @@ public class LeadIntegration {
         this.name = name;
     }
 
-    public JSONObject getFormData() {
+    public Json getFormData() {
         return formData;
     }
 
-    public void setFormData(JSONObject formData) {
+    public void setFormData(Json formData) {
         this.formData = formData;
     }
 }

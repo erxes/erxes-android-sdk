@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.model;
 
 import com.newmedia.erxes.basic.FormConnectMutation;
+import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONObject;
 
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class Lead {
     private String id, title, description, buttonText, themeColor;
-    private JSONObject callout;
+    private Json callout;
     private List<LeadField> fields;
 
     public static Lead convert(FormConnectMutation.Form responseForm) {
@@ -64,11 +65,11 @@ public class Lead {
         this.themeColor = themeColor;
     }
 
-    public JSONObject getCallout() {
+    public Json getCallout() {
         return callout;
     }
 
-    public void setCallout(JSONObject callout) {
+    public void setCallout(Json callout) {
         this.callout = callout;
     }
 

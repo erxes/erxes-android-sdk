@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -31,29 +32,30 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     public RealmResults<Conversation> conversationList;
     private Realm realm;
     private Config config;
-    public ConversationListAdapter(Context context) {
+
+    public ConversationListAdapter(Activity context) {
         this.context = context;
         Realm.init(context);
         realm = DB.getDB();
         config = Config.getInstance(context);
         this.conversationList = realm.where(Conversation.class)
-                .equalTo("status","open")
-                .equalTo("customerId",config.customerId)
-                .equalTo("integrationId",config.integrationId)
+                .equalTo("status", "open")
+                .equalTo("customerId", config.customerId)
+                .equalTo("integrationId", config.integrationId)
                 .findAll();
 
         this.conversationList.addChangeListener(new RealmChangeListener<RealmResults<Conversation>>() {
             @Override
             public void onChange(RealmResults<Conversation> conversations) {
                 ConversationListAdapter.this.notifyDataSetChanged();
-                Log.d("Listener","changed all");
+                Log.d("Listener", "changed all");
             }
         });
 
 
-
     }
-    public void update_position(String conversationId){
+
+    public void update_position(String conversationId) {
 //        for(int i = 0 ; i< conversationList.size();i++){
 //            if(conversationList.get(i)._id.equalsIgnoreCase(conversationId)){
 //                this.notifyItemChanged(i);
@@ -75,48 +77,58 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         view.setOnClickListener(onClickListener);
         return new ConversationHolder(view);
     }
+
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent a = new Intent(context,MessageActivity.class);
-            config.conversationId = conversationList.get((int)view.getTag())._id;
+            Intent a = new Intent(context, MessageActivity.class);
+            config.conversationId = conversationList.get((int) view.getTag())._id;
             context.startActivity(a);
         }
     };
+
     @Override
     public void onBindViewHolder(@NonNull ConversationHolder holder, int position) {
 
-        if(conversationList.get(position).isread) {
-            if(conversationList.get(position).content!=null)
-            holder.content.setText(Html.fromHtml(conversationList.get(position).content));
+        if (conversationList.get(position).isread) {
+            if (conversationList.get(position).content != null)
+                holder.content.setText(Html.fromHtml(conversationList.get(position).content));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.content.setTextColor(Color.parseColor("#808080"));
-        }
-        else{
+        } else {
             holder.content.setText(Html.fromHtml(conversationList.get(position).content));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
 
-        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId",conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
+        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId", conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
 
         holder.name.setText("");
-        if(message!=null&&message.user !=null){
+        if (message != null && message.user != null) {
             String myString = message.user.fullName;
-            String upperString = myString.substring(0,1).toUpperCase() + myString.substring(1);
+            String upperString = myString.substring(0, 1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
-            if(message.user.avatar!=null)
-                Glide.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
+            if (message.user.avatar != null)
+                Glide.with(context).load(message.user.avatar)
+                        .placeholder(R.drawable.avatar)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(holder.circleImageView);
+            else
+                Glide.with(context).load(R.drawable.avatar)
+                        .placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
 
             Long createDate = Long.valueOf(message.createdAt);
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
-        }else {
-            holder.circleImageView.setImageResource(R.drawable.avatar);
+        } else {
+            Glide.with(context).load(R.drawable.avatar)
+                    .placeholder(R.drawable.avatar)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.circleImageView);
             Long createDate = Long.valueOf(conversationList.get(position).date);
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);

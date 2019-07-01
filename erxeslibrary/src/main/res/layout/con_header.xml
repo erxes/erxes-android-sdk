@@ -38,7 +38,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:alpha="0.7"
-                    android:text="September 30 / 2018"
                     android:textColor="#fff"
                     android:textSize="@dimen/header_small"
                     android:textStyle="bold" />
@@ -102,7 +101,6 @@
                 android:id="@+id/greetingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Welcome"
                 android:textColor="#fff"
                 android:textSize="@dimen/header_big"
                 android:textStyle="bold" />

@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -33,7 +34,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
             context.startActivity(a);
         }
     };
-    public ArticleAdapter(Context context , RealmList<KnowledgeBaseArticle> articles) {
+    public ArticleAdapter(Activity context , RealmList<KnowledgeBaseArticle> articles) {
         this.context = context;
         this.config = Config.getInstance(context);
         this.articles = articles;

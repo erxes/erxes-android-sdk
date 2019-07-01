@@ -15,8 +15,10 @@ import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.User;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import org.jetbrains.annotations.NotNull;
+
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
 public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> {
@@ -29,6 +31,12 @@ public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> 
         Realm.init(context);
         Realm realm = DB.getDB();
         list = realm.where(User.class).findAll();
+        realm.addChangeListener(new RealmChangeListener<Realm>() {
+            @Override
+            public void onChange(@NotNull Realm realm) {
+                notifyDataSetChanged();
+            }
+        });
 //        realm.close();
     }
 

@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.configuration;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -14,6 +15,7 @@ import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.R;
 
@@ -69,32 +71,26 @@ public class Helper {
                 put("folder",R.drawable.knowledge_folder);
 
             }});
-    static void Init(Context context){
+    static void Init(Activity context){
         dataManager =  DataManager.getInstance(context);
         config = Config.getInstance(context);
     }
-    static public void load_uiOptions(JSONObject js){
+    static public void load_uiOptions(Json js){
         if(js == null)
             return;
         String color = null;
-        try {
-            color = js.getString("color");
-            dataManager.setData(DataManager.color, color);
-            if(color != null)
-                config.colorCode = Color.parseColor(color);
-            else{
-                config.colorCode = Color.parseColor("#5629B6");
-            }
-        }catch (JSONException e){
+        color = js.getString("color");
+        dataManager.setData(DataManager.color, color);
+        if(color != null)
+            config.colorCode = Color.parseColor(color);
+        else{
+            config.colorCode = Color.parseColor("#5629B6");
         }
-        try {
-            color = js.getString("wallpaper");
-            dataManager.setData("wallpaper", color);
-        }catch (JSONException e){
-        }
+        color = js.getString("wallpaper");
+        dataManager.setData("wallpaper", color);
 
     }
-    static public void load_messengerData(JSONObject js){
+    static public void load_messengerData(Json js){
         if(js == null)
             return;
         dataManager.setMessengerData(js.toString());

@@ -1,6 +1,8 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -13,35 +15,46 @@ import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.model.FormConnect;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.annotation.Nonnull;
-
 
 
 public class SetConnect {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
-    private Config config ;
+    private Config config;
     private DataManager dataManager;
     private boolean isLogin = true;
 
-    public SetConnect(ErxesRequest ER, Context context) {
+    public SetConnect(ErxesRequest ER, Activity context) {
         this.ER = ER;
         config = Config.getInstance(context);
         dataManager = DataManager.getInstance(context);
     }
-    public void run(String email,String phone,boolean isUser, boolean isLogin){
+
+    public void run(String email, String phone, boolean isUser, boolean isLogin, String data) {
         this.isLogin = isLogin;
+        JSONObject customData = null;
+        try {
+            customData = new JSONObject(data);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ER.apolloClient.mutate(MessengerConnectMutation.builder()
                 .brandCode(config.brandCode)
                 .email(email)
                 .phone(phone)
                 .isUser(isUser)
+                .data(new Json(customData))
                 .build()).enqueue(request);
     }
+
     private ApolloCall.Callback<MessengerConnectMutation.Data> request = new ApolloCall.Callback<MessengerConnectMutation.Data>() {
         @Override
         public void onResponse(@Nonnull Response<MessengerConnectMutation.Data> response) {
@@ -55,7 +68,6 @@ public class SetConnect {
 
                 config.changeLanguage(response.data().messengerConnect().languageCode());
                 Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
-                Log.e(TAG,response.data().messengerConnect().messengerData().toString());
                 Helper.load_messengerData(response.data().messengerConnect().messengerData());
 
                 if (!isLogin)
@@ -79,17 +91,17 @@ public class SetConnect {
     };
 
     private void getLead() {
-        ER.apolloClient.mutate(FormConnectMutation.builder()
-                .brandCode(config.brandCode)
-                .formCode(config.messengerdata.getFormCode())
-                .build()).enqueue(formConnect);
+        if (!TextUtils.isEmpty(config.messengerdata.getFormCode()))
+            ER.apolloClient.mutate(FormConnectMutation.builder()
+                    .brandCode(config.brandCode)
+                    .formCode(config.messengerdata.getFormCode())
+                    .build()).enqueue(formConnect);
     }
 
     private ApolloCall.Callback<FormConnectMutation.Data> formConnect = new ApolloCall.Callback<FormConnectMutation.Data>() {
         @Override
         public void onResponse(@NotNull Response<FormConnectMutation.Data> response) {
             if (!response.hasErrors()) {
-                Log.e(TAG, "onResponse: Lead");
                 config.formConnect = FormConnect.convert(response);
                 ER.notefyAll(ReturnType.LEAD, null, null);
             } else {

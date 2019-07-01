@@ -26,5 +26,5 @@
     <dimen name="action_size">24dp</dimen>
     <dimen name="tools_size">20dp</dimen>
     <dimen name="radius_corner">23dp</dimen>
-
+    <dimen name="image_size_new">30dp</dimen>
 </resources>

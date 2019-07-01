@@ -19,6 +19,7 @@ public class KnowledgeBaseTopic extends RealmObject {
     public RealmList<KnowledgeBaseCategory> categories;
     public String color;
     public String languageCode;
+
     public void convert(FaqGetQuery.Data data){
         this._id = data.knowledgeBaseTopicsDetail()._id();
         this.title = data.knowledgeBaseTopicsDetail().title();

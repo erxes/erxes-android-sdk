@@ -1,5 +1,7 @@
 package com.newmedia.erxeslibrary.configuration;
 
+import com.newmedia.erxeslibrary.helper.Json;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,7 +18,7 @@ public class Messengerdata {
     private String formCode;
     private String facebook, twitter, youtube;
 
-    public static Messengerdata convert(JSONObject jsonObject, String languageCode) {
+    public static Messengerdata convert(Json jsonObject, String languageCode) {
         Messengerdata messengerdata = new Messengerdata();
         try {
             if (jsonObject.has("isOnline")) {

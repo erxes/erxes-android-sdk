@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -23,7 +24,7 @@ public class GetInteg {
     private ErxesRequest ER;
     private Config config;
 
-    public GetInteg(ErxesRequest ER, Context context) {
+    public GetInteg(ErxesRequest ER, Activity context) {
         this.ER = ER;
         config = Config.getInstance(context);
 

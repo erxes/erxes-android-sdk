@@ -1,8 +1,6 @@
 
-mutation MessengerConnect($brandCode: String!, $email: String, $phone: String,$isUser:Boolean){
-    messengerConnect (brandCode: $brandCode,
-    email: $email,
-    phone: $phone,isUser:$isUser){
+mutation MessengerConnect($brandCode: String!, $email: String, $phone: String,$isUser:Boolean, $data: JSON){
+    messengerConnect (brandCode: $brandCode, email: $email, phone: $phone,isUser:$isUser, data: $data){
         integrationId
         uiOptions
         languageCode
@@ -180,5 +178,11 @@ mutation formConnect($brandCode: String!, $formCode: String!) {
                 order
             }
         }
+    }
+}
+
+mutation saveLead($integrationId: String!, $formId: String!, $submissions: [FieldValueInput],$browserInfo: JSON!) {
+    saveForm(integrationId: $integrationId, formId: $formId, submissions: $submissions, browserInfo: $browserInfo) {
+        status
     }
 }
