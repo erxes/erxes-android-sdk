@@ -1,7 +1,10 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -104,11 +108,11 @@ public class LeadAdapter extends RecyclerView.Adapter<LeadAdapter.ViewHolder> {
                         break;
                     case "check":
                         goneAll();
-//                    prepareCheck(field);
+                        prepareCheck(field, position);
                         break;
                     case "radio":
                         goneAll();
-//                        prepareRadio(field);
+                        prepareRadio(field, position);
                         break;
                     default:
                         goneAll();
@@ -173,36 +177,21 @@ public class LeadAdapter extends RecyclerView.Adapter<LeadAdapter.ViewHolder> {
             });
         }
 
-        void prepareCheck(LeadField field) {
+        void prepareCheck(LeadField field, int position) {
             recyclerView.setVisibility(View.VISIBLE);
             recyclerView.setLayoutManager(new LinearLayoutManager(supportFragment.getActivity()));
             recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(new RecyclerView.Adapter() {
-                @Override
-                public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                    return null;
-                }
-
-                @Override
-                public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
-                }
-
-                @Override
-                public int getItemCount() {
-                    return 0;
-                }
-            });
+            CheckAdapter checkAdapter = new CheckAdapter(supportFragment, field.getOptions(), position);
+            recyclerView.setAdapter(checkAdapter);
         }
 
-        void prepareRadio(LeadField field) {
+        void prepareRadio(LeadField field, final int position) {
             radioGroup.setVisibility(View.VISIBLE);
             ViewGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             radioGroup.setLayoutParams(layoutParams);
             RadioButton radioButton;
-            String radio = null;
             for (int i = 0; i < field.getOptions().size(); i++) {
                 radioButton = new RadioButton(supportFragment.getActivity());
                 radioButton.setLayoutParams(layoutParams);
@@ -213,23 +202,26 @@ public class LeadAdapter extends RecyclerView.Adapter<LeadAdapter.ViewHolder> {
             radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(RadioGroup group, int checkedId) {
-
+                    supportFragment.setRadioValue(position,checkedId);
                 }
             });
         }
 
-        void prepareInput(LeadField field, final int position) {
-            Log.e("TAG", "prepareInput: " + position );
+        void prepareInput(final LeadField field, final int position) {
+            Log.e("TAG", "prepareInput: " + position);
             input.setVisibility(View.VISIBLE);
             input.setEnabled(true);
             switch (field.getValition()) {
-//                case "date":
-//                    input.setInputType(InputType.TYPE_CLASS_TEXT);
-//                    input.setFocusable(false);
-//                    input.setOnClickListener(v -> {
-//                        prepareInputDate(field, input);
-//                    });
-//                    break;
+                case "date":
+                    input.setInputType(InputType.TYPE_CLASS_TEXT);
+                    input.setFocusable(false);
+                    input.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            prepareInputDate(input,position);
+                        }
+                    });
+                    break;
                 case "phone":
                     input.setInputType(InputType.TYPE_CLASS_PHONE);
                     break;
@@ -257,6 +249,20 @@ public class LeadAdapter extends RecyclerView.Adapter<LeadAdapter.ViewHolder> {
                 @Override
                 public void afterTextChanged(Editable s) {
 
+                }
+            });
+        }
+
+        void prepareInputDate (final EditText input, final int position) {
+            FragmentManager fragmentManager = supportFragment.getActivity().getSupportFragmentManager();
+            final DatePickerFragment newFragment = new DatePickerFragment();
+            newFragment.show(fragmentManager, "datePicker");
+            fragmentManager.executePendingTransactions();
+            newFragment.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    input.setText(newFragment.inputText);
+                    supportFragment.values[position] = newFragment.resultDate;
                 }
             });
         }

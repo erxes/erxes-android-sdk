@@ -184,5 +184,11 @@ mutation formConnect($brandCode: String!, $formCode: String!) {
 mutation saveLead($integrationId: String!, $formId: String!, $submissions: [FieldValueInput],$browserInfo: JSON!) {
     saveForm(integrationId: $integrationId, formId: $formId, submissions: $submissions, browserInfo: $browserInfo) {
         status
+        errors{
+            fieldId
+            code
+            text
+        }
+        messageId
     }
 }

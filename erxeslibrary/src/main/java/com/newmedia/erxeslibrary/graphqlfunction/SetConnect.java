@@ -40,9 +40,11 @@ public class SetConnect {
 
     public void run(String email, String phone, boolean isUser, boolean isLogin, String data) {
         this.isLogin = isLogin;
-        JSONObject customData = null;
+        JSONObject customData = new JSONObject();
         try {
-            customData = new JSONObject(data);
+            if (data != null) {
+                customData = new JSONObject(data);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

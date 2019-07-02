@@ -83,11 +83,13 @@ public class DataManager {
         editor.commit();
     }
     public Messengerdata getMessenger(){
-        try {
-            return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))),pref.getString(language, null));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
+        if (pref.getString("message", null) != null) {
+            try {
+                return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))), pref.getString(language, null));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else return null;
     }
 }

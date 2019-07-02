@@ -27,8 +27,13 @@ import com.newmedia.erxeslibrary.ui.conversations.ConversationListAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.LeadAdapter;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +52,8 @@ public class SupportFragment extends Fragment {
     private ImageView imageLead;
     private RecyclerView getRecyclerView;
     private LeadAdapter leadAdapter;
+    public Boolean[] booleans;
+    public String[] resultChecks;
 
     public String[] values;
 
@@ -181,6 +188,27 @@ public class SupportFragment extends Fragment {
         });
     }
 
+    public void setCheckValue(int parentPosition) {
+        if (booleans != null && booleans.length > 0) {
+            int size = 0;
+            for (Boolean aBoolean : booleans) {
+                if (aBoolean)
+                    size++;
+            }
+            resultChecks = new String[size];
+            int pointer = 0;
+            for (int i = 0; i < booleans.length; i++) {
+                if (booleans[i]) {
+                    resultChecks[pointer++] = config.formConnect.getLead().getFields().get(parentPosition).getOptions().get(i);
+                }
+            }
+        }
+    }
+
+    public void setRadioValue(int parentPosition, int checkedPosition) {
+        values[parentPosition] = config.formConnect.getLead().getFields().get(parentPosition).getOptions().get(checkedPosition);
+    }
+
     private void checkRequired() {
         boolean isDone = true;
         int position = 0;
@@ -226,14 +254,16 @@ public class SupportFragment extends Fragment {
             config.fieldValueInputs.clear();
         }
         for (int i = 0; i < config.formConnect.getLead().getFields().size(); i++) {
-            FieldValueInput fieldValueInput = FieldValueInput.builder()
-                    ._id(config.formConnect.getLead().getFields().get(i).getId())
-                    .type(config.formConnect.getLead().getFields().get(i).getType())
-                    .validation(config.formConnect.getLead().getFields().get(i).getValition())
-                    .text(config.formConnect.getLead().getFields().get(i).getText())
-                    .value(values[i])
-                    .build();
-            config.fieldValueInputs.add(fieldValueInput);
+//            if (!TextUtils.isEmpty(values[i])) {
+                FieldValueInput fieldValueInput = FieldValueInput.builder()
+                        ._id(config.formConnect.getLead().getFields().get(i).getId())
+                        .type(config.formConnect.getLead().getFields().get(i).getType())
+                        .validation(config.formConnect.getLead().getFields().get(i).getValition())
+                        .text(config.formConnect.getLead().getFields().get(i).getText())
+                        .value(values[i])
+                        .build();
+                config.fieldValueInputs.add(fieldValueInput);
+//            }
         }
 
         ((ConversationListActivity) getActivity()).sendLead();

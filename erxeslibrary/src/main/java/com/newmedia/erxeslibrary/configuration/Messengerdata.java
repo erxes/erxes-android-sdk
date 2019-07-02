@@ -51,7 +51,7 @@ public class Messengerdata {
             }
             if (jsonObject.has("messages")) {
                 JSONObject messageJson = jsonObject.getJSONObject("messages");
-                if (messageJson.has(languageCode)) {
+                if (languageCode != null && messageJson.has(languageCode)) {
                     JSONObject lanJson = messageJson.getJSONObject(languageCode);
                     Messages messages = new Messages();
                     if (lanJson.has("welcome"))

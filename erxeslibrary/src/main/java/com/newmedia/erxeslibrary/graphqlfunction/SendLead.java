@@ -14,6 +14,7 @@ import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.helper.Json;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SendLead {
@@ -29,8 +30,14 @@ public class SendLead {
     }
 
     public void run() {
+        JSONObject browserInfo = new JSONObject();
+        try {
+            browserInfo = new JSONObject(config.geoResponse);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         ER.apolloClient.mutate(SaveLeadMutation.builder()
-                .formId(config.messengerdata.getFormCode())
+                .formId(config.formConnect.getLead().getId())
                 .integrationId(config.integrationId)
                 .submissions(config.fieldValueInputs)
                 .browserInfo(new Json(new JSONObject()))

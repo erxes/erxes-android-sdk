@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import com.newmedia.erxes.basic.type.FieldValueInput;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.model.FormConnect;
+import com.newmedia.erxeslibrary.model.Geo;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 
@@ -44,6 +45,8 @@ public class Config implements ErxesObserver {
     static private Config config;
     public FormConnect formConnect;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
+    public Geo geo;
+    public String geoResponse;
 
     public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;

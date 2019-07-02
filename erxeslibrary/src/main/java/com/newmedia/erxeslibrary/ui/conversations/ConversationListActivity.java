@@ -143,6 +143,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         else
             erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false, false, null);
 
+        erxesRequest.getGEO();
         config.conversationId = null;
 
         dataManager.setData("chat_is_going", true);

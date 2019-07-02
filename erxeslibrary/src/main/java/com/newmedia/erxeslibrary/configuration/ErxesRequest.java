@@ -10,6 +10,7 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 //import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
+import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
@@ -83,6 +84,14 @@ public class ErxesRequest {
         }
         SetConnect setConnect = new SetConnect(this, activity);
         setConnect.run(email, phone, isUser, isLogin, data);
+    }
+
+    public void getGEO() {
+        if (!isNetworkConnected()) {
+            return;
+        }
+        GetGEO getGEO = new GetGEO(this, activity);
+        getGEO.run();
     }
 
     public void getIntegration() {
