@@ -7,7 +7,6 @@ import android.net.ConnectivityManager;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
-//import com.newmedia.erxes.basic.IsMessengerOnlineQuery;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
@@ -25,12 +24,15 @@ import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.realm.Realm;
+import okhttp3.CipherSuite;
+import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.TlsVersion;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
@@ -57,25 +59,37 @@ public class ErxesRequest {
     }
 
     public void set_client() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
+//                .cipherSuites(
+//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
+//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
+//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
+//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
+//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
+//                        CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
+//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
+//                .build();
 
-        if (config.HOST_3100 != null)
+        if (config.HOST_3100 != null) {
             okHttpClient = new OkHttpClient.Builder()
+//                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.activity))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
                     .build();
-        apolloClient = ApolloClient.builder()
-                .serverUrl(config.HOST_3100)
-                .okHttpClient(okHttpClient)
-                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
-                .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
-                .addCustomTypeAdapter(CustomType.JSON,new JsonCustomTypeAdapter2())
-//                .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON,new JsonCustomTypeAdapter())
-                .build();
+            apolloClient = ApolloClient.builder()
+                    .serverUrl(config.HOST_3100)
+                    .okHttpClient(okHttpClient)
+                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
+                    .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
+                    .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
+                    .build();
+        }
     }
 
     public void setConnect(String email, String phone, boolean isUser, boolean isLogin, String data) {

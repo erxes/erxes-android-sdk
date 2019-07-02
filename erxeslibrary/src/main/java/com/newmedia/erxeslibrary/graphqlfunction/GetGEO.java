@@ -15,7 +15,6 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 public class GetGEO {
 
@@ -33,10 +32,7 @@ public class GetGEO {
     }
 
     public void run() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(logging).build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         Request request = new Request.Builder()
                 .url("https://geo.erxes.io")
                 .build();
