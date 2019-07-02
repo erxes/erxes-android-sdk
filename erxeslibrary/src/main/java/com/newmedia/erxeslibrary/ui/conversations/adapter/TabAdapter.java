@@ -12,6 +12,9 @@ import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 
 public class TabAdapter extends FragmentPagerAdapter {
     private Context context;
+    private SupportFragment supportFragment = new SupportFragment();
+    private FaqFragment faqFragment = new FaqFragment();
+
     public TabAdapter(FragmentManager fm,Context context) {
         super(fm);
         this.context = context;
@@ -20,8 +23,8 @@ public class TabAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0)
-            return SupportFragment.newInstance();
-        return new FaqFragment();
+            return supportFragment;
+        return faqFragment;
     }
 
     @Nullable

@@ -16,15 +16,12 @@
         android:paddingRight="@dimen/main_margin"
         android:paddingBottom="@dimen/main_margin_half"
         android:paddingTop="@dimen/main_margin_half">
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/profile_image"
             android:layout_gravity="center_vertical"
             android:layout_width="@dimen/image_size"
             android:layout_height="@dimen/image_size"
-            android:src="@drawable/avatar"
-            app:civ_border_width="1dp"
-            app:civ_border_color="#000000"
-            app:civ_circle_background_color="#fff"/>
+            android:src="@drawable/avatar"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"

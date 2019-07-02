@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -25,9 +26,9 @@ public class Insertnewmess {
     final static String TAG = "insertnew";
     private ErxesRequest ER;
     private Config config ;
-    private Context context;
+    private Activity context;
     private String message;
-    public Insertnewmess(ErxesRequest ER, Context context) {
+    public Insertnewmess(ErxesRequest ER, Activity context) {
         this.ER = ER;
         this.context = context;
         config = Config.getInstance(context);

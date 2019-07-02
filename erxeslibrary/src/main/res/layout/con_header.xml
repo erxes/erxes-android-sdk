@@ -13,22 +13,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/pattern_repeat"
         android:orientation="horizontal">
-        <LinearLayout
-            android:id="@+id/logout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/main_margin"
-            android:layout_marginRight="@dimen/main_margin"
-            android:gravity="center"
-            android:padding="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <android.support.v7.widget.AppCompatImageView
-                android:layout_width="@dimen/action_size"
-                android:layout_height="@dimen/action_size"
-                android:src="@drawable/erxes_cancel" />
-        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/textGroup"
@@ -36,38 +20,96 @@
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
             android:layout_marginLeft="@dimen/main_margin"
+            android:layout_marginRight="@dimen/main_margin"
             android:layout_marginTop="@dimen/main_margin"
             android:gravity="left"
             android:orientation="vertical"
-            app:layout_constraintRight_toLeftOf="@id/logout"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_marginTop="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:alpha="0.7"
+                    android:textColor="#fff"
+                    android:textSize="@dimen/header_small"
+                    android:textStyle="bold" />
+                <View
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"/>
+                <LinearLayout
+                    android:id="@+id/fbcontainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/fb"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/facebooklogo"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/twcontainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/tw"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/twitterlogo"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ytcontainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:gravity="center"
+                    android:padding="8dp">
+                    <ImageView
+                        android:id="@+id/yt"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/youtubelogo"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/logout"
+                    android:padding="8dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="@dimen/action_size"
+                        android:layout_height="@dimen/action_size"
+                        android:src="@drawable/erxes_cancel" />
+                </LinearLayout>
+            </LinearLayout>
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/greetingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:alpha="0.7"
-                android:text="September 30 / 2018"
-                android:textColor="#fff"
-                android:textSize="@dimen/header_small"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Welcome"
                 android:textColor="#fff"
                 android:textSize="@dimen/header_big"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/welcometext"
+                android:id="@+id/greetingMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.7"
-                android:text="Танд асуух асуулт байна уу? Бид танд туслахад бэлэн байна."
                 android:textColor="#f7f4f4"
                 android:textSize="@dimen/header_small" />
         </LinearLayout>

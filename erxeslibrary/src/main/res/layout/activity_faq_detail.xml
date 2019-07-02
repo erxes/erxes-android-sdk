@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="bottom"
+    android:background="#00000000"
+    android:id="@+id/linearlayout"
+    tools:context=".ui.faq.FaqDetailActivity">
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/container"
+        android:background="@drawable/cornerbackground">
+        <com.newmedia.erxeslibrary.customeview.RoundedCornerLayout
+            android:id="@+id/info_header"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="@dimen/login_bar_height_small"
+                android:background="@drawable/pattern_repeat"
+                android:paddingLeft="@dimen/main_margin"
+                android:paddingRight="@dimen/main_margin"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:id="@+id/back"
+                    android:onClick="Click_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/action_size"
+                        android:layout_height="@dimen/action_size"
+                        android:src="@drawable/erxes_left_arrow" />
+                </LinearLayout>
+                <LinearLayout
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/back"
+                    app:layout_constraintRight_toLeftOf="@id/close"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/general"
+                            android:text="generel"
+                            android:textColor="#fff"
+                            android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:textSize="@dimen/header_big"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="@dimen/action_size"
+                        android:layout_height="@dimen/action_size"
+                        android:src="@drawable/erxes_cancel" />
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+        </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
+
+        <LinearLayout
+            app:layout_constraintTop_toBottomOf="@id/info_header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="16dp"
+            android:background="#fff"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginRight="@dimen/main_margin"
+            android:layout_marginLeft="@dimen/main_margin">
+            <TextView
+                android:id="@+id/article_header"
+                android:textStyle="bold"
+                android:textSize="26sp"
+                android:textColor="#000"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:textColor="#686868"
+                android:id="@+id/article_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="#494949"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/article_content1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textColor="#494949"
+                android:id="@+id/article_content2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

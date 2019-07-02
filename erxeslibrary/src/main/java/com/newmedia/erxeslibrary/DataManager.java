@@ -1,10 +1,15 @@
 package com.newmedia.erxeslibrary;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.configuration.Messengerdata;
+import com.newmedia.erxeslibrary.helper.Json;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by lol on 3/23/16.
@@ -22,9 +27,17 @@ public class DataManager {
     public static final String customerId = "customerId";
     public static final String color = "color";
     public static final String language = "language";
+    public static final String isUser = "isUser";
+    public static final String customData = "customData";
 
 
     static private DataManager dataManager;
+    static public DataManager getInstance(Activity activity){
+        if(dataManager == null)
+            dataManager = new DataManager(activity);
+
+        return dataManager;
+    }
     static public DataManager getInstance(Context context){
         if(dataManager == null)
             dataManager = new DataManager(context);
@@ -70,14 +83,13 @@ public class DataManager {
         editor.commit();
     }
     public Messengerdata getMessenger(){
-        String a = pref.getString("message", null);
-        Gson gson = new Gson();
-        if( a != null )
+        if (pref.getString("message", null) != null) {
             try {
-                return gson.fromJson(a,Messengerdata.class);
+                return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))), pref.getString(language, null));
+            } catch (JSONException e) {
+                e.printStackTrace();
+                return null;
             }
-            catch (Exception e){}
-
-        return null;
+        } else return null;
     }
 }

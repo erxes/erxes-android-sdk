@@ -1,67 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.conversations.fragments.SupportFragment">
-    <android.support.v7.widget.CardView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:shape="ring"
-        app:cardElevation="5dp"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="@dimen/chooser_raduis">
-        <LinearLayout
-            android:orientation="vertical"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#fff">
-            <TextView
-                android:layout_marginTop="@dimen/main_margin_half"
-                android:layout_marginLeft="@dimen/main_margin_half"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/header_big"
-                android:textStyle="bold"
-                android:visibility="gone"
-                android:text="@string/conversation"/>
+            android:layout_margin="16dp"
+            android:shape="ring"
+            app:cardCornerRadius="@dimen/chooser_raduis"
+            app:cardElevation="5dp">
+
             <LinearLayout
-                android:layout_marginTop="@dimen/main_margin_half"
-                android:layout_marginLeft="@dimen/main_margin"
-                android:layout_marginBottom="@dimen/main_margin_half"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:onClick="start_new_conversation">
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/newconversation"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="@dimen/image_size"
-                    android:layout_height="@dimen/image_size"
-                    android:src="@drawable/ic_action_add"
-                    app:civ_circle_background_color="@color/colorPrimary"/>
-                <LinearLayout
+                android:background="#fff"
+                android:orientation="vertical">
+
+                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:orientation="vertical">
-                    <TextView
-                        android:layout_marginLeft="10dp"
-                        android:textColor="#000"
-                        android:gravity="center_vertical"
-                        android:textSize="@dimen/header_big"
+                    android:layout_marginStart="@dimen/main_margin_half"
+                    android:layout_marginLeft="@dimen/main_margin_half"
+                    android:layout_marginTop="@dimen/main_margin_half"
+                    android:text="@string/conversation"
+                    android:textSize="@dimen/header_big"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/main_margin"
+                    android:layout_marginTop="@dimen/main_margin_half"
+                    android:layout_marginBottom="@dimen/main_margin_half"
+                    android:onClick="start_new_conversation"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="@dimen/image_size"
+                        android:layout_height="@dimen/image_size"
+                        android:background="@drawable/circle_black_10"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:id="@+id/newconversation"
+                            android:layout_width="@dimen/image_size_new"
+                            android:layout_height="@dimen/image_size_new"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/baseline_add_black_24dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/newconversation"/>
+                        android:layout_gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:gravity="center_vertical"
+                            android:text="@string/newconversation"
+                            android:textColor="#000"
+                            android:textSize="@dimen/header_big" />
+                    </LinearLayout>
                 </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/chat_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#fff" />
             </LinearLayout>
-            <android.support.v7.widget.RecyclerView
-                android:background="#fff"
-                android:id="@+id/chat_recycler_view"
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/leadCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:shape="ring"
+            android:visibility="gone"
+            app:cardCornerRadius="@dimen/chooser_raduis"
+            app:cardElevation="5dp">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-            </android.support.v7.widget.RecyclerView>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
-</FrameLayout>
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/titleLead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textSize="@dimen/header_big"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <ImageView
+                        android:id="@+id/imageLead"
+                        android:layout_width="90dp"
+                        android:layout_height="90dp"
+                        android:src="@drawable/icon"
+                        android:layout_marginRight="10dp"/>
+
+                    <TextView
+                        android:id="@+id/descriptionLead"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/header_big"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/joinLead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/buttonGreenColor"
+                    app:cardCornerRadius="5dp">
+
+                    <TextView
+                        android:id="@+id/textJoinLead"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:textColor="#fff" />
+                </android.support.v7.widget.CardView>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/getLeadCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            android:shape="ring"
+            app:cardCornerRadius="@dimen/chooser_raduis"
+            app:cardElevation="5dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/getTitleLead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textSize="@dimen/header_big"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/getDescriptionLead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:textSize="@dimen/header_big" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/getRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </android.support.v7.widget.RecyclerView>
+
+                <android.support.v7.widget.CardView
+                    android:id="@+id/getJoinLead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foreground="?attr/selectableItemBackground"
+                    app:cardBackgroundColor="@color/buttonGreenColor"
+                    app:cardCornerRadius="5dp">
+
+                    <TextView
+                        android:id="@+id/getTextJoinLead"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:textColor="#fff" />
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

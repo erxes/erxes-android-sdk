@@ -1,13 +1,16 @@
 
-mutation MessengerConnect($brandCode: String!, $email: String!, $phone: String!,$isUser:Boolean!){
-    messengerConnect (brandCode: $brandCode,
-    email: $email,
-    phone: $phone,isUser:$isUser){
+mutation MessengerConnect($brandCode: String!, $email: String, $phone: String,$isUser:Boolean, $data: JSON){
+    messengerConnect (brandCode: $brandCode, email: $email, phone: $phone,isUser:$isUser, data: $data){
         integrationId
         uiOptions
         languageCode
         messengerData
         customerId
+        brand{
+            name
+            code
+            description
+        }
     }
 }
 mutation InsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [AttachmentInput])
@@ -36,7 +39,7 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
    }
  }
 
-query Messages($conversationId: String!){
+query Messages($conversationId: String){
   messages(conversationId: $conversationId) {
         _id
         customerId
@@ -60,8 +63,8 @@ query Messages($conversationId: String!){
   }
 }
 
-query ConversationDetail($integ : String!){
-  conversationDetail(integrationId: $integ) {
+query ConversationDetail($id: String, $integ : String!){
+  conversationDetail(_id: $id, integrationId: $integ) {
     isOnline
     supporters{
       _id
@@ -109,17 +112,83 @@ query FaqGet($topicId: String!){
       title
       description
       icon
-    articles {
-      _id
-      title
-      summary
-      content
-      createdBy
-      createdDate
-      modifiedBy
-      modifiedDate
-    }
-
+        articles {
+          _id
+          title
+          summary
+          content
+          createdBy
+          createdDate
+          modifiedBy
+          modifiedDate
+        }
     }
   }
+}
+
+query getForm($formId: String) {
+    form(formId: $formId) {
+        _id
+        title
+        description
+        buttonText
+        themeColor
+        callout
+        fields {
+            _id
+            formId
+            type
+            check
+            text
+            description
+            options
+            isRequired
+            name
+            validation
+            order
+        }
+    }
+}
+
+mutation formConnect($brandCode: String!, $formCode: String!) {
+    formConnect(brandCode: $brandCode, formCode: $formCode) {
+        integration {
+            _id
+            name
+            formData
+        }
+        form {
+            _id
+            title
+            description
+            buttonText
+            themeColor
+            callout
+            fields {
+                _id
+                formId
+                type
+                check
+                text
+                description
+                options
+                isRequired
+                name
+                validation
+                order
+            }
+        }
+    }
+}
+
+mutation saveLead($integrationId: String!, $formId: String!, $submissions: [FieldValueInput],$browserInfo: JSON!) {
+    saveForm(integrationId: $integrationId, formId: $formId, submissions: $submissions, browserInfo: $browserInfo) {
+        status
+        errors{
+            fieldId
+            code
+            text
+        }
+        messageId
+    }
 }

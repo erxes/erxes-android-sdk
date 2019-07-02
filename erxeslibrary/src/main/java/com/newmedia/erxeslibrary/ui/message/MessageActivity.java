@@ -128,6 +128,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         .load(user.avatar)
                         .placeholder(R.drawable.avatar)
                         .error(R.drawable.avatar)
+                        .optionalCircleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(por);
             }catch (Exception e){}
@@ -241,10 +242,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             subscribe_conversation();
         }
         else {
-            mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),new ArrayList<ConversationMessage>()));
+            mMessageRecycler.setAdapter(new MessageListAdapter(this,new ArrayList<ConversationMessage>()));
         }
         header_profile_change();
-        erxesRequest.getSupporters();
+
         if (shouldAskPermissions()) {
             askPermissions();
         }
@@ -265,7 +266,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
             }
         });
-        mMessageRecycler.setAdapter(new MessageListAdapter(this.getApplicationContext(),d));
+        mMessageRecycler.setAdapter(new MessageListAdapter(this,d));
         erxesRequest.getMessages(config.conversationId);
     }
     public void Click_back(View v){
@@ -316,6 +317,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     protected void onResume() {
         super.onResume();
         erxesRequest.add(this);
+        erxesRequest.getSupporters();
     }
 
     //Android 4.4 (API level 19)

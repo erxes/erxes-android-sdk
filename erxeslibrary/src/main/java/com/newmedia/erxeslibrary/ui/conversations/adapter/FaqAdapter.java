@@ -1,6 +1,8 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,50 +20,50 @@ import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
+import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmList;
+import io.realm.RealmModel;
+import io.realm.RealmResults;
 
 public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     private KnowledgeBaseTopic knowledgeBaseTopic;
-    private RealmList<KnowledgeBaseCategory> categories;
-    private Context context;
+    private RealmList<KnowledgeBaseCategory> categories = new RealmList<>();
+    private Activity context;
     private Config config;
     private int selected_position = -1;
-    public FaqAdapter(Context context) {
+    private Realm realm;
+
+    public FaqAdapter(Activity context) {
         this.context = context;
         this.config = Config.getInstance(context);
         Realm.init(context);
-        Realm realm = DB.getDB();
-        try {
-            if (config.messengerdata.knowledgeBaseTopicId != null) {
+        realm = DB.getDB();
+        init();
+//        realm.where(KnowledgeBaseTopic.class).findAll().addChangeListener(new RealmChangeListener<RealmResults<KnowledgeBaseTopic>>() {
+//            @Override
+//            public void onChange(RealmResults<KnowledgeBaseTopic> knowledgeBaseTopics) {
+//                init();
+//                FaqAdapter.this.notifyDataSetChanged();
+//            }
+//        });
+    }
 
-                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.knowledgeBaseTopicId).findFirst();
-                Log.d("faq", "id = " + knowledgeBaseTopic);
-            } else {
-
-                knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
-                Log.d("faq", "findfirst " + knowledgeBaseTopic);
-            }
-        }catch (Exception e1){
-
+    private void init() {
+        if (config.messengerdata.getKnowledgeBaseTopicId() != null) {
+            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.getKnowledgeBaseTopicId()).findFirst();
+        } else {
+            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
         }
-        if(knowledgeBaseTopic!=null) {
-            this.categories = knowledgeBaseTopic.categories;
-            knowledgeBaseTopic.categories.addChangeListener(new RealmChangeListener<RealmList<KnowledgeBaseCategory>>() {
-                @Override
-                public void onChange(RealmList<KnowledgeBaseCategory> knowledgeBaseCategories) {
-                    FaqAdapter.this.notifyDataSetChanged();
-                }
-            });
-        }else{
-            //run app without error
+        if (knowledgeBaseTopic != null) {
+            this.categories.clear();
+            this.categories.addAll(knowledgeBaseTopic.categories);
+        } else {
             this.categories = new RealmList<>();
-
         }
-
     }
 
     @NonNull
@@ -76,37 +78,37 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
-        holder.title.setText(categories.get(position).title+"("+categories.get(position).numOfArticles+") ");
+        if (Helper.ICON_MAP.get(categories.get(position).icon) != null)
+            holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
+        holder.title.setText(categories.get(position).title + " (" + categories.get(position).numOfArticles + ") ");
         holder.description.setText(Html.fromHtml(categories.get(position).description));
         holder.parent.setTag(position);
-        holder.parent.setOnClickListener(clickListener);
-        if(selected_position==position) {
+        holder.parent.setTag(categories.get(position)._id);
+        holder.parent.setOnClickListener(onClickListener);
+        if (selected_position == position) {
             holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles));
             holder.recyclerView.setLayoutManager(new LinearLayoutManager(context));
             holder.recyclerView.setVisibility(View.VISIBLE);
-        }
-        else
-            holder.recyclerView.setVisibility(View.GONE);
+        } else holder.recyclerView.setVisibility(View.GONE);
     }
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return categories != null ? categories.size() : 0;
     }
+
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            int position = (int)v.getTag();
-            if( selected_position == position){
+            int position = (int) v.getTag();
+            if (selected_position == position) {
                 int temp = selected_position;
                 selected_position = -1;
                 FaqAdapter.this.notifyItemChanged(temp);
-            }
-            else{
+            } else {
                 int temp = selected_position;
                 selected_position = -1;
-                if(temp > -1) {
+                if (temp > -1) {
                     FaqAdapter.this.notifyItemChanged(temp);
                 }
                 selected_position = position;
@@ -114,11 +116,21 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             }
         }
     };
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent a = new Intent(context, FaqActivity.class);
+            a.putExtra("id", (String) v.getTag());
+            context.startActivity(a);
+        }
+    };
+
     public class Holder extends RecyclerView.ViewHolder {
         ImageView icon;
-        TextView title,description;
-        View parent ;
+        TextView title, description;
+        View parent;
         RecyclerView recyclerView;
+
         public Holder(View itemView) {
             super(itemView);
             parent = itemView;

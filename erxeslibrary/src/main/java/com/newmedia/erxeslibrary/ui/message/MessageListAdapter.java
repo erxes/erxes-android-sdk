@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui.message;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -9,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +37,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
 
     private List<ConversationMessage> mMessageList;
-    private Context context;
+    private Activity context;
     private int previous_size = 0;
     private Config config;
-    public MessageListAdapter( Context context,List<ConversationMessage> mMessageList) {
+    public MessageListAdapter(Activity context, List<ConversationMessage> mMessageList) {
         this.context = context;
         this.config = Config.getInstance(context);
         this.mMessageList =  mMessageList;
@@ -223,19 +226,26 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         void bind(ConversationMessage message) {
 //            messageText.loadData(message.content,"text/html","utf-8");
-            messageText.setText(Html.fromHtml(message.content.replace("\n","")));;
+            Log.e("TAG", "bind: " + message.content );
+            Spanned htmlDescription = Html.fromHtml(message.content);
+            String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
+            messageText.setText(htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length()));
 //            messageText.setText(message.content);;
             timeText.setText(config.Message_datetime(message.createdAt));
 
 /**/
             if(message.user!=null){
-
-                Glide.with(context).load(message.user.avatar).placeholder(R.drawable.avatar)
+                Glide.with(context).load(message.user.avatar)
+                        .placeholder(R.drawable.avatar)
+                        .circleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
-            }
-            else
-                profileImage.setImageResource(R.drawable.avatar);
+            } else
+                Glide.with(context).load(R.drawable.avatar)
+                        .placeholder(R.drawable.avatar)
+                        .circleCrop()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(profileImage);
 
             filelist.removeAllViews();
             timeText.setText(config.Message_datetime(message.createdAt));
@@ -310,7 +320,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 inputImage.requestLayout();
 
                 Glide.with(context).load(url).placeholder(circularProgressDrawable)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL).override(pixels,Target.SIZE_ORIGINAL)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .override(pixels,Target.SIZE_ORIGINAL)
                         .into(inputImage);
                 fileview.setOnClickListener(null);
                 filename.setVisibility(View.GONE);

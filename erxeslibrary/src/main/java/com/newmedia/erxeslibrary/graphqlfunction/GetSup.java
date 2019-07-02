@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -15,14 +16,18 @@ import com.newmedia.erxeslibrary.model.User;
 
 import javax.annotation.Nonnull;
 
+import io.realm.Realm;
+
 public class GetSup {
     final static String TAG = "GETSUP";
     private ErxesRequest ER;
     private Config config ;
-    public GetSup(ErxesRequest ER, Context context) {
+    private Realm realm = DB.getDB();
+    private Activity context;
+    public GetSup(ErxesRequest ER, Activity context) {
         this.ER = ER;
         config = Config.getInstance(context);
-
+        this.context = context;
     }
     public void run(){
         ER.apolloClient.query(MessengerSupportersQuery.builder().integ(config.integrationId).build())
@@ -31,12 +36,25 @@ public class GetSup {
 
     private ApolloCall.Callback<MessengerSupportersQuery.Data> request =  new ApolloCall.Callback<MessengerSupportersQuery.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<MessengerSupportersQuery.Data> response) {
+        public void onResponse(@Nonnull final Response<MessengerSupportersQuery.Data> response) {
             if(!response.hasErrors()) {
-
-                DB.save(User.convert(response.data().messengerSupporters()));
-
-                ER.notefyAll(ReturnType.GetSupporters,null ,null);
+                context.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        realm.executeTransactionAsync(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                realm.delete(User.class);
+                                realm.copyToRealmOrUpdate(User.convert(response.data().messengerSupporters()));
+                            }
+                        }, new Realm.Transaction.OnSuccess() {
+                            @Override
+                            public void onSuccess() {
+                                ER.notefyAll(ReturnType.GetSupporters, null, null);
+                            }
+                        });
+                    }
+                });
             }
             else{
                 Log.d(TAG, "errors " + response.errors().toString());
