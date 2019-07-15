@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.model;
 
-import io.realm.RealmObject;
-
-public class EngageData extends RealmObject {
+public class EngageData {
     private String messageId;
     private String brandId;
     private String content;

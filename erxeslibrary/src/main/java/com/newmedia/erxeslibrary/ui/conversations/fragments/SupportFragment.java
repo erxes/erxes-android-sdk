@@ -45,7 +45,7 @@ import java.util.List;
  */
 public class SupportFragment extends Fragment {
     private ImageView addnew_conversation;
-    private RecyclerView recyclerView;
+    public RecyclerView recyclerView;
     private Config config;
     private CardView leadCardView, getLeadCardView, joinLeadCardView, getJoinLeadCardView;
     private TextView titleLead, getTitleLead, descriptionLead, getDescriptionLead, textJoinLead, getTextJoinLead;

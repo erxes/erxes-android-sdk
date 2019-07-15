@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
@@ -11,16 +10,15 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ListenerService;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class Insertnewmess {
     final static String TAG = "insertnew";
@@ -46,7 +44,7 @@ public class Insertnewmess {
     }
     private ApolloCall.Callback<InsertMessageMutation.Data> request = new ApolloCall.Callback<InsertMessageMutation.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
+        public void onResponse(@NotNull Response<InsertMessageMutation.Data> response) {
             if(response.hasErrors()) {
                 Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,null,response.errors().get(0).message());
@@ -56,8 +54,8 @@ public class Insertnewmess {
 
                 Conversation conversation = Conversation.update(response.data().insertMessage(),message,config);
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
-                DB.save(conversation);
-                DB.save(a);
+                config.conversations.add(conversation);
+                config.conversationMessages.add(a);
                 Intent intent2 = new Intent(context, ListenerService.class);
                 intent2.putExtra("id",config.conversationId);
                 context.startService(intent2);
@@ -69,7 +67,7 @@ public class Insertnewmess {
             }
         }
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
+        public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
             ER.notefyAll( ReturnType.CONNECTIONFAILED,null,e.getMessage());
             Log.d(TAG, "failed ");

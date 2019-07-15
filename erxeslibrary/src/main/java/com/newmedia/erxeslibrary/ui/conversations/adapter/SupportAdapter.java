@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -11,33 +12,20 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.User;
 
-import org.jetbrains.annotations.NotNull;
-
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> {
 
-    private RealmResults<User> list;
+    private List<User> list = new ArrayList<>();
     private Context context;
 
-    public SupportAdapter(Context context) {
+    public SupportAdapter(Activity context,List<User> users) {
         this.context = context;
-        Realm.init(context);
-        Realm realm = DB.getDB();
-        list = realm.where(User.class).findAll();
-        realm.addChangeListener(new RealmChangeListener<Realm>() {
-            @Override
-            public void onChange(@NotNull Realm realm) {
-                notifyDataSetChanged();
-            }
-        });
-//        realm.close();
+        list = users;
     }
 
     @NonNull

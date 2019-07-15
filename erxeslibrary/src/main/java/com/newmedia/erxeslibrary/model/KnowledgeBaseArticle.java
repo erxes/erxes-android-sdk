@@ -5,11 +5,7 @@ import com.newmedia.erxes.basic.FaqGetQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class KnowledgeBaseArticle extends RealmObject{
-    @PrimaryKey
+public class KnowledgeBaseArticle {
     public String _id;
     public String title;
     public String summary;
@@ -19,6 +15,7 @@ public class KnowledgeBaseArticle extends RealmObject{
     public String modifiedBy;
     public String modifiedDate;
     public User author;
+
     static public List<KnowledgeBaseArticle> convert(List<FaqGetQuery.Article> itemuser){
         KnowledgeBaseArticle temp;
         List<KnowledgeBaseArticle> categories = new ArrayList<>();

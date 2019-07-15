@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,55 +14,29 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmList;
-import io.realm.RealmModel;
-import io.realm.RealmResults;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     private KnowledgeBaseTopic knowledgeBaseTopic;
-    private RealmList<KnowledgeBaseCategory> categories = new RealmList<>();
+    private List<KnowledgeBaseCategory> categories = new ArrayList<>();
     private Activity context;
     private Config config;
     private int selected_position = -1;
-    private Realm realm;
 
     public FaqAdapter(Activity context) {
         this.context = context;
         this.config = Config.getInstance(context);
-        Realm.init(context);
-        realm = DB.getDB();
-        init();
-//        realm.where(KnowledgeBaseTopic.class).findAll().addChangeListener(new RealmChangeListener<RealmResults<KnowledgeBaseTopic>>() {
-//            @Override
-//            public void onChange(RealmResults<KnowledgeBaseTopic> knowledgeBaseTopics) {
-//                init();
-//                FaqAdapter.this.notifyDataSetChanged();
-//            }
-//        });
-    }
-
-    private void init() {
-        if (config.messengerdata.getKnowledgeBaseTopicId() != null) {
-            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).equalTo("_id", config.messengerdata.getKnowledgeBaseTopicId()).findFirst();
-        } else {
-            knowledgeBaseTopic = realm.where(KnowledgeBaseTopic.class).findFirst();
-        }
-        if (knowledgeBaseTopic != null) {
-            this.categories.clear();
-            this.categories.addAll(knowledgeBaseTopic.categories);
-        } else {
-            this.categories = new RealmList<>();
-        }
+        if (categories.size() > 0)
+            categories.clear();
+        categories.addAll(config.knowledgeBaseTopic.categories);
     }
 
     @NonNull
@@ -86,7 +59,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
         holder.parent.setTag(categories.get(position)._id);
         holder.parent.setOnClickListener(onClickListener);
         if (selected_position == position) {
-            holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles));
+            holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles, categories.get(position)._id));
             holder.recyclerView.setLayoutManager(new LinearLayoutManager(context));
             holder.recyclerView.setVisibility(View.VISIBLE);
         } else holder.recyclerView.setVisibility(View.GONE);

@@ -8,7 +8,6 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,43 +15,25 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
 
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
-import io.realm.Sort;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
     private Context context;
-    public RealmResults<Conversation> conversationList;
-    private Realm realm;
+    public List<Conversation> conversationList = new ArrayList<>();
     private Config config;
 
     public ConversationListAdapter(Activity context) {
         this.context = context;
-        Realm.init(context);
-        realm = DB.getDB();
         config = Config.getInstance(context);
-        this.conversationList = realm.where(Conversation.class)
-                .equalTo("status", "open")
-                .equalTo("customerId", config.customerId)
-                .equalTo("integrationId", config.integrationId)
-                .findAll();
-
-        this.conversationList.addChangeListener(new RealmChangeListener<RealmResults<Conversation>>() {
-            @Override
-            public void onChange(RealmResults<Conversation> conversations) {
-                ConversationListAdapter.this.notifyDataSetChanged();
-                Log.d("Listener", "changed all");
-            }
-        });
-
-
+        if (this.conversationList != null && this.conversationList.size() > 0)
+            this.conversationList.clear();
+        this.conversationList.addAll(config.conversations);
     }
 
     public void update_position(String conversationId) {
@@ -103,7 +84,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.content.setTextColor(Color.BLACK);
         }
 
-        ConversationMessage message = realm.where(ConversationMessage.class).equalTo("conversationId", conversationList.get(position)._id).isNotNull("user").sort("createdAt", Sort.DESCENDING).findFirst();
+        ConversationMessage message = conversationList.get(position).conversationMessages
+                .get(conversationList.get(position).conversationMessages.size() - 1);
 
         holder.name.setText("");
         if (message != null && message.user != null) {

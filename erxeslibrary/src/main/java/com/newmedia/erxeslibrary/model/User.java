@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.model;
 
 
-//import com.newmedia.erxes.basic.GetSupporterQuery;
-import com.newmedia.erxes.basic.ConversationDetailQuery;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxes.basic.MessengerSupportersQuery;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
@@ -10,11 +8,7 @@ import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class User extends RealmObject{
-    @PrimaryKey
+public class User {
     public String _id;
     public String avatar;
     public String fullName;

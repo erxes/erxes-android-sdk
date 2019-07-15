@@ -10,8 +10,12 @@ import android.support.annotation.NonNull;
 
 import com.newmedia.erxes.basic.type.FieldValueInput;
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.model.Geo;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
+import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 
@@ -41,12 +45,17 @@ public class Config implements ErxesObserver {
     public boolean isMessengerOnline = false, notifyCustomer;
     private DataManager dataManager;
     public Activity activity;
+    public Context context;
     private ErxesRequest erxesRequest;
     static private Config config;
     public FormConnect formConnect;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
     public Geo geo;
     public String geoResponse;
+    public KnowledgeBaseTopic knowledgeBaseTopic;
+    public List<User> supporters = new ArrayList<>();
+    public List<Conversation> conversations = new ArrayList<>();
+    public List<ConversationMessage> conversationMessages = new ArrayList<>();
 
     public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
@@ -185,10 +194,24 @@ public class Config implements ErxesObserver {
         }
         return config;
     }
+    static public Config getInstance(Context context) {
+        if (config == null) {
+            config = new Config(context);
+            config.erxesRequest = ErxesRequest.getInstance(config);
+            if (config.HOST_3100 != null)
+                config.erxesRequest.set_client();
+        }
+        return config;
+    }
 
     private Config(Activity activity) {
         dataManager = DataManager.getInstance(activity);
         this.activity = activity;
+        LoadDefaultValues();
+    }
+    private Config(Context context) {
+        dataManager = DataManager.getInstance(context);
+        this.context = context;
         LoadDefaultValues();
     }
 

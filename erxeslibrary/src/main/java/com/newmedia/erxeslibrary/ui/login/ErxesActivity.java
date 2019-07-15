@@ -27,9 +27,6 @@ import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
 
-import io.realm.Realm;
-
-
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private EditText email, phone;
@@ -44,9 +41,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-        Realm.init(this);
         dataManager = DataManager.getInstance(this);
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);

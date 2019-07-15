@@ -22,8 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.annotation.Nonnull;
-
 
 public class SetConnect {
     final static String TAG = "SETCONNECT";
@@ -59,7 +57,7 @@ public class SetConnect {
 
     private ApolloCall.Callback<MessengerConnectMutation.Data> request = new ApolloCall.Callback<MessengerConnectMutation.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<MessengerConnectMutation.Data> response) {
+        public void onResponse(@NotNull Response<MessengerConnectMutation.Data> response) {
             if (!response.hasErrors()) {
 
                 config.customerId = response.data().messengerConnect().customerId();
@@ -84,7 +82,7 @@ public class SetConnect {
         }
 
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
+        public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
             Log.d(TAG, "failed ");
             e.printStackTrace();

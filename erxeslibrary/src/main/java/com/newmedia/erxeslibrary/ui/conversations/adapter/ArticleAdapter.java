@@ -15,30 +15,33 @@ import android.widget.TextView;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
-import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 
-import io.realm.RealmList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder>  {
 
 
-    private RealmList<KnowledgeBaseArticle> articles;
+    private List<KnowledgeBaseArticle> articles = new ArrayList<>();
     private Context context;
     private Config config;
+    private String categoryId;
+
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent a = new Intent(context, FaqDetailActivity.class);
+            a.putExtra("categoryId",categoryId);
             a.putExtra("id",(String) v.getTag());
             context.startActivity(a);
         }
     };
-    public ArticleAdapter(Activity context , RealmList<KnowledgeBaseArticle> articles) {
+    public ArticleAdapter(Activity context , List<KnowledgeBaseArticle> articles, String categoryId) {
         this.context = context;
         this.config = Config.getInstance(context);
         this.articles = articles;
-
+        this.categoryId = categoryId;
     }
 
     @NonNull
@@ -64,7 +67,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
     @Override
     public int getItemCount() {
-        return articles.size();
+        return articles != null ? articles.size() : 0;
     }
     private View.OnClickListener clickListener = new View.OnClickListener() {
         @Override

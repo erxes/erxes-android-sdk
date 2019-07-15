@@ -14,18 +14,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
-public class ConversationMessage extends RealmObject {
-    @PrimaryKey
+public class ConversationMessage {
     public String _id;
     public String conversationId;
     public String customerId;
     public User user;
     public String content;
     public String createdAt;
-    public boolean internal;
+    public boolean internal = false;
     public String attachments;
 
     

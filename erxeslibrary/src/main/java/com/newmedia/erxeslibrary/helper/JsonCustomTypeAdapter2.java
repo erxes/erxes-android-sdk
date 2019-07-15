@@ -3,16 +3,15 @@ package com.newmedia.erxeslibrary.helper;
 import com.apollographql.apollo.response.CustomTypeAdapter;
 import com.apollographql.apollo.response.CustomTypeValue;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.annotation.Nonnull;
-
 public class JsonCustomTypeAdapter2 implements CustomTypeAdapter<Json> {
 
 
-    public Json decode(@Nonnull CustomTypeValue value) {
+    public Json decode(@NotNull CustomTypeValue value) {
         String str = value.value.toString();
         if (str.length() > 0) {
 
@@ -36,7 +35,7 @@ public class JsonCustomTypeAdapter2 implements CustomTypeAdapter<Json> {
         return null;
 
     }
-    public CustomTypeValue encode(@Nonnull Json value){
+    public CustomTypeValue encode(@NotNull Json value){
         if(value.is_object)
             return new CustomTypeValue.GraphQLJson(value.convert_object());
         else

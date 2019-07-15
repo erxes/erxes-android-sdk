@@ -44,7 +44,6 @@ public class FaqFragment extends Fragment {
             recyclerView.setAdapter(new FaqAdapter(this.getActivity()));
             LinearLayoutManager ln = new LinearLayoutManager(this.getContext());
             recyclerView.setLayoutManager(ln);
-//        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(this.getContext()));
         }
     }
 }

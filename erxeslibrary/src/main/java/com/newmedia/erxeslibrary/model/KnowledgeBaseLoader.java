@@ -1,7 +1,5 @@
 package com.newmedia.erxeslibrary.model;
 
-import io.realm.RealmObject;
-
-public class KnowledgeBaseLoader extends RealmObject {
+public class KnowledgeBaseLoader {
     private String loadType;
 }

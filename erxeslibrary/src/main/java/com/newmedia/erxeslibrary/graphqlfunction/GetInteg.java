@@ -1,23 +1,18 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
-import com.newmedia.erxes.basic.FormConnectMutation;
 import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
-import com.newmedia.erxeslibrary.model.FormConnect;
 
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
 
 public class GetInteg {
     final static String TAG = "GETINTEG";
@@ -37,7 +32,7 @@ public class GetInteg {
 
     private ApolloCall.Callback<GetMessengerIntegrationQuery.Data> request = new ApolloCall.Callback<GetMessengerIntegrationQuery.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<GetMessengerIntegrationQuery.Data> response) {
+        public void onResponse(@NotNull Response<GetMessengerIntegrationQuery.Data> response) {
             if (!response.hasErrors()) {
 
                 try {
@@ -55,7 +50,7 @@ public class GetInteg {
         }
 
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
+        public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
             Log.d(TAG, "failed ");
             e.printStackTrace();

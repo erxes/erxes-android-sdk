@@ -4,10 +4,9 @@ package com.newmedia.erxeslibrary.configuration;
 import com.apollographql.apollo.response.CustomTypeAdapter;
 import com.apollographql.apollo.response.CustomTypeValue;
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import javax.annotation.Nonnull;
 
 public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
 
@@ -16,7 +15,7 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
     }
 
     @Override
-    public JSONObject decode(@Nonnull CustomTypeValue value) {
+    public JSONObject decode(@NotNull CustomTypeValue value) {
 
         try {
             return new JSONObject( value.value.toString());
@@ -27,9 +26,9 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<JSONObject> {
 
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public CustomTypeValue encode(@Nonnull JSONObject value) {
+    public CustomTypeValue encode(@NotNull JSONObject value) {
 
         return new CustomTypeValue.GraphQLJsonString(value.toString());
     }

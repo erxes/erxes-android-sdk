@@ -15,28 +15,22 @@ import android.widget.TextView;
 
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
-import com.newmedia.erxeslibrary.model.User;
-
-import io.realm.Realm;
+import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 
 public class FaqDetailActivity extends AppCompatActivity {
     private ViewGroup container;
     private Point size;
     private Config config;
     private TextView general,article_header,date,content1,content2;
-    private Realm realm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_faq_detail);
-        realm = DB.getDB();
         config = Config.getInstance(this);
         load_findViewByid();
     }
@@ -81,14 +75,32 @@ public class FaqDetailActivity extends AppCompatActivity {
         content2 = this.findViewById(R.id.article_content2);
 
         String id = getIntent().getStringExtra("id");
+        String categoryId = getIntent().getStringExtra("categoryId");
 
         if(id!=null) {
-            KnowledgeBaseArticle knowledgeBaseArticle = realm.where(KnowledgeBaseArticle.class).equalTo("_id",id).findFirst();
-            general.setText(knowledgeBaseArticle.title);
-            date.setText(config.full_date(knowledgeBaseArticle.createdDate));
-            article_header.setText(knowledgeBaseArticle.title);
-            content1.setText(Html.fromHtml(knowledgeBaseArticle.summary));
-            content2.setText(Html.fromHtml(knowledgeBaseArticle.content));
+            KnowledgeBaseCategory knowledgeBaseCategory = null;
+            for (int i = 0; i < config.knowledgeBaseTopic.categories.size(); i ++) {
+                if (config.knowledgeBaseTopic.categories.get(i)._id.equals(categoryId)) {
+                    knowledgeBaseCategory = config.knowledgeBaseTopic.categories.get(i);
+                    break;
+                }
+            }
+            if (knowledgeBaseCategory != null) {
+                KnowledgeBaseArticle knowledgeBaseArticle = null;
+                for (int i = 0 ; i < knowledgeBaseCategory.articles.size(); i ++) {
+                    if (knowledgeBaseCategory.articles.get(i)._id.equals(id)) {
+                        knowledgeBaseArticle = knowledgeBaseCategory.articles.get(i);
+                        break;
+                    }
+                }
+                if (knowledgeBaseArticle != null) {
+                    general.setText(knowledgeBaseArticle.title);
+                    date.setText(config.full_date(knowledgeBaseArticle.createdDate));
+                    article_header.setText(knowledgeBaseArticle.title);
+                    content1.setText(Html.fromHtml(knowledgeBaseArticle.summary));
+                    content2.setText(Html.fromHtml(knowledgeBaseArticle.content));
+                }
+            }
         }
     }
     public void Click_back(View v){
@@ -122,10 +134,6 @@ public class FaqDetailActivity extends AppCompatActivity {
         }
     };
     public void logout(View v){
-        realm.beginTransaction();
-        realm.delete(ConversationMessage.class);
-        realm.delete(User.class);
-        realm.commitTransaction();
         config.Logout();
         finish();
     }

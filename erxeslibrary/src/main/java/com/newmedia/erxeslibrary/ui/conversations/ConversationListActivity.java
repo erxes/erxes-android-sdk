@@ -59,10 +59,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             @Override
             public void run() {
                 switch (returnType) {
-                    case ReturnType.Subscription:
                     case ReturnType.Getconversation:
                         Log.d(TAG, "here changed");
-//                        recyclerView.getAdapter().notifyDataSetChanged();
+                        if (tabAdapter != null) {
+                            ((SupportFragment) tabAdapter.getItem(0))
+                                    .recyclerView.getAdapter().notifyDataSetChanged();
+                        }
                         break;
                     case ReturnType.INTEGRATION_CHANGED:
 //                        info_header.setBackgroundColor(config.colorCode);
@@ -90,6 +92,10 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                     case ReturnType.savedLead:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLeadAgain();
+                        break;
+                    case ReturnType.GetSupporters:
+                        if (supporterView != null && supporterView.getAdapter() != null)
+                            supporterView.getAdapter().notifyDataSetChanged();
                         break;
                     default:
                         break;
@@ -199,7 +205,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             init();
         }
 
-        supporterView.setAdapter(new SupportAdapter(this));
+        supporterView.setAdapter(new SupportAdapter(this,config.supporters));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
         Helper.display_configure(this, container, "#66000000");

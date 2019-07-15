@@ -24,15 +24,10 @@ import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.realm.Realm;
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
-import okhttp3.TlsVersion;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
@@ -54,7 +49,6 @@ public class ErxesRequest {
     private ErxesRequest(Config config) {
         this.activity = config.activity;
         this.config = config;
-        Realm.init(activity);
         Helper.Init(activity);
     }
 

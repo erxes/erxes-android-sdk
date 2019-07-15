@@ -9,15 +9,12 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.model.Conversation;
 
-import java.util.List;
-
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class Getconv {
     final static String TAG = "SETCONNECT";
@@ -40,11 +37,12 @@ public class Getconv {
     }
     private ApolloCall.Callback<ConversationsQuery.Data> request = new ApolloCall.Callback<ConversationsQuery.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<ConversationsQuery.Data> response) {
+        public void onResponse(@NotNull Response<ConversationsQuery.Data> response) {
 
             if(response.data().conversations().size()>0) {
-                final List<Conversation> data = Conversation.convert(response,config);
-                DB.save(data);
+                if (config.conversations != null && config.conversations.size() > 0)
+                    config.conversations.clear();
+                config.conversations.addAll(Conversation.convert(response,config));
 
                 Log.d(TAG,"Getconversation ok ");
             }
@@ -54,7 +52,7 @@ public class Getconv {
         }
 
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
+        public void onFailure(@NotNull ApolloException e) {
             Log.d(TAG,"Getconversation failed ");
             e.printStackTrace();
             ER.notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());

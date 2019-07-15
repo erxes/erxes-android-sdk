@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -10,14 +9,13 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.DB;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
-import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
+import java.util.List;
 
 public class Insertmess {
     final static String TAG = "SETCONNECT";
@@ -42,7 +40,7 @@ public class Insertmess {
 
     private ApolloCall.Callback<InsertMessageMutation.Data> request = new ApolloCall.Callback<InsertMessageMutation.Data>() {
         @Override
-        public void onResponse(@Nonnull Response<InsertMessageMutation.Data> response) {
+        public void onResponse(@NotNull Response<InsertMessageMutation.Data> response) {
 
             if(response.hasErrors()) {
                 Log.d(TAG, "errors " + response.errors().toString());
@@ -50,12 +48,12 @@ public class Insertmess {
             }
             else {
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
-                DB.save(a);
+                config.conversationMessages.add(a);
                 ER.notefyAll(ReturnType.Mutation,conversationId,null);
             }
         }
         @Override
-        public void onFailure(@Nonnull ApolloException e) {
+        public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
             ER.notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
             Log.d(TAG, "failed ");

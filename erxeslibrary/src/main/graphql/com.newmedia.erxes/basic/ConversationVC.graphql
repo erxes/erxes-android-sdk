@@ -33,25 +33,52 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
  query Conversations($integrationId: String!,$customerId: String!){
    conversations(integrationId: $integrationId,customerId: $customerId) {
          _id
+         customerId
+         integrationId
          status
          content
          createdAt
+         messages {
+            _id
+            conversationId
+            customerId
+            user{
+                _id
+                details{
+                    avatar
+                    shortName
+                    fullName
+                }
+            }
+            content
+            createdAt
+            internal
+            fromBot
+            attachments {
+                size
+                url
+                type
+                name
+            }
+         }
    }
  }
 
 query Messages($conversationId: String){
   messages(conversationId: $conversationId) {
         _id
+        conversationId
         customerId
         content
         createdAt
         internal
+        fromBot
          attachments {
              size
              url
              type
              name
-           },
+           }
         user{
              _id
              details
