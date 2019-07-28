@@ -63,13 +63,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    MessageListAdapter adapter = (MessageListAdapter)mMessageRecycler.getAdapter();
+                    MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
                     switch (returnType){
                         case ReturnType.Subscription:
 //                            subscription();
                             break;
                             //without break
                         case ReturnType.Getmessages:
+                            mMessageRecycler.getAdapter().notifyDataSetChanged();
                             if(adapter.getItemCount() > 2 && adapter.refresh_data())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                             swipeRefreshLayout.setRefreshing(false);
@@ -108,7 +109,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     }
     private void subscription(){
-        MessageListAdapter adapter = (MessageListAdapter)mMessageRecycler.getAdapter();
+        MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
         header_profile_change();
         isMessenOnlineImage.setText(R.string.online);
         if(adapter.getItemCount() > 2 && adapter.refresh_data())
@@ -243,9 +244,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         }
     }
     private void subscribe_conversation(){
-        subscription();
         mMessageRecycler.setAdapter(new MessageListAdapter(this,config.conversationMessages));
         erxesRequest.getMessages(config.conversationId);
+        subscription();
     }
     public void Click_back(View v){
         finish();

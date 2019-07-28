@@ -105,13 +105,14 @@ public class SupportFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
-        ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity());
+        ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity(),config.conversations);
         recyclerView.setAdapter(adapter);
-        if (0 == adapter.conversationList.size() && !((ConversationListActivity) getActivity()).isFirstStart) {
+        if (0 == adapter.conversationList.size() && !config.isFirstStart) {
             start_new_conversation(null);
         }
 
 //        erxesRequest.getConversations();
+        setLead();
 
         return v;
     }
@@ -271,7 +272,7 @@ public class SupportFragment extends Fragment {
 
     public void start_new_conversation(View v) {
 //        config.conversationId = null;
-        ((ConversationListActivity) getActivity()).isFirstStart = true;
+        config.isFirstStart = true;
         Intent a = new Intent(this.getActivity(), MessageActivity.class);
         startActivity(a);
     }

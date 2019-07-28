@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;

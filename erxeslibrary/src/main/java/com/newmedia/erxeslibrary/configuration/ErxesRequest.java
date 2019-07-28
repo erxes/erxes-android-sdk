@@ -13,6 +13,7 @@ import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
+import com.newmedia.erxeslibrary.graphqlfunction.GetLead;
 import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
 import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
 import com.newmedia.erxeslibrary.graphqlfunction.Getmess;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
@@ -53,6 +55,8 @@ public class ErxesRequest {
     }
 
     public void set_client() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -73,6 +77,7 @@ public class ErxesRequest {
 //                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
+                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.activity))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
                     .build();
@@ -86,12 +91,12 @@ public class ErxesRequest {
         }
     }
 
-    public void setConnect(String email, String phone, boolean isUser, boolean isLogin, String data) {
+    public void setConnect(String email, String phone, boolean isUser, String data) {
         if (!isNetworkConnected()) {
             return;
         }
         SetConnect setConnect = new SetConnect(this, activity);
-        setConnect.run(email, phone, isUser, isLogin, data);
+        setConnect.run(email, phone, isUser, data);
     }
 
     public void getGEO() {
@@ -160,6 +165,14 @@ public class ErxesRequest {
         }
         GetKnowledge getSup = new GetKnowledge(this, activity);
         getSup.run();
+    }
+
+    public void getLead() {
+        if (!isNetworkConnected()) {
+            return;
+        }
+        GetLead getLead = new GetLead(this, activity);
+        getLead.run();
     }
 
     public void sendLead() {

@@ -50,7 +50,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private DataManager dataManager;
     private TabAdapter tabAdapter;
     private TabLayout tabLayout;
-    public boolean isFirstStart = false;
     private ImageView fb, tw, yt;
 
     @Override
@@ -60,8 +59,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             public void run() {
                 switch (returnType) {
                     case ReturnType.Getconversation:
-                        Log.d(TAG, "here changed");
-                        if (tabAdapter != null) {
+                        if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
+                                .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
@@ -126,7 +125,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
         erxesRequest.add(this);
-        if (config.customerId == null) {
+        if (dataManager.getDataS(DataManager.customerId) == null) {
             startActivity();
             return;
         }
@@ -135,20 +134,23 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             dataManager.setData(DataManager.customerId, null);
             startActivity();
             return;
-        } else if (dataManager.getDataB(DataManager.isUser)) {
-            erxesRequest.setConnect(
-                    dataManager.getDataS(DataManager.email),
-                    dataManager.getDataS(DataManager.phone),
-                    true,
-                    false,
-                    dataManager.getDataS(DataManager.customData));
-        } else if (!TextUtils.isEmpty(dataManager.getDataS(DataManager.email)))
-            erxesRequest.setConnect(
-                    dataManager.getDataS(DataManager.email), null, false, false, null
-            );
-        else
-            erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false, false, null);
+        }
+//        else if (dataManager.getDataB(DataManager.isUser)) {
+//            erxesRequest.setConnect(
+//                    dataManager.getDataS(DataManager.email),
+//                    dataManager.getDataS(DataManager.phone),
+//                    true,
+//                    false,
+//                    dataManager.getDataS(DataManager.customData));
+//        } else if (!TextUtils.isEmpty(dataManager.getDataS(DataManager.email)))
+//            erxesRequest.setConnect(
+//                    dataManager.getDataS(DataManager.email), null, false, false, null
+//            );
+//        else
+//            erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false, false, null);
 
+        erxesRequest.getLead();
+        erxesRequest.getConversations();
         erxesRequest.getGEO();
         config.conversationId = null;
 
@@ -178,7 +180,9 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
+
         setContentView(R.layout.activity_conversation);
+
         viewpager = findViewById(R.id.viewpager);
         info_header = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
@@ -197,9 +201,14 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         viewpager.setPagingEnabled(false);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
 
+
         viewpager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewpager);
         tabLayout.setSelectedTabIndicatorColor(config.colorCode);
+
+        if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
+            tabLayout.setVisibility(View.VISIBLE);
+        }
 
         if (getIntent().getBooleanExtra("isFromLogin", false)) {
             init();
@@ -222,6 +231,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         this.findViewById(R.id.twcontainer).setOnTouchListener(touchListener);
         this.findViewById(R.id.ytcontainer).setOnTouchListener(touchListener);
     }
+
+
 
     private void init() {
         if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)

@@ -52,10 +52,11 @@ public class Config implements ErxesObserver {
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
     public Geo geo;
     public String geoResponse;
-    public KnowledgeBaseTopic knowledgeBaseTopic;
+    public KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
     public List<User> supporters = new ArrayList<>();
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
+    public boolean isFirstStart = false;
 
     public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
@@ -235,6 +236,7 @@ public class Config implements ErxesObserver {
         dataManager.setData(DataManager.phone, null);
         dataManager.setData(DataManager.customData, null);
         Intent a = new Intent(activity, ErxesActivity.class);
+        a.putExtra("hasData",false);
         activity.startActivity(a);
     }
 
@@ -243,8 +245,14 @@ public class Config implements ErxesObserver {
         dataManager.setData(DataManager.email, email);
         dataManager.setData(DataManager.phone, phone);
         dataManager.setData(DataManager.customData, jsonObject.toString());
-        erxesRequest.add(this);
-        erxesRequest.setConnect(email, phone, true, true, jsonObject.toString());
+        Intent a = new Intent(activity, ErxesActivity.class);
+        a.putExtra("hasData",true);
+        a.putExtra("customData", jsonObject.toString());
+        a.putExtra("mEmail",email);
+        a.putExtra("mPhone",phone);
+        activity.startActivity(a);
+//        erxesRequest.add(this);
+
     }
 
 //    public void Start_login_email(String email, boolean isUser) {

@@ -42,7 +42,12 @@ public class Getconv {
             if(response.data().conversations().size()>0) {
                 if (config.conversations != null && config.conversations.size() > 0)
                     config.conversations.clear();
-                config.conversations.addAll(Conversation.convert(response,config));
+                if (config.conversations != null) {
+                    for (Conversation conversation : Conversation.convert(response,config)) {
+                        if (conversation.status.equalsIgnoreCase("open"))
+                        config.conversations.add(conversation);
+                    }
+                }
 
                 Log.d(TAG,"Getconversation ok ");
             }

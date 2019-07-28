@@ -26,15 +26,17 @@ public class GetInteg {
     }
 
     public void run() {
-        ER.apolloClient.query(GetMessengerIntegrationQuery.builder().brandCode(config.brandCode).build())
-                .enqueue(request);
+        Log.e(TAG, "run: " + config.brandCode );
+        ER.apolloClient.query(GetMessengerIntegrationQuery.builder()
+                .brandCode(config.brandCode)
+                .build()
+        ).enqueue(request);
     }
 
     private ApolloCall.Callback<GetMessengerIntegrationQuery.Data> request = new ApolloCall.Callback<GetMessengerIntegrationQuery.Data>() {
         @Override
-        public void onResponse(@NotNull Response<GetMessengerIntegrationQuery.Data> response) {
+        public void onResponse(Response<GetMessengerIntegrationQuery.Data> response) {
             if (!response.hasErrors()) {
-
                 try {
                     config.changeLanguage(response.data().getMessengerIntegration().languageCode());
                     Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
@@ -44,13 +46,13 @@ public class GetInteg {
                 }
                 ER.notefyAll(ReturnType.INTEGRATION_CHANGED, null, null);
             } else {
-                Log.d(TAG, "errors " + response.errors().toString());
+                Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
+        public void onFailure(ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
             Log.d(TAG, "failed ");
             e.printStackTrace();

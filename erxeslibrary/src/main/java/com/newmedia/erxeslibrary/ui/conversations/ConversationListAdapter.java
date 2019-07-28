@@ -24,16 +24,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
-    private Context context;
-    public List<Conversation> conversationList = new ArrayList<>();
+    private Activity activity;
+    public List<Conversation> conversationList;
     private Config config;
 
-    public ConversationListAdapter(Activity context) {
-        this.context = context;
-        config = Config.getInstance(context);
-        if (this.conversationList != null && this.conversationList.size() > 0)
-            this.conversationList.clear();
-        this.conversationList.addAll(config.conversations);
+    public ConversationListAdapter(Activity activity, List<Conversation> conversationList) {
+        this.activity = activity;
+        config = Config.getInstance(activity);
+        this.conversationList = conversationList;
     }
 
     public void update_position(String conversationId) {
@@ -62,9 +60,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent a = new Intent(context, MessageActivity.class);
+            Intent a = new Intent(activity, MessageActivity.class);
             config.conversationId = conversationList.get((int) view.getTag())._id;
-            context.startActivity(a);
+            if (config.conversationMessages != null && config.conversationMessages.size() > 0) {
+                config.conversationMessages.clear();
+            }
+            if (config.conversationMessages != null) {
+                config.conversationMessages.addAll(conversationList.get((int) view.getTag()).conversationMessages);
+            }
+            activity.startActivity(a);
         }
     };
 
@@ -84,21 +88,23 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.content.setTextColor(Color.BLACK);
         }
 
-        ConversationMessage message = conversationList.get(position).conversationMessages
-                .get(conversationList.get(position).conversationMessages.size() - 1);
-
+        ConversationMessage message = null;
+        if (conversationList.get(position).conversationMessages.size() > 0) {
+            message = conversationList.get(position).conversationMessages
+                    .get(conversationList.get(position).conversationMessages.size() - 1);
+        }
         holder.name.setText("");
         if (message != null && message.user != null) {
             String myString = message.user.fullName;
             String upperString = myString.substring(0, 1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
             if (message.user.avatar != null)
-                Glide.with(context).load(message.user.avatar)
+                Glide.with(activity).load(message.user.avatar)
                         .placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
             else
-                Glide.with(context).load(R.drawable.avatar)
+                Glide.with(activity).load(R.drawable.avatar)
                         .placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
@@ -107,7 +113,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
         } else {
-            Glide.with(context).load(R.drawable.avatar)
+            Glide.with(activity).load(R.drawable.avatar)
                     .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);

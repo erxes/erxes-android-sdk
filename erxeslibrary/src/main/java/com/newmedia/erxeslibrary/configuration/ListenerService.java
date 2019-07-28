@@ -69,14 +69,14 @@ public class ListenerService extends Service {
                 .build();
 
 
-        Log.d(TAG, "oncreate");
+        Log.e(TAG, "oncreate");
     }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "destory");
+        Log.e(TAG, "destory");
     }
 
 
@@ -110,7 +110,7 @@ public class ListenerService extends Service {
 
         } else {
             conversation_listen(id);
-            Log.d(TAG, "start only one");
+            Log.e(TAG, "start only one");
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -124,7 +124,7 @@ public class ListenerService extends Service {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        Log.d(TAG, "subscribe thread running ");
+                        Log.e(TAG, "subscribe thread running ");
                         Thread.sleep(5000);
                     } catch (InterruptedException e1) {
                         e1.printStackTrace();
@@ -156,12 +156,12 @@ public class ListenerService extends Service {
                                     @Override
                                     protected void onStart() {
                                         super.onStart();
-                                        Log.d(TAG, "onstarted " + conversationId);
+                                        Log.e(TAG, "onstarted " + conversationId);
                                     }
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        Log.d(TAG, "onerror " + conversationId);
+                                        Log.e(TAG, "onerror " + conversationId);
                                         e.printStackTrace();
 //                                disposables.delete(this);
                                         run_thread(conversationId);
@@ -176,7 +176,7 @@ public class ListenerService extends Service {
 //                                    }
                                             DataManager dataManager = DataManager.getInstance(ListenerService.this);
                                             if (dataManager.getDataB("chat_is_going") == false) {
-                                                Log.d(TAG, "dead");
+                                                Log.e(TAG, "dead");
                                                 String chat_message = response.data().conversationMessageInserted().content();
                                                 String name = "";
                                                 try {
@@ -197,16 +197,16 @@ public class ListenerService extends Service {
                                                         config.conversations.get(i).isread = false;
                                                     }
                                                 }
-                                            Log.d(TAG, "insert to database");
+                                            Log.e(TAG, "insert to database");
                                         }
-                                        Log.d(TAG, "onnext " + conversationId);
+                                        Log.e(TAG, "onnext " + conversationId);
 
 
                                     }
 
                                     @Override
                                     public void onComplete() {
-                                        Log.d(TAG, "subsrioption ehsouced");
+                                        Log.e(TAG, "subsrioption ehsouced");
                                     }
                                 }
                         )

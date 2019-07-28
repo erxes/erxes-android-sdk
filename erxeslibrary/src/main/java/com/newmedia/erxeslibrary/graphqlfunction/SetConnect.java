@@ -28,7 +28,6 @@ public class SetConnect {
     private ErxesRequest ER;
     private Config config;
     private DataManager dataManager;
-    private boolean isLogin = true;
 
     public SetConnect(ErxesRequest ER, Activity context) {
         this.ER = ER;
@@ -36,8 +35,7 @@ public class SetConnect {
         dataManager = DataManager.getInstance(context);
     }
 
-    public void run(String email, String phone, boolean isUser, boolean isLogin, String data) {
-        this.isLogin = isLogin;
+    public void run(String email, String phone, boolean isUser, String data) {
         JSONObject customData = new JSONObject();
         try {
             if (data != null) {
@@ -52,7 +50,8 @@ public class SetConnect {
                 .phone(phone)
                 .isUser(isUser)
                 .data(new Json(customData))
-                .build()).enqueue(request);
+                .build()
+        ).enqueue(request);
     }
 
     private ApolloCall.Callback<MessengerConnectMutation.Data> request = new ApolloCall.Callback<MessengerConnectMutation.Data>() {
@@ -70,49 +69,25 @@ public class SetConnect {
                 Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
                 Helper.load_messengerData(response.data().messengerConnect().messengerData());
 
-                if (!isLogin)
-                    getLead();
+//                getLead();
 
                 ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
             } else {
 
-                Log.d(TAG, "errors " + response.errors().toString());
+                Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
+
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.d(TAG, "failed ");
+            Log.e(TAG, "failed " + e.getMessage() + "\n" + e.getLocalizedMessage());
             e.printStackTrace();
 
         }
     };
 
-    private void getLead() {
-        if (!TextUtils.isEmpty(config.messengerdata.getFormCode()))
-            ER.apolloClient.mutate(FormConnectMutation.builder()
-                    .brandCode(config.brandCode)
-                    .formCode(config.messengerdata.getFormCode())
-                    .build()).enqueue(formConnect);
-    }
 
-    private ApolloCall.Callback<FormConnectMutation.Data> formConnect = new ApolloCall.Callback<FormConnectMutation.Data>() {
-        @Override
-        public void onResponse(@NotNull Response<FormConnectMutation.Data> response) {
-            if (!response.hasErrors()) {
-                config.formConnect = FormConnect.convert(response);
-                ER.notefyAll(ReturnType.LEAD, null, null);
-            } else {
-                Log.e(TAG, "onResponse: " + response.errors().get(0).message());
-            }
-        }
-
-        @Override
-        public void onFailure(@NotNull ApolloException e) {
-            e.printStackTrace();
-            Log.e(TAG, "onFailure: formConnect");
-        }
-    };
 }

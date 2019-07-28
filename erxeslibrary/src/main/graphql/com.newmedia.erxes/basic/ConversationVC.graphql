@@ -65,7 +65,7 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
  }
 
 query Messages($conversationId: String){
-  messages(conversationId: $conversationId) {
+    messages(conversationId: $conversationId) {
         _id
         conversationId
         customerId
@@ -73,84 +73,83 @@ query Messages($conversationId: String){
         createdAt
         internal
         fromBot
-         attachments {
-             size
-             url
-             type
-             name
-           }
-        user{
-             _id
-             details
-             {
-                    avatar
-                    fullName
-             }
-     }
-  }
+        attachments {
+            size
+            url
+            type
+            name
+        }
+        user {
+            _id
+            details {
+                avatar
+                fullName
+            }
+        }
+    }
 }
 
 query ConversationDetail($id: String, $integ : String!){
-  conversationDetail(_id: $id, integrationId: $integ) {
-    isOnline
-    supporters{
-      _id
-      details {
-        avatar
-        fullName
-      }
+    conversationDetail(_id: $id, integrationId: $integ) {
+        isOnline
+        supporters{
+            _id
+            details {
+                avatar
+                fullName
+            }
+        }
     }
-  }
 }
-query MessengerSupporters($integ : String!){
-  messengerSupporters(integrationId: $integ)
-  {
-    _id
-    details {
-      avatar
-      shortName
-      position
-      location
-      description
-      fullName
+query MessengerSupporters($integ : String!) {
+    messengerSupporters(integrationId: $integ) {
+        _id
+        details {
+            avatar
+            shortName
+            position
+            location
+            description
+            fullName
+        }
     }
-  }
-
 }
 
 query GetMessengerIntegration($brandCode: String!){
-  getMessengerIntegration(brandCode: $brandCode) {
-    languageCode
-    uiOptions
-    messengerData
-  }
+    getMessengerIntegration(brandCode: $brandCode) {
+        _id
+        name
+        languageCode
+        uiOptions
+        messengerData
+    }
 }
 
 query FaqGet($topicId: String!){
-  knowledgeBaseTopicsDetail(topicId: $topicId) {
-    _id
-    title
-    description
-    color
-    languageCode
-    categories{
-      _id
-      numOfArticles
-      title
-      description
-      icon
-        articles {
-          _id
-          title
-          summary
-          content
-          createdBy
-          createdDate
-          modifiedBy
-          modifiedDate
+    knowledgeBaseTopicsDetail(topicId: $topicId) {
+        _id
+        title
+        description
+        color
+        languageCode
+        categories{
+            _id
+            numOfArticles
+            title
+            description
+            icon
+            articles {
+                _id
+                title
+                summary
+                content
+                createdBy
+                createdDate
+                modifiedBy
+                modifiedDate
+            }
         }
     }
-  }
 }
 
 query getForm($formId: String) {

@@ -48,8 +48,7 @@ public class Insertnewmess {
             if(response.hasErrors()) {
                 Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,null,response.errors().get(0).message());
-            }
-            else {
+            } else {
                 Log.d(TAG, "cid " + response.data().insertMessage().conversationId());
 
                 Conversation conversation = Conversation.update(response.data().insertMessage(),message,config);

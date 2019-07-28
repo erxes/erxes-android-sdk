@@ -19,7 +19,7 @@ public class Conversation {
     public String content;
     public String date;
     public boolean isread = true;
-    public List<ConversationMessage> conversationMessages;
+    public List<ConversationMessage> conversationMessages = new ArrayList<>();
     public List<String> readUserIds;
     public List<User> participatedUsers;
 

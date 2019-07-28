@@ -37,6 +37,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     private Config config;
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
+    private LinearLayout loaderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_erxes);
 
-
+        loaderView = this.findViewById(R.id.loaderView);
         email = this.findViewById(R.id.email);
         phone = this.findViewById(R.id.phone);
         container = findViewById(R.id.linearlayout);
@@ -61,14 +62,23 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         Helper.display_configure(this, container, "#66000000");
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
-        if (config.isLoggedIn()) {
-            config.LoadDefaultValues();
-            Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-            a.putExtra("isFromLogin",false);
-            ErxesActivity.this.startActivity(a);
-            finish();
+
+        boolean hasData = getIntent().getBooleanExtra("hasData",false);
+        String customData = getIntent().getStringExtra("customData");
+        String mEmail = getIntent().getStringExtra("mEmail");
+        String mPhone = getIntent().getStringExtra("mPhone");
+        if (hasData) {
+            erxesRequest.setConnect(mEmail, mPhone, true, customData);
         } else {
-            erxesRequest.getIntegration();
+            if (config.isLoggedIn()) {
+                config.LoadDefaultValues();
+                Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
+                a.putExtra("isFromLogin",false);
+                ErxesActivity.this.startActivity(a);
+                finish();
+            } else {
+                erxesRequest.getIntegration();
+            }
         }
     }
 
@@ -124,7 +134,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.phone, phone.getText().toString());
-                    erxesRequest.setConnect("", phone.getText().toString(), false,true,null);
+                    erxesRequest.setConnect("", phone.getText().toString(), false,null);
                     phone.setError(null);
                 } else
                     phone.setError(getResources().getString(R.string.no_correct_phone));
@@ -132,7 +142,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.email, email.getText().toString());
-                    erxesRequest.setConnect("" + email.getText().toString(), "", false,true,null);
+                    erxesRequest.setConnect("" + email.getText().toString(), "", false,null);
                 } else
                     email.setError(getResources().getString(R.string.no_correct_mail));
             }
@@ -170,6 +180,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
                     case ReturnType.INTEGRATION_CHANGED:
                         change_color();
+                        loaderView.setVisibility(View.GONE);
                         break;
 
                     case ReturnType.CONNECTIONFAILED:

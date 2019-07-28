@@ -36,14 +36,19 @@ public class FaqFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_faq, container, false);
         recyclerView = v.findViewById(R.id.recycler_view);
+        config = Config.getInstance(this.getActivity());
+        init();
+
         return v;
     }
 
     public void init() {
-        if (isAdded() && recyclerView != null) {
-            recyclerView.setAdapter(new FaqAdapter(this.getActivity()));
-            LinearLayoutManager ln = new LinearLayoutManager(this.getContext());
-            recyclerView.setLayoutManager(ln);
+        if (isAdded()) {
+            if (recyclerView != null && config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null){
+                recyclerView.setAdapter(new FaqAdapter(this.getActivity()));
+                LinearLayoutManager ln = new LinearLayoutManager(this.getContext());
+                recyclerView.setLayoutManager(ln);
+            }
         }
     }
 }
