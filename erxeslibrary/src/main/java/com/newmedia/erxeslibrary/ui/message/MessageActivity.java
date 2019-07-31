@@ -52,14 +52,11 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private Config config;
     private ErxesRequest erxesRequest;
     private Point size;
-
     private GFilePart gFilePart;
 
     private final String TAG = "MESSAGEACTIVITY";
     @Override
     public void notify(final int returnType, String conversationId,  String message) {
-
-
             this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -68,7 +65,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         case ReturnType.Subscription:
 //                            subscription();
                             break;
-                            //without break
                         case ReturnType.Getmessages:
                             mMessageRecycler.getAdapter().notifyDataSetChanged();
                             if(adapter.getItemCount() > 2 && adapter.refresh_data())
@@ -76,7 +72,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             swipeRefreshLayout.setRefreshing(false);
                             break;
                         case ReturnType.Mutation:
-
                             if(adapter.getItemCount() > 2 && adapter.refresh_data())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                             swipeRefreshLayout.setRefreshing(false);
@@ -208,10 +203,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         int index = Integer.getInteger(config.wallpaper,-1);
         if(index > -1 && index < 5)
             mMessageRecycler.setBackgroundResource(Helper.backgrounds[index]);
-
-
-
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,7 +216,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         load_findViewByid();
         mMessageRecycler.setLayoutManager(linearLayoutManager);
-
 
         if(config.conversationId != null) {
             linearLayoutManager.setStackFromEnd(true);
@@ -243,18 +235,22 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             askPermissions();
         }
     }
+
     private void subscribe_conversation(){
         mMessageRecycler.setAdapter(new MessageListAdapter(this,config.conversationMessages));
         erxesRequest.getMessages(config.conversationId);
         subscription();
     }
+
     public void Click_back(View v){
         finish();
     }
+
     public void logout(View v){
         config.Logout();
         finish();
     }
+
     public void send_message(View view) {
         if(!config.isNetworkConnected()) {
             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
@@ -274,7 +270,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             erxesRequest.getMessages(config.conversationId);
         else
             swipeRefreshLayout.setRefreshing(false);
-
     }
 
     @Override
@@ -314,10 +309,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         upload_group.setClickable(true);
     }
 
-
-
-
-
     protected boolean shouldAskPermissions() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
@@ -332,11 +323,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         requestPermissions(permissions, requestCode);
     }
 
-
     private View.OnTouchListener touchListener =  new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
-
             if(event.getAction() == MotionEvent.ACTION_DOWN){
                 MessageActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -360,7 +349,4 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             return true;
         }
     };
-
-
-
 }

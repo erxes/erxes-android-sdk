@@ -9,13 +9,17 @@
     android:background="#80000000"
     android:id="@+id/linearlayout"
     tools:context=".ui.conversations.ConversationListActivity">
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@drawable/cornerbackground"
         android:id="@+id/container">
-        <include android:id="@+id/info_header" layout="@layout/con_header"/>
+
+        <include android:id="@+id/info_header"
+            layout="@layout/con_header"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="10dp"

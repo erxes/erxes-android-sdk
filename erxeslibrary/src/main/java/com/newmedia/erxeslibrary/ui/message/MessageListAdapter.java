@@ -40,36 +40,26 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private Activity context;
     private int previous_size = 0;
     private Config config;
+
     public MessageListAdapter(Activity context, List<ConversationMessage> mMessageList) {
         this.context = context;
         this.config = Config.getInstance(context);
-        this.mMessageList =  mMessageList;
+        this.mMessageList = mMessageList;
         this.previous_size = this.mMessageList.size();
     }
 
-    public void setmMessageList(List<ConversationMessage> mMessageList) {
-        this.mMessageList = mMessageList;
-    }
-    public boolean IsBeginningChat(){
-        if(mMessageList.size() == 0)
-            return true;
-        else
-            return false;
-    }
-
-    public boolean refresh_data(){
-
-        if(mMessageList.size() > previous_size) {
+    boolean refresh_data() {
+        if (mMessageList.size() > previous_size) {
             int counter_before = mMessageList.size();
             int zoruu = mMessageList.size() - previous_size;
 
             previous_size = mMessageList.size();
-            if(config.messengerdata.getWelcome(config.language)!=null) {
+            if (config.messengerdata.getWelcome(config.language) != null) {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size());
                 else
-                    notifyItemRangeInserted(counter_before+1, zoruu);
-            }else{
+                    notifyItemRangeInserted(counter_before + 1, zoruu);
+            } else {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size() - 1);
                 else
@@ -77,8 +67,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
             }
             return true;
-        }
-        else
+        } else
             return false;
     }
 
@@ -87,17 +76,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
-        if(viewType == 0) {
+        if (viewType == 0) {
             View view = layoutInflater.inflate(R.layout.item_message_sent, parent, false);
 //        view.setOnClickListener(onClickListener);
             return new SentMessageHolder(view);
-        }
-        else if(viewType == 1){
+        } else if (viewType == 1) {
             View view = layoutInflater.inflate(R.layout.item_message_received, parent, false);
 //        view.setOnClickListener(onClickListener);
             return new ReceivedMessageHolder(view);
-        }
-        else {
+        } else {
             View view = layoutInflater.inflate(R.layout.item_message_welcome, parent, false);
 //        view.setOnClickListener(onClickListener);
             return new WelcomeMessageHolder(view);
@@ -106,13 +93,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if(position == 0 && config.messengerdata.getWelcome(config.language)!=null)
+        if (position == 0 && config.messengerdata.getWelcome(config.language) != null)
             return 2; //welcomeMessage
 
-        if(config.messengerdata.getWelcome(config.language)!=null)
+        if (config.messengerdata.getWelcome(config.language) != null)
             position = position - 1;
 
-        if( config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId ))
+        if (config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId))
             return 0;
         else
             return 1;
@@ -122,14 +109,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
 
-        ConversationMessage message ;
+        ConversationMessage message;
 
-        if(config.messengerdata.getWelcome(config.language)!=null && (position == 0)){
+        if (config.messengerdata.getWelcome(config.language) != null && (position == 0)) {
             message = new ConversationMessage();
             message.content = (config.messengerdata.getWelcome(config.language));
             message.createdAt = ("");
-        }
-        else if(config.messengerdata.getWelcome(config.language) != null)
+        } else if (config.messengerdata.getWelcome(config.language) != null)
             message = mMessageList.get(position - 1);
         else
             message = mMessageList.get(position);
@@ -149,42 +135,45 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        if(config.messengerdata.getWelcome(config.language) != null)
+        if (config.messengerdata.getWelcome(config.language) != null)
             return mMessageList.size() + 1;
         else
-            return mMessageList.size() ;
-
+            return mMessageList.size();
     }
+
     private View.OnClickListener fileDownload = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            String url = (String)view.getTag();
-            if(url.startsWith("http")) {
+            String url = (String) view.getTag();
+            if (url.startsWith("http")) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((String) view.getTag()));
                 context.startActivity(browserIntent);
             }
         }
     };
+
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, timeText;
         ViewGroup filelist;
+
         SentMessageHolder(View itemView) {
             super(itemView);
 
-            messageText =  itemView.findViewById(R.id.text_message_body);
-            timeText =  itemView.findViewById(R.id.text_message_time);
+            messageText = itemView.findViewById(R.id.text_message_body);
+            timeText = itemView.findViewById(R.id.text_message_time);
             filelist = itemView.findViewById(R.id.filelist);
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.content));;
+            messageText.setText(Html.fromHtml(message.content));
+            ;
             timeText.setText(config.Message_datetime(message.createdAt));
             GradientDrawable a1 = (GradientDrawable) messageText.getBackground();
             a1.setColor(config.colorCode);
 //                messageText.setBackgroundColor(Color.parseColor(Config.color));
             filelist.removeAllViews();
             timeText.setText(config.Message_datetime(message.createdAt));
-            if(message.attachments !=null) {
+            if (message.attachments != null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
 
                 try {
@@ -206,35 +195,30 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
     }
 
-
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
-        TextView  timeText;
+        TextView timeText;
         TextView messageText;
         ImageView profileImage;
         ViewGroup filelist;
 
-
         ReceivedMessageHolder(View itemView) {
             super(itemView);
 
-            messageText =  itemView.findViewById(R.id.text_message_body);
-            timeText =  itemView.findViewById(R.id.text_message_time);
+            messageText = itemView.findViewById(R.id.text_message_body);
+            timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
             filelist = itemView.findViewById(R.id.filelist);
 
         }
 
         void bind(ConversationMessage message) {
-//            messageText.loadData(message.content,"text/html","utf-8");
-            Log.e("TAG", "bind: " + message.content );
+            Log.e("TAG", "bind: " + message.content);
             Spanned htmlDescription = Html.fromHtml(message.content);
             String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
             messageText.setText(htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length()));
-//            messageText.setText(message.content);;
             timeText.setText(config.Message_datetime(message.createdAt));
 
-/**/
-            if(message.user!=null){
+            if (message.user != null) {
                 Glide.with(context).load(message.user.avatar)
                         .placeholder(R.drawable.avatar)
                         .circleCrop()
@@ -249,7 +233,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
             filelist.removeAllViews();
             timeText.setText(config.Message_datetime(message.createdAt));
-            if(message.attachments !=null) {
+            if (message.attachments != null) {
                 LayoutInflater layoutInflater = LayoutInflater.from(context);
 
                 try {
@@ -270,30 +254,31 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         }
     }
+
     private class WelcomeMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText;
 
         WelcomeMessageHolder(View itemView) {
             super(itemView);
 
-            messageText =  itemView.findViewById(R.id.text_message_body);
+            messageText = itemView.findViewById(R.id.text_message_body);
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.content));;
+            messageText.setText(Html.fromHtml(message.content));
+            ;
         }
     }
-    private void draw_file(JSONObject o,ImageView inputImage,View fileview,TextView filename){
 
-
-        try{
+    private void draw_file(JSONObject o, ImageView inputImage, View fileview, TextView filename) {
+        try {
             String type = o.getString("type");
             String size = o.getString("size");
             String name = o.getString("name");
             String url = o.getString("url");
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
-            circularProgressDrawable.setStrokeWidth(  5f);
-            circularProgressDrawable.setCenterRadius(  30f);
+            circularProgressDrawable.setStrokeWidth(5f);
+            circularProgressDrawable.setCenterRadius(30f);
             circularProgressDrawable.start();
 
             float scale = context.getResources().getDisplayMetrics().density;
@@ -311,9 +296,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             filename.setText(name);
             filename.setVisibility(View.VISIBLE);
 
-
-
-            if(type.contains("image")) {
+            if (type.contains("image")) {
                 pixels = (int) (200 * scale + 0.5f);
                 inputImage.getLayoutParams().width = pixels;
 //                inputImage.getLayoutParams().height = pixels;
@@ -321,30 +304,19 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
                 Glide.with(context).load(url).placeholder(circularProgressDrawable)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(pixels,Target.SIZE_ORIGINAL)
+                        .override(pixels, Target.SIZE_ORIGINAL)
                         .into(inputImage);
                 fileview.setOnClickListener(null);
                 filename.setVisibility(View.GONE);
-            }
-            else if(type.contains("application/pdf")){
+            } else if (type.contains("application/pdf")) {
                 inputImage.setImageResource(R.drawable.filepdf);
-            }
-            else if(type.contains("application")&&type.contains("word")){
+            } else if (type.contains("application") && type.contains("word")) {
                 inputImage.setImageResource(R.drawable.fileword);
-            }
-            else{
+            } else {
                 inputImage.setImageResource(R.drawable.file);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-//    private SimpleTarget target = new SimpleTarget<Bitmap>() {
-//        @Override
-//        public void onResourceReady(Bitmap bitmap, @Nullable Transition<? super Bitmap> transition) {
-//            // do something with the bitmap
-//            // set it to an ImageView
-//            inputImage.setImageBitmap(bitmap);
-//        }
-//    };
 }

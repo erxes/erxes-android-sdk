@@ -8,6 +8,7 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,20 +33,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         this.activity = activity;
         config = Config.getInstance(activity);
         this.conversationList = conversationList;
-    }
-
-    public void update_position(String conversationId) {
-//        for(int i = 0 ; i< conversationList.size();i++){
-//            if(conversationList.get(i)._id.equalsIgnoreCase(conversationId)){
-//                this.notifyItemChanged(i);
-//                return;
-//            }
-//        }
-//        this.conversationList = realm.where(Conversation.class)
-//                .equalTo("status","open")
-//                .equalTo("customerId",config.customerId)
-//                .equalTo("integrationId",config.integrationId)
-//                .findAll();
     }
 
     @NonNull
@@ -93,7 +80,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             message = conversationList.get(position).conversationMessages
                     .get(conversationList.get(position).conversationMessages.size() - 1);
         }
-        holder.name.setText("");
         if (message != null && message.user != null) {
             String myString = message.user.fullName;
             String upperString = myString.substring(0, 1).toUpperCase() + myString.substring(1);
@@ -113,12 +99,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.date.setText(config.convert_datetime(createDate));
             holder.parent.setTag(position);
         } else {
+            holder.name.setText("Support staff");
             Glide.with(activity).load(R.drawable.avatar)
                     .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
-            Long createDate = Long.valueOf(conversationList.get(position).date);
-            holder.date.setText(config.convert_datetime(createDate));
+            long createDate = Long.parseLong(conversationList.get(position).date);
+//            holder.date.setText(config.convert_datetime(createDate));
+            holder.date.setText(config.conversationDate(createDate));
             holder.parent.setTag(position);
         }
 

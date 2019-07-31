@@ -106,8 +106,6 @@ public class ListenerService extends Service {
                     conversation_listen(config.conversations.get(i)._id);
                 }
             }
-
-
         } else {
             conversation_listen(id);
             Log.e(TAG, "start only one");
@@ -148,68 +146,63 @@ public class ListenerService extends Service {
                         ._id(conversationId)
                         .build());
         disposables.add(Rx2Apollo.from(subscriptionCall)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(
-                                new DisposableSubscriber<Response<ConversationMessageInsertedSubscription.Data>>() {
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(
+                        new DisposableSubscriber<Response<ConversationMessageInsertedSubscription.Data>>() {
 
-                                    @Override
-                                    protected void onStart() {
-                                        super.onStart();
-                                        Log.e(TAG, "onstarted " + conversationId);
-                                    }
+                            @Override
+                            protected void onStart() {
+                                super.onStart();
+                                Log.e(TAG, "onstarted " + conversationId);
+                            }
 
-                                    @Override
-                                    public void onError(Throwable e) {
-                                        Log.e(TAG, "onerror " + conversationId);
-                                        e.printStackTrace();
-//                                disposables.delete(this);
-                                        run_thread(conversationId);
-                                    }
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, "onerror " + conversationId);
+                                e.printStackTrace();
+                                run_thread(conversationId);
+                            }
 
-                                    @Override
-                                    public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
-                                        if (!response.hasErrors()) {
-//                                    if(ErxesRequest.erxesRequest != null) {
-//                                        ErxesRequest.erxesRequest.ConversationMessageSubsribe_handmade(response.data().conversationMessageInserted());
-//                                        Log.d("erxesservice","alive");
-//                                    }
-                                            DataManager dataManager = DataManager.getInstance(ListenerService.this);
-                                            if (dataManager.getDataB("chat_is_going") == false) {
-                                                Log.e(TAG, "dead");
-                                                String chat_message = response.data().conversationMessageInserted().content();
-                                                String name = "";
-                                                try {
-                                                    if (response.data().conversationMessageInserted().user().details() != null)
-                                                        name = response.data().conversationMessageInserted().user().details().fullName();
-                                                } catch (Exception e) {
-                                                }
-                                                createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
-
+                            @Override
+                            public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
+                                if (!response.hasErrors()) {
+                                    if (response.data().conversationMessageInserted() != null) {
+                                        DataManager dataManager = DataManager.getInstance(ListenerService.this);
+                                        if (!dataManager.getDataB("chat_is_going")) {
+                                            Log.e(TAG, "dead");
+                                            String chat_message = response.data().conversationMessageInserted().content();
+                                            String name = "";
+                                            try {
+                                                if (response.data().conversationMessageInserted().user().details() != null)
+                                                    name = response.data().conversationMessageInserted().user().details().fullName();
+                                            } catch (Exception ignored) {
                                             }
 
+                                            createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
+                                        }
+
+                                        if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
+                                                .equals(ConversationMessage.convert(response.data().conversationMessageInserted())._id))
                                             config.conversationMessages.add(ConversationMessage.convert(response.data().conversationMessageInserted()));
 
-                                            if (response.data().conversationMessageInserted() != null)
-                                                for (int i = 0; i < config.conversations.size(); i++) {
-                                                    if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
-                                                        config.conversations.get(i).content = response.data().conversationMessageInserted().content();
-                                                        config.conversations.get(i).isread = false;
-                                                    }
-                                                }
-                                            Log.e(TAG, "insert to database");
+                                        for (int i = 0; i < config.conversations.size(); i++) {
+                                            if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
+                                                config.conversations.get(i).content = response.data().conversationMessageInserted().content();
+                                                config.conversations.get(i).isread = false;
+                                            }
                                         }
-                                        Log.e(TAG, "onnext " + conversationId);
-
-
-                                    }
-
-                                    @Override
-                                    public void onComplete() {
-                                        Log.e(TAG, "subsrioption ehsouced");
                                     }
                                 }
-                        )
+                                Log.e(TAG, "onnext " + conversationId);
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.e(TAG, "subsrioption ehsouced");
+                            }
+                        }
+                )
         );
     }
 

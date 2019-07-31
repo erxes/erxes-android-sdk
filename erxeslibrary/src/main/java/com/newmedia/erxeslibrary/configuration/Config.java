@@ -116,11 +116,11 @@ public class Config implements ErxesObserver {
         long minutes = (((diffTime % 604800) % 86400) % 3600) / 60;
         long seconds = (((diffTime % 604800) % 86400) % 3600) % 60;
         SimpleDateFormat format =
-                new SimpleDateFormat("HH:mm");
+                new SimpleDateFormat("h:mm a");
         SimpleDateFormat format2 =
-                new SimpleDateFormat("EEE HH:mm");
+                new SimpleDateFormat("EEE h:mm a");
         SimpleDateFormat format3 =
-                new SimpleDateFormat("MMM d,HH:mm");
+                new SimpleDateFormat("MMM d,h:mm a");
         if (language.equalsIgnoreCase("mn")) {
             format3 = new SimpleDateFormat("MMM сарын d,HH:mm");
             format2 = format3;
@@ -142,7 +142,7 @@ public class Config implements ErxesObserver {
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
-                new SimpleDateFormat("MMM dd / yyyy HH:mm");
+                new SimpleDateFormat("MMM dd, yyyy h:mm a");
 
 
         if (this.language.equalsIgnoreCase("en")) {
@@ -156,7 +156,7 @@ public class Config implements ErxesObserver {
 
     public String full_date(String createDate_s) {
 
-        Long createDate = null;
+        Long createDate;
         try {
             createDate = Long.valueOf(createDate_s);
         } catch (NumberFormatException e) {
@@ -176,6 +176,15 @@ public class Config implements ErxesObserver {
         } else {
             return format.format(date);
         }
+    }
+
+    public String conversationDate(long createdDate) {
+        Date date = new Date();
+        date.setTime(createdDate);
+
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat("h:mm a");
+        return simpleDateFormat.format(date);
     }
 
     @Override
