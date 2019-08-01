@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.newmedia.erxeslibrary.customeview.RoundedCornerLayout android:id="@+id/info_header"
+<com.newmedia.erxeslibrary.customeview.RoundedCornerLayout
+    android:id="@+id/info_header"
     android:background="@color/colorPrimary"
     android:orientation="vertical"
     android:layout_width="match_parent"

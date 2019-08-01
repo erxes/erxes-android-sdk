@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+//import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
@@ -55,8 +55,8 @@ public class ErxesRequest {
     }
 
     public void set_client() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -77,7 +77,7 @@ public class ErxesRequest {
 //                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-                    .addInterceptor(logging)
+//                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.activity))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
                     .build();
