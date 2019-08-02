@@ -4,12 +4,18 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 
 import com.newmedia.erxes.basic.type.FieldValueInput;
 import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.iconics.Iconics;
+import com.newmedia.erxeslibrary.iconics.IconicsDrawable;
+import com.newmedia.erxeslibrary.iconics.typeface.GenericFont;
+import com.newmedia.erxeslibrary.iconics.typeface.ITypeface;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
@@ -204,6 +210,7 @@ public class Config implements ErxesObserver {
         }
         return config;
     }
+
     static public Config getInstance(Context context) {
         if (config == null) {
             config = new Config(context);
@@ -219,6 +226,7 @@ public class Config implements ErxesObserver {
         this.activity = activity;
         LoadDefaultValues();
     }
+
     private Config(Context context) {
         dataManager = DataManager.getInstance(context);
         this.context = context;
@@ -240,12 +248,13 @@ public class Config implements ErxesObserver {
     }
 
     public void Start() {
+        registerIcon();
         dataManager.setData(DataManager.isUser, false);
         dataManager.setData(DataManager.email, null);
         dataManager.setData(DataManager.phone, null);
         dataManager.setData(DataManager.customData, null);
         Intent a = new Intent(activity, ErxesActivity.class);
-        a.putExtra("hasData",false);
+        a.putExtra("hasData", false);
         activity.startActivity(a);
     }
 
@@ -255,10 +264,10 @@ public class Config implements ErxesObserver {
         dataManager.setData(DataManager.phone, phone);
         dataManager.setData(DataManager.customData, jsonObject.toString());
         Intent a = new Intent(activity, ErxesActivity.class);
-        a.putExtra("hasData",true);
+        a.putExtra("hasData", true);
         a.putExtra("customData", jsonObject.toString());
-        a.putExtra("mEmail",email);
-        a.putExtra("mPhone",phone);
+        a.putExtra("mEmail", email);
+        a.putExtra("mPhone", phone);
         activity.startActivity(a);
 //        erxesRequest.add(this);
 
@@ -365,5 +374,40 @@ public class Config implements ErxesObserver {
             t.Init(this.brand, this.apiHost, this.subscriptionHost, this.uploadHost);
             return t;
         }
+    }
+
+    private void registerIcon() {
+        if (context != null) Iconics.init(context);
+        else Iconics.init(activity);
+
+        GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
+        erxesSDKGF.registerIcon("send", '\ueb09');
+        erxesSDKGF.registerIcon("cancel", '\ue80d');
+        erxesSDKGF.registerIcon("email_2", '\uf0e0');
+        Iconics.registerFont(erxesSDKGF);
+    }
+
+    public Drawable getCancelIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24);
+    }
+
+    public Drawable getsendIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-send").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-send").sizeDp(24);
+    }
+
+    public Drawable getEmailIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-email_2").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-email_2").sizeDp(24);
+    }
+
+    public Drawable getPhoneIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-phone").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-phone").sizeDp(24);
     }
 }

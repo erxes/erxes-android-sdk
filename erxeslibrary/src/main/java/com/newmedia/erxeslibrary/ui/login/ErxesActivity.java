@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -18,11 +19,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.iconics.IconicsDrawable;
+import com.newmedia.erxeslibrary.iconics.context.IconicsLayoutInflater;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
@@ -32,7 +36,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     private EditText email, phone;
     private TextView sms_button, email_button;
     private LinearLayout container;
-    private ImageView mailzurag, phonezurag;
+    private ImageView mailzurag, phonezurag, sendImageView, cancelImageView;
     private CardView mailgroup, smsgroup;
     private Config config;
     private ErxesRequest erxesRequest;
@@ -41,6 +45,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
         super.onCreate(savedInstanceState);
         dataManager = DataManager.getInstance(this);
         config = Config.getInstance(this);
@@ -58,10 +63,13 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         smsgroup = this.findViewById(R.id.smsgroup);
         mailzurag = this.findViewById(R.id.mail_zurag);
         phonezurag = this.findViewById(R.id.phonezurag);
+        sendImageView = this.findViewById(R.id.sendImageView);
+        cancelImageView = this.findViewById(R.id.cancelImageView);
 
         Helper.display_configure(this, container, "#66000000");
         this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         change_color();
+        initIcon();
 
         boolean hasData = getIntent().getBooleanExtra("hasData",false);
         String customData = getIntent().getStringExtra("customData");
@@ -80,6 +88,13 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 erxesRequest.getIntegration();
             }
         }
+    }
+
+    private void initIcon() {
+        Glide.with(this).load(config.getsendIcon(this,-1)).into(sendImageView);
+        Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
+        Glide.with(this).load(config.getEmailIcon(this,R.color.md_white_1000)).into(mailzurag);
+//        Glide.with(this).load(config.getPhoneIcon(this,R.color.md_white_1000)).into(phonezurag);
     }
 
     private void change_color() {

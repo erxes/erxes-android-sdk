@@ -6,7 +6,7 @@
     <string name="fileerror">Илгээх боломжгүй файл байна</string>
     <string name="logout">Гарах</string>
     <string name="email">и-мейл</string>
-    <string name="email_hint">email@domain.com</string>
+    <string name="email_hint">Email@domain.com</string>
     <string name="phone">утас</string>
     <string name="connnect">Холбогдох</string>
     <string name="contact">Холбогдох</string>
