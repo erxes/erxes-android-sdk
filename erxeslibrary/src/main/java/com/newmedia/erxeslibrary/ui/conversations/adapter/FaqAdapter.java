@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.R;
@@ -51,8 +52,12 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        if (Helper.ICON_MAP.get(categories.get(position).icon) != null)
-            holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
+        if (categories.get(position).icon != null)
+            Glide.with(context).load(config.getKnowledgeIcon(context, categories.get(position).icon)).into(holder.icon);
+        else
+            Glide.with(context).load(config.getKnowledgeIcon(context, "erxes")).into(holder.icon);
+//        if (Helper.ICON_MAP.get(categories.get(position).icon) != null)
+//            holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
         holder.title.setText(categories.get(position).title + " (" + categories.get(position).numOfArticles + ") ");
         holder.description.setText(Html.fromHtml(categories.get(position).description));
         holder.parent.setTag(position);

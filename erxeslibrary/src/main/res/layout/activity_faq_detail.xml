@@ -25,66 +25,54 @@
                 android:layout_height="wrap_content"
                 android:minHeight="@dimen/login_bar_height_small"
                 android:background="@drawable/pattern_repeat"
-                android:paddingLeft="@dimen/main_margin"
-                android:paddingRight="@dimen/main_margin"
+                android:paddingLeft="@dimen/main_margin_10_dec"
+                android:paddingRight="@dimen/main_margin_10_dec"
                 android:orientation="horizontal">
-                <LinearLayout
-                    android:id="@+id/back"
-                    android:onClick="Click_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:gravity="center">
                     <ImageView
-                        android:layout_width="@dimen/action_size"
-                        android:layout_height="@dimen/action_size"
-                        android:src="@drawable/erxes_left_arrow" />
-                </LinearLayout>
+                        android:id="@+id/backImageView"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:padding="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
                 <LinearLayout
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintLeft_toRightOf="@id/back"
-                    app:layout_constraintRight_toLeftOf="@id/close"
+                    app:layout_constraintLeft_toRightOf="@id/backImageView"
+                    app:layout_constraintRight_toLeftOf="@id/cancelImageView"
+                    android:layout_marginLeft="@dimen/main_margin_10_dec"
+                    android:layout_marginRight="@dimen/main_margin_10_dec"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/general"
-                            android:text="generel"
                             android:textColor="#fff"
                             android:textStyle="bold"
-                            android:maxLines="1"
+                            android:maxLines="2"
                             android:ellipsize="end"
                             android:textSize="@dimen/header_big"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
                 </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/close"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:gravity="center">
                     <ImageView
-                        android:layout_width="@dimen/action_size"
-                        android:layout_height="@dimen/action_size"
-                        android:src="@drawable/erxes_cancel" />
-                </LinearLayout>
+                        android:id="@+id/cancelImageView"
+                        android:layout_width="38dp"
+                        android:layout_height="38dp"
+                        android:padding="10dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"/>
             </android.support.constraint.ConstraintLayout>
         </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
 
         <LinearLayout
             app:layout_constraintTop_toBottomOf="@id/info_header"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="@dimen/main_margin"
             android:background="#fff"
             android:orientation="vertical"
             android:layout_width="match_parent"

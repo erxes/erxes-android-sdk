@@ -26,52 +26,54 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/main_margin_half"
-                    android:layout_marginLeft="@dimen/main_margin_half"
-                    android:layout_marginTop="@dimen/main_margin_half"
-                    android:text="@string/conversation"
-                    android:textSize="@dimen/header_big"
-                    android:textStyle="bold"
-                    android:visibility="gone" />
-
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/main_margin"
-                    android:layout_marginTop="@dimen/main_margin_half"
-                    android:layout_marginBottom="@dimen/main_margin_half"
-                    android:onClick="start_new_conversation"
+                    android:padding="@dimen/main_margin"
+                    android:text="@string/conversation"
+                    android:textSize="@dimen/header_big"
+                    android:textStyle="bold"/>
+
+                <LinearLayout
+                    android:id="@+id/newConversationCLick"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/main_margin"
+                    android:paddingRight="@dimen/main_margin"
+                    android:paddingTop="@dimen/main_margin_half"
+                    android:paddingBottom="@dimen/main_margin_half"
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="@dimen/image_size"
-                        android:layout_height="@dimen/image_size"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="@drawable/circle_black_10"
                         android:gravity="center">
 
                         <ImageView
                             android:id="@+id/newconversation"
-                            android:layout_width="@dimen/image_size_new"
-                            android:layout_height="@dimen/image_size_new"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/baseline_add_black_24dp" />
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:layout_gravity="center_vertical"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_gravity="center_vertical"
+                        android:paddingLeft="@dimen/main_margin"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="16dp"
-                            android:gravity="center_vertical"
-                            android:text="@string/newconversation"
-                            android:textColor="#000"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/start_new_conversation"
+                            android:textColor="@color/md_black_1000"
+                            android:textSize="@dimen/header_big" />
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/talk_with_support_staff"
+                            android:textColor="@color/md_grey_700"
                             android:textSize="@dimen/header_big" />
                     </LinearLayout>
                 </LinearLayout>

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +55,7 @@ public class SupportFragment extends Fragment {
     private LeadAdapter leadAdapter;
     public Boolean[] booleans;
     public String[] resultChecks;
+    private LinearLayout newConversationClick;
 
     public String[] values;
 
@@ -79,10 +81,8 @@ public class SupportFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_support, container, false);
         addnew_conversation = v.findViewById(R.id.newconversation);
-        Glide.with(this).load(R.drawable.baseline_add_black_24dp)
-                .placeholder(R.drawable.avatar)
-                .optionalCircleCrop()
-                .into(addnew_conversation);
+        newConversationClick = v.findViewById(R.id.newConversationCLick);
+        initIcon();
         recyclerView = v.findViewById(R.id.chat_recycler_view);
         getRecyclerView = v.findViewById(R.id.getRecyclerView);
 
@@ -103,18 +103,31 @@ public class SupportFragment extends Fragment {
 
         imageLead = v.findViewById(R.id.imageLead);
 
+        newConversationClick.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start_new_conversation();
+            }
+        });
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
         ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity(),config.conversations);
         recyclerView.setAdapter(adapter);
         if (0 == adapter.conversationList.size() && !config.isFirstStart) {
-            start_new_conversation(null);
+            start_new_conversation();
         }
 
 //        erxesRequest.getConversations();
         setLead();
 
         return v;
+    }
+
+    private void initIcon() {
+        Glide.with(this).load(config.getPlusIcon(getActivity(),-1))
+                .optionalCircleCrop()
+                .into(addnew_conversation);
     }
 
     public void setLead() {
@@ -270,8 +283,7 @@ public class SupportFragment extends Fragment {
         ((ConversationListActivity) getActivity()).sendLead();
     }
 
-    public void start_new_conversation(View v) {
-//        config.conversationId = null;
+    public void start_new_conversation() {
         config.isFirstStart = true;
         Intent a = new Intent(this.getActivity(), MessageActivity.class);
         startActivity(a);

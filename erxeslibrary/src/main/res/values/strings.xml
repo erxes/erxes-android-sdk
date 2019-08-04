@@ -18,8 +18,9 @@
     <string name="offline">Offline now</string>
     <string name="no_correct_mail">Please enter a valid email address</string>
     <string name="no_correct_phone">Please enter a valid phone number</string>
-    <string name="conversation">Conversation</string>
+    <string name="conversation">Recent conversations</string>
     <string name="SUPPORT">SUPPORT</string>
     <string name="FAQ">FAQ</string>
-
+    <string name="start_new_conversation">Start new conversation</string>
+    <string name="talk_with_support_staff">Talk with support staff</string>
 </resources>

@@ -10,7 +10,6 @@
     android:orientation="vertical"
     tools:context=".ui.login.ErxesActivity">
 
-
     <LinearLayout
         android:id="@+id/mainView"
         android:layout_width="match_parent"
@@ -34,28 +33,24 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <LinearLayout
-                android:id="@+id/logout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:padding="10dp">
 
                 <ImageView
                     android:id="@+id/cancelImageView"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"/>
-            </LinearLayout>
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:background="?android:attr/actionBarItemBackground"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="10dp"/>
 
         </RelativeLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="10dp"
+            android:layout_height="5dp"
             android:background="@drawable/toolbarshadow" />
 
         <FrameLayout
@@ -76,7 +71,7 @@
                     android:gravity="center"
                     android:text="@string/contact_info"
                     android:textColor="#686666"
-                    android:textSize="@dimen/chooser_font_size"/>
+                    android:textSize="@dimen/chooser_font_size" />
 
                 <RelativeLayout
                     android:id="@+id/selector"
@@ -168,57 +163,71 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_top">
+                    android:layout_marginTop="@dimen/margin_top"
+                    android:orientation="vertical">
 
-                    <LinearLayout
+                    <View
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/reply_height"
+                        android:layout_height="5dp"
+                        android:background="@drawable/topshadow" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:background="@color/md_white_1000"
                         android:gravity="center"
                         android:orientation="horizontal">
 
-                        <EditText
-                            android:id="@+id/email"
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
-                            android:layout_weight="9"
-                            android:background="@color/md_white_1000"
-                            android:hint="@string/email_hint"
-                            android:inputType="textEmailAddress"
-                            android:maxLines="1" />
+                            android:layout_toLeftOf="@+id/loginclick"
+                            android:orientation="vertical">
 
-                        <EditText
-                            android:id="@+id/phone"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="20dp"
-                            android:layout_weight="9"
-                            android:background="@color/md_white_1000"
-                            android:hint="@string/sms"
-                            android:inputType="phone"
-                            android:maxLines="1"
-                            android:visibility="gone" />
+                            <EditText
+                                android:id="@+id/email"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@color/md_white_1000"
+                                android:hint="@string/email_hint"
+                                android:inputType="textEmailAddress"
+                                android:maxLines="1"
+                                android:paddingLeft="20dp"
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp" />
+
+                            <EditText
+                                android:id="@+id/phone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="20dp"
+                                android:background="@color/md_white_1000"
+                                android:hint="@string/sms"
+                                android:inputType="phone"
+                                android:maxLines="1"
+                                android:visibility="gone" />
+                        </LinearLayout>
 
                         <RelativeLayout
                             android:id="@+id/loginclick"
-                            android:layout_width="0dp"
-                            android:layout_height="fill_parent"
-                            android:layout_weight="2"
+                            android:layout_width="60dp"
+                            android:layout_height="48dp"
+                            android:layout_alignParentRight="true"
+                            android:background="?android:attr/selectableItemBackground"
                             android:onClick="Connect_click">
 
                             <ImageView
                                 android:id="@+id/sendImageView"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
-                                android:layout_centerVertical="true"
-                                android:layout_alignParentRight="true"
                                 android:layout_alignParentEnd="true"
-                                android:layout_marginRight="20dp"
-                                android:layout_marginEnd="20dp"/>
+                                android:layout_alignParentRight="true"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="20dp"
+                                android:layout_marginRight="20dp" />
                         </RelativeLayout>
 
-                    </LinearLayout>
+                    </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>
 

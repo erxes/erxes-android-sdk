@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="main_margin">16dp</dimen>
+    <dimen name="main_margin_10_dec">6dp</dimen>
     <dimen name="main_margin_half">8dp</dimen>
     <dimen name="padding_new_conv">8dp</dimen>
     <dimen name="padding_new_conv_bottom">10dp</dimen>

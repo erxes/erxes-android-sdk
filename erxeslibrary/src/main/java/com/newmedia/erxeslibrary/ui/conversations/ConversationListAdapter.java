@@ -40,7 +40,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     public ConversationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.chatlist_item, parent, false);
-        view.setOnClickListener(onClickListener);
         return new ConversationHolder(view);
     }
 
@@ -61,6 +60,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
 
     @Override
     public void onBindViewHolder(@NonNull ConversationHolder holder, int position) {
+
+        holder.itemClick.setOnClickListener(onClickListener);
 
         if (conversationList.get(position).isread) {
             if (conversationList.get(position).content != null)

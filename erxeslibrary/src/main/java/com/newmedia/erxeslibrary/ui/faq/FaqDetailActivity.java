@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
@@ -25,6 +27,8 @@ public class FaqDetailActivity extends AppCompatActivity {
     private Point size;
     private Config config;
     private TextView general,article_header,date,content1,content2;
+    private ImageView backImageView, cancelImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +40,9 @@ public class FaqDetailActivity extends AppCompatActivity {
     }
     private void load_findViewByid(){
         container = this.findViewById(R.id.container);
+        backImageView = this.findViewById(R.id.backImageView);
+        cancelImageView = this.findViewById(R.id.cancelImageView);
+        initIcon();
 
         size = Helper.display_configure(this,container,"#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -65,8 +72,8 @@ public class FaqDetailActivity extends AppCompatActivity {
             }
         });
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        this.findViewById(R.id.close).setOnTouchListener(touchListener);
-        this.findViewById(R.id.back).setOnTouchListener(touchListener);
+        cancelImageView.setOnClickListener(v -> logout());
+        backImageView.setOnClickListener(v -> finish());
 
         general = this.findViewById(R.id.general);
         article_header = this.findViewById(R.id.article_header);
@@ -95,7 +102,7 @@ public class FaqDetailActivity extends AppCompatActivity {
                 }
                 if (knowledgeBaseArticle != null) {
                     general.setText(knowledgeBaseArticle.title);
-                    date.setText(config.full_date(knowledgeBaseArticle.createdDate));
+                    date.setText("Created : " + config.full_date(knowledgeBaseArticle.createdDate));
                     article_header.setText(knowledgeBaseArticle.title);
                     content1.setText(Html.fromHtml(knowledgeBaseArticle.summary));
                     content2.setText(Html.fromHtml(knowledgeBaseArticle.content));
@@ -103,37 +110,13 @@ public class FaqDetailActivity extends AppCompatActivity {
             }
         }
     }
-    public void Click_back(View v){
-        finish();
-    }
-    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
 
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
-                FaqDetailActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(R.drawable.action_background);
-                    }
-                });
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP){
-                FaqDetailActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(0);
-                        if(v.getId() == R.id.close)
-                            logout(null);
-                        else if(v.getId() == R.id.back)
-                            Click_back(null);
-                    }
-                });
-            }
-            return true;
-        }
-    };
-    public void logout(View v){
+    private void initIcon() {
+        Glide.with(this).load(config.getBackIcon(this,R.color.md_white_1000)).into(backImageView);
+        Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
+    }
+
+    public void logout(){
         config.Logout();
         finish();
     }

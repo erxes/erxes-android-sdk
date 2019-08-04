@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:id="@+id/itemClick"
+    android:background="?android:attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,9 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/main_margin"
-        android:paddingRight="@dimen/main_margin"
-        android:paddingBottom="@dimen/main_margin_half"
-        android:paddingTop="@dimen/main_margin_half">
+        android:paddingRight="@dimen/main_margin">
         <ImageView
             android:id="@+id/profile_image"
             android:layout_gravity="center_vertical"

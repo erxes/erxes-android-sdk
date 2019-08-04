@@ -69,8 +69,6 @@ public class SetConnect {
                 Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
                 Helper.load_messengerData(response.data().messengerConnect().messengerData());
 
-//                getLead();
-
                 ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
             } else {
 

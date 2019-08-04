@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Эрхэс</string>
-    <string name="cantconnect">Холбогдох боломжгүй байна</string>
-    <string name="serverror">Буруу мэдээлэл</string>
-    <string name="fileerror">Илгээх боломжгүй файл байна</string>
+    <string name="cantconnect">Холбогдох боломжгүй байна!</string>
+    <string name="serverror">Буруу мэдээлэл!</string>
+    <string name="fileerror">Илгээх боломжгүй файл байна!</string>
     <string name="logout">Гарах</string>
-    <string name="email">и-мейл</string>
+    <string name="email">И-мейл</string>
     <string name="email_hint">Email@domain.com</string>
-    <string name="phone">утас</string>
+    <string name="phone">Утас</string>
     <string name="connnect">Холбогдох</string>
     <string name="contact">Холбогдох</string>
     <string name="contact_info">Холбоо барих мэдээллээ үлдээнэ үү</string>
     <string name="sms">Утасны дугаар</string>
     <string name="writereply">Хариу бичих</string>
     <string name="newconversation">Шинэ харилцаа</string>
-    <string name="online">онлайн</string>
-    <string name="offline">офлайн</string>
-    <string name="no_correct_mail">имейл хаяг буруу</string>
-    <string name="no_correct_phone">утасны дугаар буруу</string>
+    <string name="online">Онлайн</string>
+    <string name="offline">Офлайн</string>
+    <string name="no_correct_mail">Имейл хаяг буруу</string>
+    <string name="no_correct_phone">Утасны дугаар буруу</string>
     <string name="conversation">Харилцан ярианууд</string>
     <string name="SUPPORT">ТУСЛАМЖ</string>
     <string name="FAQ">АСУУЛТ</string>
+    <string name="start_new_conversation">Харилцан яриа эхлүүлэх</string>
+    <string name="talk_with_support_staff">Туслах ажилтантай ярилцах</string>
 </resources>

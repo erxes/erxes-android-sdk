@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
@@ -27,6 +29,8 @@ public class FaqActivity extends AppCompatActivity {
     private Config config;
     private TextView general,general_number,general_description;
     private RecyclerView recyclerView;
+    private ImageView backImageView, cancelImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,11 +48,11 @@ public class FaqActivity extends AppCompatActivity {
         }
     }
 
-    public void Click_back(View v){
-        finish();
-    }
     private void load_findViewByid(){
         container = this.findViewById(R.id.container);
+        backImageView = this.findViewById(R.id.backImageView);
+        cancelImageView = this.findViewById(R.id.cancelImageView);
+        initIcon();
 
         size = Helper.display_configure(this,container,"#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
@@ -78,8 +82,8 @@ public class FaqActivity extends AppCompatActivity {
             }
         });
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        this.findViewById(R.id.close).setOnTouchListener(touchListener);
-        this.findViewById(R.id.back).setOnTouchListener(touchListener);
+        this.findViewById(R.id.cancelImageView).setOnClickListener(v -> logout());
+        this.findViewById(R.id.backImageView).setOnClickListener(v -> finish());
         recyclerView = this.findViewById(R.id.recycler_view);
         general = this.findViewById(R.id.general);
         general_number = this.findViewById(R.id.general_number);
@@ -102,34 +106,13 @@ public class FaqActivity extends AppCompatActivity {
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }
     }
-    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
 
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
-                FaqActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(R.drawable.action_background);
-                    }
-                });
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP){
-                FaqActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(0);
-                        if(v.getId() == R.id.close)
-                            logout(null);
-                        else if(v.getId() == R.id.back)
-                            Click_back(null);
-                    }
-                });
-            }
-            return true;
-        }
-    };
-    public void logout(View v){
+    private void initIcon() {
+        Glide.with(this).load(config.getBackIcon(this,R.color.md_white_1000)).into(backImageView);
+        Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
+    }
+
+    public void logout(){
         config.Logout();
         finish();
     }

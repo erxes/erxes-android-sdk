@@ -45,7 +45,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private EditText edittext_chatbox;
     private RecyclerView mMessageRecycler;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ImageView profile1,profile2;
+    private ImageView profile1,profile2, backImageView, logoutImageView, sendImageView, attachmentImageView;
     private TextView names,isMessenOnlineImage;
     private ViewGroup container,upload_group;
     private ProgressBar progressBar;
@@ -187,6 +187,11 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         names = this.findViewById(R.id.names);
         edittext_chatbox = this.findViewById(R.id.edittext_chatbox);
         mMessageRecycler = this.findViewById(R.id.reyclerview_message_list);
+        backImageView = this.findViewById(R.id.backImageView);
+        logoutImageView = this.findViewById(R.id.logoutImageView);
+        sendImageView = this.findViewById(R.id.sendImageView);
+        attachmentImageView = this.findViewById(R.id.attachmentImageView);
+        initIcon();
 
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -197,12 +202,19 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         });
 
-        this.findViewById(R.id.logout).setOnTouchListener(touchListener);
-        this.findViewById(R.id.back).setOnTouchListener(touchListener);
+        logoutImageView.setOnClickListener(v -> logout());
+        backImageView.setOnClickListener(v -> finish());
 
         int index = Integer.getInteger(config.wallpaper,-1);
         if(index > -1 && index < 5)
             mMessageRecycler.setBackgroundResource(Helper.backgrounds[index]);
+    }
+
+    private void initIcon() {
+        Glide.with(this).load(config.getBackIcon(this,R.color.md_white_1000)).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this,R.color.md_white_1000)).into(logoutImageView);
+        Glide.with(this).load(config.getsendIcon(this,-1)).into(sendImageView);
+        Glide.with(this).load(config.getAttachmentIcon(this,-1)).into(attachmentImageView);
     }
 
     @Override
@@ -242,11 +254,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         subscription();
     }
 
-    public void Click_back(View v){
-        finish();
-    }
-
-    public void logout(View v){
+    public void logout(){
         config.Logout();
         finish();
     }
@@ -322,31 +330,4 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         int requestCode = 200;
         requestPermissions(permissions, requestCode);
     }
-
-    private View.OnTouchListener touchListener =  new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
-            if(event.getAction() == MotionEvent.ACTION_DOWN){
-                MessageActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(R.drawable.action_background);
-                    }
-                });
-            }
-            else if(event.getAction() == MotionEvent.ACTION_UP){
-                MessageActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundColor(Color.parseColor("#00000000"));
-                        if(v.getId() == R.id.logout)
-                            logout(null);
-                        else if(v.getId() == R.id.back)
-                            Click_back(null);
-                    }
-                });
-            }
-            return true;
-        }
-    };
 }

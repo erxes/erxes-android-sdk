@@ -45,7 +45,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        LayoutInflaterCompat.setFactory(getLayoutInflater(), new IconicsLayoutInflater(getDelegate()));
         super.onCreate(savedInstanceState);
         dataManager = DataManager.getInstance(this);
         config = Config.getInstance(this);
@@ -67,7 +66,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         cancelImageView = this.findViewById(R.id.cancelImageView);
 
         Helper.display_configure(this, container, "#66000000");
-        this.findViewById(R.id.logout).setOnTouchListener(touchListener);
+        cancelImageView.setOnClickListener(touchListener);
         change_color();
         initIcon();
 
@@ -94,7 +93,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         Glide.with(this).load(config.getsendIcon(this,-1)).into(sendImageView);
         Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
         Glide.with(this).load(config.getEmailIcon(this,R.color.md_white_1000)).into(mailzurag);
-//        Glide.with(this).load(config.getPhoneIcon(this,R.color.md_white_1000)).into(phonezurag);
+        Glide.with(this).load(config.getPhoneIcon(this,R.color.md_white_1000)).into(phonezurag);
     }
 
     private void change_color() {
@@ -140,7 +139,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     }
 
-    public void logout(View v) {
+    public void logout() {
         this.finish();
     }
 
@@ -214,32 +213,12 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     }
 
-    private View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                ErxesActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(R.drawable.action_background);
-                    }
-                });
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                ErxesActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundColor(Color.parseColor("#00000000"));
-                        if (v.getId() == R.id.logout)
-                            logout(null);
-                    }
-                });
-            }
-            return true;
-        }
+    private View.OnClickListener touchListener = v -> {
+        if (v.getId() == R.id.cancelImageView)
+            logout();
     };
 
-    public final static boolean isValidEmail(CharSequence target) {
+    public static boolean isValidEmail(CharSequence target) {
         if (TextUtils.isEmpty(target)) {
             return false;
         } else {

@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    android:background="?android:attr/selectableItemBackground"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
+    android:paddingTop="@dimen/main_margin"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="@dimen/main_margin"
+        android:layout_marginRight="@dimen/main_margin"
         android:background="@drawable/circle_black_10"
         android:padding="10dp">
 
         <ImageView
+            android:id="@+id/clipboardImageView"
             android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/clipboard" />
+            android:layout_height="30dp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -27,7 +29,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="20dp"
             android:orientation="vertical">
 
             <TextView
@@ -46,7 +47,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/main_margin"
             android:layout_marginRight="5dp"
             android:background="#19000000" />
     </LinearLayout>

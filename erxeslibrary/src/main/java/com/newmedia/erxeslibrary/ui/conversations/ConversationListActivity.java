@@ -18,8 +18,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
@@ -50,7 +52,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private DataManager dataManager;
     private TabAdapter tabAdapter;
     private TabLayout tabLayout;
-    private ImageView fb, tw, yt;
+    private ImageView fb, tw, yt, cancelImageView;
+    private LinearLayout tabsContainer;
 
     @Override
     public void notify(final int returnType, final String conversationId, final String message) {
@@ -72,7 +75,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                     case ReturnType.CONNECTIONFAILED:
                         break;
                     case ReturnType.LOGIN_SUCCESS:
-                        init();
+//                        init();
                         break;
                     case ReturnType.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
@@ -83,7 +86,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         break;
                     case ReturnType.FAQ:
                         if (tabLayout != null) {
-                            tabLayout.setVisibility(View.VISIBLE);
+                            tabsContainer.setVisibility(View.VISIBLE);
                             if (tabAdapter != null)
                                 ((FaqFragment) tabAdapter.getItem(1)).init();
                         }
@@ -188,13 +191,16 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         container = findViewById(R.id.container);
         welcometext = findViewById(R.id.greetingMessage);
         title = findViewById(R.id.greetingTitle);
-        this.findViewById(R.id.logout).setOnTouchListener(touchListener);
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
         fb = findViewById(R.id.fb);
         tw = findViewById(R.id.tw);
         yt = findViewById(R.id.yt);
         tabLayout = findViewById(R.id.tabs);
+        tabsContainer = findViewById(R.id.tabsContainer);
+        cancelImageView = this.findViewById(R.id.cancelImageView);
+        cancelImageView.setOnClickListener(v -> finish());
+        initIcon();
 
         dataManager = DataManager.getInstance(this);
 
@@ -205,16 +211,15 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         viewpager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewpager);
         tabLayout.setSelectedTabIndicatorColor(config.colorCode);
+        tabLayout.setTabTextColors(getResources().getColor(R.color.md_grey_500), config.colorCode);
 
         if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
-            tabLayout.setVisibility(View.VISIBLE);
+            tabsContainer.setVisibility(View.VISIBLE);
         }
 
-        if (getIntent().getBooleanExtra("isFromLogin", false)) {
-            init();
-        }
+        init();
 
-        supporterView.setAdapter(new SupportAdapter(this,config.supporters));
+        supporterView.setAdapter(new SupportAdapter(this, config.supporters));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
         Helper.display_configure(this, container, "#66000000");
@@ -227,16 +232,38 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         yt.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
-        this.findViewById(R.id.fbcontainer).setOnTouchListener(touchListener);
-        this.findViewById(R.id.twcontainer).setOnTouchListener(touchListener);
-        this.findViewById(R.id.ytcontainer).setOnTouchListener(touchListener);
+        this.findViewById(R.id.fbcontainer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().contains("http")) {
+                    startFacebook(config.messengerdata.getFacebook());
+                }
+            }
+        });
+        this.findViewById(R.id.twcontainer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (config.messengerdata.getTwitter() != null && config.messengerdata.getTwitter().contains("http")) {
+                    startTwitter(config.messengerdata.getTwitter());
+                }
+            }
+        });
+        this.findViewById(R.id.ytcontainer).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (config.messengerdata.getYoutube() != null && config.messengerdata.getYoutube().contains("http")) {
+                    startYoutube(config.messengerdata.getYoutube());
+                }
+            }
+        });
     }
 
-
+    private void initIcon() {
+        Glide.with(this).load(config.getCancelIcon(this, R.color.md_white_1000)).into(cancelImageView);
+    }
 
     private void init() {
-        if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
-            erxesRequest.getFAQ();
+        erxesRequest.getFAQ();
         date.setText(config.now());
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
             title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
@@ -254,54 +281,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             this.findViewById(R.id.ytcontainer).setVisibility(View.VISIBLE);
         else this.findViewById(R.id.ytcontainer).setVisibility(View.GONE);
     }
-
-    public void start_new_conversation(View v) {
-        config.conversationId = null;
-        Intent a = new Intent(this, MessageActivity.class);
-        startActivity(a);
-    }
-
-    public void logout(View v) {
-        finish();
-    }
-
-    private View.OnTouchListener touchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(final View v, MotionEvent event) {
-
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                ConversationListActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundResource(R.drawable.action_background);
-                    }
-                });
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                ConversationListActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        v.setBackgroundColor(Color.parseColor("#00000000"));
-                        if (v.getId() == R.id.logout) {
-                            logout(null);
-                        } else if (v.getId() == R.id.fbcontainer) {
-                            if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().contains("http")) {
-                                startFacebook(config.messengerdata.getFacebook());
-                            }
-                        } else if (v.getId() == R.id.twcontainer) {
-                            if (config.messengerdata.getTwitter() != null && config.messengerdata.getTwitter().contains("http")) {
-                                startTwitter(config.messengerdata.getTwitter());
-                            }
-                        } else if (v.getId() == R.id.ytcontainer) {
-                            if (config.messengerdata.getYoutube() != null && config.messengerdata.getYoutube().contains("http")) {
-                                startYoutube(config.messengerdata.getYoutube());
-                            }
-                        }
-                    }
-                });
-            }
-            return true;
-        }
-    };
 
     private void startYoutube(String url) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));

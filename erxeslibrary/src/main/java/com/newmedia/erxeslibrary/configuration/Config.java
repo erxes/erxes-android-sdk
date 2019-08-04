@@ -176,7 +176,7 @@ public class Config implements ErxesObserver {
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
-                new SimpleDateFormat("MMM dd / yyyy HH:mm");
+                new SimpleDateFormat("MMM dd / yyyy h:mm a");
         if (this.language.equalsIgnoreCase("en")) {
             return format2.format(date);
         } else {
@@ -196,8 +196,8 @@ public class Config implements ErxesObserver {
     @Override
     public void notify(int returnType, String conversationId, String message) {
         if (ReturnType.LOGIN_SUCCESS == returnType) {
-            Intent a = new Intent(activity, ErxesActivity.class);
-            activity.startActivity(a);
+//            Intent a = new Intent(activity, ErxesActivity.class);
+//            activity.startActivity(a);
         }
     }
 
@@ -259,6 +259,7 @@ public class Config implements ErxesObserver {
     }
 
     public void Start(String email, String phone, JSONObject jsonObject) {
+        registerIcon();
         dataManager.setData(DataManager.isUser, true);
         dataManager.setData(DataManager.email, email);
         dataManager.setData(DataManager.phone, phone);
@@ -269,19 +270,7 @@ public class Config implements ErxesObserver {
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
         activity.startActivity(a);
-//        erxesRequest.add(this);
-
     }
-
-//    public void Start_login_email(String email, boolean isUser) {
-//        erxesRequest.add(this);
-//        erxesRequest.setConnect(email, "", isUser, true);
-//    }
-//
-//    public void Start_login_phone(String phone, boolean isUser) {
-//        erxesRequest.add(this);
-//        erxesRequest.setConnect("", phone, isUser, true);
-//    }
 
     public void LoadDefaultValues() {
 
@@ -383,8 +372,129 @@ public class Config implements ErxesObserver {
         GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
         erxesSDKGF.registerIcon("send", '\ueb09');
         erxesSDKGF.registerIcon("cancel", '\ue80d');
-        erxesSDKGF.registerIcon("email_2", '\uf0e0');
+        erxesSDKGF.registerIcon("email_3", '\ue82c');
+        erxesSDKGF.registerIcon("phonecall_3", '\ue865');
+        erxesSDKGF.registerIcon("plus_1", '\uec2d');
+        erxesSDKGF.registerIcon("logout", '\ue84f');
+        erxesSDKGF.registerIcon("leftarrow", '\ue84a');
+        erxesSDKGF.registerIcon("attach", '\ueb3e');
+
+        erxesSDKGF.registerIcon("alarm", '\ue802');
+        erxesSDKGF.registerIcon("briefcase", '\ue809');
+        erxesSDKGF.registerIcon("cloudcomputing", '\ue816');
+        erxesSDKGF.registerIcon("earthgrid", '\ue829');
+        erxesSDKGF.registerIcon("diagram",'\ue820');
+        erxesSDKGF.registerIcon("compass", '\ue817');
+        erxesSDKGF.registerIcon("idea", '\ue840');
+        erxesSDKGF.registerIcon("diamond", '\ue821');
+        erxesSDKGF.registerIcon("piggybank", '\ue86a');
+        erxesSDKGF.registerIcon("piechart",'\ue869');
+        erxesSDKGF.registerIcon("scale", '\ue87e');
+        erxesSDKGF.registerIcon("megaphone", '\ue851');
+        erxesSDKGF.registerIcon("tools", '\ue895');
+        erxesSDKGF.registerIcon("umbrella",'\ue899');
+        erxesSDKGF.registerIcon("bar_chart", '\ue8aa');
+        erxesSDKGF.registerIcon("star", '\ue88a');
+        erxesSDKGF.registerIcon("head_1", '\ue8cd');
+        erxesSDKGF.registerIcon("settings", '\ue880');
+        erxesSDKGF.registerIcon("users",'\ue927');
+        erxesSDKGF.registerIcon("paintpalette", '\ue940');
+        erxesSDKGF.registerIcon("stamp", '\ue94f');
+        erxesSDKGF.registerIcon("flag", '\ue837');
+        erxesSDKGF.registerIcon("phone_call", '\ue8ed');
+        erxesSDKGF.registerIcon("laptop",'\ue8d3');
+        erxesSDKGF.registerIcon("dashboard", '\ue81f');
+        erxesSDKGF.registerIcon("calculator", '\ue80b');
+        erxesSDKGF.registerIcon("home", '\ue83e');
+        erxesSDKGF.registerIcon("puzzle", '\ue872');
+        erxesSDKGF.registerIcon("medal",'\ue850');
+        erxesSDKGF.registerIcon("calendar", '\ue80c');
+
+        erxesSDKGF.registerIcon("like", '\ue84b');
+        erxesSDKGF.registerIcon("book", '\ue8ac');
+        erxesSDKGF.registerIcon("clipboard", '\ue8b3');
+        erxesSDKGF.registerIcon("computer",'\ue8bb');
+        erxesSDKGF.registerIcon("paste", '\ue861');
+        erxesSDKGF.registerIcon("folder", '\ue838');
+
         Iconics.registerFont(erxesSDKGF);
+    }
+
+    public Drawable getKnowledgeIcon(Activity activity, String value) {
+        switch (value) {
+            case "like":
+                return new IconicsDrawable(activity).icon("rxx-like").sizeDp(24);
+            case "book":
+                return new IconicsDrawable(activity).icon("rxx-book").sizeDp(24);
+            case "computer":
+                return new IconicsDrawable(activity).icon("rxx-computer").sizeDp(24);
+            case "paste":
+                return new IconicsDrawable(activity).icon("rxx-paste").sizeDp(24);
+            case "folder":
+                return new IconicsDrawable(activity).icon("rxx-folder").sizeDp(24);
+            case "calculator":
+                return new IconicsDrawable(activity).icon("rxx-calculator").sizeDp(24);
+            case "home":
+                return new IconicsDrawable(activity).icon("rxx-home").sizeDp(24);
+            case "puzzle":
+                return new IconicsDrawable(activity).icon("rxx-puzzle").sizeDp(24);
+            case "medal":
+                return new IconicsDrawable(activity).icon("rxx-medal").sizeDp(24);
+            case "calendar":
+                return new IconicsDrawable(activity).icon("rxx-calendar").sizeDp(24);
+            case "stamp":
+                return new IconicsDrawable(activity).icon("rxx-stamp").sizeDp(24);
+            case "flag":
+                return new IconicsDrawable(activity).icon("rxx-flag").sizeDp(24);
+            case "phone-call":
+                return new IconicsDrawable(activity).icon("rxx-phone_call").sizeDp(24);
+            case "laptop":
+                return new IconicsDrawable(activity).icon("rxx-laptop").sizeDp(24);
+            case "dashboard":
+                return new IconicsDrawable(activity).icon("rxx-dashboard").sizeDp(24);
+            case "star":
+                return new IconicsDrawable(activity).icon("rxx-star").sizeDp(24);
+            case "head-1":
+                return new IconicsDrawable(activity).icon("rxx-head_1").sizeDp(24);
+            case "settings":
+                return new IconicsDrawable(activity).icon("rxx-settings").sizeDp(24);
+            case "users":
+                return new IconicsDrawable(activity).icon("rxx-users").sizeDp(24);
+            case "paintpalette":
+                return new IconicsDrawable(activity).icon("rxx-paintpalette").sizeDp(24);
+            case "alarm":
+                return new IconicsDrawable(activity).icon("rxx-alarm").sizeDp(24);
+            case "briefcase":
+                return new IconicsDrawable(activity).icon("rxx-briefcase").sizeDp(24);
+            case "cloudcomputing":
+                return new IconicsDrawable(activity).icon("rxx-cloudcomputing").sizeDp(24);
+            case "earthgrid":
+                return new IconicsDrawable(activity).icon("rxx-earthgrid").sizeDp(24);
+            case "diagram":
+                return new IconicsDrawable(activity).icon("rxx-diagram").sizeDp(24);
+            case "compass":
+                return new IconicsDrawable(activity).icon("rxx-compass").sizeDp(24);
+            case "idea":
+                return new IconicsDrawable(activity).icon("rxx-idea").sizeDp(24);
+            case "diamond":
+                return new IconicsDrawable(activity).icon("rxx-diamond").sizeDp(24);
+            case "piggybank":
+                return new IconicsDrawable(activity).icon("rxx-piggybank").sizeDp(24);
+            case "piechart":
+                return new IconicsDrawable(activity).icon("rxx-piechart").sizeDp(24);
+            case "scale":
+                return new IconicsDrawable(activity).icon("rxx-scale").sizeDp(24);
+            case "megaphone":
+                return new IconicsDrawable(activity).icon("rxx-megaphone").sizeDp(24);
+            case "tools":
+                return new IconicsDrawable(activity).icon("rxx-tools").sizeDp(24);
+            case "umbrella":
+                return new IconicsDrawable(activity).icon("rxx-umbrella").sizeDp(24);
+            case "bar-chart":
+                return new IconicsDrawable(activity).icon("rxx-bar_chart").sizeDp(24);
+            default:
+                return new IconicsDrawable(activity).icon("rxx-clipboard").sizeDp(24);
+        }
     }
 
     public Drawable getCancelIcon(Activity activity, int colorCode) {
@@ -401,13 +511,38 @@ public class Config implements ErxesObserver {
 
     public Drawable getEmailIcon(Activity activity, int colorCode) {
         if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-email_2").sizeDp(24).color(activity.getResources().getColor(colorCode));
-        else return new IconicsDrawable(activity).icon("rxx-email_2").sizeDp(24);
+            return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24);
     }
 
     public Drawable getPhoneIcon(Activity activity, int colorCode) {
         if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-phone").sizeDp(24).color(activity.getResources().getColor(colorCode));
-        else return new IconicsDrawable(activity).icon("rxx-phone").sizeDp(24);
+            return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24);
     }
+
+    public Drawable getPlusIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-plus_1").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-plus_1").sizeDp(24);
+    }
+
+    public Drawable getBackIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-leftarrow").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-leftarrow").sizeDp(24);
+    }
+
+    public Drawable getLogoutIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-logout").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-logout").sizeDp(24);
+    }
+
+    public Drawable getAttachmentIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        else return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24);
+    }
+
 }

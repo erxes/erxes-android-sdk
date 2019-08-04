@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseArticle;
@@ -24,7 +25,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
 
     private List<KnowledgeBaseArticle> articles = new ArrayList<>();
-    private Context context;
+    private Activity context;
     private Config config;
     private String categoryId;
 
@@ -55,37 +56,32 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(@NonNull ArticleAdapter.Holder holder, int position) {
-
-//        holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
+        Glide.with(context).load(config.getKnowledgeIcon(context,"clipboard")).into(holder.clipboardImageView);
         holder.title.setText(articles.get(position).title);
         holder.summary.setText(Html.fromHtml(articles.get(position).summary));
         holder.parent.setTag(position);
         holder.parent.setTag(articles.get(position)._id);
         holder.parent.setOnClickListener(onClickListener);
-
     }
 
     @Override
     public int getItemCount() {
         return articles != null ? articles.size() : 0;
     }
-    private View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int position = (int) v.getTag();
 
-        }
-    };
     public class Holder extends RecyclerView.ViewHolder {
         ImageView icon;
         TextView title,summary;
         View parent ;
+        ImageView clipboardImageView;
+
         public Holder(View itemView) {
             super(itemView);
             parent = itemView;
 //            icon = itemView.findViewById(R.id.icon);
             title = itemView.findViewById(R.id.title);
             summary = itemView.findViewById(R.id.summary);
+            clipboardImageView = itemView.findViewById(R.id.clipboardImageView);
         }
     }
 

@@ -27,8 +27,9 @@ public class GetKnowledge {
     }
 
     public void run() {
-        ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
-                .enqueue(request);
+        if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
+            ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
+                    .enqueue(request);
     }
 
     private ApolloCall.Callback<FaqGetQuery.Data> request = new ApolloCall.Callback<FaqGetQuery.Data>() {

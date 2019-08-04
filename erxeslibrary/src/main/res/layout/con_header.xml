@@ -1,107 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.newmedia.erxeslibrary.customeview.RoundedCornerLayout
+<com.newmedia.erxeslibrary.customeview.RoundedCornerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/info_header"
-    android:background="@color/colorPrimary"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
     <android.support.constraint.ConstraintLayout
-        app:layout_constraintTop_toBottomOf="parent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/pattern_repeat"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/textGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="20dp"
-            android:layout_marginLeft="@dimen/main_margin"
-            android:layout_marginRight="@dimen/main_margin"
-            android:layout_marginTop="@dimen/main_margin"
             android:gravity="left"
             android:orientation="vertical"
+            android:paddingLeft="@dimen/main_margin"
+            android:paddingTop="@dimen/main_margin_10_dec"
+            android:paddingRight="@dimen/main_margin_10_dec"
+            android:paddingBottom="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <LinearLayout
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/date"
-                    android:layout_marginTop="8dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
                     android:alpha="0.7"
                     android:textColor="#fff"
                     android:textSize="@dimen/header_small"
                     android:textStyle="bold" />
+
                 <View
-                    android:layout_weight="1"
                     android:layout_width="0dp"
-                    android:layout_height="0dp"/>
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
                 <LinearLayout
                     android:id="@+id/fbcontainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:background="?android:attr/actionBarItemBackground"
                     android:gravity="center"
-                    android:padding="8dp">
+                    android:padding="10dp"
+                    android:visibility="gone">
+
                     <ImageView
                         android:id="@+id/fb"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/facebooklogo"/>
+                        android:src="@drawable/facebooklogo" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/twcontainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:background="?android:attr/actionBarItemBackground"
                     android:gravity="center"
-                    android:padding="8dp">
+                    android:padding="10dp"
+                    android:visibility="gone">
+
                     <ImageView
                         android:id="@+id/tw"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/twitterlogo"/>
+                        android:src="@drawable/twitterlogo" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/ytcontainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
+                    android:background="?android:attr/actionBarItemBackground"
                     android:gravity="center"
-                    android:padding="8dp">
+                    android:padding="10dp"
+                    android:visibility="gone">
+
                     <ImageView
                         android:id="@+id/yt"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        android:src="@drawable/youtubelogo"/>
+                        android:src="@drawable/youtubelogo" />
                 </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/logout"
-                    android:padding="8dp"
-                    android:layout_marginLeft="12dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/erxes_cancel" />
-                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/cancelImageView"
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="?android:attr/actionBarItemBackground"
+                    android:padding="10dp" />
             </LinearLayout>
+
             <TextView
                 android:id="@+id/greetingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:textColor="#fff"
                 android:textSize="@dimen/header_big"
                 android:textStyle="bold" />
@@ -110,16 +122,19 @@
                 android:id="@+id/greetingMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
                 android:alpha="0.7"
                 android:textColor="#f7f4f4"
                 android:textSize="@dimen/header_small" />
         </LinearLayout>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/supporters"
-            app:layout_constraintTop_toBottomOf="@id/textGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_margin"
             android:paddingBottom="@dimen/main_margin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintTop_toBottomOf="@id/textGroup" />
     </android.support.constraint.ConstraintLayout>
 </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
