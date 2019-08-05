@@ -212,7 +212,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            Log.e("TAG", "bind: " + message.content);
             Spanned htmlDescription = Html.fromHtml(message.content);
             String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
             messageText.setText(htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length()));

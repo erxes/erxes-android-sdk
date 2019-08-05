@@ -41,6 +41,7 @@ public class ListenerService extends Service {
     private static final String TAG = ListenerService.class.getName();
     private OkHttpClient okHttpClient;
     private ApolloClient apolloClient;
+    private ErxesRequest ER;
     private CompositeDisposable disposables = new CompositeDisposable();
     Config config;
 
@@ -55,7 +56,7 @@ public class ListenerService extends Service {
         super.onCreate();
 
         config = Config.getInstance(this);
-//        startListen();
+        ER = ErxesRequest.getInstance(config);
         DataManager dataManager;
         dataManager = DataManager.getInstance(this);
 
@@ -99,7 +100,7 @@ public class ListenerService extends Service {
         if (id == null) {
             DataManager dataManager;
             dataManager = DataManager.getInstance(this);
-            Log.d(TAG, "start " + config.conversations.size());
+            Log.e(TAG, "start " + config.conversations.size());
             if (disposables.size() != config.conversations.size()) {
                 disposables.clear();
                 for (int i = 0; i < config.conversations.size(); i++) {
@@ -182,9 +183,21 @@ public class ListenerService extends Service {
                                             createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
                                         }
 
-                                        if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
-                                                .equals(ConversationMessage.convert(response.data().conversationMessageInserted())._id))
-                                            config.conversationMessages.add(ConversationMessage.convert(response.data().conversationMessageInserted()));
+                                        ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
+                                        if (config.conversationMessages.size() > 0) {
+                                            if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
+                                                    .equals(conversationMessage._id)) {
+                                                config.conversationMessages.add(conversationMessage);
+                                            }
+                                        }
+                                        for (int i = 0; i < config.conversations.size(); i++) {
+                                            if (config.conversations.get(i)._id.equals(conversationId)) {
+                                                config.conversations.get(i).conversationMessages.add(conversationMessage);
+                                                break;
+                                            }
+                                        }
+                                        Log.e(TAG, "onNext: " + conversationMessage.content);
+                                        ER.notefyAll(ReturnType.ComingNewMessage, null, null);
 
                                         for (int i = 0; i < config.conversations.size(); i++) {
                                             if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
@@ -194,7 +207,6 @@ public class ListenerService extends Service {
                                         }
                                     }
                                 }
-                                Log.e(TAG, "onnext " + conversationId);
                             }
 
                             @Override

@@ -19,4 +19,5 @@ public class ReturnType {
     final static public int LEAD = 11;
     final static public int FAQ = 12;
     final static public int savedLead = 13;
+    final static public int ComingNewMessage = 14;
 }

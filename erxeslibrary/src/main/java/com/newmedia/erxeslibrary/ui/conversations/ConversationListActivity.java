@@ -61,11 +61,23 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             @Override
             public void run() {
                 switch (returnType) {
+                    case ReturnType.ComingNewMessage:
+                        if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
+                                .recyclerView != null) {
+                            ((SupportFragment) tabAdapter.getItem(0))
+                                    .recyclerView.getAdapter().notifyDataSetChanged();
+                        }
+                        break;
                     case ReturnType.Getconversation:
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
                                     .recyclerView.getAdapter().notifyDataSetChanged();
+                        }
+                        if (config.conversations.size() > 0) {
+                            Intent intent2 = new Intent(ConversationListActivity.this, ListenerService.class);
+                            stopService(intent2);
+                            startService(intent2);
                         }
                         break;
                     case ReturnType.INTEGRATION_CHANGED:
@@ -138,20 +150,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             startActivity();
             return;
         }
-//        else if (dataManager.getDataB(DataManager.isUser)) {
-//            erxesRequest.setConnect(
-//                    dataManager.getDataS(DataManager.email),
-//                    dataManager.getDataS(DataManager.phone),
-//                    true,
-//                    false,
-//                    dataManager.getDataS(DataManager.customData));
-//        } else if (!TextUtils.isEmpty(dataManager.getDataS(DataManager.email)))
-//            erxesRequest.setConnect(
-//                    dataManager.getDataS(DataManager.email), null, false, false, null
-//            );
-//        else
-//            erxesRequest.setConnect(null, dataManager.getDataS(DataManager.phone), false, false, null);
-
         erxesRequest.getLead();
         erxesRequest.getConversations();
         erxesRequest.getGEO();
@@ -159,16 +157,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
         dataManager.setData("chat_is_going", true);
 
-//        LayerDrawable layerDrawable = (LayerDrawable) getResources()
-//                .getDrawable(R.drawable.pattern_color);
-//        GradientDrawable gradientDrawable = (GradientDrawable) layerDrawable
-//                .findDrawableByLayerId(R.id.background);
-//        gradientDrawable.setColor(config.colorCode);
-//        info_header.setBackground(layerDrawable);
         info_header.setBackgroundColor(config.colorCode);
 
         chat_is_going = true;
     }
+
+
 
     @Override
     protected void onDestroy() {
@@ -225,8 +219,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         Helper.display_configure(this, container, "#66000000");
 
 
-        Intent intent2 = new Intent(this, ListenerService.class);
-        startService(intent2);
         erxesRequest.getSupporters();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);

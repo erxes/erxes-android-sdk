@@ -27,6 +27,7 @@ public class GetKnowledge {
     }
 
     public void run() {
+        Log.e(TAG, "run: " + config.messengerdata.getKnowledgeBaseTopicId());
         if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
             ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
                     .enqueue(request);
@@ -36,13 +37,8 @@ public class GetKnowledge {
         @Override
         public void onResponse(@NotNull final Response<FaqGetQuery.Data> response) {
             if (!response.hasErrors()) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
-                        ER.notefyAll(ReturnType.FAQ, null, null);
-                    }
-                });
+                config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
+                ER.notefyAll(ReturnType.FAQ, null, null);
             } else {
                 Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
