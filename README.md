@@ -10,6 +10,8 @@ erxes is an open source growth marketing platform. Marketing, sales, and custome
 [![BCH compliance](https://bettercodehub.com/edge/badge/erxes/erxes-android-sdk?branch=master)](https://bettercodehub.com/)
 [![CI Status](https://api.travis-ci.org/erxes/erxes-android-sdk.svg?branch=develop)](https://travis-ci.org/erxes/erxes-android-sdk)
 [![CocoaPods](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/erxes/erxes-android-sdk/)
+[![](https://jitpack.io/v/erxes/erxes-android-sdk.svg)](https://jitpack.io/#erxes/erxes-android-sdk)
+
 
 ## Documentation
 
