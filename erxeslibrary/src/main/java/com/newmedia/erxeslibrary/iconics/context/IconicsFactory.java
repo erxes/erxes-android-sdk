@@ -2,7 +2,7 @@ package com.newmedia.erxeslibrary.iconics.context;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.v7.view.menu.ActionMenuItemView;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;

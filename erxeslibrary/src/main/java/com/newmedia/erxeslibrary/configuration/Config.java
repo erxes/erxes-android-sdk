@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
+import androidx.core.graphics.ColorUtils;
+import android.text.Html;
+import android.text.Spanned;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig;
 import com.newmedia.erxes.basic.type.FieldValueInput;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.iconics.Iconics;
 import com.newmedia.erxeslibrary.iconics.IconicsDrawable;
 import com.newmedia.erxeslibrary.iconics.typeface.GenericFont;
-import com.newmedia.erxeslibrary.iconics.typeface.ITypeface;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
@@ -248,7 +252,8 @@ public class Config implements ErxesObserver {
     }
 
     public void Start() {
-        registerIcon();
+        initializeIcon();
+        initializeFresco();
         dataManager.setData(DataManager.isUser, false);
         dataManager.setData(DataManager.email, null);
         dataManager.setData(DataManager.phone, null);
@@ -259,7 +264,8 @@ public class Config implements ErxesObserver {
     }
 
     public void Start(String email, String phone, JSONObject jsonObject) {
-        registerIcon();
+        initializeIcon();
+        initializeFresco();
         dataManager.setData(DataManager.isUser, true);
         dataManager.setData(DataManager.email, email);
         dataManager.setData(DataManager.phone, phone);
@@ -292,6 +298,17 @@ public class Config implements ErxesObserver {
         language = dataManager.getDataS(DataManager.language);
         changeLanguage(language);
 
+    }
+
+    public CharSequence getHtml(String content) {
+        Spanned htmlDescription;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            htmlDescription = Html.fromHtml(content,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            htmlDescription = Html.fromHtml(content);
+        }
+        String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
+        return htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length());
     }
 
     public boolean isLoggedIn() {
@@ -365,7 +382,28 @@ public class Config implements ErxesObserver {
         }
     }
 
-    private void registerIcon() {
+    private void initializeFresco() {
+        if (context != null) {
+            ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(context)
+                    .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
+                    .setResizeAndRotateEnabledForNetwork(true)
+                    .setDiskCacheEnabled(true)
+                    .setDownsampleEnabled(true)
+                    .build();
+            Fresco.initialize(context, imagePipelineConfig);
+        } else {
+            ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(activity)
+                    .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
+                    .setResizeAndRotateEnabledForNetwork(true)
+                    .setDiskCacheEnabled(true)
+                    .setDownsampleEnabled(true)
+                    .build();
+            Fresco.initialize(activity, imagePipelineConfig);
+        }
+
+    }
+
+    private void initializeIcon() {
         if (context != null) Iconics.init(context);
         else Iconics.init(activity);
 
@@ -416,6 +454,7 @@ public class Config implements ErxesObserver {
         erxesSDKGF.registerIcon("computer",'\ue8bb');
         erxesSDKGF.registerIcon("paste", '\ue861');
         erxesSDKGF.registerIcon("folder", '\ue838');
+        erxesSDKGF.registerIcon("image_v",'\ueb90');
 
         Iconics.registerFont(erxesSDKGF);
     }
@@ -545,4 +584,15 @@ public class Config implements ErxesObserver {
         else return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24);
     }
 
+    public Drawable getImageVIcon(Activity activity, int colorCode) {
+        if (colorCode != -1)
+            return new IconicsDrawable(activity).icon("rxx-image_v").sizeDp(96).color(colorCode);
+        else return new IconicsDrawable(activity).icon("rxx-image_v").sizeDp(96);
+    }
+
+    public int getInColor(int backgroundColor) {
+        if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
+            return activity.getResources().getColor(R.color.md_white_1000);
+        else return activity.getResources().getColor(R.color.md_black_1000);
+    }
 }

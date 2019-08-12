@@ -3,16 +3,15 @@ package com.newmedia.erxeslibrary.ui.message;
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.design.widget.Snackbar;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.MotionEvent;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -32,7 +31,6 @@ import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.R;
 
@@ -279,7 +277,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
             return;
         }
-        if (!edittext_chatbox.getText().toString().equalsIgnoreCase("")) {
+        if (!edittext_chatbox.getText().toString().equalsIgnoreCase("") ||
+                gFilePart.get().size() > 0) {
             if (config.conversationId != null) {
                 erxesRequest.InsertMessage(edittext_chatbox.getText().toString(), config.conversationId, gFilePart.get());
             } else {

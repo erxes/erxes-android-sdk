@@ -1,1 +1,11 @@
-include ':app', ':erxeslibrary'
+include ':app', ':erxeslibrary',
+        ':repackaged:frescoLocal:fresco-2.0.0',
+        ':repackaged:frescoLocal:drawee-2.0.0',
+        ':repackaged:frescoLocal:imagepipeline-2.0.0',
+        ':repackaged:frescoLocal:fbcore-2.0.0',
+        ':repackaged:frescoLocal:imagepipeline-base-2.0.0',
+        ':repackaged:frescoLocal:soloader-0.6.0',
+        ':repackaged:frescoLocal:bolts-tasks-1.4.0',
+        ':repackaged:frescoLocal:nativeimagetranscoder-2.0.0',
+        ':repackaged:frescoimageviewerLocal:frescoimageviewer-0.5.0',
+        ':repackaged:frescoimageviewerLocal:photodraweeview-2.0.0'

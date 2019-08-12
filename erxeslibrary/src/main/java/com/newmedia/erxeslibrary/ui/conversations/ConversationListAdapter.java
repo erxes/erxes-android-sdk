@@ -1,13 +1,13 @@
 package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.text.Html;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +21,6 @@ import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
@@ -64,13 +63,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         holder.itemClick.setOnClickListener(onClickListener);
 
         if (conversationList.get(position).isread) {
-            if (conversationList.get(position).content != null)
-                holder.content.setText(Html.fromHtml(conversationList.get(position).content));
+            if (!TextUtils.isEmpty(conversationList.get(position).content)) {
+                Log.e(this.getClass().getName(), "onBindViewHolder: " + conversationList.get(position).content );
+                holder.content.setText(config.getHtml(conversationList.get(position).content));
+            }
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.content.setTextColor(Color.parseColor("#808080"));
         } else {
-            holder.content.setText(Html.fromHtml(conversationList.get(position).content));
+            holder.content.setText(config.getHtml(conversationList.get(position).content));
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);

@@ -4,16 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
+
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -34,7 +32,6 @@ import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
-import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 
@@ -54,6 +51,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private TabLayout tabLayout;
     private ImageView fb, tw, yt, cancelImageView;
     private LinearLayout tabsContainer;
+    private Intent intent;
 
     @Override
     public void notify(final int returnType, final String conversationId, final String message) {
@@ -75,9 +73,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
                         if (config.conversations.size() > 0) {
-                            Intent intent2 = new Intent(ConversationListActivity.this, ListenerService.class);
-                            stopService(intent2);
-                            startService(intent2);
+                            stopService(intent);
+                            startService(intent);
                         }
                         break;
                     case ReturnType.INTEGRATION_CHANGED:
@@ -169,6 +166,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         super.onDestroy();
         chat_is_going = false;
         dataManager.setData("chat_is_going", false);
+        stopService(intent);
     }
 
     @Override
@@ -197,6 +195,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         initIcon();
 
         dataManager = DataManager.getInstance(this);
+
+        intent = new Intent(ConversationListActivity.this, ListenerService.class);
 
         viewpager.setPagingEnabled(false);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);

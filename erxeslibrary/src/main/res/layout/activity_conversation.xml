@@ -10,7 +10,7 @@
     android:id="@+id/linearlayout"
     tools:context=".ui.conversations.ConversationListActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -33,7 +33,7 @@
             android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/info_header"
             android:orientation="vertical">
-        <android.support.design.widget.TabLayout
+        <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,18 +44,18 @@
             app:tabInlineLabel="true"
             app:tabSelectedTextColor="@color/colorPrimary"
             app:tabMode="fixed">
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabItem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/SUPPORT" />
 
-            <android.support.design.widget.TabItem
+            <com.google.android.material.tabs.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/FAQ" />
-        </android.support.design.widget.TabLayout>
+        </com.google.android.material.tabs.TabLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
@@ -71,5 +71,5 @@
 
 
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.text.Html;
 import android.util.Log;
 
@@ -186,7 +186,7 @@ public class ListenerService extends Service {
                                         ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
                                         if (config.conversationMessages.size() > 0) {
                                             if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
-                                                    .equals(conversationMessage._id)) {
+                                                    .equals(conversationMessage._id) && !conversationMessage.internal) {
                                                 config.conversationMessages.add(conversationMessage);
                                             }
                                         }

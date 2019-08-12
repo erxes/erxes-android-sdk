@@ -14,38 +14,47 @@ import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class Getmess {
     final static String TAG = "SETCONNECT";
     private ErxesRequest ER;
     private String conversationid;
-    private Config config ;
+    private Config config;
+
     public Getmess(ErxesRequest ER, Activity context) {
         this.ER = ER;
         config = Config.getInstance(context);
     }
 
-    public void run(String conversationid){
+    public void run(String conversationid) {
         this.conversationid = conversationid;
         ER.apolloClient.query(MessagesQuery.builder()
                 .conversationId(conversationid)
                 .build()).enqueue(request);
     }
+
     private ApolloCall.Callback<MessagesQuery.Data> request = new ApolloCall.Callback<MessagesQuery.Data>() {
         @Override
         public void onResponse(@NotNull Response<MessagesQuery.Data> response) {
 
-            if(response.data().messages().size() > 0) {
+            if (response.data().messages().size() > 0) {
                 if (config.conversationMessages.size() > 0)
                     config.conversationMessages.clear();
-                config.conversationMessages.addAll(ConversationMessage.convert(response,conversationid));
-                ER.notefyAll(ReturnType.Getmessages,conversationid,null);
+                List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);
+                for (ConversationMessage message : conversationMessages) {
+                    if (!message.internal)
+                        config.conversationMessages.add(message);
+                }
+
+                ER.notefyAll(ReturnType.Getmessages, conversationid, null);
             }
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
-            ER.notefyAll(ReturnType.CONNECTIONFAILED,conversationid,null);
-            Log.d(TAG,"Getmessages failed ");
+            ER.notefyAll(ReturnType.CONNECTIONFAILED, conversationid, null);
+            Log.d(TAG, "Getmessages failed ");
         }
     };
 }

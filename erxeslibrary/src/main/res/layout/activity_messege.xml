@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context=".ui.message.MessageActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary">
 
-            <android.support.constraint.ConstraintLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/pattern_repeat"
@@ -47,12 +47,12 @@
                         android:id="@+id/profile1"
                         android:layout_width="@dimen/image_size"
                         android:layout_height="@dimen/image_size"
+                        android:layout_alignStart="@id/profile2"
                         android:layout_alignLeft="@id/profile2"
                         android:layout_centerHorizontal="true"
+                        android:layout_marginStart="20dp"
                         android:layout_marginLeft="20dp"
-                        android:visibility="invisible"
-                        android:layout_alignStart="@id/profile2"
-                        android:layout_marginStart="20dp" />
+                        android:visibility="invisible" />
 
                     <ImageView
                         android:id="@+id/profile2"
@@ -64,11 +64,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_toRightOf="@+id/profile1"
-                        android:orientation="vertical"
                         android:layout_marginStart="10dp"
-                        android:layout_toEndOf="@+id/profile1">
+                        android:layout_marginLeft="10dp"
+                        android:layout_toEndOf="@+id/profile1"
+                        android:layout_toRightOf="@+id/profile1"
+                        android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/names"
@@ -109,29 +109,30 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </android.support.constraint.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
 
-        <android.support.v4.widget.SwipeRefreshLayout
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginBottom="1dp"
             android:background="#fff"
-            app:layout_constraintBottom_toTopOf="@+id/filelist"
+            app:layout_constraintBottom_toTopOf="@+id/fileListContainer"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/info_header"
             app:layout_constraintVertical_bias="1.0">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/reyclerview_message_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/messageBackground"
                 android:paddingLeft="@dimen/main_margin"
                 android:paddingRight="@dimen/main_margin" />
-        </android.support.v4.widget.SwipeRefreshLayout>
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
         <View
             android:layout_width="match_parent"
@@ -139,16 +140,23 @@
             android:background="@drawable/toolbarshadow"
             app:layout_constraintTop_toBottomOf="@+id/info_header" />
 
-        <LinearLayout
-            android:id="@+id/filelist"
+        <HorizontalScrollView
+            android:id="@+id/fileListContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:background="@color/messageBackground"
             app:layout_constraintBottom_toTopOf="@+id/simpleProgressBar"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
 
-        </LinearLayout>
+            <LinearLayout
+                android:id="@+id/filelist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <ProgressBar
             android:id="@+id/simpleProgressBar"
@@ -158,17 +166,12 @@
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/chatgroup" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/topshadow"
-            app:layout_constraintBottom_toTopOf="@+id/chatgroup" />
-
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:id="@+id/chatgroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_margin="5dp"
+            app:cardElevation="3dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent">
@@ -227,6 +230,6 @@
                         android:layout_height="20dp" />
                 </LinearLayout>
             </RelativeLayout>
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

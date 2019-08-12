@@ -1,6 +1,6 @@
 package com.newmedia.erxeslibrary.helper;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;

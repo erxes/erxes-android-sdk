@@ -37,14 +37,14 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.*;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.ColorRes;
-import android.support.annotation.DimenRes;
-import android.support.annotation.Dimension;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
+import androidx.annotation.Dimension;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.View;
@@ -54,8 +54,8 @@ import com.newmedia.erxeslibrary.iconics.typeface.IIcon;
 import com.newmedia.erxeslibrary.iconics.typeface.ITypeface;
 import com.newmedia.erxeslibrary.iconics.utils.Utils;
 
-import static android.support.annotation.Dimension.DP;
-import static android.support.annotation.Dimension.PX;
+import static androidx.annotation.Dimension.DP;
+import static androidx.annotation.Dimension.PX;
 import static android.view.View.LAYER_TYPE_SOFTWARE;
 
 /**

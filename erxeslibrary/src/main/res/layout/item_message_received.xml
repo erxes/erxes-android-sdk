@@ -1,49 +1,56 @@
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="8dp"
-    android:layout_marginBottom="5dp">
+    android:layout_marginBottom="5dp"
+    android:paddingTop="8dp">
 
 
     <ImageView
         android:id="@+id/image_message_profile"
         android:layout_width="@dimen/image_size"
         android:layout_height="@dimen/image_size"
-        android:src="@drawable/avatar"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body"/>
-    <TextView
-        android:layout_marginLeft="8dp"
-        android:padding="16dp"
-        android:background="@drawable/rounded_rectangle_orange"
-        android:id="@+id/text_message_body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:maxWidth="240dp"
-        android:textColor="#444"
-        app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
-         />
+        android:src="@drawable/avatar" />
+
     <LinearLayout
-        android:id="@+id/filelist"
-        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@+id/text_message_body"
-        app:layout_constraintTop_toBottomOf="@+id/text_message_body">
+        android:layout_marginLeft="8dp"
+        android:orientation="vertical"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_rectangle_white">
+
+            <TextView
+                android:id="@+id/text_message_body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="10dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/fileRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp">
+
+            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/text_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/md_grey_600"
+            android:textSize="10sp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_marginTop="3dp"
-        android:id="@+id/text_message_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#AAAEB3"
-        android:textSize="10sp"
-        app:layout_constraintLeft_toLeftOf="@+id/filelist"
-        app:layout_constraintTop_toBottomOf="@+id/filelist" />
-
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

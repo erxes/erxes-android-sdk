@@ -18,8 +18,8 @@ package com.newmedia.erxeslibrary.iconics.animation;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
 import android.text.TextPaint;
 
 import com.newmedia.erxeslibrary.iconics.IconicsBrush;

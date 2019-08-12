@@ -1,16 +1,14 @@
 package com.newmedia.erxeslibrary.ui.message;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.widget.CircularProgressDrawable;
-import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
+import androidx.annotation.NonNull;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MessageListAdapter extends RecyclerView.Adapter {
@@ -78,15 +77,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         if (viewType == 0) {
             View view = layoutInflater.inflate(R.layout.item_message_sent, parent, false);
-//        view.setOnClickListener(onClickListener);
             return new SentMessageHolder(view);
         } else if (viewType == 1) {
             View view = layoutInflater.inflate(R.layout.item_message_received, parent, false);
-//        view.setOnClickListener(onClickListener);
             return new ReceivedMessageHolder(view);
         } else {
             View view = layoutInflater.inflate(R.layout.item_message_welcome, parent, false);
-//        view.setOnClickListener(onClickListener);
             return new WelcomeMessageHolder(view);
         }
     }
@@ -154,39 +150,42 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, timeText;
-        ViewGroup filelist;
+        RecyclerView fileRecyclerView;
 
         SentMessageHolder(View itemView) {
             super(itemView);
 
             messageText = itemView.findViewById(R.id.text_message_body);
             timeText = itemView.findViewById(R.id.text_message_time);
-            filelist = itemView.findViewById(R.id.filelist);
+            fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.content));
-            ;
-            timeText.setText(config.Message_datetime(message.createdAt));
-            GradientDrawable a1 = (GradientDrawable) messageText.getBackground();
-            a1.setColor(config.colorCode);
-//                messageText.setBackgroundColor(Color.parseColor(Config.color));
-            filelist.removeAllViews();
+            messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
             if (message.attachments != null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(context);
-
                 try {
-
-                    JSONArray a = new JSONArray(message.attachments);
-                    for (int i = 0; i < a.length(); i++) {
-                        View view = layoutInflater.inflate(R.layout.file_item, filelist, false);
-                        draw_file(a.getJSONObject(i),
-                                (ImageView) view.findViewById(R.id.image_input),
-                                view,
-                                (TextView) view.findViewById(R.id.filename));
-                        filelist.addView(view);
+                    JSONArray jsonArray = new JSONArray(message.attachments);
+                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                    for (int i = 0 ; i < jsonArray.length(); i ++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        FileAttachment fileAttachment = new FileAttachment();
+                        fileAttachment.setName(jsonObject.getString("name"));
+                        fileAttachment.setSize(jsonObject.getString("size"));
+                        fileAttachment.setType(jsonObject.getString("type"));
+                        fileAttachment.setUrl(jsonObject.getString("url"));
+                        fileAttachmentList.add(fileAttachment);
                     }
+                    GridLayoutManager gridLayoutManager;
+                    if (fileAttachmentList.size() > 2) {
+                        gridLayoutManager = new GridLayoutManager(context, 3);
+                    } else {
+                        gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                    }
+                    fileRecyclerView.setVisibility(View.VISIBLE);
+                    fileRecyclerView.setLayoutManager(gridLayoutManager);
+                    fileRecyclerView.setHasFixedSize(true);
+                    fileRecyclerView.setAdapter(new FileAdapter(context,fileAttachmentList));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -199,7 +198,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView timeText;
         TextView messageText;
         ImageView profileImage;
-        ViewGroup filelist;
+        RecyclerView fileRecyclerView;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -207,14 +206,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText = itemView.findViewById(R.id.text_message_body);
             timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
-            filelist = itemView.findViewById(R.id.filelist);
+            fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
 
         }
 
         void bind(ConversationMessage message) {
-            Spanned htmlDescription = Html.fromHtml(message.content);
-            String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
-            messageText.setText(htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length()));
+            messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
 
             if (message.user != null) {
@@ -230,22 +227,30 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
 
-            filelist.removeAllViews();
             timeText.setText(config.Message_datetime(message.createdAt));
             if (message.attachments != null) {
-                LayoutInflater layoutInflater = LayoutInflater.from(context);
-
                 try {
-
-                    JSONArray a = new JSONArray(message.attachments);
-                    for (int i = 0; i < a.length(); i++) {
-                        View view = layoutInflater.inflate(R.layout.file_item, filelist, false);
-                        draw_file(a.getJSONObject(i),
-                                (ImageView) view.findViewById(R.id.image_input),
-                                view,
-                                (TextView) view.findViewById(R.id.filename));
-                        filelist.addView(view);
+                    JSONArray jsonArray = new JSONArray(message.attachments);
+                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                    for (int i = 0 ; i < jsonArray.length(); i ++) {
+                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+                        FileAttachment fileAttachment = new FileAttachment();
+                        fileAttachment.setName(jsonObject.getString("name"));
+                        fileAttachment.setSize(jsonObject.getString("size"));
+                        fileAttachment.setType(jsonObject.getString("type"));
+                        fileAttachment.setUrl(jsonObject.getString("url"));
+                        fileAttachmentList.add(fileAttachment);
                     }
+                    GridLayoutManager gridLayoutManager;
+                    if (fileAttachmentList.size() > 2) {
+                        gridLayoutManager = new GridLayoutManager(context, 3);
+                    } else {
+                        gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                    }
+                    fileRecyclerView.setVisibility(View.VISIBLE);
+                    fileRecyclerView.setLayoutManager(gridLayoutManager);
+                    fileRecyclerView.setHasFixedSize(true);
+                    fileRecyclerView.setAdapter(new FileAdapter(context,fileAttachmentList));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -264,8 +269,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-            messageText.setText(Html.fromHtml(message.content));
-            ;
+
+            messageText.setText(config.getHtml(message.content));
         }
     }
 
@@ -318,4 +323,5 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             e.printStackTrace();
         }
     }
+
 }

@@ -1,13 +1,12 @@
 package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 
 import java.util.Arrays;

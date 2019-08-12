@@ -7,6 +7,7 @@
 
     <color name="buttonGreenColor">#3ccc38</color>
     <color name="erxesColor">#5629B6</color>
+    <color name="messageBackground">#faf9fb</color>
 
     <color name="md_amber_100">#FFECB3</color>
     <color name="md_amber_200">#FFE082</color>
@@ -286,6 +287,8 @@
     <color name="md_yellow_A400">#FFEA00</color>
     <color name="md_yellow_A700">#FFD600</color>
 
+    <color name="pinkTransparent">#2A8113EC</color>
+    <color name="roundedBlue">#6569DF</color>
     <color name="transparent">#00000000</color>
     <color name="halftransparent">#46000000</color>
     <color name="aboveransparent">#69000000</color>

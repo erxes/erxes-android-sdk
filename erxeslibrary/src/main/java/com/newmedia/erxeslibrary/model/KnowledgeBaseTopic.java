@@ -15,13 +15,15 @@ public class KnowledgeBaseTopic {
 
     public static KnowledgeBaseTopic convert(FaqGetQuery.Data data){
         KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
-        knowledgeBaseTopic._id = data.knowledgeBaseTopicsDetail()._id();
-        knowledgeBaseTopic.title = data.knowledgeBaseTopicsDetail().title();
-        knowledgeBaseTopic.description = data.knowledgeBaseTopicsDetail().description();
-        knowledgeBaseTopic.color = data.knowledgeBaseTopicsDetail().color();
-        knowledgeBaseTopic.languageCode = data.knowledgeBaseTopicsDetail().languageCode();
-        knowledgeBaseTopic.categories = new ArrayList<>();
-        knowledgeBaseTopic.categories.addAll( KnowledgeBaseCategory.convert(data.knowledgeBaseTopicsDetail().categories()));
+        if (data.knowledgeBaseTopicsDetail() != null) {
+            knowledgeBaseTopic._id = data.knowledgeBaseTopicsDetail()._id();
+            knowledgeBaseTopic.title = data.knowledgeBaseTopicsDetail().title();
+            knowledgeBaseTopic.description = data.knowledgeBaseTopicsDetail().description();
+            knowledgeBaseTopic.color = data.knowledgeBaseTopicsDetail().color();
+            knowledgeBaseTopic.languageCode = data.knowledgeBaseTopicsDetail().languageCode();
+            knowledgeBaseTopic.categories = new ArrayList<>();
+            knowledgeBaseTopic.categories.addAll(KnowledgeBaseCategory.convert(data.knowledgeBaseTopicsDetail().categories()));
+        }
         return knowledgeBaseTopic;
     }
 }

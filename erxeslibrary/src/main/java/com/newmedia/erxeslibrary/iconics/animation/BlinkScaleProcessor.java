@@ -19,8 +19,8 @@ package com.newmedia.erxeslibrary.iconics.animation;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.support.annotation.FloatRange;
-import android.support.annotation.NonNull;
+import androidx.annotation.FloatRange;
+import androidx.annotation.NonNull;
 import android.text.TextPaint;
 
 import com.newmedia.erxeslibrary.iconics.IconicsBrush;

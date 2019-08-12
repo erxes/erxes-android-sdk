@@ -23,11 +23,12 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/names"
+                android:id="@+id/contact"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_margin="20dp"
+                android:visibility="invisible"
                 android:text="@string/contact"
                 android:textColor="#fff"
                 android:textSize="18sp"
@@ -87,9 +88,10 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="25dp" />
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginStart="25dp" />
 
-                    <android.support.v7.widget.CardView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/smsgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
@@ -98,7 +100,10 @@
                         android:layout_marginLeft="@dimen/chooser_offset"
                         android:onClick="sms_click"
                         android:shape="ring"
-                        app:cardCornerRadius="@dimen/chooser_raduis">
+                        app:cardCornerRadius="@dimen/chooser_raduis"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginStart="@dimen/chooser_offset"
+                        android:layout_alignStart="@id/strut">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -111,7 +116,8 @@
                                 android:layout_width="@dimen/icon_size"
                                 android:layout_height="@dimen/icon_size"
                                 android:layout_marginRight="14dp"
-                                android:src="@drawable/phone_call" />
+                                android:src="@drawable/phone_call"
+                                android:layout_marginEnd="14dp" />
 
                             <TextView
                                 android:id="@+id/sms_button"
@@ -122,9 +128,9 @@
                                 android:textColor="#000"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
-                    </android.support.v7.widget.CardView>
+                    </androidx.cardview.widget.CardView>
 
-                    <android.support.v7.widget.CardView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/mailgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
@@ -133,7 +139,9 @@
                         android:onClick="email_click"
                         android:shape="ring"
                         app:cardBackgroundColor="#5629B6"
-                        app:cardCornerRadius="@dimen/chooser_raduis">
+                        app:cardCornerRadius="@dimen/chooser_raduis"
+                        android:layout_alignEnd="@id/strut"
+                        android:layout_alignParentStart="true">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -156,20 +164,16 @@
                                 android:textColor="#fff"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
-                    </android.support.v7.widget.CardView>
+                    </androidx.cardview.widget.CardView>
 
                 </RelativeLayout>
 
-                <LinearLayout
+                <androidx.cardview.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_top"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="5dp"
-                        android:background="@drawable/topshadow" />
+                    android:layout_margin="5dp"
+                    app:cardElevation="3dp">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
@@ -182,7 +186,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toLeftOf="@+id/loginclick"
-                            android:orientation="vertical">
+                            android:orientation="vertical"
+                            android:layout_toStartOf="@+id/loginclick">
 
                             <EditText
                                 android:id="@+id/email"
@@ -194,7 +199,9 @@
                                 android:maxLines="1"
                                 android:paddingLeft="20dp"
                                 android:paddingTop="10dp"
-                                android:paddingBottom="10dp" />
+                                android:paddingBottom="10dp"
+                                android:paddingStart="20dp"
+                                tools:ignore="RtlSymmetry" />
 
                             <EditText
                                 android:id="@+id/phone"
@@ -205,7 +212,10 @@
                                 android:hint="@string/sms"
                                 android:inputType="phone"
                                 android:maxLines="1"
-                                android:visibility="gone" />
+                                android:paddingTop="10dp"
+                                android:paddingBottom="10dp"
+                                android:visibility="gone"
+                                android:layout_marginStart="20dp" />
                         </LinearLayout>
 
                         <RelativeLayout
@@ -214,7 +224,8 @@
                             android:layout_height="48dp"
                             android:layout_alignParentRight="true"
                             android:background="?android:attr/selectableItemBackground"
-                            android:onClick="Connect_click">
+                            android:onClick="Connect_click"
+                            android:layout_alignParentEnd="true">
 
                             <ImageView
                                 android:id="@+id/sendImageView"
@@ -228,7 +239,7 @@
                         </RelativeLayout>
 
                     </RelativeLayout>
-                </LinearLayout>
+                </androidx.cardview.widget.CardView>
             </LinearLayout>
 
             <include layout="@layout/loader_view" />

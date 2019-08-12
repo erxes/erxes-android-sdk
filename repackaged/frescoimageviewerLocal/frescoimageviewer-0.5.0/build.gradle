@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('frescoimageviewer-0.5.0.aar'))

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/roundedBlue"
+    android:layout_margin="1dp">
     <ImageView
         android:id="@+id/image_input"
         android:layout_margin="5dp"
@@ -18,7 +22,7 @@
         android:id="@+id/filename"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="filename" />
+        android:textColor="@color/md_white_1000"/>
     <ImageView
         android:id="@+id/remove"
         android:layout_marginRight="5dp"

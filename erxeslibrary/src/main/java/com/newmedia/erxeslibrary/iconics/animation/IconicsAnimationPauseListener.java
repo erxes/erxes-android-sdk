@@ -17,7 +17,7 @@
 package com.newmedia.erxeslibrary.iconics.animation;
 
 import android.os.Build;
-import android.support.annotation.RequiresApi;
+import androidx.annotation.RequiresApi;
 
 
 /**

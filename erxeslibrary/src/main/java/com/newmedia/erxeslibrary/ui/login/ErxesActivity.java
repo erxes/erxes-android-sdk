@@ -4,13 +4,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.LayoutInflaterCompat;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.core.view.LayoutInflaterCompat;
+import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
+import androidx.cardview.widget.CardView;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -25,8 +24,6 @@ import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.iconics.IconicsDrawable;
-import com.newmedia.erxeslibrary.iconics.context.IconicsLayoutInflater;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
@@ -34,7 +31,7 @@ import com.newmedia.erxeslibrary.R;
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private EditText email, phone;
-    private TextView sms_button, email_button;
+    private TextView sms_button, email_button, contact;
     private LinearLayout container;
     private ImageView mailzurag, phonezurag, sendImageView, cancelImageView;
     private CardView mailgroup, smsgroup;
@@ -64,6 +61,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         phonezurag = this.findViewById(R.id.phonezurag);
         sendImageView = this.findViewById(R.id.sendImageView);
         cancelImageView = this.findViewById(R.id.cancelImageView);
+        contact = this.findViewById(R.id.contact);
 
         Helper.display_configure(this, container, "#66000000");
         cancelImageView.setOnClickListener(touchListener);
@@ -194,6 +192,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
                     case ReturnType.INTEGRATION_CHANGED:
                         change_color();
+                        contact.setVisibility(View.VISIBLE);
                         loaderView.setVisibility(View.GONE);
                         break;
 
