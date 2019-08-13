@@ -9,11 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
@@ -163,29 +169,31 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
-            if (message.attachments != null) {
+            if (!TextUtils.isEmpty(message.attachments)) {
                 try {
                     JSONArray jsonArray = new JSONArray(message.attachments);
-                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                    for (int i = 0 ; i < jsonArray.length(); i ++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        FileAttachment fileAttachment = new FileAttachment();
-                        fileAttachment.setName(jsonObject.getString("name"));
-                        fileAttachment.setSize(jsonObject.getString("size"));
-                        fileAttachment.setType(jsonObject.getString("type"));
-                        fileAttachment.setUrl(jsonObject.getString("url"));
-                        fileAttachmentList.add(fileAttachment);
+                    if (jsonArray.length() > 0) {
+                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            FileAttachment fileAttachment = new FileAttachment();
+                            fileAttachment.setName(jsonObject.getString("name"));
+                            fileAttachment.setSize(jsonObject.getString("size"));
+                            fileAttachment.setType(jsonObject.getString("type"));
+                            fileAttachment.setUrl(jsonObject.getString("url"));
+                            fileAttachmentList.add(fileAttachment);
+                        }
+                        GridLayoutManager gridLayoutManager;
+                        if (fileAttachmentList.size() > 2) {
+                            gridLayoutManager = new GridLayoutManager(context, 3);
+                        } else {
+                            gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                        }
+                        fileRecyclerView.setVisibility(View.VISIBLE);
+                        fileRecyclerView.setLayoutManager(gridLayoutManager);
+                        fileRecyclerView.setHasFixedSize(true);
+                        fileRecyclerView.setAdapter(new FileAdapter(context, fileAttachmentList));
                     }
-                    GridLayoutManager gridLayoutManager;
-                    if (fileAttachmentList.size() > 2) {
-                        gridLayoutManager = new GridLayoutManager(context, 3);
-                    } else {
-                        gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
-                    }
-                    fileRecyclerView.setVisibility(View.VISIBLE);
-                    fileRecyclerView.setLayoutManager(gridLayoutManager);
-                    fileRecyclerView.setHasFixedSize(true);
-                    fileRecyclerView.setAdapter(new FileAdapter(context,fileAttachmentList));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -199,6 +207,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView messageText;
         ImageView profileImage;
         RecyclerView fileRecyclerView;
+        WebView webView;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -207,12 +216,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
+            webView = itemView.findViewById(R.id.webView);
 
         }
 
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
+            webView.setBackgroundColor(context.getResources().getColor(R.color.md_white_1000));
+            webView.loadData(message.content,null,"UTF-8");
 
             if (message.user != null) {
                 Glide.with(context).load(message.user.avatar)
@@ -228,29 +240,31 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         .into(profileImage);
 
             timeText.setText(config.Message_datetime(message.createdAt));
-            if (message.attachments != null) {
+            if (!TextUtils.isEmpty(message.attachments)) {
                 try {
                     JSONArray jsonArray = new JSONArray(message.attachments);
-                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                    for (int i = 0 ; i < jsonArray.length(); i ++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-                        FileAttachment fileAttachment = new FileAttachment();
-                        fileAttachment.setName(jsonObject.getString("name"));
-                        fileAttachment.setSize(jsonObject.getString("size"));
-                        fileAttachment.setType(jsonObject.getString("type"));
-                        fileAttachment.setUrl(jsonObject.getString("url"));
-                        fileAttachmentList.add(fileAttachment);
+                    if (jsonArray.length() > 0) {
+                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            FileAttachment fileAttachment = new FileAttachment();
+                            fileAttachment.setName(jsonObject.getString("name"));
+                            fileAttachment.setSize(jsonObject.getString("size"));
+                            fileAttachment.setType(jsonObject.getString("type"));
+                            fileAttachment.setUrl(jsonObject.getString("url"));
+                            fileAttachmentList.add(fileAttachment);
+                        }
+                        GridLayoutManager gridLayoutManager;
+                        if (fileAttachmentList.size() > 2) {
+                            gridLayoutManager = new GridLayoutManager(context, 3);
+                        } else {
+                            gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                        }
+                        fileRecyclerView.setVisibility(View.VISIBLE);
+                        fileRecyclerView.setLayoutManager(gridLayoutManager);
+                        fileRecyclerView.setHasFixedSize(true);
+                        fileRecyclerView.setAdapter(new FileAdapter(context, fileAttachmentList));
                     }
-                    GridLayoutManager gridLayoutManager;
-                    if (fileAttachmentList.size() > 2) {
-                        gridLayoutManager = new GridLayoutManager(context, 3);
-                    } else {
-                        gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
-                    }
-                    fileRecyclerView.setVisibility(View.VISIBLE);
-                    fileRecyclerView.setLayoutManager(gridLayoutManager);
-                    fileRecyclerView.setHasFixedSize(true);
-                    fileRecyclerView.setAdapter(new FileAdapter(context,fileAttachmentList));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

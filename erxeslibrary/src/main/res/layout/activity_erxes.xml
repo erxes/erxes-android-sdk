@@ -223,7 +223,7 @@
                             android:layout_width="60dp"
                             android:layout_height="48dp"
                             android:layout_alignParentRight="true"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:background="?android:attr/actionBarItemBackground"
                             android:onClick="Connect_click"
                             android:layout_alignParentEnd="true">
 

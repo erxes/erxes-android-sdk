@@ -122,9 +122,9 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void startActivity() {
-        this.finish();
         Intent a = new Intent(ConversationListActivity.this, ErxesActivity.class);
         startActivity(a);
+        this.finish();
     }
 
     public void sendLead() {

@@ -170,40 +170,40 @@ public class ListenerService extends Service {
                                 if (!response.hasErrors()) {
                                     if (response.data().conversationMessageInserted() != null) {
                                         DataManager dataManager = DataManager.getInstance(ListenerService.this);
-                                        if (!dataManager.getDataB("chat_is_going")) {
-                                            Log.e(TAG, "dead");
-                                            String chat_message = response.data().conversationMessageInserted().content();
-                                            String name = "";
-                                            try {
-                                                if (response.data().conversationMessageInserted().user().details() != null)
-                                                    name = response.data().conversationMessageInserted().user().details().fullName();
-                                            } catch (Exception ignored) {
+                                        if (dataManager.getDataB("chat_is_going")) {
+                                            ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
+                                            if (config.conversationMessages.size() > 0) {
+                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
+                                                        .equals(conversationMessage._id) && !conversationMessage.internal) {
+                                                    config.conversationMessages.add(conversationMessage);
+                                                }
                                             }
+                                            for (int i = 0; i < config.conversations.size(); i++) {
+                                                if (config.conversations.get(i)._id.equals(conversationId)) {
+                                                    config.conversations.get(i).conversationMessages.add(conversationMessage);
+                                                    break;
+                                                }
+                                            }
+                                            Log.e(TAG, "onNext: " + conversationMessage.content);
+                                            ER.notefyAll(ReturnType.ComingNewMessage, null, null);
 
-                                            createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
-                                        }
-
-                                        ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
-                                        if (config.conversationMessages.size() > 0) {
-                                            if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
-                                                    .equals(conversationMessage._id) && !conversationMessage.internal) {
-                                                config.conversationMessages.add(conversationMessage);
+                                            for (int i = 0; i < config.conversations.size(); i++) {
+                                                if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
+                                                    config.conversations.get(i).content = response.data().conversationMessageInserted().content();
+                                                    config.conversations.get(i).isread = false;
+                                                }
                                             }
-                                        }
-                                        for (int i = 0; i < config.conversations.size(); i++) {
-                                            if (config.conversations.get(i)._id.equals(conversationId)) {
-                                                config.conversations.get(i).conversationMessages.add(conversationMessage);
-                                                break;
-                                            }
-                                        }
-                                        Log.e(TAG, "onNext: " + conversationMessage.content);
-                                        ER.notefyAll(ReturnType.ComingNewMessage, null, null);
-
-                                        for (int i = 0; i < config.conversations.size(); i++) {
-                                            if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
-                                                config.conversations.get(i).content = response.data().conversationMessageInserted().content();
-                                                config.conversations.get(i).isread = false;
-                                            }
+                                        } else {
+//                                            Log.e(TAG, "dead");
+//                                            String chat_message = response.data().conversationMessageInserted().content();
+//                                            String name = "";
+//                                            try {
+//                                                if (response.data().conversationMessageInserted().user().details() != null)
+//                                                    name = response.data().conversationMessageInserted().user().details().fullName();
+//                                            } catch (Exception ignored) {
+//                                            }
+//
+//                                            createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
                                         }
                                     }
                                 }

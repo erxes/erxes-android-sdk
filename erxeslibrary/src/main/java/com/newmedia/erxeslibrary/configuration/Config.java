@@ -278,6 +278,10 @@ public class Config implements ErxesObserver {
         activity.startActivity(a);
     }
 
+    public void checkRequired() {
+
+    }
+
     public void LoadDefaultValues() {
 
         dataManager = DataManager.getInstance(activity);
@@ -319,6 +323,8 @@ public class Config implements ErxesObserver {
         customerId = null;
         dataManager.setData(DataManager.customerId, null);
         dataManager.setData(DataManager.integrationId, null);
+        dataManager.setData(DataManager.email, null);
+        dataManager.setData(DataManager.phone, null);
         return true;
     }
 

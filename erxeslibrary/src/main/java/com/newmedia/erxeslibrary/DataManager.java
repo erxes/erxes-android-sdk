@@ -20,15 +20,15 @@ public class DataManager {
     // Editor reference for Shared preferences
     SharedPreferences.Editor editor;
     private static final String PREFER_NAME = "ERXES_LIB";
-    public static final String brandcode = "brandcode";
-    public static final String email = "email";
-    public static final String phone = "phone";
-    public static final String integrationId = "integrationId";
-    public static final String customerId = "customerId";
-    public static final String color = "color";
-    public static final String language = "language";
-    public static final String isUser = "isUser";
-    public static final String customData = "customData";
+    public static final String brandcode = "rxx_brandcode";
+    public static final String email = "rxx_email";
+    public static final String phone = "rxx_phone";
+    public static final String integrationId = "rxx_integrationId";
+    public static final String customerId = "rxx_customerId";
+    public static final String color = "rxx_color";
+    public static final String language = "rxx_language";
+    public static final String isUser = "rxx_isUser";
+    public static final String customData = "rxx_customData";
 
 
     static private DataManager dataManager;

@@ -64,14 +64,15 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
 
         if (conversationList.get(position).isread) {
             if (!TextUtils.isEmpty(conversationList.get(position).content)) {
-                Log.e(this.getClass().getName(), "onBindViewHolder: " + conversationList.get(position).content );
                 holder.content.setText(config.getHtml(conversationList.get(position).content));
             }
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.content.setTextColor(Color.parseColor("#808080"));
         } else {
-            holder.content.setText(config.getHtml(conversationList.get(position).content));
+            if (!TextUtils.isEmpty(conversationList.get(position).content)) {
+                holder.content.setText(config.getHtml(conversationList.get(position).content));
+            }
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);

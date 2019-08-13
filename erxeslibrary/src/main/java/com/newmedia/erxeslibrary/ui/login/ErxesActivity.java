@@ -187,7 +187,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                         Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
                         a.putExtra("isFromLogin",true);
                         ErxesActivity.this.startActivity(a);
-                        finish();
+                        ErxesActivity.this.finish();
                         break;
 
                     case ReturnType.INTEGRATION_CHANGED:
