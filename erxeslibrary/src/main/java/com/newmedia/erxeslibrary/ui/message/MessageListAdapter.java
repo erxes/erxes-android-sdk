@@ -42,13 +42,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
 
     private List<ConversationMessage> mMessageList;
-    private Activity context;
+    private Activity activity;
     private int previous_size = 0;
     private Config config;
 
-    public MessageListAdapter(Activity context, List<ConversationMessage> mMessageList) {
-        this.context = context;
-        this.config = Config.getInstance(context);
+    public MessageListAdapter(Activity activity, List<ConversationMessage> mMessageList) {
+        this.activity = activity;
+        this.config = Config.getInstance(activity);
         this.mMessageList = mMessageList;
         this.previous_size = this.mMessageList.size();
     }
@@ -149,7 +149,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             String url = (String) view.getTag();
             if (url.startsWith("http")) {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((String) view.getTag()));
-                context.startActivity(browserIntent);
+                activity.startActivity(browserIntent);
             }
         }
     };
@@ -185,14 +185,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         }
                         GridLayoutManager gridLayoutManager;
                         if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(context, 3);
+                            gridLayoutManager = new GridLayoutManager(activity, 3);
                         } else {
-                            gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
                         }
                         fileRecyclerView.setVisibility(View.VISIBLE);
                         fileRecyclerView.setLayoutManager(gridLayoutManager);
                         fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(context, fileAttachmentList));
+                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -223,17 +223,17 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
-            webView.setBackgroundColor(context.getResources().getColor(R.color.md_white_1000));
+            webView.setBackgroundColor(activity.getResources().getColor(R.color.md_white_1000));
             webView.loadData(message.content,null,"UTF-8");
 
             if (message.user != null) {
-                Glide.with(context).load(message.user.avatar)
+                Glide.with(activity).load(message.user.avatar)
                         .placeholder(R.drawable.avatar)
                         .circleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
             } else
-                Glide.with(context).load(R.drawable.avatar)
+                Glide.with(activity).load(R.drawable.avatar)
                         .placeholder(R.drawable.avatar)
                         .circleCrop()
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -256,14 +256,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         }
                         GridLayoutManager gridLayoutManager;
                         if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(context, 3);
+                            gridLayoutManager = new GridLayoutManager(activity, 3);
                         } else {
-                            gridLayoutManager = new GridLayoutManager(context, fileAttachmentList.size());
+                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
                         }
                         fileRecyclerView.setVisibility(View.VISIBLE);
                         fileRecyclerView.setLayoutManager(gridLayoutManager);
                         fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(context, fileAttachmentList));
+                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -294,12 +294,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             String size = o.getString("size");
             String name = o.getString("name");
             String url = o.getString("url");
-            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(activity);
             circularProgressDrawable.setStrokeWidth(5f);
             circularProgressDrawable.setCenterRadius(30f);
             circularProgressDrawable.start();
 
-            float scale = context.getResources().getDisplayMetrics().density;
+            float scale = activity.getResources().getDisplayMetrics().density;
             int pixels = (int) (20 * scale + 0.5f);
             inputImage.getLayoutParams().width = pixels;
             inputImage.requestLayout();
@@ -320,7 +320,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 //                inputImage.getLayoutParams().height = pixels;
                 inputImage.requestLayout();
 
-                Glide.with(context).load(url).placeholder(circularProgressDrawable)
+                Glide.with(activity).load(url).placeholder(circularProgressDrawable)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .override(pixels, Target.SIZE_ORIGINAL)
                         .into(inputImage);

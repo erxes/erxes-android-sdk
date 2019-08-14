@@ -45,6 +45,7 @@ public class SupportFragment extends Fragment {
     public Boolean[] booleans;
     public String[] resultChecks;
     private LinearLayout newConversationClick;
+    private CardView chatContainer;
 
     public String[] values;
 
@@ -69,52 +70,48 @@ public class SupportFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_support, container, false);
-        addnew_conversation = v.findViewById(R.id.newconversation);
-        newConversationClick = v.findViewById(R.id.newConversationCLick);
-        initIcon();
-        recyclerView = v.findViewById(R.id.chat_recycler_view);
+        chatContainer = v.findViewById(R.id.chatContainer);
         getRecyclerView = v.findViewById(R.id.getRecyclerView);
-
         leadCardView = v.findViewById(R.id.leadCardView);
         getLeadCardView = v.findViewById(R.id.getLeadCardView);
-
         joinLeadCardView = v.findViewById(R.id.joinLead);
         getJoinLeadCardView = v.findViewById(R.id.getJoinLead);
-
         titleLead = v.findViewById(R.id.titleLead);
         getTitleLead = v.findViewById(R.id.getTitleLead);
-
         descriptionLead = v.findViewById(R.id.descriptionLead);
         getDescriptionLead = v.findViewById(R.id.getDescriptionLead);
-
         textJoinLead = v.findViewById(R.id.textJoinLead);
         getTextJoinLead = v.findViewById(R.id.getTextJoinLead);
-
         imageLead = v.findViewById(R.id.imageLead);
 
-        newConversationClick.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        setLead();
+
+        if (config.messengerdata.isShowChat()) {
+            chatContainer.setVisibility(View.VISIBLE);
+            addnew_conversation = v.findViewById(R.id.newconversation);
+            newConversationClick = v.findViewById(R.id.newConversationCLick);
+            recyclerView = v.findViewById(R.id.chat_recycler_view);
+            initIcon();
+            recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+
+            ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity(), config.conversations);
+            recyclerView.setAdapter(adapter);
+            if (0 == adapter.conversationList.size() && !config.isFirstStart) {
                 start_new_conversation();
             }
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-
-        ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity(),config.conversations);
-        recyclerView.setAdapter(adapter);
-        if (0 == adapter.conversationList.size() && !config.isFirstStart) {
-            start_new_conversation();
+            newConversationClick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    start_new_conversation();
+                }
+            });
         }
-
-//        erxesRequest.getConversations();
-        setLead();
 
         return v;
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getPlusIcon(getActivity(),-1))
+        Glide.with(this).load(config.getPlusIcon(getActivity(),0))
                 .optionalCircleCrop()
                 .into(addnew_conversation);
     }

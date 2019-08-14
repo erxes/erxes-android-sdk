@@ -58,34 +58,28 @@ public class SetConnect {
         @Override
         public void onResponse(@NotNull Response<MessengerConnectMutation.Data> response) {
             if (!response.hasErrors()) {
+                if (config.messengerdata.isShowLauncher()) {
+                    config.customerId = response.data().messengerConnect().customerId();
+                    config.integrationId = response.data().messengerConnect().integrationId();
 
-                config.customerId = response.data().messengerConnect().customerId();
-                config.integrationId = response.data().messengerConnect().integrationId();
+                    dataManager.setData(DataManager.customerId, config.customerId);
+                    dataManager.setData(DataManager.integrationId, config.integrationId);
 
-                dataManager.setData(DataManager.customerId, config.customerId);
-                dataManager.setData(DataManager.integrationId, config.integrationId);
+                    config.changeLanguage(response.data().messengerConnect().languageCode());
+                    Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
+                    Helper.load_messengerData(response.data().messengerConnect().messengerData());
 
-                config.changeLanguage(response.data().messengerConnect().languageCode());
-                Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
-                Helper.load_messengerData(response.data().messengerConnect().messengerData());
-
-                ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
+                    ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
+                }
             } else {
-
-                Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
-
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.e(TAG, "failed " + e.getMessage() + "\n" + e.getLocalizedMessage());
             e.printStackTrace();
-
         }
     };
-
-
 }

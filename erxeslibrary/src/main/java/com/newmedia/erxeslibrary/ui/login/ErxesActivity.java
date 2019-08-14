@@ -4,12 +4,18 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+
 import com.google.android.material.snackbar.Snackbar;
+
 import androidx.core.view.LayoutInflaterCompat;
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+
 import androidx.cardview.widget.CardView;
+
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -27,6 +33,8 @@ import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
+
+import org.json.JSONObject;
 
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
@@ -64,11 +72,11 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         contact = this.findViewById(R.id.contact);
 
         Helper.display_configure(this, container, "#66000000");
-        cancelImageView.setOnClickListener(touchListener);
         change_color();
+        cancelImageView.setOnClickListener(touchListener);
         initIcon();
 
-        boolean hasData = getIntent().getBooleanExtra("hasData",false);
+        boolean hasData = getIntent().getBooleanExtra("hasData", false);
         String customData = getIntent().getStringExtra("customData");
         String mEmail = getIntent().getStringExtra("mEmail");
         String mPhone = getIntent().getStringExtra("mPhone");
@@ -78,27 +86,41 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (config.isLoggedIn()) {
                 config.LoadDefaultValues();
                 Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-                a.putExtra("isFromLogin",false);
+                a.putExtra("isFromLogin", false);
                 ErxesActivity.this.startActivity(a);
                 finish();
             } else {
-                erxesRequest.getIntegration();
+                change_color();
+                contact.setVisibility(View.VISIBLE);
+                loaderView.setVisibility(View.GONE);
             }
         }
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getsendIcon(this,-1)).into(sendImageView);
-        Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
-        Glide.with(this).load(config.getEmailIcon(this,R.color.md_white_1000)).into(mailzurag);
-        Glide.with(this).load(config.getPhoneIcon(this,R.color.md_white_1000)).into(phonezurag);
+        Glide.with(this).load(config.getsendIcon(this, 0)).into(sendImageView);
+        Glide.with(this).load(config.getCancelIcon(this, config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this)
+                .load(config.getEmailIcon(this, getResources().getColor(R.color.md_white_1000)))
+                .into(mailzurag);
+        Glide.with(this)
+                .load(config.getPhoneIcon(this, getResources().getColor(R.color.md_white_1000)))
+                .into(phonezurag);
+    }
+
+    private void changeEmailColor(int color) {
+        Glide.with(this).load(config.getEmailIcon(this, color)).into(mailzurag);
+    }
+
+    private void changePhoneColor(int color) {
+        Glide.with(this).load(config.getPhoneIcon(this, color)).into(phonezurag);
     }
 
     private void change_color() {
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
         mailgroup.setCardBackgroundColor(config.colorCode);
         sms_button.setTextColor(config.colorCode);
-        changeBitmapColor(phonezurag, config.colorCode);
+        changePhoneColor(config.colorCode);
 
         Drawable drawable = this.findViewById(R.id.selector).getBackground();
         drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
@@ -108,33 +130,25 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     public void email_click(View v) {
         email.setVisibility(View.VISIBLE);
         phone.setVisibility(View.GONE);
-        /////
+
         smsgroup.setCardBackgroundColor(Color.WHITE);
         email_button.setTextColor(Color.WHITE);
-        changeBitmapColor(mailzurag, Color.WHITE);
+        changeEmailColor(getResources().getColor(R.color.md_white_1000));
         sms_button.setTextColor(config.colorCode);
         ((CardView) v).setCardBackgroundColor(config.colorCode);
-        changeBitmapColor(phonezurag, config.colorCode);
-
-    }
-
-    public void changeBitmapColor(ImageView image, int color) {
-        image.getDrawable().setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        changePhoneColor(config.colorCode);
     }
 
     public void sms_click(View v) {
-
         email.setVisibility(View.GONE);
         phone.setVisibility(View.VISIBLE);
 
         mailgroup.setCardBackgroundColor(Color.WHITE);
         sms_button.setTextColor(Color.WHITE);
-        changeBitmapColor(phonezurag, Color.WHITE);
-
+        changePhoneColor(getResources().getColor(R.color.md_white_1000));
         email_button.setTextColor(config.colorCode);
         ((CardView) v).setCardBackgroundColor(config.colorCode);
-        changeBitmapColor(mailzurag, config.colorCode);
-
+        changeEmailColor(config.colorCode);
     }
 
     public void logout() {
@@ -146,7 +160,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.phone, phone.getText().toString());
-                    erxesRequest.setConnect("", phone.getText().toString(), false,null);
+                    erxesRequest.setConnect("", phone.getText().toString(), false, null);
                     phone.setError(null);
                 } else
                     phone.setError(getResources().getString(R.string.no_correct_phone));
@@ -154,7 +168,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.email, email.getText().toString());
-                    erxesRequest.setConnect("" + email.getText().toString(), "", false,null);
+                    erxesRequest.setConnect("" + email.getText().toString(), "", false, null);
                 } else
                     email.setError(getResources().getString(R.string.no_correct_mail));
             }
@@ -174,6 +188,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     protected void onResume() {
         super.onResume();
         erxesRequest.add(this);
+        config.setActivityConfig(this);
     }
 
     @Override
@@ -185,15 +200,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 switch (returnType) {
                     case ReturnType.LOGIN_SUCCESS:
                         Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-                        a.putExtra("isFromLogin",true);
+                        a.putExtra("isFromLogin", true);
                         ErxesActivity.this.startActivity(a);
                         ErxesActivity.this.finish();
-                        break;
-
-                    case ReturnType.INTEGRATION_CHANGED:
-                        change_color();
-                        contact.setVisibility(View.VISIBLE);
-                        loaderView.setVisibility(View.GONE);
                         break;
 
                     case ReturnType.CONNECTIONFAILED:

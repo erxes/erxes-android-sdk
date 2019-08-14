@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Messengerdata {
-    private boolean isOnline;
+    private boolean isOnline, requireAuth, showChat, showLauncher,forceLogoutWhenResolve;
     private String timezone;
     private List<String> supporterIds;
     private String knowledgeBaseTopicId;
@@ -34,6 +34,15 @@ public class Messengerdata {
                 }
                 messengerdata.setSupporterIds(supIds);
             }
+            if (jsonObject.has("requireAuth"))
+                messengerdata.setRequireAuth(jsonObject.getBoolean("requireAuth"));
+            if (jsonObject.has("showChat"))
+                messengerdata.setShowChat(jsonObject.getBoolean("showChat"));
+            if (jsonObject.has("showLauncher"))
+                messengerdata.setShowLauncher(jsonObject.getBoolean("showLauncher"));
+            if (jsonObject.has("forceLogoutWhenResolve"))
+                messengerdata.setForceLogoutWhenResolve(jsonObject.getBoolean("forceLogoutWhenResolve"));
+
             if (jsonObject.has("knowledgeBaseTopicId"))
                 messengerdata.setKnowledgeBaseTopicId(jsonObject.getString("knowledgeBaseTopicId"));
             if (jsonObject.has("availabilityMethod"))
@@ -97,6 +106,38 @@ public class Messengerdata {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public boolean isRequireAuth() {
+        return requireAuth;
+    }
+
+    public void setRequireAuth(boolean requireAuth) {
+        this.requireAuth = requireAuth;
+    }
+
+    public boolean isShowChat() {
+        return showChat;
+    }
+
+    public void setShowChat(boolean showChat) {
+        this.showChat = showChat;
+    }
+
+    public boolean isShowLauncher() {
+        return showLauncher;
+    }
+
+    public void setShowLauncher(boolean showLauncher) {
+        this.showLauncher = showLauncher;
+    }
+
+    public boolean isForceLogoutWhenResolve() {
+        return forceLogoutWhenResolve;
+    }
+
+    public void setForceLogoutWhenResolve(boolean forceLogoutWhenResolve) {
+        this.forceLogoutWhenResolve = forceLogoutWhenResolve;
     }
 
     //    public Map<String, Messages> messages;

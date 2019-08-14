@@ -9,13 +9,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:orientation="vertical">
 
         <androidx.cardview.widget.CardView
+            android:id="@+id/chatContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_margin="8dp"
             android:shape="ring"
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/chooser_raduis"
             app:cardElevation="5dp">
 
@@ -90,11 +93,9 @@
             android:id="@+id/leadCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
             android:shape="ring"
             android:visibility="gone"
+            android:layout_margin="8dp"
             app:cardCornerRadius="@dimen/chooser_raduis"
             app:cardElevation="5dp">
 

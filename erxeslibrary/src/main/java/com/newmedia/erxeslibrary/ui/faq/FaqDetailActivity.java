@@ -110,12 +110,17 @@ public class FaqDetailActivity extends AppCompatActivity {
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getBackIcon(this,R.color.md_white_1000)).into(backImageView);
-        Glide.with(this).load(config.getCancelIcon(this,R.color.md_white_1000)).into(cancelImageView);
+        Glide.with(this).load(config.getBackIcon(this,config.getInColor(config.colorCode))).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this,config.getInColor(config.colorCode))).into(cancelImageView);
     }
 
     public void logout(){
-        config.Logout();
-        finish();
+        config.Logout(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        config.setActivityConfig(this);
     }
 }

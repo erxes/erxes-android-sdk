@@ -24,3 +24,10 @@ subscription ConversationMessageInserted($_id: String!){
       }
   }
 }
+
+subscription ConversationChanged($_id: String!) {
+    conversationChanged(_id: $_id) {
+        conversationId
+        type
+    }
+}

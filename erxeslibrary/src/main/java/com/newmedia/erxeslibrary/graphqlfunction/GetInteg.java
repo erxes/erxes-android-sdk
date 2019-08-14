@@ -13,11 +13,15 @@ import com.newmedia.erxeslibrary.configuration.Helper;
 import com.newmedia.erxeslibrary.configuration.ReturnType;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 public class GetInteg {
     final static String TAG = "GETINTEG";
     private ErxesRequest ER;
     private Config config;
+    private boolean hasData;
+    private String email, phone;
+    private JSONObject jsonObject;
 
     public GetInteg(ErxesRequest ER, Activity context) {
         this.ER = ER;
@@ -25,8 +29,11 @@ public class GetInteg {
 
     }
 
-    public void run() {
-        Log.e(TAG, "run: " + config.brandCode );
+    public void run(boolean hasData, String email, String phone, JSONObject jsonObject) {
+        this.hasData = hasData;
+        this.email = email;
+        this.phone = phone;
+        this.jsonObject = jsonObject;
         ER.apolloClient.query(GetMessengerIntegrationQuery.builder()
                 .brandCode(config.brandCode)
                 .build()
@@ -41,23 +48,25 @@ public class GetInteg {
                     config.changeLanguage(response.data().getMessengerIntegration().languageCode());
                     Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
                     Helper.load_messengerData(response.data().getMessengerIntegration().messengerData());
+                    if (config.messengerdata != null) {
+                        if (!config.messengerdata.isShowLauncher()) {
+                            ER.setConnect(email, phone, true, jsonObject.toString());
+                        } else {
+                            config.initActivity(hasData, email, phone, jsonObject);
+                        }
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                ER.notefyAll(ReturnType.INTEGRATION_CHANGED, null, null);
             } else {
                 Log.e(TAG, "errors " + response.errors().toString());
-                ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onFailure(ApolloException e) {
-            ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.d(TAG, "failed ");
+            Log.e(TAG, "failed ");
             e.printStackTrace();
-
         }
     };
-
 }

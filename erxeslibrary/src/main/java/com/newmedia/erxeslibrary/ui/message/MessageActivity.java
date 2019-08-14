@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.ui.message;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Point;
@@ -224,16 +225,17 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getBackIcon(this, R.color.md_white_1000)).into(backImageView);
-        Glide.with(this).load(config.getLogoutIcon(this, R.color.md_white_1000)).into(logoutImageView);
-        Glide.with(this).load(config.getsendIcon(this, -1)).into(sendImageView);
-        Glide.with(this).load(config.getAttachmentIcon(this, -1)).into(attachmentImageView);
+        Glide.with(this).load(config.getBackIcon(this, config.getInColor(config.colorCode))).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this, config.getInColor(config.colorCode))).into(logoutImageView);
+        Glide.with(this).load(config.getsendIcon(this, 0)).into(sendImageView);
+        Glide.with(this).load(config.getAttachmentIcon(this, 0)).into(attachmentImageView);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         config = Config.getInstance(this);
+        config.setActivityConfig(this);
         erxesRequest = ErxesRequest.getInstance(config);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_messege);
@@ -268,8 +270,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
 
     public void logout() {
-        config.Logout();
-        finish();
+        config.Logout(this);
     }
 
     public void send_message(View view) {

@@ -24,6 +24,8 @@ import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -111,12 +113,12 @@ public class ErxesRequest {
         getGEO.run();
     }
 
-    public void getIntegration() {
+    public void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
         if (!isNetworkConnected()) {
             return;
         }
         GetInteg getIntegration = new GetInteg(this, activity);
-        getIntegration.run();
+        getIntegration.run(hasData,email,phone,jsonObject);
     }
 
     public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {

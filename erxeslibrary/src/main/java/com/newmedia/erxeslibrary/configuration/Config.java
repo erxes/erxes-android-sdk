@@ -1,15 +1,19 @@
 package com.newmedia.erxeslibrary.configuration;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
+
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
+
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
@@ -26,8 +30,12 @@ import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.model.Geo;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.User;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
+import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
+import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import org.json.JSONObject;
 
@@ -52,12 +60,12 @@ public class Config implements ErxesObserver {
     public int colorCode;
     public String conversationId = null;
     public String brandCode;
-    public boolean isMessengerOnline = false, notifyCustomer;
+    private boolean isMessengerOnline = false;
     private DataManager dataManager;
-    public Activity activity;
+    public Activity activity, activityConfig;
     public Context context;
     private ErxesRequest erxesRequest;
-    static private Config config;
+    private static Config config;
     public FormConnect formConnect;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
     public Geo geo;
@@ -66,7 +74,8 @@ public class Config implements ErxesObserver {
     public List<User> supporters = new ArrayList<>();
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
-    public boolean isFirstStart = false;
+    public boolean isFirstStart = false, requireAuth = false,
+            showChat = true, showLauncher = true, forceLogoutWhenResolve = false;
 
     public String convert_datetime(Long createDate) {
         Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
@@ -205,7 +214,7 @@ public class Config implements ErxesObserver {
         }
     }
 
-    static public Config getInstance(Activity activity) {
+    public static Config getInstance(Activity activity) {
         if (config == null) {
             config = new Config(activity);
             config.erxesRequest = ErxesRequest.getInstance(config);
@@ -223,6 +232,12 @@ public class Config implements ErxesObserver {
                 config.erxesRequest.set_client();
         }
         return config;
+    }
+
+    public void setActivityConfig(Activity activity) {
+        activityConfig = activity;
+        Log.e("TAG", "getInstance: " + activity.getClass().getName() );
+        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName() );
     }
 
     private Config(Activity activity) {
@@ -252,34 +267,30 @@ public class Config implements ErxesObserver {
     }
 
     public void Start() {
-        initializeIcon();
-        initializeFresco();
-        dataManager.setData(DataManager.isUser, false);
-        dataManager.setData(DataManager.email, null);
-        dataManager.setData(DataManager.phone, null);
-        dataManager.setData(DataManager.customData, null);
-        Intent a = new Intent(activity, ErxesActivity.class);
-        a.putExtra("hasData", false);
-        activity.startActivity(a);
+        checkRequired(false, null, null, new JSONObject());
     }
 
     public void Start(String email, String phone, JSONObject jsonObject) {
+        checkRequired(true, email, phone, jsonObject);
+    }
+
+    public void initActivity(boolean hasData, String email, String phone, JSONObject jsonObject) {
         initializeIcon();
         initializeFresco();
-        dataManager.setData(DataManager.isUser, true);
+        dataManager.setData(DataManager.isUser, hasData);
         dataManager.setData(DataManager.email, email);
         dataManager.setData(DataManager.phone, phone);
         dataManager.setData(DataManager.customData, jsonObject.toString());
         Intent a = new Intent(activity, ErxesActivity.class);
-        a.putExtra("hasData", true);
+        a.putExtra("hasData", hasData);
         a.putExtra("customData", jsonObject.toString());
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
         activity.startActivity(a);
     }
 
-    public void checkRequired() {
-
+    private void checkRequired(boolean hasData, String email, String phone, JSONObject jsonObject) {
+        erxesRequest.getIntegration(hasData, email, phone, jsonObject);
     }
 
     public void LoadDefaultValues() {
@@ -307,7 +318,7 @@ public class Config implements ErxesObserver {
     public CharSequence getHtml(String content) {
         Spanned htmlDescription;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            htmlDescription = Html.fromHtml(content,Html.FROM_HTML_MODE_LEGACY);
+            htmlDescription = Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY);
         } else {
             htmlDescription = Html.fromHtml(content);
         }
@@ -319,13 +330,26 @@ public class Config implements ErxesObserver {
         return dataManager.getDataS(DataManager.customerId) != null;
     }
 
-    public boolean Logout() {
+    public void Logout(Activity activity) {
         customerId = null;
         dataManager.setData(DataManager.customerId, null);
         dataManager.setData(DataManager.integrationId, null);
         dataManager.setData(DataManager.email, null);
         dataManager.setData(DataManager.phone, null);
-        return true;
+        if (activity.getClass().getName().contains("ConversationListActivity")) {
+            if (activityConfig.getClass().getName().contains("ConversationListActivity")) {
+                activity.startActivity(new Intent(activity, ErxesActivity.class));
+                activity.finish();
+            } else if (activityConfig.getClass().getName().contains("FaqActivity")) {
+                ((FaqActivity) activityConfig).logout();
+            } else if (activityConfig.getClass().getName().contains("FaqDetailActivity")) {
+                ((FaqDetailActivity) activityConfig).logout();
+            } else {
+                ((MessageActivity) activityConfig).logout();
+            }
+        } else {
+            activity.finish();
+        }
     }
 
     public boolean isNetworkConnected() {
@@ -381,23 +405,14 @@ public class Config implements ErxesObserver {
             return this;
         }
 
-        public Config build(Activity context1) {
-            Config t = Config.getInstance(context1);
+        public Config build(Activity activity) {
+            Config t = Config.getInstance(activity);
             t.Init(this.brand, this.apiHost, this.subscriptionHost, this.uploadHost);
             return t;
         }
     }
 
     private void initializeFresco() {
-        if (context != null) {
-            ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(context)
-                    .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
-                    .setResizeAndRotateEnabledForNetwork(true)
-                    .setDiskCacheEnabled(true)
-                    .setDownsampleEnabled(true)
-                    .build();
-            Fresco.initialize(context, imagePipelineConfig);
-        } else {
             ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(activity)
                     .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
                     .setResizeAndRotateEnabledForNetwork(true)
@@ -405,13 +420,10 @@ public class Config implements ErxesObserver {
                     .setDownsampleEnabled(true)
                     .build();
             Fresco.initialize(activity, imagePipelineConfig);
-        }
-
     }
 
     private void initializeIcon() {
-        if (context != null) Iconics.init(context);
-        else Iconics.init(activity);
+        Iconics.init(activity);
 
         GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
         erxesSDKGF.registerIcon("send", '\ueb09');
@@ -427,40 +439,40 @@ public class Config implements ErxesObserver {
         erxesSDKGF.registerIcon("briefcase", '\ue809');
         erxesSDKGF.registerIcon("cloudcomputing", '\ue816');
         erxesSDKGF.registerIcon("earthgrid", '\ue829');
-        erxesSDKGF.registerIcon("diagram",'\ue820');
+        erxesSDKGF.registerIcon("diagram", '\ue820');
         erxesSDKGF.registerIcon("compass", '\ue817');
         erxesSDKGF.registerIcon("idea", '\ue840');
         erxesSDKGF.registerIcon("diamond", '\ue821');
         erxesSDKGF.registerIcon("piggybank", '\ue86a');
-        erxesSDKGF.registerIcon("piechart",'\ue869');
+        erxesSDKGF.registerIcon("piechart", '\ue869');
         erxesSDKGF.registerIcon("scale", '\ue87e');
         erxesSDKGF.registerIcon("megaphone", '\ue851');
         erxesSDKGF.registerIcon("tools", '\ue895');
-        erxesSDKGF.registerIcon("umbrella",'\ue899');
+        erxesSDKGF.registerIcon("umbrella", '\ue899');
         erxesSDKGF.registerIcon("bar_chart", '\ue8aa');
         erxesSDKGF.registerIcon("star", '\ue88a');
         erxesSDKGF.registerIcon("head_1", '\ue8cd');
         erxesSDKGF.registerIcon("settings", '\ue880');
-        erxesSDKGF.registerIcon("users",'\ue927');
+        erxesSDKGF.registerIcon("users", '\ue927');
         erxesSDKGF.registerIcon("paintpalette", '\ue940');
         erxesSDKGF.registerIcon("stamp", '\ue94f');
         erxesSDKGF.registerIcon("flag", '\ue837');
         erxesSDKGF.registerIcon("phone_call", '\ue8ed');
-        erxesSDKGF.registerIcon("laptop",'\ue8d3');
+        erxesSDKGF.registerIcon("laptop", '\ue8d3');
         erxesSDKGF.registerIcon("dashboard", '\ue81f');
         erxesSDKGF.registerIcon("calculator", '\ue80b');
         erxesSDKGF.registerIcon("home", '\ue83e');
         erxesSDKGF.registerIcon("puzzle", '\ue872');
-        erxesSDKGF.registerIcon("medal",'\ue850');
+        erxesSDKGF.registerIcon("medal", '\ue850');
         erxesSDKGF.registerIcon("calendar", '\ue80c');
 
         erxesSDKGF.registerIcon("like", '\ue84b');
         erxesSDKGF.registerIcon("book", '\ue8ac');
         erxesSDKGF.registerIcon("clipboard", '\ue8b3');
-        erxesSDKGF.registerIcon("computer",'\ue8bb');
+        erxesSDKGF.registerIcon("computer", '\ue8bb');
         erxesSDKGF.registerIcon("paste", '\ue861');
         erxesSDKGF.registerIcon("folder", '\ue838');
-        erxesSDKGF.registerIcon("image_v",'\ueb90');
+        erxesSDKGF.registerIcon("image_v", '\ueb90');
 
         Iconics.registerFont(erxesSDKGF);
     }
@@ -543,55 +555,55 @@ public class Config implements ErxesObserver {
     }
 
     public Drawable getCancelIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24);
     }
 
     public Drawable getsendIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-send").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-send").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-send").sizeDp(24);
     }
 
     public Drawable getEmailIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24);
     }
 
     public Drawable getPhoneIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24);
     }
 
     public Drawable getPlusIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-plus_1").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-plus_1").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-plus_1").sizeDp(24);
     }
 
     public Drawable getBackIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-leftarrow").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-leftarrow").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-leftarrow").sizeDp(24);
     }
 
     public Drawable getLogoutIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-logout").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-logout").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-logout").sizeDp(24);
     }
 
     public Drawable getAttachmentIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
-            return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24).color(activity.getResources().getColor(colorCode));
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24);
     }
 
     public Drawable getImageVIcon(Activity activity, int colorCode) {
-        if (colorCode != -1)
+        if (colorCode != 0)
             return new IconicsDrawable(activity).icon("rxx-image_v").sizeDp(96).color(colorCode);
         else return new IconicsDrawable(activity).icon("rxx-image_v").sizeDp(96);
     }
