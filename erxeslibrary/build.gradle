@@ -58,21 +58,13 @@ dependencies {
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
+//    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation project(':repackaged:frescoLocal:fresco-2.0.0')
-    implementation project(':repackaged:frescoLocal:fbcore-2.0.0')
-    implementation project(':repackaged:frescoLocal:drawee-2.0.0')
-    implementation project(':repackaged:frescoLocal:imagepipeline-2.0.0')
-    implementation project(':repackaged:frescoLocal:imagepipeline-base-2.0.0')
-    implementation project(':repackaged:frescoLocal:nativeimagetranscoder-2.0.0')
-    implementation project(':repackaged:frescoLocal:soloader-0.6.0')
-    implementation project(':repackaged:frescoLocal:bolts-tasks-1.4.0')
+    implementation 'com.github.stfalcon:frescoimageviewer:0.5.0'
+    implementation 'com.facebook.fresco:fresco:2.0.0'
 
-    implementation project(':repackaged:frescoimageviewerLocal:frescoimageviewer-0.5.0')
-    implementation project(':repackaged:frescoimageviewerLocal:photodraweeview-2.0.0')
 
     compileOnly 'org.jetbrains:annotations:13.0'
     testCompileOnly 'org.jetbrains:annotations:13.0'
