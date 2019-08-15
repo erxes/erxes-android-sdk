@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/SUPPORT" />
 
-                <com.google.android.material.tabs.TabItem
+                <android.support.design.widget.TabItem
                     android:id="@+id/tabItem2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
