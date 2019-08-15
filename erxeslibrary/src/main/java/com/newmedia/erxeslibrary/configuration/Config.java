@@ -1,6 +1,5 @@
 package com.newmedia.erxeslibrary.configuration;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -8,9 +7,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 
-import androidx.annotation.NonNull;
-import androidx.core.graphics.ColorUtils;
 
+import android.support.annotation.NonNull;
+import android.support.v4.graphics.ColorUtils;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;

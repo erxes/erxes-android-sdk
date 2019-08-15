@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.util.Log;
 

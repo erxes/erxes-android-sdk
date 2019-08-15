@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.net.Uri;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,8 +18,6 @@ import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ProgressRequestBody;
 import com.newmedia.erxeslibrary.FileInfo;
 import com.newmedia.erxeslibrary.R;
-
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;

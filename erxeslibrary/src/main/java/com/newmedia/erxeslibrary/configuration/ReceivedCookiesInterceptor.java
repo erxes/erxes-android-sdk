@@ -3,7 +3,7 @@ package com.newmedia.erxeslibrary.configuration;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 
 import java.io.IOException;
 import java.util.HashSet;

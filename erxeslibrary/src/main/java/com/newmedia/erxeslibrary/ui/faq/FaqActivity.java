@@ -3,10 +3,10 @@ package com.newmedia.erxeslibrary.ui.faq;
 import android.app.Service;
 import android.graphics.Point;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;

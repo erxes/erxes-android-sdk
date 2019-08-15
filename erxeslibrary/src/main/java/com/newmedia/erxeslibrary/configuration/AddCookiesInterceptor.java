@@ -2,7 +2,7 @@ package com.newmedia.erxeslibrary.configuration;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
