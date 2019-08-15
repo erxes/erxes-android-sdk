@@ -30,11 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.CipherSuite;
-import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
-import okhttp3.TlsVersion;
-//import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";

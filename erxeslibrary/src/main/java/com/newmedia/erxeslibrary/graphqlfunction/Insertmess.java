@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -27,6 +28,9 @@ public class Insertmess {
         config = Config.getInstance(context);
     }
     public void run( String message, final String conversationId,List<AttachmentInput> list){
+        if (TextUtils.isEmpty(message)) {
+            message = "This message has an attachment";
+        }
         this.message = message;
         this.conversationId = conversationId;
         InsertMessageMutation.Builder temp =InsertMessageMutation.builder().
@@ -45,8 +49,7 @@ public class Insertmess {
             if(response.hasErrors()) {
                 Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,conversationId,response.errors().get(0).message());
-            }
-            else {
+            } else {
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
                 config.conversationMessages.add(a);
                 ER.notefyAll(ReturnType.Mutation,conversationId,null);
