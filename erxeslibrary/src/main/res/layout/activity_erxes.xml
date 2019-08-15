@@ -91,7 +91,7 @@
                         android:layout_marginLeft="25dp"
                         android:layout_marginStart="25dp" />
 
-                    <androidx.cardview.widget.CardView
+                    <android.support.v7.widget.CardView
                         android:id="@+id/smsgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
@@ -128,9 +128,9 @@
                                 android:textColor="#000"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </android.support.v7.widget.CardView>
 
-                    <androidx.cardview.widget.CardView
+                    <android.support.v7.widget.CardView
                         android:id="@+id/mailgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
@@ -164,11 +164,11 @@
                                 android:textColor="#fff"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
-                    </androidx.cardview.widget.CardView>
+                    </android.support.v7.widget.CardView>
 
                 </RelativeLayout>
 
-                <androidx.cardview.widget.CardView
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/margin_top"
@@ -239,7 +239,7 @@
                         </RelativeLayout>
 
                     </RelativeLayout>
-                </androidx.cardview.widget.CardView>
+                </android.support.v7.widget.CardView>
             </LinearLayout>
 
             <include layout="@layout/loader_view" />

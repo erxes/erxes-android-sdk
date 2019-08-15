@@ -190,14 +190,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         new DisposableSubscriber<Response<ConversationChangedSubscription.Data>>() {
                             @Override
                             public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
-                                runOnUiThread(() -> {
                                     if (!dataResponse.hasErrors()) {
                                         if (dataResponse.data() != null &&
                                                 dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
                                             config.Logout(ConversationListActivity.this);
                                         }
                                     }
-                                });
                             }
 
                             @Override

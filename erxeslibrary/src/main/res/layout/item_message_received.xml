@@ -44,7 +44,7 @@
                     android:layout_margin="5dp" />
             </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/fileRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
                 android:paddingBottom="10dp"
                 android:visibility="gone">
 
-            </androidx.recyclerview.widget.RecyclerView>
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
 
         <TextView

@@ -10,7 +10,7 @@
     android:orientation="vertical"
     tools:context=".ui.message.MessageActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/pattern_repeat"
@@ -109,10 +109,10 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </android.support.constraint.ConstraintLayout>
         </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -125,14 +125,14 @@
             app:layout_constraintTop_toBottomOf="@+id/info_header"
             app:layout_constraintVertical_bias="1.0">
 
-            <androidx.recyclerview.widget.RecyclerView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/reyclerview_message_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/messageBackground"
                 android:paddingLeft="@dimen/main_margin"
                 android:paddingRight="@dimen/main_margin" />
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <View
             android:layout_width="match_parent"
@@ -166,7 +166,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/chatgroup" />
 
-        <androidx.cardview.widget.CardView
+        <android.support.v7.widget.CardView
             android:id="@+id/chatgroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -230,6 +230,6 @@
                         android:layout_height="20dp" />
                 </LinearLayout>
             </RelativeLayout>
-        </androidx.cardview.widget.CardView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+    </android.support.constraint.ConstraintLayout>
 </LinearLayout>

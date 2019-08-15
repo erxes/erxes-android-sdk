@@ -28,7 +28,7 @@
                 android:padding="10dp"
                 android:textColor="@color/md_white_1000"/>
 
-            <androidx.recyclerview.widget.RecyclerView
+            <android.support.v7.widget.RecyclerView
                 android:id="@+id/fileRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,7 +37,7 @@
                 android:paddingLeft="10dp"
                 android:paddingBottom="10dp">
 
-            </androidx.recyclerview.widget.RecyclerView>
+            </android.support.v7.widget.RecyclerView>
         </LinearLayout>
 
         <TextView
