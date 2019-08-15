@@ -248,8 +248,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         if (config.messengerdata.isShowChat()) {
             erxesRequest.getConversations();
         }
-        erxesRequest.getLead();
-        erxesRequest.getGEO();
+
         config.conversationId = null;
 
         dataManager.setData("chat_is_going", true);
@@ -319,6 +318,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
 
         erxesRequest.getSupporters();
+        erxesRequest.getLead();
+        erxesRequest.getGEO();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);

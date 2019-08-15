@@ -122,7 +122,6 @@
                         android:id="@+id/imageLead"
                         android:layout_width="90dp"
                         android:layout_height="90dp"
-                        android:src="@drawable/icon"
                         android:layout_marginRight="10dp"/>
 
                     <TextView
@@ -156,9 +155,7 @@
             android:id="@+id/getLeadCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="16dp"
+            android:layout_margin="8dp"
             android:visibility="gone"
             android:shape="ring"
             app:cardCornerRadius="@dimen/chooser_raduis"
