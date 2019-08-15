@@ -2,23 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="bottom"
     android:background="#80000000"
-    android:id="@+id/linearlayout"
+    android:gravity="bottom"
+    android:orientation="vertical"
     tools:context=".ui.conversations.ConversationListActivity">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:background="@drawable/cornerbackground"
-        android:id="@+id/container">
+        android:orientation="vertical">
 
-        <include android:id="@+id/info_header"
-            layout="@layout/con_header"/>
+        <include
+            android:id="@+id/info_header"
+            layout="@layout/con_header" />
 
         <View
             android:layout_width="match_parent"
@@ -30,45 +31,48 @@
             android:id="@+id/tabsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/info_header"
-            android:orientation="vertical">
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="5dp"
-            app:tabIndicatorColor="@color/colorPrimary"
-            app:tabIndicatorHeight="2dp"
-            app:tabRippleColor="@color/md_deep_purple_300"
-            app:tabInlineLabel="true"
-            app:tabSelectedTextColor="@color/colorPrimary"
-            app:tabMode="fixed">
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/SUPPORT" />
+            app:layout_constraintTop_toBottomOf="@+id/info_header">
 
-            <com.google.android.material.tabs.TabItem
-                android:id="@+id/tabItem2"
-                android:layout_width="wrap_content"
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tabs"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/FAQ" />
-        </com.google.android.material.tabs.TabLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/toolbarshadow"/>
+                android:elevation="5dp"
+                app:tabIndicatorColor="@color/colorPrimary"
+                app:tabIndicatorHeight="2dp"
+                app:tabInlineLabel="true"
+                app:tabMode="fixed"
+                app:tabRippleColor="@color/md_deep_purple_300"
+                app:tabSelectedTextColor="@color/colorPrimary">
+
+                <android.support.design.widget.TabItem
+                    android:id="@+id/tabItem"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/SUPPORT" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:id="@+id/tabItem2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/FAQ" />
+            </android.support.design.widget.TabLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:background="@drawable/toolbarshadow" />
         </LinearLayout>
+
         <com.newmedia.erxeslibrary.CustomViewPager
             android:id="@+id/viewpager"
-            app:layout_constraintTop_toBottomOf="@+id/tabsContainer"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabsContainer" />
 
 
     </android.support.constraint.ConstraintLayout>
