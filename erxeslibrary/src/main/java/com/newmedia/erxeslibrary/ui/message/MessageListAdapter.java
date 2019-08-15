@@ -219,7 +219,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
             timeText.setText(config.Message_datetime(message.createdAt));
-            webView.setBackgroundColor(activity.getResources().getColor(R.color.md_white_1000));
+            webView.setBackgroundColor(activity.getResources().getColor(R.color.messageItemBG));
             webView.loadData(message.content,null,"UTF-8");
 
             if (message.user != null) {

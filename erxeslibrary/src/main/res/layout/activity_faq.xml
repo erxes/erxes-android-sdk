@@ -23,7 +23,7 @@
             android:background="@color/colorPrimary"
             app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/pattern_repeat"
@@ -95,7 +95,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </android.support.constraint.ConstraintLayout>
         </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
 
         <android.support.v7.widget.RecyclerView

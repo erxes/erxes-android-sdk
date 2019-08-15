@@ -1,10 +1,10 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle" >
-            <stroke android:color="@color/md_grey_500"
+            <stroke android:color="@color/messageItemBG"
                 android:width="1dp"/>
             <solid
-                android:color="@color/md_white_1000" >
+                android:color="@color/messageItemBG" >
             </solid>
             <corners
                 android:topRightRadius="16dp"
