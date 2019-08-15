@@ -278,7 +278,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             return;
         }
         if (!edittext_chatbox.getText().toString().equalsIgnoreCase("") ||
-                gFilePart.get().size() > 0) {
+                gFilePart.get() != null && gFilePart.get().size() > 0) {
             if (config.conversationId != null) {
                 erxesRequest.InsertMessage(edittext_chatbox.getText().toString(), config.conversationId, gFilePart.get());
             } else {

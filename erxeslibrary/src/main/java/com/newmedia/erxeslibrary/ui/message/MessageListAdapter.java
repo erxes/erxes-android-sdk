@@ -10,6 +10,7 @@ import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -105,8 +106,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
-
         ConversationMessage message;
 
         if (config.messengerdata.getWelcome(config.language) != null && (position == 0)) {
@@ -189,10 +188,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         fileRecyclerView.setLayoutManager(gridLayoutManager);
                         fileRecyclerView.setHasFixedSize(true);
                         fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
+                    } else {
+                        fileRecyclerView.setVisibility(View.GONE);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                fileRecyclerView.setVisibility(View.GONE);
             }
 
         }
@@ -203,7 +206,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView messageText;
         ImageView profileImage;
         RecyclerView fileRecyclerView;
-        WebView webView;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -212,15 +214,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
-            webView = itemView.findViewById(R.id.webView);
-
         }
 
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
+            if (message.content.contains("href"))
+                messageText.setMovementMethod(LinkMovementMethod.getInstance());
+            else messageText.setMovementMethod(null);
+
             timeText.setText(config.Message_datetime(message.createdAt));
-            webView.setBackgroundColor(activity.getResources().getColor(R.color.messageItemBG));
-            webView.loadData(message.content,null,"UTF-8");
 
             if (message.user != null) {
                 Glide.with(activity).load(message.user.avatar)
@@ -235,7 +237,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
 
-            timeText.setText(config.Message_datetime(message.createdAt));
             if (!TextUtils.isEmpty(message.attachments)) {
                 try {
                     JSONArray jsonArray = new JSONArray(message.attachments);
@@ -260,10 +261,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         fileRecyclerView.setLayoutManager(gridLayoutManager);
                         fileRecyclerView.setHasFixedSize(true);
                         fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
+                    } else {
+                        fileRecyclerView.setVisibility(View.GONE);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            } else {
+                fileRecyclerView.setVisibility(View.GONE);
             }
 
         }
