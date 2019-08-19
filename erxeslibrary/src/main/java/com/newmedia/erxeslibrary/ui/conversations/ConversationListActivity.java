@@ -43,6 +43,7 @@ import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -106,6 +107,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
                     case ReturnType.LEAD:
+                        Log.d("GetLead","called");
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLead();
                         break;
@@ -274,6 +276,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         erxesRequest = ErxesRequest.getInstance(config);
         config = Config.getInstance(this);
+
+        Helper.changeLanguage(this,config.language);
         setContentView(R.layout.activity_conversation);
 
         viewpager = findViewById(R.id.viewpager);
@@ -348,6 +352,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                 }
             }
         });
+
     }
 
     private void initIcon() {

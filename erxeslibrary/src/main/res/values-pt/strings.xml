@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Welcome">Bem vindo!</string>
+    <string name="Close">Fechar</string>
+    <string name="Offline">Offline</string>
+    <string name="Online">Online</string>
+    <string name="Send_a_message">Enviar uma mensagem</string>
+    <string name="Send">Enviar</string>
+    <string name="Support">Suporte</string>
+    <string name="Faq">Faq</string>
+    <string name="Start_new_conversation">Iniciar nova conversa</string>
+    <string name="Write_a_reply">Escreva uma resposta</string>
+    <string name="Conversation">Conversa</string>
+    <string name="with_Support_staff">com a equipe de suporte</string>
+    <string name="Click_to_select_a_date">Clique para selecionar uma data</string>
+    <string name="Thanks_for_your_message">Obrigado pela sua mensagem. Responderemos assim que pudermos.</string>
+    <string name="Create_new">Criar novo</string>
+    <string name="Written_by">Escrito por</string>
+    <string name="Modified">Modificado </string>
+    <string name="Created">Criado </string>
+    <string name="There_are">Existem </string>
+    <string name="articles_in_this_category">artigos desta categoria</string>
+    <string name="Back_to_categories">Voltar as categorias</string>
+    <string name="Back_to_top">Voltar ao inicio</string>
+    <string name="Back_to_articles">Voltar aos artigos</string>
+    <string name="Contact">Contato</string>
+    <string name="Give_us_your_contact_information">Envie suas informações de contato</string>
+    <string name="Email">Email</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">email@domain.com</string>
+    <string name="phone_number">Numero de telefone</string>
+    <string name="Support_staff">Equipe de suporte</string>
+    <string name="Conversations">Conversas</string>
+    <string name="Recent_conversations">Conversas Recentes </string>
+    <string name="with_Support_staffs">com equipes de suporte</string>
+    <string name="Talk_with_support_staff">Fale com a equipe de suporte</string>
+    <string name="Do_you_want_to_end_this_conversation">Você quer terminar esta conversa ?</string>
+    <string name="Welcome_description">Deixe-me saber se você tem alguma dúvida! Ficaremos felizes em ajudar</string>
+    <string name="Failed">Falhou</string>
+    <string name="No_articles_found">Nenhum artigo encontrado</string>
+    <string name="Search">Procurar</string>
+    <string name="End_conversation">encerrar conversa</string>
+</resources>

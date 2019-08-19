@@ -29,7 +29,7 @@
                 android:layout_centerInParent="true"
                 android:layout_margin="20dp"
                 android:visibility="invisible"
-                android:text="@string/contact"
+                android:text="@string/Contact"
                 android:textColor="#fff"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -70,7 +70,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="@string/contact_info"
+                    android:text="@string/Give_us_your_contact_information"
                     android:textColor="#686666"
                     android:textSize="@dimen/chooser_font_size" />
 
@@ -124,7 +124,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="center_horizontal"
-                                android:text="@string/sms"
+                                android:text="@string/phone_number"
                                 android:textColor="#000"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
@@ -160,7 +160,7 @@
                                 android:id="@+id/email_button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/email"
+                                android:text="@string/Email"
                                 android:textColor="#fff"
                                 android:textSize="@dimen/chooser_font_size" />
                         </LinearLayout>
@@ -194,7 +194,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@color/md_white_1000"
-                                android:hint="@string/email_hint"
+                                android:hint="@string/email_domain_com"
                                 android:inputType="textEmailAddress"
                                 android:maxLines="1"
                                 android:paddingLeft="20dp"
@@ -209,7 +209,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="20dp"
                                 android:background="@color/md_white_1000"
-                                android:hint="@string/sms"
+                                android:hint="@string/phone_number"
                                 android:inputType="phone"
                                 android:maxLines="1"
                                 android:paddingTop="10dp"

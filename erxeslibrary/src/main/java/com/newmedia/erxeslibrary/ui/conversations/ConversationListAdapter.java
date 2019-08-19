@@ -99,10 +99,10 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                         .into(holder.circleImageView);
 
             Long createDate = Long.valueOf(message.createdAt);
-            holder.date.setText(config.convert_datetime(createDate));
+            holder.date.setText(config.conversationDate(createDate));
             holder.parent.setTag(position);
         } else {
-            holder.name.setText("Support staff");
+            holder.name.setText(R.string.Support_staff);
             Glide.with(activity).load(R.drawable.avatar)
                     .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)

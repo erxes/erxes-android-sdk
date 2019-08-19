@@ -23,4 +23,48 @@
     <string name="FAQ">FAQ</string>
     <string name="start_new_conversation">Start new conversation</string>
     <string name="talk_with_support_staff">Talk with support staff</string>
+
+
+
+
+    <string name="Welcome">Welcome!</string>
+    <string name="Close">Close</string>
+    <string name="Offline">Offline</string>
+    <string name="Online">Online</string>
+    <string name="Send_a_message">Send a message</string>
+    <string name="Send">Send</string>
+    <string name="Support">Support</string>
+    <string name="Faq">Faq</string>
+    <string name="Start_new_conversation">Start new conversation</string>
+    <string name="Write_a_reply">Write a reply</string>
+    <string name="Conversation">Conversation</string>
+    <string name="with_Support_staff">with Support staff</string>
+    <string name="Click_to_select_a_date">with Support staff</string>
+    <string name="Thanks_for_your_message">Thanks for your message. We will respond as soon as we can</string>
+    <string name="Create_new">Create new</string>
+    <string name="Written_by">Written by</string>
+    <string name="Modified">Modified</string>
+    <string name="Created">Created</string>
+    <string name="There_are">There are </string>
+    <string name="articles_in_this_category">articles in this category</string>
+    <string name="Back_to_categories">Back to categories</string>
+    <string name="Back_to_top">Back to top</string>
+    <string name="Back_to_articles">Back to articles</string>
+    <string name="Contact">Contact</string>
+    <string name="Give_us_your_contact_information">Give us your contact information</string>
+    <string name="Email">Email</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">email@domain.com</string>
+    <string name="phone_number">phone number</string>
+    <string name="Support_staff">Support staff</string>
+    <string name="Conversations">Conversations</string>
+    <string name="Recent_conversations">Recent conversations</string>
+    <string name="with_Support_staffs">with Support staffs</string>
+    <string name="Talk_with_support_staff">Talk with support staff</string>
+    <string name="Do_you_want_to_end_this_conversation">Do you want to end this conversation ?</string>
+    <string name="Welcome_description">Let me know if you have any questions! We\'d be happy to help</string>
+    <string name="Failed">Failed</string>
+    <string name="No_articles_found">No articles found</string>
+    <string name="Search">Search</string>
+    <string name="End_conversation">End conversation</string>
 </resources>

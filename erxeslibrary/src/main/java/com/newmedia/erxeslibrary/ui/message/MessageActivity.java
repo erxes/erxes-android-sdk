@@ -112,7 +112,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private void subscription() {
         MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
         header_profile_change();
-        isMessenOnlineImage.setText(R.string.online);
+        isMessenOnlineImage.setText(R.string.Online);
         if (adapter.getItemCount() > 2 && adapter.refresh_data())
             mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
         swipeRefreshLayout.setRefreshing(false);
@@ -154,7 +154,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         if (config.supporters.size() > 1) bind(config.supporters.get(1), profile2);
         else profile2.setVisibility(View.INVISIBLE);
 
-        isMessenOnlineImage.setText(config.messenger_status_check() ? R.string.online : R.string.offline);
+        isMessenOnlineImage.setText(config.messenger_status_check() ? R.string.Online : R.string.Offline);
 
 //        isMessenOnlineImage.setVisibility(
 //                (Config.isNetworkConnected()&&Config.IsMessengerOnline) ?View.VISIBLE:View.INVISIBLE);

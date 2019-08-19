@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.configuration;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -163,10 +164,10 @@ public class Config implements ErxesObserver {
                 new SimpleDateFormat("MMM dd, yyyy h:mm a");
 
 
-        if (this.language.equalsIgnoreCase("en")) {
-            return format2.format(date);
-        } else {
+        if (this.language.equalsIgnoreCase("mn")) {
             return format.format(date);
+        } else {
+            return format2.format(date);
         }
 
 
@@ -189,10 +190,10 @@ public class Config implements ErxesObserver {
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
                 new SimpleDateFormat("MMM dd / yyyy h:mm a");
-        if (this.language.equalsIgnoreCase("en")) {
-            return format2.format(date);
-        } else {
+        if (this.language.equalsIgnoreCase("mn")) {
             return format.format(date);
+        } else {
+            return format2.format(date);
         }
     }
 
@@ -201,15 +202,15 @@ public class Config implements ErxesObserver {
         date.setTime(createdDate);
 
         SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat("h:mm a");
+                new SimpleDateFormat("h:mm a",Locale.GERMAN);
         return simpleDateFormat.format(date);
     }
 
     @Override
     public void notify(int returnType, String conversationId, String message) {
         if (ReturnType.LOGIN_SUCCESS == returnType) {
-//            Intent a = new Intent(activity, ErxesActivity.class);
-//            activity.startActivity(a);
+            Intent a = new Intent(activity, ErxesActivity.class);
+            activity.startActivity(a);
         }
     }
 
@@ -219,6 +220,7 @@ public class Config implements ErxesObserver {
             config.erxesRequest = ErxesRequest.getInstance(config);
             if (config.HOST_3100 != null)
                 config.erxesRequest.set_client();
+            config.erxesRequest.add(config);
         }
         return config;
     }
@@ -229,6 +231,7 @@ public class Config implements ErxesObserver {
             config.erxesRequest = ErxesRequest.getInstance(config);
             if (config.HOST_3100 != null)
                 config.erxesRequest.set_client();
+            config.erxesRequest.add(config);
         }
         return config;
     }
@@ -364,17 +367,16 @@ public class Config implements ErxesObserver {
         if (lang == null || lang.equalsIgnoreCase(""))
             return;
 
-        this.language = lang;
+        this.language = lang.substring(0,2);
         dataManager.setData(DataManager.language, this.language);
 
         Locale myLocale;
         myLocale = new Locale(lang);
-
         Locale.setDefault(myLocale);
         android.content.res.Configuration config = new android.content.res.Configuration();
         config.locale = myLocale;
-        activity.getResources().updateConfiguration(config,
-                activity.getResources().getDisplayMetrics());
+        activity.getBaseContext().getResources().updateConfiguration(config,
+                activity.getBaseContext().getResources().getDisplayMetrics());
 
     }
 

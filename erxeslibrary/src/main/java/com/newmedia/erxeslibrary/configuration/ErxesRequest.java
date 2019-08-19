@@ -5,6 +5,13 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Operation;
+import com.apollographql.apollo.api.ResponseField;
+import com.apollographql.apollo.cache.normalized.CacheKey;
+import com.apollographql.apollo.cache.normalized.CacheKeyResolver;
+import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory;
+import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper;
+import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 import com.newmedia.erxes.basic.type.AttachmentInput;
@@ -24,13 +31,16 @@ import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
@@ -56,8 +66,8 @@ public class ErxesRequest {
     }
 
     public void set_client() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -73,17 +83,46 @@ public class ErxesRequest {
 //                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
 //                .build();
 
+        ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(this.activity, "db_cache");
+
+        // Create NormalizedCacheFactory
+        NormalizedCacheFactory cacheFactory = new SqlNormalizedCacheFactory(apolloSqlHelper);
+
+        // Create the cache key resolver, this example works well when all types have globally unique ids.
+        CacheKeyResolver resolver = new CacheKeyResolver() {
+            @NotNull
+            @Override
+            public CacheKey fromFieldRecordSet(@NotNull ResponseField field, @NotNull Map<String, Object> recordSet) {
+                return formatCacheKey((String) recordSet.get("id"));
+            }
+
+            @NotNull
+            @Override
+            public CacheKey fromFieldArguments(@NotNull ResponseField field, @NotNull Operation.Variables variables) {
+                return formatCacheKey((String) field.resolveArgument("id", variables));
+            }
+
+            private CacheKey formatCacheKey(String id) {
+                if (id == null || id.isEmpty()) {
+                    return CacheKey.NO_KEY;
+                } else {
+                    return CacheKey.from(id);
+                }
+            }
+        };
+
         if (config.HOST_3100 != null) {
             okHttpClient = new OkHttpClient.Builder()
 //                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-//                    .addInterceptor(logging)
+                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.activity))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
                     .build();
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.HOST_3100)
+                    .normalizedCache(cacheFactory, resolver)
                     .okHttpClient(okHttpClient)
                     .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())

@@ -57,7 +57,7 @@ dependencies {
     }
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
-//    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.12.3'
 
     implementation 'com.mikepenz:iconics-core:3.0.4@aar'
 

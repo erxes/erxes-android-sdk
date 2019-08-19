@@ -1,6 +1,8 @@
 package com.newmedia.erxeslibrary.configuration;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -19,6 +21,7 @@ import com.newmedia.erxeslibrary.R;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Helper {
@@ -117,7 +120,10 @@ public class Helper {
             container.requestLayout();
         }
         return size;
-
     }
-
+    static public void changeLanguage(Context context,String language){
+        Configuration config = new android.content.res.Configuration();
+        config.locale  = new Locale(language);
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+    }
 }

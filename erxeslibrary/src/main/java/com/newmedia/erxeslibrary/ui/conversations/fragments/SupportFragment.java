@@ -144,7 +144,7 @@ public class SupportFragment extends Fragment {
         leadCardView.setVisibility(View.VISIBLE);
         titleLead.setText(config.formConnect.getLead().getTitle());
         descriptionLead.setText(config.formConnect.getLeadIntegration().getFormData().getString("thankContent"));
-        textJoinLead.setText("Create new");
+        textJoinLead.setText(R.string.Create_new);
         imageLead.setVisibility(View.GONE);
 //                    joinLeadCardView.setCardBackgroundColor(Color.parseColor(config.formConnect.getLead().getThemeColor()));
     }

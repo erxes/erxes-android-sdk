@@ -31,10 +31,10 @@ public class TabAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position){
-            case 0: return context.getResources().getString(R.string.SUPPORT);
-            case 1: return context.getResources().getString(R.string.FAQ);
+            case 0: return context.getResources().getString(R.string.Support);
+            case 1: return context.getResources().getString(R.string.Faq);
             default:
-                return context.getResources().getString(R.string.FAQ);
+                return context.getResources().getString(R.string.Faq);
         }
     }
 
