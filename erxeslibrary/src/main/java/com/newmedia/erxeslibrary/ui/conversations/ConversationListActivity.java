@@ -8,6 +8,7 @@ import android.net.Uri;
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
+
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -25,24 +26,23 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.newmedia.erxes.subscription.ConversationChangedSubscription;
-import com.newmedia.erxeslibrary.CustomViewPager;
+import com.newmedia.erxeslibrary.helper.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesHelper;
-import com.newmedia.erxeslibrary.configuration.Returntype;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.utils.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.ListenerService;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.connection.service.ListenerService;
+import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
+import com.newmedia.erxeslibrary.ui.ErxesActivity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -167,11 +167,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         if (erxesRequest.apolloClient == null)
             return;
         if (conversationId != null) {
-                opensourceChangedCall = erxesRequest.apolloClient
-                        .subscribe(ConversationChangedSubscription.builder()
-                                .id(conversationId)
-                                .build());
-                initChangedConversation();
+            opensourceChangedCall = erxesRequest.apolloClient
+                    .subscribe(ConversationChangedSubscription.builder()
+                            .id(conversationId)
+                            .build());
+            initChangedConversation();
         }
     }
 
@@ -183,12 +183,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         new DisposableSubscriber<Response<ConversationChangedSubscription.Data>>() {
                             @Override
                             public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
-                                    if (!dataResponse.hasErrors()) {
-                                        if (dataResponse.data() != null &&
-                                                dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
-                                            config.Logout(ConversationListActivity.this);
-                                        }
+                                if (!dataResponse.hasErrors()) {
+                                    if (dataResponse.data() != null &&
+                                            dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
+                                        config.Logout(ConversationListActivity.this);
                                     }
+                                }
                             }
 
                             @Override
@@ -245,6 +245,21 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             erxesRequest.getConversations();
         }
 
+        if (config.formConnect != null && tabAdapter != null) {
+            ((SupportFragment) tabAdapter.getItem(0)).setLead();
+        }
+        if (config.supporters != null && config.supporters.size() > 0) {
+            if (supporterView != null && supporterView.getAdapter() != null)
+                supporterView.getAdapter().notifyDataSetChanged();
+        }
+        if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
+            if (tabLayout != null && tabsContainer.getVisibility() == View.GONE) {
+                tabsContainer.setVisibility(View.VISIBLE);
+                if (tabAdapter != null)
+                    ((FaqFragment) tabAdapter.getItem(1)).init();
+            }
+        }
+
         config.conversationId = null;
 
         dataManager.setData("chatIsGoing", true);
@@ -271,7 +286,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         erxesRequest = ErxesRequest.getInstance(config);
         config = Config.getInstance(this);
 
-        ErxesHelper.changeLanguage(this,config.language);
+        ErxesHelper.changeLanguage(this, config.language);
         setContentView(R.layout.activity_conversation);
 
         CustomViewPager viewpager = findViewById(R.id.viewpager);
@@ -302,26 +317,25 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         viewpager.setPagingEnabled(false);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
 
-
         viewpager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewpager);
         tabLayout.setSelectedTabIndicatorColor(config.colorCode);
         tabLayout.setTabTextColors(getResources().getColor(R.color.md_grey_500), config.colorCode);
 
+        erxesRequest.getSupporters();
+        erxesRequest.getLead();
+        erxesRequest.getFAQ();
+        init();
+
         if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
             tabsContainer.setVisibility(View.VISIBLE);
         }
-
-        init();
 
         supporterView.setAdapter(new SupportAdapter(this, config.supporters));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
         ErxesHelper.display_configure(this, container, "#66000000");
 
-
-        erxesRequest.getSupporters();
-        erxesRequest.getLead();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
@@ -358,7 +372,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void init() {
-        erxesRequest.getFAQ();
         date.setText(config.now());
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
             title.setText(config.messengerdata.getMessages().getGreetings().getTitle());

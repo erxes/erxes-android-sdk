@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:id="@+id/container"
         android:background="@drawable/cornerbackground">
-        <com.newmedia.erxeslibrary.customeview.RoundedCornerLayout
+        <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
             android:id="@+id/info_header"
             app:layout_constraintTop_toTopOf="parent"
             android:background="@color/colorPrimary"
@@ -67,7 +67,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
             </android.support.constraint.ConstraintLayout>
-        </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
+        </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
         <LinearLayout
             app:layout_constraintTop_toBottomOf="@id/info_header"

@@ -1,7 +1,8 @@
-package com.newmedia.erxeslibrary.helper;
+package com.newmedia.erxeslibrary.connection.helper;
 
 import com.apollographql.apollo.response.CustomTypeAdapter;
 import com.apollographql.apollo.response.CustomTypeValue;
+import com.newmedia.erxeslibrary.helper.Json;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;

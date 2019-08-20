@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.graphqlfunction;
+package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 
@@ -8,7 +8,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.FaqGetQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.Returntype;
+import com.newmedia.erxeslibrary.utils.Returntype;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 
 import io.reactivex.Observer;

@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/cornerbackground">
 
-        <com.newmedia.erxeslibrary.customeview.RoundedCornerLayout
+        <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
             android:id="@+id/info_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,7 +110,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </android.support.constraint.ConstraintLayout>
-        </com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
+        </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"

@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.configuration;
+package com.newmedia.erxeslibrary.model;
 
 import com.newmedia.erxeslibrary.helper.Json;
 

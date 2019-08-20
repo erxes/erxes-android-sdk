@@ -115,6 +115,7 @@ public class SupportFragment extends Fragment {
             Json leadObject = config.formConnect.getLead().getCallout();
             if (leadObject != null) {
                 leadCardView.setVisibility(View.VISIBLE);
+                getLeadCardView.setVisibility(View.GONE);
                 if (!TextUtils.isEmpty(leadObject.getString("featuredImage")) &&
                         leadObject.getString("featuredImage").contains("http")) {
                     Glide.with(this)

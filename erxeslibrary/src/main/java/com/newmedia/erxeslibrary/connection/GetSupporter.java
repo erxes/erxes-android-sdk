@@ -1,19 +1,15 @@
-package com.newmedia.erxeslibrary.graphqlfunction;
+package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
-import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.MessengerSupportersQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.Returntype;
+import com.newmedia.erxeslibrary.utils.Returntype;
 import com.newmedia.erxeslibrary.model.User;
-
-import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;

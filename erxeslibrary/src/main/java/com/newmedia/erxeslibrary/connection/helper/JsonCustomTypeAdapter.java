@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.configuration;
+package com.newmedia.erxeslibrary.connection.helper;
 
 
 import com.apollographql.apollo.response.CustomTypeAdapter;

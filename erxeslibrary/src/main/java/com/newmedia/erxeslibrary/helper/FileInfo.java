@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.helper;
 
 import android.content.Context;
 import android.database.Cursor;

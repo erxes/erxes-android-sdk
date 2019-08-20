@@ -1,6 +1,5 @@
 package com.newmedia.erxeslibrary.configuration;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +21,8 @@ import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.GenericFont;
 import com.newmedia.erxes.basic.type.FieldValueInput;
-import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.model.Messengerdata;
+import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
@@ -31,12 +31,11 @@ import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
-import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
+import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import org.json.JSONObject;
 
-import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -46,25 +45,9 @@ import java.util.Locale;
 
 public class Config {
 
-    private Config(Context context) {
-        this.context = context;
-        dataManager = DataManager.getInstance(context);
-        LoadDefaultValues();
-    }
-
-    public static Config getInstance(Context context) {
-        if (config == null) {
-            config = new Config(context);
-            config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.host3100 != null)
-                config.erxesRequest.set_client();
-        }
-        return config;
-    }
-
-    String host3100 = "";
-    String host3300 = "";
-    public String hostUpload = "";
+    String host3100 = null;
+    String host3300 = null;
+    public String hostUpload = null;
     public String customerId;
     public String integrationId;
     public String language, wallpaper;
@@ -78,7 +61,7 @@ public class Config {
     public Context context;
     private ErxesRequest erxesRequest;
     private static Config config;
-    public FormConnect formConnect;
+    public FormConnect formConnect = null;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
     public String geoResponse;
     public KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
@@ -86,6 +69,21 @@ public class Config {
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
     public boolean isFirstStart = false, requireAuth = false;
+
+    private Config(Context context) {
+        this.context = context;
+        dataManager = DataManager.getInstance(context);
+    }
+
+    public static Config getInstance(Context context) {
+        if (config == null) {
+            config = new Config(context);
+            config.erxesRequest = ErxesRequest.getInstance(config);
+            if (config.host3100 != null)
+                config.erxesRequest.set_client();
+        }
+        return config;
+    }
 
     public String convertDatetime(long createDate) {
         long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
@@ -213,15 +211,15 @@ public class Config {
         Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
-    private void Init(String brandcode, String host3100, String host3300, String hostUpload) {
+    private void Init(String brandCode, String host3100, String host3300, String hostUpload) {
         this.host3100 = host3100;
         this.host3300 = host3300;
         this.hostUpload = hostUpload;
-        this.brandCode = brandcode;
+        this.brandCode = brandCode;
         dataManager.setData("host3100", this.host3100);
         dataManager.setData("host3300", this.host3300);
         dataManager.setData("hostUpload", this.hostUpload);
-        dataManager.setData("BRANDCODE", brandcode);
+        dataManager.setData("BRANDCODE", this.brandCode);
         LoadDefaultValues();
         erxesRequest.set_client();
     }
@@ -362,10 +360,10 @@ public class Config {
             return this;
         }
 
-        public Config build(Activity activity) {
-            Config t = Config.getInstance(activity);
-            t.Init(this.brand, this.apiHost, this.subscriptionHost, this.uploadHost);
-            return t;
+        public Config build(Context context) {
+            Config config = Config.getInstance(context);
+            config.Init(this.brand, this.apiHost, this.subscriptionHost, this.uploadHost);
+            return config;
         }
     }
 

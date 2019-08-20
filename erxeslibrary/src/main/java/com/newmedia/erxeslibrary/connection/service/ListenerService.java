@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.configuration;
+package com.newmedia.erxeslibrary.connection.service;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -25,8 +25,12 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
+import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
+import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
 

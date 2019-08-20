@@ -18,8 +18,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesHelper;
-import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.helper.SoftKeyboard;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.ArticleAdapter;
 

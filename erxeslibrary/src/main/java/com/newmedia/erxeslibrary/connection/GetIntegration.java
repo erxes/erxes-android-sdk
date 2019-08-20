@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.graphqlfunction;
+package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,7 +8,7 @@ import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesHelper;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 
 import org.json.JSONObject;

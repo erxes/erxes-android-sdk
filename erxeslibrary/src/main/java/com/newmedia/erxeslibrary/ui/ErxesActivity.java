@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.ui.login;
+package com.newmedia.erxeslibrary.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,13 +19,13 @@ import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
-import com.newmedia.erxeslibrary.DataManager;
+import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesHelper;
-import com.newmedia.erxeslibrary.configuration.Returntype;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.utils.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
-import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
 
 public class ErxesActivity extends AppCompatActivity implements ErxesObserver {

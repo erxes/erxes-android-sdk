@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.configuration;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Operation;
@@ -14,19 +15,23 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxes.basic.type.CustomType;
-import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
-import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
-import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.graphqlfunction.GetIntegration;
-import com.newmedia.erxeslibrary.graphqlfunction.GetLead;
-import com.newmedia.erxeslibrary.graphqlfunction.GetSupporter;
-import com.newmedia.erxeslibrary.graphqlfunction.GetConversation;
-import com.newmedia.erxeslibrary.graphqlfunction.GetMessage;
-import com.newmedia.erxeslibrary.graphqlfunction.InsertMessage;
-import com.newmedia.erxeslibrary.graphqlfunction.InsertNewMessage;
-import com.newmedia.erxeslibrary.graphqlfunction.SendLead;
-import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
-import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
+import com.newmedia.erxeslibrary.connection.GetGEO;
+import com.newmedia.erxeslibrary.connection.GetKnowledge;
+import com.newmedia.erxeslibrary.utils.ErxesObserver;
+import com.newmedia.erxeslibrary.connection.GetIntegration;
+import com.newmedia.erxeslibrary.connection.GetLead;
+import com.newmedia.erxeslibrary.connection.GetSupporter;
+import com.newmedia.erxeslibrary.connection.GetConversation;
+import com.newmedia.erxeslibrary.connection.GetMessage;
+import com.newmedia.erxeslibrary.connection.InsertMessage;
+import com.newmedia.erxeslibrary.connection.InsertNewMessage;
+import com.newmedia.erxeslibrary.connection.SendLead;
+import com.newmedia.erxeslibrary.connection.SetConnect;
+import com.newmedia.erxeslibrary.connection.helper.AddCookiesInterceptor;
+import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
+import com.newmedia.erxeslibrary.connection.helper.ReceivedCookiesInterceptor;
+import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter2;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -78,8 +83,8 @@ public final class ErxesRequest {
     }
 
     void set_client() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -127,11 +132,13 @@ public final class ErxesRequest {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
+                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.context))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.host3100)
+                    .normalizedCache(cacheFactory,resolver)
                     .okHttpClient(okHttpClient)
                     .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())

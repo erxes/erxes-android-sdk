@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.configuration;
+package com.newmedia.erxeslibrary.connection.helper;
 
 import android.content.Context;
 import android.content.SharedPreferences;

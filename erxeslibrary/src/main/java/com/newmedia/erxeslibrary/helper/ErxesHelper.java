@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.configuration;
+package com.newmedia.erxeslibrary.helper;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -13,9 +13,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.newmedia.erxeslibrary.DataManager;
-import com.newmedia.erxeslibrary.helper.Json;
-import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
+import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.model.Messengerdata;
+import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.R;
 
 import java.util.Collections;
@@ -69,7 +70,7 @@ public class ErxesHelper {
 
             }});
 
-    static void Init(Context context) {
+    public static void Init(Context context) {
         dataManager = DataManager.getInstance(context);
         config = Config.getInstance(context);
     }

@@ -1,13 +1,8 @@
-package com.newmedia.erxeslibrary.graphqlfunction;
+package com.newmedia.erxeslibrary.connection;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
-import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.model.Geo;
 
 import java.io.IOException;
 

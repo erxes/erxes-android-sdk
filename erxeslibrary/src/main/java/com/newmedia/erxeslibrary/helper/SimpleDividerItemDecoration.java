@@ -1,10 +1,12 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.helper;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import com.newmedia.erxeslibrary.R;
 
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;

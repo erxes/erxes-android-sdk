@@ -1,11 +1,9 @@
-package com.newmedia.erxeslibrary;
+package com.newmedia.erxeslibrary.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.gson.Gson;
-import com.newmedia.erxeslibrary.configuration.Messengerdata;
+import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONException;
@@ -16,9 +14,7 @@ import org.json.JSONObject;
  */
 public final class DataManager {
 
-    private DataManager() {}
-
-    private static DataManager dataManager = new DataManager();
+    private static DataManager dataManager;
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -47,7 +43,7 @@ public final class DataManager {
     public void setData(String key, String data) {
         // Storing login value as TRUE
         editor.putString(key, data);
-        editor.commit();
+        editor.apply();
     }
     public String getDataS(String key) {
         // Storing login value as TRUE
@@ -56,7 +52,7 @@ public final class DataManager {
     public void setData(String key, int data) {
         // Storing login value as TRUE
         editor.putInt(key, data);
-        editor.commit();
+        editor.apply();
     }
     public int getDataI(String key) {
         // Storing login value as TRUE
@@ -65,7 +61,7 @@ public final class DataManager {
     public void setData(String key, boolean data) {
         // Storing login value as TRUE
         editor.putBoolean(key, data);
-        editor.commit();
+        editor.apply();
     }
     public boolean getDataB(String key) {
         // Storing login value as TRUE
@@ -73,7 +69,7 @@ public final class DataManager {
     }
     public void setMessengerData(String data){
         editor.putString("message", data);
-        editor.commit();
+        editor.apply();
     }
     public Messengerdata getMessenger(){
         if (pref.getString("message", null) != null) {

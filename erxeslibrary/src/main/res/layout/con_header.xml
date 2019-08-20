@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.newmedia.erxeslibrary.customeview.RoundedCornerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.newmedia.erxeslibrary.helper.RoundedCornerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/info_header"
     android:layout_width="match_parent"
@@ -137,4 +137,4 @@
             android:paddingBottom="@dimen/main_margin"
             app:layout_constraintTop_toBottomOf="@id/textGroup" />
     </android.support.constraint.ConstraintLayout>
-</com.newmedia.erxeslibrary.customeview.RoundedCornerLayout>
+</com.newmedia.erxeslibrary.helper.RoundedCornerLayout>

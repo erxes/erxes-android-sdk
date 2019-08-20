@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.customeview;
+package com.newmedia.erxeslibrary.helper;
 
 import android.content.Context;
 import android.graphics.Bitmap;

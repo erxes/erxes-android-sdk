@@ -8,7 +8,7 @@
     android:background="#80000000"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context=".ui.login.ErxesActivity">
+    tools:context=".ui.ErxesActivity">
 
     <LinearLayout
         android:id="@+id/mainView"
