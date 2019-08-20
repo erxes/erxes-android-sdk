@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
-import android.app.Activity;
-import android.util.Log;
+import android.content.Context;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
@@ -10,9 +9,6 @@ import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Helper;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
-
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class GetInteg {
@@ -23,7 +19,7 @@ public class GetInteg {
     private String email, phone;
     private JSONObject jsonObject;
 
-    public GetInteg(ErxesRequest ER, Activity context) {
+    public GetInteg(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
 
@@ -58,14 +54,11 @@ public class GetInteg {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                Log.e(TAG, "errors " + response.errors().toString());
             }
         }
 
         @Override
         public void onFailure(ApolloException e) {
-            Log.e(TAG, "failed ");
             e.printStackTrace();
         }
     };

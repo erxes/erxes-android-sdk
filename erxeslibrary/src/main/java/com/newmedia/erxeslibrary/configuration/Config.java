@@ -29,11 +29,9 @@ import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.model.Geo;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.User;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
-import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import org.json.JSONObject;
@@ -45,8 +43,30 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+public class Config {
 
-public class Config implements ErxesObserver {
+    private Config(Context context) {
+        this.context = context;
+        dataManager = DataManager.getInstance(context);
+        LoadDefaultValues();
+    }
+
+    private Config(Context context, Activity activity) {
+        this.context = context;
+        this.activity = activity;
+        dataManager = DataManager.getInstance(context);
+        LoadDefaultValues();
+    }
+
+    public static Config getInstance(Context context) {
+        if (config == null) {
+            config = new Config(context);
+            config.erxesRequest = ErxesRequest.getInstance(config);
+            if (config.HOST_3100 != null)
+                config.erxesRequest.set_client();
+        }
+        return config;
+    }
 
     public String HOST_3100 = "";
     public String HOST_3300 = "";
@@ -77,7 +97,7 @@ public class Config implements ErxesObserver {
             showChat = true, showLauncher = true, forceLogoutWhenResolve = false;
 
     public String convert_datetime(Long createDate) {
-        Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
+        long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
 
         diffTime = diffTime / 1000;
         long weeks = diffTime / 604800;
@@ -153,34 +173,26 @@ public class Config implements ErxesObserver {
     }
 
     public String now() {
-
-
         Date date = new Date();
-
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
                 new SimpleDateFormat("MMM dd, yyyy h:mm a");
-
 
         if (this.language.equalsIgnoreCase("en")) {
             return format2.format(date);
         } else {
             return format.format(date);
         }
-
-
     }
 
     public String full_date(String createDate_s) {
-
-        Long createDate;
+        long createDate;
         try {
-            createDate = Long.valueOf(createDate_s);
+            createDate = Long.parseLong(createDate_s);
         } catch (NumberFormatException e) {
             return "";
         }
-
 
         Date date = new Date();
         date.setTime(createDate);
@@ -205,50 +217,10 @@ public class Config implements ErxesObserver {
         return simpleDateFormat.format(date);
     }
 
-    @Override
-    public void notify(int returnType, String conversationId, String message) {
-        if (ReturnType.LOGIN_SUCCESS == returnType) {
-//            Intent a = new Intent(activity, ErxesActivity.class);
-//            activity.startActivity(a);
-        }
-    }
-
-    public static Config getInstance(Activity activity) {
-        if (config == null) {
-            config = new Config(activity);
-            config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null)
-                config.erxesRequest.set_client();
-        }
-        return config;
-    }
-
-    static public Config getInstance(Context context) {
-        if (config == null) {
-            config = new Config(context);
-            config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null)
-                config.erxesRequest.set_client();
-        }
-        return config;
-    }
-
     public void setActivityConfig(Activity activity) {
         activityConfig = activity;
-        Log.e("TAG", "getInstance: " + activity.getClass().getName() );
-        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName() );
-    }
-
-    private Config(Activity activity) {
-        dataManager = DataManager.getInstance(activity);
-        this.activity = activity;
-        LoadDefaultValues();
-    }
-
-    private Config(Context context) {
-        dataManager = DataManager.getInstance(context);
-        this.context = context;
-        LoadDefaultValues();
+        Log.e("TAG", "getInstance: " + activity.getClass().getName());
+        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
     private void Init(String brandcode, String ip_3100, String ip_3300, String ip_upload_file) {
@@ -276,16 +248,16 @@ public class Config implements ErxesObserver {
     public void initActivity(boolean hasData, String email, String phone, JSONObject jsonObject) {
         initializeIcon();
         initializeFresco();
-        dataManager.setData(DataManager.isUser, hasData);
-        dataManager.setData(DataManager.email, email);
-        dataManager.setData(DataManager.phone, phone);
-        dataManager.setData(DataManager.customData, jsonObject.toString());
-        Intent a = new Intent(activity, ErxesActivity.class);
+        dataManager.setData(DataManager.ISUSER, hasData);
+        dataManager.setData(DataManager.EMAIL, email);
+        dataManager.setData(DataManager.PHONE, phone);
+        dataManager.setData(DataManager.CUSTOMDATA, jsonObject.toString());
+        Intent a = new Intent(context, ErxesActivity.class);
         a.putExtra("hasData", hasData);
         a.putExtra("customData", jsonObject.toString());
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
-        activity.startActivity(a);
+        context.startActivity(a);
     }
 
     private void checkRequired(boolean hasData, String email, String phone, JSONObject jsonObject) {
@@ -293,23 +265,22 @@ public class Config implements ErxesObserver {
     }
 
     public void LoadDefaultValues() {
-
-        dataManager = DataManager.getInstance(activity);
+        dataManager = DataManager.getInstance(context);
         HOST_3100 = dataManager.getDataS("HOST3100");
         HOST_3300 = dataManager.getDataS("HOST3300");
         HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
         brandCode = dataManager.getDataS("BRANDCODE");
 
-        customerId = dataManager.getDataS(DataManager.customerId);
-        integrationId = dataManager.getDataS(DataManager.integrationId);
+        customerId = dataManager.getDataS(DataManager.CUSTOMERID);
+        integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
         messengerdata = dataManager.getMessenger();
-        color = dataManager.getDataS(DataManager.color);
+        color = dataManager.getDataS(DataManager.COLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
         else
             colorCode = Color.parseColor("#5629B6");
         wallpaper = dataManager.getDataS("wallpaper");
-        language = dataManager.getDataS(DataManager.language);
+        language = dataManager.getDataS(DataManager.LANGUAGE);
         changeLanguage(language);
 
     }
@@ -326,15 +297,15 @@ public class Config implements ErxesObserver {
     }
 
     public boolean isLoggedIn() {
-        return dataManager.getDataS(DataManager.customerId) != null;
+        return dataManager.getDataS(DataManager.CUSTOMERID) != null;
     }
 
     public void Logout(Activity activity) {
         customerId = null;
-        dataManager.setData(DataManager.customerId, null);
-        dataManager.setData(DataManager.integrationId, null);
-        dataManager.setData(DataManager.email, null);
-        dataManager.setData(DataManager.phone, null);
+        dataManager.setData(DataManager.CUSTOMERID, null);
+        dataManager.setData(DataManager.INTEGRATIONID, null);
+        dataManager.setData(DataManager.EMAIL, null);
+        dataManager.setData(DataManager.PHONE, null);
         if (activity.getClass().getName().contains("ConversationListActivity")) {
             if (activityConfig.getClass().getName().contains("ConversationListActivity")) {
                 activity.startActivity(new Intent(activity, ErxesActivity.class));
@@ -352,7 +323,7 @@ public class Config implements ErxesObserver {
     }
 
     public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
@@ -365,7 +336,7 @@ public class Config implements ErxesObserver {
             return;
 
         this.language = lang;
-        dataManager.setData(DataManager.language, this.language);
+        dataManager.setData(DataManager.LANGUAGE, this.language);
 
         Locale myLocale;
         myLocale = new Locale(lang);
@@ -373,9 +344,8 @@ public class Config implements ErxesObserver {
         Locale.setDefault(myLocale);
         android.content.res.Configuration config = new android.content.res.Configuration();
         config.locale = myLocale;
-        activity.getResources().updateConfiguration(config,
-                activity.getResources().getDisplayMetrics());
-
+        context.getResources().updateConfiguration(config,
+                context.getResources().getDisplayMetrics());
     }
 
     public static class Builder {
@@ -412,17 +382,17 @@ public class Config implements ErxesObserver {
     }
 
     private void initializeFresco() {
-            ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(activity)
-                    .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
-                    .setResizeAndRotateEnabledForNetwork(true)
-                    .setDiskCacheEnabled(true)
-                    .setDownsampleEnabled(true)
-                    .build();
-            Fresco.initialize(activity, imagePipelineConfig);
+        ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(context)
+                .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
+                .setResizeAndRotateEnabledForNetwork(true)
+                .setDiskCacheEnabled(true)
+                .setDownsampleEnabled(true)
+                .build();
+        Fresco.initialize(context, imagePipelineConfig);
     }
 
     private void initializeIcon() {
-        Iconics.init(activity);
+        Iconics.init(context);
 
         GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
         erxesSDKGF.registerIcon("send", '\ueb09');
@@ -609,7 +579,7 @@ public class Config implements ErxesObserver {
 
     public int getInColor(int backgroundColor) {
         if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
-            return activity.getResources().getColor(R.color.md_white_1000);
-        else return activity.getResources().getColor(R.color.md_black_1000);
+            return context.getResources().getColor(R.color.md_white_1000);
+        else return context.getResources().getColor(R.color.md_black_1000);
     }
 }

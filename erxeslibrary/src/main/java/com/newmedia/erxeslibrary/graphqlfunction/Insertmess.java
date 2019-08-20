@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -23,7 +24,7 @@ public class Insertmess {
     private ErxesRequest ER;
     private Config config ;
     private String conversationId,message;
-    public Insertmess(ErxesRequest ER, Activity context) {
+    public Insertmess(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
     }
@@ -47,7 +48,6 @@ public class Insertmess {
         public void onResponse(@NotNull Response<InsertMessageMutation.Data> response) {
 
             if(response.hasErrors()) {
-                Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,conversationId,response.errors().get(0).message());
             } else {
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
@@ -59,7 +59,6 @@ public class Insertmess {
         public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
             ER.notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
-            Log.d(TAG, "failed ");
         }
     };
 }

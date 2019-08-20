@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -18,16 +19,13 @@ public class GetKnowledge {
     final static String TAG = "GetKnowledge";
     private ErxesRequest ER;
     private Config config;
-    private Activity activity;
 
-    public GetKnowledge(ErxesRequest ER, Activity activity) {
+    public GetKnowledge(ErxesRequest ER, Context context) {
         this.ER = ER;
-        config = Config.getInstance(activity);
-        this.activity = activity;
+        config = Config.getInstance(context);
     }
 
     public void run() {
-        Log.e(TAG, "run: " + config.messengerdata.getKnowledgeBaseTopicId());
         if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
             ER.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
                     .enqueue(request);
@@ -40,7 +38,6 @@ public class GetKnowledge {
                 config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
                 ER.notefyAll(ReturnType.FAQ, null, null);
             } else {
-                Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
@@ -48,7 +45,6 @@ public class GetKnowledge {
         @Override
         public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.e(TAG, "failed ");
             e.printStackTrace();
 
         }

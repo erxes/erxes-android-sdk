@@ -235,13 +235,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         config.setActivityConfig(this);
         erxesRequest = ErxesRequest.getInstance(config);
         erxesRequest.add(this);
-        if (dataManager.getDataS(DataManager.customerId) == null) {
+        if (dataManager.getDataS(DataManager.CUSTOMERID) == null) {
             startActivity();
             return;
         }
-        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.email)) &&
-                TextUtils.isEmpty(dataManager.getDataS(DataManager.phone))) {
-            dataManager.setData(DataManager.customerId, null);
+        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.EMAIL)) &&
+                TextUtils.isEmpty(dataManager.getDataS(DataManager.PHONE))) {
+            dataManager.setData(DataManager.CUSTOMERID, null);
             startActivity();
             return;
         }
@@ -319,7 +319,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
         erxesRequest.getSupporters();
         erxesRequest.getLead();
-        erxesRequest.getGEO();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);

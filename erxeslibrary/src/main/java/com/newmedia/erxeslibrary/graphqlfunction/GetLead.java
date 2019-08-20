@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -21,12 +22,10 @@ public class GetLead {
     final static String TAG = "GetLead";
     private ErxesRequest ER;
     private Config config;
-    private DataManager dataManager;
 
-    public GetLead(ErxesRequest ER, Activity context) {
+    public GetLead(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
-        dataManager = DataManager.getInstance(context);
     }
 
     public void run() {

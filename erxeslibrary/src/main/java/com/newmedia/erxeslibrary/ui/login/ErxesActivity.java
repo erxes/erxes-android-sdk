@@ -154,7 +154,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         if (config.isNetworkConnected()) {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
-                    dataManager.setData(DataManager.phone, phone.getText().toString());
+                    dataManager.setData(DataManager.PHONE, phone.getText().toString());
                     erxesRequest.setConnect("", phone.getText().toString(), false, null);
                     phone.setError(null);
                 } else
@@ -162,7 +162,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             } else {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
-                    dataManager.setData(DataManager.email, email.getText().toString());
+                    dataManager.setData(DataManager.EMAIL, email.getText().toString());
                     erxesRequest.setConnect("" + email.getText().toString(), "", false, null);
                 } else
                     email.setError(getResources().getString(R.string.no_correct_mail));

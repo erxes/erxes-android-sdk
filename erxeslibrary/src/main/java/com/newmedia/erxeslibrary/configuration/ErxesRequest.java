@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.configuration;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.ConnectivityManager;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
@@ -37,7 +35,7 @@ public class ErxesRequest {
 
     public ApolloClient apolloClient;
     private OkHttpClient okHttpClient;
-    private Activity activity;
+    private Context context;
     private List<ErxesObserver> observers;
     private Config config;
 
@@ -50,9 +48,9 @@ public class ErxesRequest {
     }
 
     private ErxesRequest(Config config) {
-        this.activity = config.activity;
+        this.context = config.context;
         this.config = config;
-        Helper.Init(activity);
+        Helper.Init(context);
     }
 
     public void set_client() {
@@ -79,8 +77,8 @@ public class ErxesRequest {
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
 //                    .addInterceptor(logging)
-                    .addInterceptor(new AddCookiesInterceptor(this.activity))
-                    .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
+                    .addInterceptor(new AddCookiesInterceptor(this.context))
+                    .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.HOST_3100)
@@ -93,94 +91,94 @@ public class ErxesRequest {
     }
 
     public void setConnect(String email, String phone, boolean isUser, String data) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        SetConnect setConnect = new SetConnect(this, activity);
+        SetConnect setConnect = new SetConnect(this, context);
         setConnect.run(email, phone, isUser, data);
     }
 
     public void getGEO() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetGEO getGEO = new GetGEO(this, activity);
+        GetGEO getGEO = new GetGEO(context);
         getGEO.run();
     }
 
     public void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetInteg getIntegration = new GetInteg(this, activity);
+        GetInteg getIntegration = new GetInteg(this, context);
         getIntegration.run(hasData,email,phone,jsonObject);
     }
 
     public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Insertmess insertmessage = new Insertmess(this, activity);
+        Insertmess insertmessage = new Insertmess(this, context);
         insertmessage.run(message, conversationId, list);
     }
 
     public void InsertNewMessage(final String message, List<AttachmentInput> list) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
 
-        Insertnewmess insertnewmessage = new Insertnewmess(this, activity);
+        Insertnewmess insertnewmessage = new Insertnewmess(this, context);
         insertnewmessage.run(message, list);
     }
 
     public void getConversations() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Getconv getconversation = new Getconv(this, activity);
+        Getconv getconversation = new Getconv(this, context);
         getconversation.run();
 
 
     }
 
     public void getMessages(String conversationid) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Getmess getmess = new Getmess(this, activity);
+        Getmess getmess = new Getmess(this, context);
         getmess.run(conversationid);
 
     }
 
     public void getSupporters() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetSup getSup = new GetSup(this, activity);
+        GetSup getSup = new GetSup(this, context);
         getSup.run();
     }
 
     public void getFAQ() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetKnowledge getSup = new GetKnowledge(this, activity);
+        GetKnowledge getSup = new GetKnowledge(this, context);
         getSup.run();
     }
 
     public void getLead() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetLead getLead = new GetLead(this, activity);
+        GetLead getLead = new GetLead(this, context);
         getLead.run();
     }
 
     public void sendLead() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        SendLead sendLead = new SendLead(this, activity);
+        SendLead sendLead = new SendLead(this, context);
         sendLead.run();
     }
 
@@ -189,35 +187,6 @@ public class ErxesRequest {
             observers = new ArrayList<>();
         observers.clear();
         observers.add(e);
-    }
-
-    //    public void isMessengerOnline(){
-//        if(!isNetworkConnected()){
-//            return;
-//        }
-//
-//        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(config.integrationId)
-//                .build()).enqueue(new ApolloCall.Callback<IsMessengerOnlineQuery.Data>() {
-//            @Override
-//            public void onResponse(@Nonnull Response<IsMessengerOnlineQuery.Data> response) {
-//                if(!response.hasErrors()){
-//                    config.isMessengerOnline =  response.data().isMessengerOnline();
-//                    notefyAll(ReturnType.IsMessengerOnline,null,null);
-//                }
-//                else
-//                    notefyAll(ReturnType.SERVERERROR,null,null);
-//            }
-//
-//            @Override
-//            public void onFailure(@Nonnull ApolloException e) {
-//                Log.d(TAG,"IsMessengerOnline failed ");
-//                notefyAll(ReturnType.CONNECTIONFAILED,null,null);
-//            }
-//        });
-//    }
-    public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
     }
 
     public void remove(ErxesObserver e) {

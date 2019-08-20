@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
@@ -25,9 +26,10 @@ public class Insertnewmess {
     final static String TAG = "insertnew";
     private ErxesRequest ER;
     private Config config ;
-    private Activity context;
+    private Context context;
     private String message;
-    public Insertnewmess(ErxesRequest ER, Activity context) {
+
+    public Insertnewmess(ErxesRequest ER, Context context) {
         this.ER = ER;
         this.context = context;
         config = Config.getInstance(context);
@@ -50,30 +52,22 @@ public class Insertnewmess {
         @Override
         public void onResponse(@NotNull Response<InsertMessageMutation.Data> response) {
             if(response.hasErrors()) {
-                Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR,null,response.errors().get(0).message());
             } else {
-                Log.d(TAG, "cid " + response.data().insertMessage().conversationId());
-
                 Conversation conversation = Conversation.update(response.data().insertMessage(),message,config);
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
                 config.conversations.add(conversation);
                 config.conversationMessages.add(a);
-                Intent intent2 = new Intent(context, ListenerService.class);
-                intent2.putExtra("id",config.conversationId);
-                context.startService(intent2);
-//                    ListenerService.conversation_listen(config.conversationId);
-
+                Intent intent = new Intent(context, ListenerService.class);
+                intent.putExtra("id",config.conversationId);
+                context.startService(intent);
                 ER.notefyAll(ReturnType.Mutation_new,response.data().insertMessage().conversationId(),null);
-
-
             }
         }
         @Override
         public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
             ER.notefyAll( ReturnType.CONNECTIONFAILED,null,e.getMessage());
-            Log.d(TAG, "failed ");
         }
     };
 }

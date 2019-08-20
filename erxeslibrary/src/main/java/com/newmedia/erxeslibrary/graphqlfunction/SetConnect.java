@@ -29,7 +29,7 @@ public class SetConnect {
     private Config config;
     private DataManager dataManager;
 
-    public SetConnect(ErxesRequest ER, Activity context) {
+    public SetConnect(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
         dataManager = DataManager.getInstance(context);
@@ -62,8 +62,8 @@ public class SetConnect {
                     config.customerId = response.data().messengerConnect().customerId();
                     config.integrationId = response.data().messengerConnect().integrationId();
 
-                    dataManager.setData(DataManager.customerId, config.customerId);
-                    dataManager.setData(DataManager.integrationId, config.integrationId);
+                    dataManager.setData(DataManager.CUSTOMERID, config.customerId);
+                    dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
 
                     config.changeLanguage(response.data().messengerConnect().languageCode());
                     Helper.load_uiOptions(response.data().messengerConnect().uiOptions());

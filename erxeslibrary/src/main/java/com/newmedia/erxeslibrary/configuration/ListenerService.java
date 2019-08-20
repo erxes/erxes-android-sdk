@@ -98,9 +98,6 @@ public class ListenerService extends Service {
                 id = bundle.getString("id", null);
         }
         if (id == null) {
-            DataManager dataManager;
-            dataManager = DataManager.getInstance(this);
-            Log.e(TAG, "start " + config.conversations.size());
             if (disposables.size() != config.conversations.size()) {
                 disposables.clear();
                 for (int i = 0; i < config.conversations.size(); i++) {
@@ -109,7 +106,6 @@ public class ListenerService extends Service {
             }
         } else {
             conversation_listen(id);
-            Log.e(TAG, "start only one");
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -119,7 +115,6 @@ public class ListenerService extends Service {
 
     private boolean run_thread(final String conversationId) {
         if (!isNetworkConnected()) {
-            //internetgui yud gesen ug
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -155,12 +150,12 @@ public class ListenerService extends Service {
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.e(TAG, "onstarted " + conversationId);
+                                Log.e(TAG, "onStarted " + conversationId);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, "onerror " + conversationId);
+                                Log.e(TAG, "onError " + conversationId);
                                 e.printStackTrace();
                                 run_thread(conversationId);
                             }
@@ -184,7 +179,6 @@ public class ListenerService extends Service {
                                                     break;
                                                 }
                                             }
-                                            Log.e(TAG, "onNext: " + conversationMessage.content);
                                             ER.notefyAll(ReturnType.ComingNewMessage, null, null);
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
@@ -211,7 +205,7 @@ public class ListenerService extends Service {
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "subsrioption ehsouced");
+                                Log.e(TAG, "onComplete");
                             }
                         }
                 )
@@ -267,8 +261,6 @@ public class ListenerService extends Service {
                     .setContentIntent(pendingIntent).getNotification();
             notificationManager.notify(123, notification);
         }
-
-        Log.d(TAG, "notification can");
     }
 
 

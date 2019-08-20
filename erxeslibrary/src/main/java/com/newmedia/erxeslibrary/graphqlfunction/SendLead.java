@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,21 +22,13 @@ public class SendLead {
     final static String TAG = "SendLead";
     private ErxesRequest ER;
     private Config config;
-    private Activity activity;
 
-    public SendLead(ErxesRequest ER, Activity activity) {
+    public SendLead(ErxesRequest ER, Context context) {
         this.ER = ER;
-        config = Config.getInstance(activity);
-        this.activity = activity;
+        config = Config.getInstance(context);
     }
 
     public void run() {
-        JSONObject browserInfo = new JSONObject();
-        try {
-            browserInfo = new JSONObject(config.geoResponse);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
         ER.apolloClient.mutate(SaveLeadMutation.builder()
                 .formId(config.formConnect.getLead().getId())
                 .integrationId(config.integrationId)
@@ -55,7 +48,6 @@ public class SendLead {
                     ER.notefyAll(ReturnType.SERVERERROR, null, response.data().saveForm().status());
                 }
             } else {
-                Log.e(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
@@ -63,7 +55,6 @@ public class SendLead {
         @Override
         public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.e(TAG, "failed ");
             e.printStackTrace();
         }
     };

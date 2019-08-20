@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -18,12 +19,10 @@ public class GetSup {
     final static String TAG = "GETSUP";
     private ErxesRequest ER;
     private Config config;
-    private Activity context;
 
-    public GetSup(ErxesRequest ER, Activity context) {
+    public GetSup(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
-        this.context = context;
     }
 
     public void run() {
@@ -42,7 +41,6 @@ public class GetSup {
                 }
                 ER.notefyAll(ReturnType.GetSupporters, null, null);
             } else {
-                Log.d(TAG, "errors " + response.errors().toString());
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
             }
         }
@@ -50,7 +48,6 @@ public class GetSup {
         @Override
         public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
-            Log.d(TAG, "failed ");
             e.printStackTrace();
 
         }

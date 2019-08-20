@@ -1,6 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
@@ -22,7 +22,7 @@ public class Getmess {
     private String conversationid;
     private Config config;
 
-    public Getmess(ErxesRequest ER, Activity context) {
+    public Getmess(ErxesRequest ER, Context context) {
         this.ER = ER;
         config = Config.getInstance(context);
     }
@@ -54,7 +54,6 @@ public class Getmess {
         @Override
         public void onFailure(@NotNull ApolloException e) {
             ER.notefyAll(ReturnType.CONNECTIONFAILED, conversationid, null);
-            Log.d(TAG, "Getmessages failed ");
         }
     };
 }

@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.configuration;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
@@ -67,7 +68,7 @@ public class Helper {
 
             }});
 
-    static void Init(Activity context) {
+    static void Init(Context context) {
         dataManager = DataManager.getInstance(context);
         config = Config.getInstance(context);
     }
@@ -75,9 +76,9 @@ public class Helper {
     static public void load_uiOptions(Json js) {
         if (js == null)
             return;
-        String color = null;
+        String color;
         color = js.getString("color");
-        dataManager.setData(DataManager.color, color);
+        dataManager.setData(DataManager.COLOR, color);
         if (color != null)
             config.colorCode = Color.parseColor(color);
         else {
