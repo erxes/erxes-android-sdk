@@ -42,7 +42,7 @@ public class GetKnowledge {
 //                    .enqueue(request);
             Rx2Apollo.from(ER.apolloClient
                     .query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
-                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST).watcher())
+                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(a);

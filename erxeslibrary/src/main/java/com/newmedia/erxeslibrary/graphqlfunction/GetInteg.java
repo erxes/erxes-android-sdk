@@ -51,9 +51,7 @@ public class GetInteg {
         Rx2Apollo.from(ER.apolloClient
                 .query(GetMessengerIntegrationQuery.builder().brandCode(config.brandCode)
                         .build())
-                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST).watcher())
-//                .timeInterval(TimeUnit.SECONDS).
-//                timeInterval()
+                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(a);

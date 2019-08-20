@@ -47,7 +47,7 @@ public class Getconv {
                 .query(ConversationsQuery.builder()
                         .integrationId(config.integrationId)
                         .customerId(config.customerId).build())
-                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST).watcher())
+                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(a);

@@ -87,7 +87,6 @@ public class SetConnect {
                 Helper.load_messengerData(response.data().messengerConnect().messengerData());
 
                 ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
-                Log.d("fucked","fucked");
 //                }
             } else {
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
@@ -111,7 +110,6 @@ public class SetConnect {
         public void onResponse(@NotNull Response<MessengerConnectMutation.Data> response) {
             if (!response.hasErrors()) {
 //                if (!config.messengerdata.isShowLauncher()) {
-
                     config.customerId = response.data().messengerConnect().customerId();
                     config.integrationId = response.data().messengerConnect().integrationId();
 
@@ -121,9 +119,7 @@ public class SetConnect {
                     config.changeLanguage(response.data().messengerConnect().languageCode());
                     Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
                     Helper.load_messengerData(response.data().messengerConnect().messengerData());
-
                     ER.notefyAll(ReturnType.LOGIN_SUCCESS, null, null);
-                    Log.d("fucked","fucked");
 //                }
             } else {
                 ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
