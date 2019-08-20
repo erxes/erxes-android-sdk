@@ -20,7 +20,7 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
      conversationId,
      createdAt,
      internal,
-     _id,
+     id,
      attachments {
          size
          url
@@ -32,18 +32,18 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
  }
  query Conversations($integrationId: String!,$customerId: String!){
    conversations(integrationId: $integrationId,customerId: $customerId) {
-         _id
+         id
          customerId
          integrationId
          status
          content
          createdAt
          messages {
-            _id
+            id
             conversationId
             customerId
             user{
-                _id
+                id
                 details{
                     avatar
                     shortName
@@ -66,7 +66,7 @@ mutation InsertMessage($integrationId: String!,$customerId: String!,$message: St
 
 query Messages($conversationId: String){
     messages(conversationId: $conversationId) {
-        _id
+        id
         conversationId
         customerId
         content
@@ -80,7 +80,7 @@ query Messages($conversationId: String){
             name
         }
         user {
-            _id
+            id
             details {
                 avatar
                 fullName
@@ -90,10 +90,10 @@ query Messages($conversationId: String){
 }
 
 query ConversationDetail($id: String, $integ : String!){
-    conversationDetail(_id: $id, integrationId: $integ) {
+    conversationDetail(id: $id, integrationId: $integ) {
         isOnline
         supporters{
-            _id
+            id
             details {
                 avatar
                 fullName
@@ -103,7 +103,7 @@ query ConversationDetail($id: String, $integ : String!){
 }
 query MessengerSupporters($integ : String!) {
     messengerSupporters(integrationId: $integ) {
-        _id
+        id
         details {
             avatar
             shortName
@@ -117,7 +117,7 @@ query MessengerSupporters($integ : String!) {
 
 query GetMessengerIntegration($brandCode: String!){
     getMessengerIntegration(brandCode: $brandCode) {
-        _id
+        id
         name
         languageCode
         uiOptions
@@ -127,19 +127,19 @@ query GetMessengerIntegration($brandCode: String!){
 
 query FaqGet($topicId: String!){
     knowledgeBaseTopicsDetail(topicId: $topicId) {
-        _id
+        id
         title
         description
         color
         languageCode
         categories{
-            _id
+            id
             numOfArticles
             title
             description
             icon
             articles {
-                _id
+                id
                 title
                 summary
                 content
@@ -154,14 +154,14 @@ query FaqGet($topicId: String!){
 
 query getForm($formId: String) {
     form(formId: $formId) {
-        _id
+        id
         title
         description
         buttonText
         themeColor
         callout
         fields {
-            _id
+            id
             formId
             type
             check
@@ -179,19 +179,19 @@ query getForm($formId: String) {
 mutation formConnect($brandCode: String!, $formCode: String!) {
     formConnect(brandCode: $brandCode, formCode: $formCode) {
         integration {
-            _id
+            id
             name
             formData
         }
         form {
-            _id
+            id
             title
             description
             buttonText
             themeColor
             callout
             fields {
-                _id
+                id
                 formId
                 type
                 check

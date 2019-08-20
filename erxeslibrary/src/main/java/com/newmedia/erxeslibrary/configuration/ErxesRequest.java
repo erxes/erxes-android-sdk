@@ -10,13 +10,13 @@ import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
+import com.newmedia.erxeslibrary.graphqlfunction.GetIntegration;
 import com.newmedia.erxeslibrary.graphqlfunction.GetLead;
-import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
-import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
-import com.newmedia.erxeslibrary.graphqlfunction.Getmess;
-import com.newmedia.erxeslibrary.graphqlfunction.Insertmess;
-import com.newmedia.erxeslibrary.graphqlfunction.Insertnewmess;
+import com.newmedia.erxeslibrary.graphqlfunction.GetSupporter;
+import com.newmedia.erxeslibrary.graphqlfunction.GetConversation;
+import com.newmedia.erxeslibrary.graphqlfunction.GetMessage;
+import com.newmedia.erxeslibrary.graphqlfunction.InsertMessage;
+import com.newmedia.erxeslibrary.graphqlfunction.InsertNewMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.SendLead;
 import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
@@ -31,15 +31,12 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 
 public class ErxesRequest {
-    final private String TAG = "erxesrequest";
-
     public ApolloClient apolloClient;
-    private OkHttpClient okHttpClient;
     private Context context;
     private List<ErxesObserver> observers;
     private Config config;
 
-    static public ErxesRequest erxesRequest;
+    private static ErxesRequest erxesRequest;
 
     static public ErxesRequest getInstance(Config config) {
         if (erxesRequest == null)
@@ -53,7 +50,7 @@ public class ErxesRequest {
         Helper.Init(context);
     }
 
-    public void set_client() {
+    void set_client() {
 //        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
 //        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
@@ -71,8 +68,10 @@ public class ErxesRequest {
 //                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
 //                .build();
 
-        if (config.HOST_3100 != null) {
-            okHttpClient = new OkHttpClient.Builder()
+        if (config.HOST3100 != null) {
+            //                    .connectionSpecs(Collections.singletonList(spec))
+            //                    .addInterceptor(logging)
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
 //                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
@@ -81,9 +80,9 @@ public class ErxesRequest {
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
-                    .serverUrl(config.HOST_3100)
+                    .serverUrl(config.HOST3100)
                     .okHttpClient(okHttpClient)
-                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
+                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
                     .build();
@@ -106,11 +105,11 @@ public class ErxesRequest {
         getGEO.run();
     }
 
-    public void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
+    void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
         if (!config.isNetworkConnected()) {
             return;
         }
-        GetInteg getIntegration = new GetInteg(this, context);
+        GetIntegration getIntegration = new GetIntegration(this, context);
         getIntegration.run(hasData,email,phone,jsonObject);
     }
 
@@ -118,7 +117,7 @@ public class ErxesRequest {
         if (!config.isNetworkConnected()) {
             return;
         }
-        Insertmess insertmessage = new Insertmess(this, context);
+        InsertMessage insertmessage = new InsertMessage(this, context);
         insertmessage.run(message, conversationId, list);
     }
 
@@ -127,7 +126,7 @@ public class ErxesRequest {
             return;
         }
 
-        Insertnewmess insertnewmessage = new Insertnewmess(this, context);
+        InsertNewMessage insertnewmessage = new InsertNewMessage(this, context);
         insertnewmessage.run(message, list);
     }
 
@@ -135,7 +134,7 @@ public class ErxesRequest {
         if (!config.isNetworkConnected()) {
             return;
         }
-        Getconv getconversation = new Getconv(this, context);
+        GetConversation getconversation = new GetConversation(this, context);
         getconversation.run();
 
 
@@ -145,8 +144,8 @@ public class ErxesRequest {
         if (!config.isNetworkConnected()) {
             return;
         }
-        Getmess getmess = new Getmess(this, context);
-        getmess.run(conversationid);
+        GetMessage getMessage = new GetMessage(this, context);
+        getMessage.run(conversationid);
 
     }
 
@@ -154,8 +153,8 @@ public class ErxesRequest {
         if (!config.isNetworkConnected()) {
             return;
         }
-        GetSup getSup = new GetSup(this, context);
-        getSup.run();
+        GetSupporter getSupporter = new GetSupporter(this, context);
+        getSupporter.run();
     }
 
     public void getFAQ() {

@@ -24,7 +24,6 @@ public class FaqDetailActivity extends AppCompatActivity {
     private ViewGroup container;
     private Point size;
     private Config config;
-    private TextView general,article_header,date,content1,content2;
     private ImageView backImageView, cancelImageView;
 
     @Override
@@ -73,11 +72,11 @@ public class FaqDetailActivity extends AppCompatActivity {
         cancelImageView.setOnClickListener(v -> logout());
         backImageView.setOnClickListener(v -> finish());
 
-        general = this.findViewById(R.id.general);
-        article_header = this.findViewById(R.id.article_header);
-        date = this.findViewById(R.id.article_date);
-        content1 = this.findViewById(R.id.article_content1);
-        content2 = this.findViewById(R.id.article_content2);
+        TextView general = this.findViewById(R.id.general);
+        TextView articleHeader = this.findViewById(R.id.article_header);
+        TextView date = this.findViewById(R.id.article_date);
+        TextView content1 = this.findViewById(R.id.article_content1);
+        TextView content2 = this.findViewById(R.id.article_content2);
 
         String id = getIntent().getStringExtra("id");
         String categoryId = getIntent().getStringExtra("categoryId");
@@ -85,7 +84,7 @@ public class FaqDetailActivity extends AppCompatActivity {
         if(id!=null) {
             KnowledgeBaseCategory knowledgeBaseCategory = null;
             for (int i = 0; i < config.knowledgeBaseTopic.categories.size(); i ++) {
-                if (config.knowledgeBaseTopic.categories.get(i)._id.equals(categoryId)) {
+                if (config.knowledgeBaseTopic.categories.get(i).id.equals(categoryId)) {
                     knowledgeBaseCategory = config.knowledgeBaseTopic.categories.get(i);
                     break;
                 }
@@ -93,15 +92,15 @@ public class FaqDetailActivity extends AppCompatActivity {
             if (knowledgeBaseCategory != null) {
                 KnowledgeBaseArticle knowledgeBaseArticle = null;
                 for (int i = 0 ; i < knowledgeBaseCategory.articles.size(); i ++) {
-                    if (knowledgeBaseCategory.articles.get(i)._id.equals(id)) {
+                    if (knowledgeBaseCategory.articles.get(i).id.equals(id)) {
                         knowledgeBaseArticle = knowledgeBaseCategory.articles.get(i);
                         break;
                     }
                 }
                 if (knowledgeBaseArticle != null) {
                     general.setText(knowledgeBaseArticle.title);
-                    date.setText("Created : " + config.full_date(knowledgeBaseArticle.createdDate));
-                    article_header.setText(knowledgeBaseArticle.title);
+                    date.setText("Created : " + config.FullDate(knowledgeBaseArticle.createdDate));
+                    articleHeader.setText(knowledgeBaseArticle.title);
                     content1.setText(Html.fromHtml(knowledgeBaseArticle.summary));
                     content2.setText(Html.fromHtml(knowledgeBaseArticle.content));
                 }

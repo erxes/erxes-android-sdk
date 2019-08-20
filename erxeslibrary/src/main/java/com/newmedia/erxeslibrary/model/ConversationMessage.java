@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ConversationMessage {
-    public String _id;
+    public String id;
     public String conversationId;
     public String customerId;
     public User user;
@@ -25,19 +25,18 @@ public class ConversationMessage {
     public String attachments;
 
 
-    static public List<ConversationMessage> convert(Response<MessagesQuery.Data> response, String ConversationId) {
+    public static List<ConversationMessage> convert(Response<MessagesQuery.Data> response, String ConversationId) {
         List<MessagesQuery.Message> data = response.data().messages();
         List<ConversationMessage> data_converted = new ArrayList<>();
         ConversationMessage this_o;
         for (MessagesQuery.Message item : data) {
             this_o = new ConversationMessage();
-            this_o._id = item._id();
+            this_o.id = item._id();
             this_o.createdAt = item.createdAt();
             this_o.customerId = item.customerId();
             this_o.content = item.content();
             this_o.internal = item.internal();
             if (item.user() != null) {
-//                Log.d("message","user"+item.user().details().avatar());
                 User user = new User();
                 user.convert(item.user());
                 this_o.user = user;
@@ -58,21 +57,17 @@ public class ConversationMessage {
                 }
                 this_o.attachments = array.toString();
             }
-
             this_o.conversationId = ConversationId;
-
-
             data_converted.add(this_o);
         }
         return data_converted;
-
     }
 
-    static public ConversationMessage convert(InsertMessageMutation.InsertMessage a, String message, Config config) {
+    public static ConversationMessage convert(InsertMessageMutation.InsertMessage a, String message, Config config) {
         ConversationMessage b = new ConversationMessage();
         b.conversationId = a.conversationId();
         b.createdAt = a.createdAt();
-        b._id = a._id();
+        b.id = a._id();
         b.content = message;
         if (a.attachments() != null) {
             JSONArray array = new JSONArray();
@@ -93,15 +88,15 @@ public class ConversationMessage {
         if (a.internal() != null)
             b.internal = a.internal();
         else b.internal = false;
-        b.customerId = config.customerId;//Config.customerId;
+        b.customerId = config.customerId;
         return b;
     }
 
-    static public ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted a) {
+    public static ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted a) {
         ConversationMessage b = new ConversationMessage();
         b.conversationId = a.conversationId();
         b.createdAt = a.createdAt();
-        b._id = a._id();
+        b.id = a._id();
         b.content = a.content();
         if (a.attachments() != null) {
             JSONArray array = new JSONArray();

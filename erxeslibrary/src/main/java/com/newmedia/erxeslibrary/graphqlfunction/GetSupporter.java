@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
-import android.app.Activity;
 import android.content.Context;
-import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
@@ -10,23 +8,23 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.MessengerSupportersQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.User;
 
 import org.jetbrains.annotations.NotNull;
 
-public class GetSup {
+public class GetSupporter {
     final static String TAG = "GETSUP";
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private Config config;
 
-    public GetSup(ErxesRequest ER, Context context) {
-        this.ER = ER;
+    public GetSupporter(ErxesRequest erxesRequest, Context context) {
+        this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
 
     public void run() {
-        ER.apolloClient.query(MessengerSupportersQuery.builder().integ(config.integrationId).build())
+        erxesRequest.apolloClient.query(MessengerSupportersQuery.builder().integ(config.integrationId).build())
                 .enqueue(request);
     }
 
@@ -39,15 +37,15 @@ public class GetSup {
                 if (config.supporters != null) {
                     config.supporters.addAll(User.convert(response.data().messengerSupporters()));
                 }
-                ER.notefyAll(ReturnType.GetSupporters, null, null);
+                erxesRequest.notefyAll(Returntype.GETSUPPORTERS, null, null);
             } else {
-                ER.notefyAll(ReturnType.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
-            ER.notefyAll(ReturnType.CONNECTIONFAILED, null, e.getMessage());
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
             e.printStackTrace();
 
         }

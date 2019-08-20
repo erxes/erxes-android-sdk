@@ -1,28 +1,21 @@
 package com.newmedia.erxeslibrary.ui.message;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.net.Uri;
 
 import android.support.annotation.NonNull;
-import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.Target;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.model.*;
 import com.newmedia.erxeslibrary.R;
@@ -40,32 +33,32 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     private List<ConversationMessage> mMessageList;
     private Activity activity;
-    private int previous_size = 0;
+    private int previousSize = 0;
     private Config config;
 
-    public MessageListAdapter(Activity activity, List<ConversationMessage> mMessageList) {
+    MessageListAdapter(Activity activity, List<ConversationMessage> mMessageList) {
         this.activity = activity;
         this.config = Config.getInstance(activity);
         this.mMessageList = mMessageList;
-        this.previous_size = this.mMessageList.size();
+        this.previousSize = this.mMessageList.size();
     }
 
-    boolean refresh_data() {
-        if (mMessageList.size() > previous_size) {
-            int counter_before = mMessageList.size();
-            int zoruu = mMessageList.size() - previous_size;
+    boolean RefreshData() {
+        if (mMessageList.size() > previousSize) {
+            int counterBefore = mMessageList.size();
+            int zoruu = mMessageList.size() - previousSize;
 
-            previous_size = mMessageList.size();
+            previousSize = mMessageList.size();
             if (config.messengerdata.getWelcome(config.language) != null) {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size());
                 else
-                    notifyItemRangeInserted(counter_before + 1, zoruu);
+                    notifyItemRangeInserted(counterBefore + 1, zoruu);
             } else {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size() - 1);
                 else
-                    notifyItemRangeInserted(counter_before, zoruu);
+                    notifyItemRangeInserted(counterBefore, zoruu);
 
             }
             return true;
@@ -100,14 +93,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         if (config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId))
             return 0;
-        else
-            return 1;
+        else return 1;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ConversationMessage message;
-
         if (config.messengerdata.getWelcome(config.language) != null && (position == 0)) {
             message = new ConversationMessage();
             message.content = (config.messengerdata.getWelcome(config.language));
@@ -138,24 +129,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             return mMessageList.size();
     }
 
-    private View.OnClickListener fileDownload = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            String url = (String) view.getTag();
-            if (url.startsWith("http")) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse((String) view.getTag()));
-                activity.startActivity(browserIntent);
-            }
-        }
-    };
-
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, timeText;
         RecyclerView fileRecyclerView;
 
         SentMessageHolder(View itemView) {
             super(itemView);
-
             messageText = itemView.findViewById(R.id.text_message_body);
             timeText = itemView.findViewById(R.id.text_message_time);
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
@@ -163,7 +142,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
-            timeText.setText(config.Message_datetime(message.createdAt));
+            timeText.setText(config.MessageDatetime(message.createdAt));
             if (!TextUtils.isEmpty(message.attachments)) {
                 try {
                     JSONArray jsonArray = new JSONArray(message.attachments);
@@ -197,7 +176,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             } else {
                 fileRecyclerView.setVisibility(View.GONE);
             }
-
         }
     }
 
@@ -209,7 +187,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
-
             messageText = itemView.findViewById(R.id.text_message_body);
             timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
@@ -222,7 +199,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 messageText.setMovementMethod(LinkMovementMethod.getInstance());
             else messageText.setMovementMethod(null);
 
-            timeText.setText(config.Message_datetime(message.createdAt));
+            timeText.setText(config.MessageDatetime(message.createdAt));
 
             if (message.user != null) {
                 Glide.with(activity).load(message.user.avatar)
@@ -284,59 +261,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
-
             messageText.setText(config.getHtml(message.content));
         }
     }
-
-    private void draw_file(JSONObject o, ImageView inputImage, View fileview, TextView filename) {
-        try {
-            String type = o.getString("type");
-            String size = o.getString("size");
-            String name = o.getString("name");
-            String url = o.getString("url");
-            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(activity);
-            circularProgressDrawable.setStrokeWidth(5f);
-            circularProgressDrawable.setCenterRadius(30f);
-            circularProgressDrawable.start();
-
-            float scale = activity.getResources().getDisplayMetrics().density;
-            int pixels = (int) (20 * scale + 0.5f);
-            inputImage.getLayoutParams().width = pixels;
-            inputImage.requestLayout();
-
-            inputImage.setImageDrawable(circularProgressDrawable);
-
-            inputImage.getDrawable().setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
-
-            fileview.setTag(url);
-            fileview.setOnClickListener(fileDownload);
-
-            filename.setText(name);
-            filename.setVisibility(View.VISIBLE);
-
-            if (type.contains("image")) {
-                pixels = (int) (200 * scale + 0.5f);
-                inputImage.getLayoutParams().width = pixels;
-//                inputImage.getLayoutParams().height = pixels;
-                inputImage.requestLayout();
-
-                Glide.with(activity).load(url).placeholder(circularProgressDrawable)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .override(pixels, Target.SIZE_ORIGINAL)
-                        .into(inputImage);
-                fileview.setOnClickListener(null);
-                filename.setVisibility(View.GONE);
-            } else if (type.contains("application/pdf")) {
-                inputImage.setImageResource(R.drawable.filepdf);
-            } else if (type.contains("application") && type.contains("word")) {
-                inputImage.setImageResource(R.drawable.fileword);
-            } else {
-                inputImage.setImageResource(R.drawable.file);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
 }

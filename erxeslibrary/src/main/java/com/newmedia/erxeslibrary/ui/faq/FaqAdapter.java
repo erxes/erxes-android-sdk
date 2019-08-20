@@ -1,4 +1,4 @@
-package com.newmedia.erxeslibrary.ui.conversations.adapter;
+package com.newmedia.erxeslibrary.ui.faq;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -17,7 +17,7 @@ import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
-import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
+import com.newmedia.erxeslibrary.ui.conversations.adapter.ArticleAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
     private List<KnowledgeBaseCategory> categories = new ArrayList<>();
     private Activity context;
     private Config config;
-    private int selected_position = -1;
+    private int selectedPosition = -1;
 
     public FaqAdapter(Activity context) {
         this.context = context;
@@ -43,8 +43,6 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.faq_item, parent, false);
-//        view.setOnClickListener(onClickListener);
-
         return new Holder(view);
     }
 
@@ -54,15 +52,13 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             Glide.with(context).load(config.getKnowledgeIcon(context, categories.get(position).icon)).into(holder.icon);
         else
             Glide.with(context).load(config.getKnowledgeIcon(context, "erxes")).into(holder.icon);
-//        if (Helper.ICON_MAP.get(categories.get(position).icon) != null)
-//            holder.icon.setImageResource(Helper.ICON_MAP.get(categories.get(position).icon).intValue());
         holder.title.setText(categories.get(position).title + " (" + categories.get(position).numOfArticles + ") ");
         holder.description.setText(Html.fromHtml(categories.get(position).description));
         holder.parent.setTag(position);
-        holder.parent.setTag(categories.get(position)._id);
+        holder.parent.setTag(categories.get(position).id);
         holder.parent.setOnClickListener(onClickListener);
-        if (selected_position == position) {
-            holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles, categories.get(position)._id));
+        if (selectedPosition == position) {
+            holder.recyclerView.setAdapter(new ArticleAdapter(context, categories.get(position).articles, categories.get(position).id));
             holder.recyclerView.setLayoutManager(new LinearLayoutManager(context));
             holder.recyclerView.setVisibility(View.VISIBLE);
         } else holder.recyclerView.setVisibility(View.GONE);
@@ -77,18 +73,18 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
-            if (selected_position == position) {
-                int temp = selected_position;
-                selected_position = -1;
+            if (selectedPosition == position) {
+                int temp = selectedPosition;
+                selectedPosition = -1;
                 FaqAdapter.this.notifyItemChanged(temp);
             } else {
-                int temp = selected_position;
-                selected_position = -1;
+                int temp = selectedPosition;
+                selectedPosition = -1;
                 if (temp > -1) {
                     FaqAdapter.this.notifyItemChanged(temp);
                 }
-                selected_position = position;
-                FaqAdapter.this.notifyItemChanged(selected_position);
+                selectedPosition = position;
+                FaqAdapter.this.notifyItemChanged(selectedPosition);
             }
         }
     };

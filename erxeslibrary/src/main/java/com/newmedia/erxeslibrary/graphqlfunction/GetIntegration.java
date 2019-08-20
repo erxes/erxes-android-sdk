@@ -11,16 +11,16 @@ import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Helper;
 import org.json.JSONObject;
 
-public class GetInteg {
+public class GetIntegration {
     final static String TAG = "GETINTEG";
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private Config config;
     private boolean hasData;
     private String email, phone;
     private JSONObject jsonObject;
 
-    public GetInteg(ErxesRequest ER, Context context) {
-        this.ER = ER;
+    public GetIntegration(ErxesRequest erxesRequest, Context context) {
+        this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
 
     }
@@ -30,7 +30,7 @@ public class GetInteg {
         this.email = email;
         this.phone = phone;
         this.jsonObject = jsonObject;
-        ER.apolloClient.query(GetMessengerIntegrationQuery.builder()
+        erxesRequest.apolloClient.query(GetMessengerIntegrationQuery.builder()
                 .brandCode(config.brandCode)
                 .build()
         ).enqueue(request);
@@ -46,7 +46,7 @@ public class GetInteg {
                     Helper.load_messengerData(response.data().getMessengerIntegration().messengerData());
                     if (config.messengerdata != null) {
                         if (!config.messengerdata.isShowLauncher()) {
-                            ER.setConnect(email, phone, true, jsonObject.toString());
+                            erxesRequest.setConnect(email, phone, true, jsonObject.toString());
                         } else {
                             config.initActivity(hasData, email, phone, jsonObject);
                         }

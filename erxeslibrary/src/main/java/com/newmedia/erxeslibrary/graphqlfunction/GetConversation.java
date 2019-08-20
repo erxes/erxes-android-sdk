@@ -7,21 +7,21 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.Conversation;
 
 import org.jetbrains.annotations.NotNull;
 
-public class Getconv {
+public class GetConversation {
     final static String TAG = "SETCONNECT";
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private Config config ;
-    public Getconv(ErxesRequest ER, Context context) {
-        this.ER = ER;
+    public GetConversation(ErxesRequest erxesRequest, Context context) {
+        this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
     public void run(){
-        ER.apolloClient.query(ConversationsQuery.builder()
+        erxesRequest.apolloClient.query(ConversationsQuery.builder()
                         .integrationId(config.integrationId)
                         .customerId(config.customerId).build())
                 .enqueue(request);
@@ -39,13 +39,13 @@ public class Getconv {
                     }
                 }
             }
-            ER.notefyAll(ReturnType.Getconversation,null,null);
+            erxesRequest.notefyAll(Returntype.GETCONVERSATION,null,null);
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
-            ER.notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
         }
     };
 }

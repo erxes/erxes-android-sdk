@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Conversation {
-    public String _id;
+    public String id;
     public String customerId;
     public String integrationId;
     public String status;
@@ -29,7 +29,7 @@ public class Conversation {
         Conversation this_o;
         for(ConversationsQuery.Conversation item:data) {
             this_o = new Conversation();
-            this_o._id = item._id();
+            this_o.id = item._id();
             this_o.date = item.createdAt();
             this_o.content = item.content();
             this_o.status = item.status();
@@ -38,7 +38,7 @@ public class Conversation {
             if (item.messages() != null && item.messages().size() > 0) {
                 for (int i = 0 ; i < item.messages().size() ; i ++) {
                     ConversationMessage message = new ConversationMessage();
-                    message._id = item.messages().get(i)._id();
+                    message.id = item.messages().get(i)._id();
                     message.content = item.messages().get(i).content();
                     message.conversationId = item.messages().get(i).conversationId();
                     message.createdAt = item.messages().get(i).createdAt();
@@ -47,7 +47,7 @@ public class Conversation {
                         message.internal = item.messages().get(i).internal();
                     if (item.messages().get(i).user() != null) {
                         User user = new User();
-                        user._id = item.messages().get(i).user()._id();
+                        user.id = item.messages().get(i).user()._id();
                         if (item.messages().get(i).user().details() != null) {
                             user.avatar = item.messages().get(i).user().details().avatar();
                             user.fullName = item.messages().get(i).user().details().fullName();
@@ -66,7 +66,7 @@ public class Conversation {
     static public Conversation update(InsertMessageMutation.InsertMessage a, String message,Config config){
         config.conversationId = a.conversationId();
         Conversation conversation = new Conversation();
-        conversation._id = config.conversationId;
+        conversation.id = config.conversationId;
         conversation.content = message;
         conversation.status = "open";
         conversation.date = a.createdAt();

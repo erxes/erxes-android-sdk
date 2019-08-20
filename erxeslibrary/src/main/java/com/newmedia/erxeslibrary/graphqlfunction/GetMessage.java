@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
@@ -9,27 +8,27 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Getmess {
+public class GetMessage {
     final static String TAG = "SETCONNECT";
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private String conversationid;
     private Config config;
 
-    public Getmess(ErxesRequest ER, Context context) {
-        this.ER = ER;
+    public GetMessage(ErxesRequest erxesRequest, Context context) {
+        this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
 
     public void run(String conversationid) {
         this.conversationid = conversationid;
-        ER.apolloClient.query(MessagesQuery.builder()
+        erxesRequest.apolloClient.query(MessagesQuery.builder()
                 .conversationId(conversationid)
                 .build()).enqueue(request);
     }
@@ -47,13 +46,13 @@ public class Getmess {
                         config.conversationMessages.add(message);
                 }
 
-                ER.notefyAll(ReturnType.Getmessages, conversationid, null);
+                erxesRequest.notefyAll(Returntype.GETMESSAGES, conversationid, null);
             }
         }
 
         @Override
         public void onFailure(@NotNull ApolloException e) {
-            ER.notefyAll(ReturnType.CONNECTIONFAILED, conversationid, null);
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, conversationid, null);
         }
     };
 }

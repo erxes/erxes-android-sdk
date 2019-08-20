@@ -1,9 +1,7 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
-import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
@@ -12,35 +10,35 @@ import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class Insertmess {
+public class InsertMessage {
     final static String TAG = "SETCONNECT";
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private Config config ;
-    private String conversationId,message;
-    public Insertmess(ErxesRequest ER, Context context) {
-        this.ER = ER;
+    private String conversationId,mContent;
+    public InsertMessage(ErxesRequest erxesRequest, Context context) {
+        this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
-    public void run( String message, final String conversationId,List<AttachmentInput> list){
-        if (TextUtils.isEmpty(message)) {
-            message = "This message has an attachment";
+    public void run( String mContent, final String conversationId,List<AttachmentInput> list){
+        if (TextUtils.isEmpty(mContent)) {
+            mContent = "This message has an attachment";
         }
-        this.message = message;
+        this.mContent = mContent;
         this.conversationId = conversationId;
-        InsertMessageMutation.Builder temp =InsertMessageMutation.builder().
-                integrationId(config.integrationId).
-                customerId(config.customerId).
-                message(message).
-                attachments(list).
-                conversationId(conversationId);
-        ER.apolloClient.mutate(temp.build()).enqueue(request);
+        InsertMessageMutation.Builder temp =InsertMessageMutation.builder()
+                .integrationId(config.integrationId)
+                .customerId(config.customerId)
+                .message(mContent)
+                .attachments(list)
+                .conversationId(conversationId);
+        erxesRequest.apolloClient.mutate(temp.build()).enqueue(request);
     }
 
     private ApolloCall.Callback<InsertMessageMutation.Data> request = new ApolloCall.Callback<InsertMessageMutation.Data>() {
@@ -48,17 +46,17 @@ public class Insertmess {
         public void onResponse(@NotNull Response<InsertMessageMutation.Data> response) {
 
             if(response.hasErrors()) {
-                ER.notefyAll(ReturnType.SERVERERROR,conversationId,response.errors().get(0).message());
+                erxesRequest.notefyAll(Returntype.SERVERERROR,conversationId,response.errors().get(0).message());
             } else {
-                ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),message,config);
+                ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),mContent,config);
                 config.conversationMessages.add(a);
-                ER.notefyAll(ReturnType.Mutation,conversationId,null);
+                erxesRequest.notefyAll(Returntype.MUTATION,conversationId,null);
             }
         }
         @Override
         public void onFailure(@NotNull ApolloException e) {
             e.printStackTrace();
-            ER.notefyAll(ReturnType.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
         }
     };
 }

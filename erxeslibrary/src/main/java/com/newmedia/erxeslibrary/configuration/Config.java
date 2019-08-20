@@ -51,29 +51,21 @@ public class Config {
         LoadDefaultValues();
     }
 
-    private Config(Context context, Activity activity) {
-        this.context = context;
-        this.activity = activity;
-        dataManager = DataManager.getInstance(context);
-        LoadDefaultValues();
-    }
-
     public static Config getInstance(Context context) {
         if (config == null) {
             config = new Config(context);
             config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null)
+            if (config.HOST3100 != null)
                 config.erxesRequest.set_client();
         }
         return config;
     }
 
-    public String HOST_3100 = "";
-    public String HOST_3300 = "";
-    public String HOST_UPLOAD = "";
+    String HOST3100 = "";
+    String HOST3300 = "";
+    public String HOSTUPLOAD = "";
     public String customerId;
     public String integrationId;
-    private String color;
     public String language, wallpaper;
     public Messengerdata messengerdata;
     public int colorCode;
@@ -81,22 +73,20 @@ public class Config {
     public String brandCode;
     private boolean isMessengerOnline = false;
     private DataManager dataManager;
-    public Activity activity, activityConfig;
+    private Activity activityConfig;
     public Context context;
     private ErxesRequest erxesRequest;
     private static Config config;
     public FormConnect formConnect;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
-    public Geo geo;
     public String geoResponse;
     public KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
     public List<User> supporters = new ArrayList<>();
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
-    public boolean isFirstStart = false, requireAuth = false,
-            showChat = true, showLauncher = true, forceLogoutWhenResolve = false;
+    public boolean isFirstStart = false, requireAuth = false;
 
-    public String convert_datetime(Long createDate) {
+    public String convertDatetime(long createDate) {
         long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
 
         diffTime = diffTime / 1000;
@@ -132,11 +122,10 @@ public class Config {
         }
     }
 
-    public String Message_datetime(String createDate_s) {
-
-        Long createDate = null;
+    public String MessageDatetime(String createDateS) {
+        long createDate;
         try {
-            createDate = Long.valueOf(createDate_s);
+            createDate = Long.valueOf(createDateS);
         } catch (NumberFormatException e) {
             return "";
         }
@@ -186,10 +175,10 @@ public class Config {
         }
     }
 
-    public String full_date(String createDate_s) {
+    public String FullDate(String createDateS) {
         long createDate;
         try {
-            createDate = Long.parseLong(createDate_s);
+            createDate = Long.parseLong(createDateS);
         } catch (NumberFormatException e) {
             return "";
         }
@@ -223,14 +212,14 @@ public class Config {
         Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
-    private void Init(String brandcode, String ip_3100, String ip_3300, String ip_upload_file) {
-        HOST_3100 = ip_3100;
-        HOST_3300 = ip_3300;
-        HOST_UPLOAD = ip_upload_file;
+    private void Init(String brandcode, String ip3100, String ip3300, String ipUploadFile) {
+        HOST3100 = ip3100;
+        HOST3300 = ip3300;
+        HOSTUPLOAD = ipUploadFile;
         this.brandCode = brandcode;
-        dataManager.setData("HOST3100", HOST_3100);
-        dataManager.setData("HOST3300", HOST_3300);
-        dataManager.setData("HOSTUPLOAD", HOST_UPLOAD);
+        dataManager.setData("HOST3100", HOST3100);
+        dataManager.setData("HOST3300", HOST3300);
+        dataManager.setData("HOSTUPLOAD", HOSTUPLOAD);
         dataManager.setData("BRANDCODE", brandcode);
         LoadDefaultValues();
         erxesRequest.set_client();
@@ -266,15 +255,15 @@ public class Config {
 
     public void LoadDefaultValues() {
         dataManager = DataManager.getInstance(context);
-        HOST_3100 = dataManager.getDataS("HOST3100");
-        HOST_3300 = dataManager.getDataS("HOST3300");
-        HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
+        HOST3100 = dataManager.getDataS("HOST3100");
+        HOST3300 = dataManager.getDataS("HOST3300");
+        HOSTUPLOAD = dataManager.getDataS("HOSTUPLOAD");
         brandCode = dataManager.getDataS("BRANDCODE");
 
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);
         integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
         messengerdata = dataManager.getMessenger();
-        color = dataManager.getDataS(DataManager.COLOR);
+        String color = dataManager.getDataS(DataManager.COLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
         else

@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class Json {
-    boolean is_object = true;
+    boolean isObject;
     private JSONArray array;
     private JSONObject object;
 
@@ -62,12 +62,12 @@ public class Json {
     }
 
     public Json(JSONArray array) {
-        this.is_object = false;
+        this.isObject = false;
         this.array = array;
     }
 
     public Json(JSONObject object) {
-        this.is_object = true;
+        this.isObject = true;
         this.object = object;
     }
 
