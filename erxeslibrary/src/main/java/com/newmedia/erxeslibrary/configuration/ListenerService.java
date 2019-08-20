@@ -252,7 +252,7 @@ public class ListenerService extends Service {
             notificationManager.createNotificationChannel(mChannel);
 
             Notification notification = new Notification.Builder(this, CHANNEL_ID)
-                    .setContentTitle("таньд мессеж ирлээ")
+                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
                     .setContentText(Html.fromHtml(chat_message))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)
@@ -260,7 +260,7 @@ public class ListenerService extends Service {
             notificationManager.notify(123, notification);
         } else {
             Notification notification = new Notification.Builder(this)
-                    .setContentTitle("таньд мессеж ирлээ")
+                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
                     .setContentText(Html.fromHtml(chat_message))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)

@@ -14,14 +14,12 @@ import org.json.JSONObject;
 /**
  * Created by lol on 3/23/16.
  */
-public class DataManager {
-    SharedPreferences pref;
-    int PRIVATE_MODE = 0;
-    // Editor reference for Shared preferences
-    SharedPreferences.Editor editor;
+public final class DataManager {
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
     private static final String PREFER_NAME = "ERXES_LIB";
     public static final String brandcode = "rxx_brandcode";
-    public static final String email = "rxx_email";
+    public static String email = "rxx_email";
     public static final String phone = "rxx_phone";
     public static final String integrationId = "rxx_integrationId";
     public static final String customerId = "rxx_customerId";
@@ -30,25 +28,23 @@ public class DataManager {
     public static final String isUser = "rxx_isUser";
     public static final String customData = "rxx_customData";
 
-
-    static private DataManager dataManager;
-    static public DataManager getInstance(Activity activity){
+    private static DataManager dataManager;
+    public static DataManager getInstance(Activity activity){
         if(dataManager == null)
             dataManager = new DataManager(activity);
 
         return dataManager;
     }
-    static public DataManager getInstance(Context context){
+    public static DataManager getInstance(Context context){
         if(dataManager == null)
             dataManager = new DataManager(context);
 
         return dataManager;
     }
-    // Context
-    Context _context;
+
     private DataManager(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREFER_NAME, PRIVATE_MODE);
+        int PRIVATE_MODE = 0;
+        pref = context.getSharedPreferences(PREFER_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
     public void setData(String key, String data) {
