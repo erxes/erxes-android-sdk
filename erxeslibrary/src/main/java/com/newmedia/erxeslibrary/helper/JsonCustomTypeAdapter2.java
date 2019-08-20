@@ -36,7 +36,7 @@ public class JsonCustomTypeAdapter2 implements CustomTypeAdapter<Json> {
 
     }
     public CustomTypeValue encode(@NotNull Json value){
-        if(value.is_object)
+        if(value.isObject)
             return new CustomTypeValue.GraphQLJson(value.convert_object());
         else
             return null;

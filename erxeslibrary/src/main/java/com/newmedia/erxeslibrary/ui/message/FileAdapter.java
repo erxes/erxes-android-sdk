@@ -31,8 +31,8 @@ import java.util.List;
 
 public class FileAdapter extends RecyclerView.Adapter {
 
-    private final int IMAGE_ITEM = 0;
-    private final int FILE_ITEM = 1;
+    private final int imageItem = 0;
+    private final int fileItem = 1;
     private GenericDraweeHierarchyBuilder builder;
     private Activity activity;
     private List<FileAttachment> fileAttachments;
@@ -69,7 +69,7 @@ public class FileAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         RecyclerView.ViewHolder vh;
         View v;
-        if (i == IMAGE_ITEM) {
+        if (i == imageItem) {
             v = LayoutInflater
                     .from(viewGroup.getContext())
                     .inflate(R.layout.item_image_file, viewGroup, false);
@@ -97,8 +97,8 @@ public class FileAdapter extends RecyclerView.Adapter {
         Log.e(getClass().getName(), "getItemViewType: " + fileAttachments.get(position).getUrl() );
         if (fileAttachments.get(position).getType().contains("image") &&
                 !fileAttachments.get(position).getType().contains("image/svg")) {
-            return IMAGE_ITEM;
-        } else return FILE_ITEM;
+            return imageItem;
+        } else return fileItem;
     }
 
     @Override

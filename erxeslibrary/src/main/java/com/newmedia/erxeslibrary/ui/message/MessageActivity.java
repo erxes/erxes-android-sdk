@@ -19,15 +19,14 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.ErxesObserver;
@@ -41,19 +40,16 @@ import java.util.ArrayList;
 
 public class MessageActivity extends AppCompatActivity implements ErxesObserver {
 
-    private EditText edittext_chatbox;
+    private EditText edittextChatbox;
     private RecyclerView mMessageRecycler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageView profile1, profile2, backImageView, logoutImageView, sendImageView, attachmentImageView;
     private TextView names, isMessenOnlineImage;
-    private ViewGroup container, upload_group;
-    private ProgressBar progressBar;
+    private ViewGroup container, uploadGroup;
     private Config config;
     private ErxesRequest erxesRequest;
     private Point size;
     private GFilePart gFilePart;
-
-    private final String TAG = "MESSAGEACTIVITY";
 
     @Override
     public void notify(final int returnType, String conversationId, String message) {
@@ -62,45 +58,45 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             public void run() {
                 MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
                 switch (returnType) {
-                    case ReturnType.ComingNewMessage:
+                    case Returntype.COMINGNEWMESSAGE:
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
                             mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                         }
                         break;
-                    case ReturnType.Getmessages:
+                    case Returntype.GETMESSAGES:
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
-                            if (adapter.getItemCount() > 2 && adapter.refresh_data())
+                            if (adapter.getItemCount() > 2 && adapter.RefreshData())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         break;
-                    case ReturnType.Mutation:
+                    case Returntype.MUTATION:
                         if (adapter != null) {
-                            if (adapter.getItemCount() > 2 && adapter.refresh_data())
+                            if (adapter.getItemCount() > 2 && adapter.RefreshData())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                             swipeRefreshLayout.setRefreshing(false);
 
                             gFilePart.end_of();
                         }
                         break;
-                    case ReturnType.Mutation_new:
+                    case Returntype.MUTATIONNEW:
                         subscribe_conversation();
                         gFilePart.end_of();
                         break;
-                    case ReturnType.IsMessengerOnline:
+                    case Returntype.ISMESSENGERONLINE:
                         header_profile_change();
                         break;
-                    case ReturnType.SERVERERROR:
+                    case Returntype.SERVERERROR:
                         Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
-                    case ReturnType.CONNECTIONFAILED:
+                    case Returntype.CONNECTIONFAILED:
                         Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
-                    case ReturnType.GetSupporters:
+                    case Returntype.GETSUPPORTERS:
                         header_profile_change();
                         break;
                 }
@@ -114,7 +110,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
         header_profile_change();
         isMessenOnlineImage.setText(R.string.online);
-        if (adapter.getItemCount() > 2 && adapter.refresh_data())
+        if (adapter.getItemCount() > 2 && adapter.RefreshData())
             mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -158,14 +154,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         isMessenOnlineImage.setText(config.messenger_status_check() ? R.string.online : R.string.offline);
 
 //        isMessenOnlineImage.setVisibility(
-//                (Config.isNetworkConnected()&&Config.IsMessengerOnline) ?View.VISIBLE:View.INVISIBLE);
+//                (Config.isNetworkConnected()&&Config.ISMESSENGERONLINE) ?View.VISIBLE:View.INVISIBLE);
 
     }
 
     void load_findViewByid() {
         container = this.findViewById(R.id.container);
 
-        size = Helper.display_configure(this, container, "#00000000");
+        size = ErxesHelper.display_configure(this, container, "#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;
@@ -193,13 +189,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 });
             }
         });
-        upload_group = this.findViewById(R.id.upload_group);
+        uploadGroup = this.findViewById(R.id.upload_group);
         swipeRefreshLayout = this.findViewById(R.id.swipeRefreshLayout);
         profile1 = this.findViewById(R.id.profile1);
         profile2 = this.findViewById(R.id.profile2);
         isMessenOnlineImage = this.findViewById(R.id.isOnline);
         names = this.findViewById(R.id.names);
-        edittext_chatbox = this.findViewById(R.id.edittext_chatbox);
+        edittextChatbox = this.findViewById(R.id.edittext_chatbox);
         mMessageRecycler = this.findViewById(R.id.reyclerview_message_list);
         backImageView = this.findViewById(R.id.backImageView);
         logoutImageView = this.findViewById(R.id.logoutImageView);
@@ -231,7 +227,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         int index = Integer.getInteger(config.wallpaper, -1);
         if (index > -1 && index < 5)
-            mMessageRecycler.setBackgroundResource(Helper.backgrounds[index]);
+            mMessageRecycler.setBackgroundResource(ErxesHelper.backgrounds[index]);
     }
 
     private void initIcon() {
@@ -257,7 +253,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         if (config.conversationId != null) {
             linearLayoutManager.setStackFromEnd(true);
             for (int i = 0; i < config.conversations.size(); i++) {
-                if (config.conversations.get(i)._id.equals(config.conversationId)) {
+                if (config.conversations.get(i).id.equals(config.conversationId)) {
                     config.conversations.get(i).isread = true;
                     break;
                 }
@@ -288,14 +284,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
             return;
         }
-        if (!edittext_chatbox.getText().toString().equalsIgnoreCase("") ||
+        if (!edittextChatbox.getText().toString().equalsIgnoreCase("") ||
                 gFilePart.get() != null && gFilePart.get().size() > 0) {
             if (config.conversationId != null) {
-                erxesRequest.InsertMessage(edittext_chatbox.getText().toString(), config.conversationId, gFilePart.get());
+                erxesRequest.InsertMessage(edittextChatbox.getText().toString(), config.conversationId, gFilePart.get());
             } else {
-                erxesRequest.InsertNewMessage(edittext_chatbox.getText().toString(), gFilePart.get());
+                erxesRequest.InsertNewMessage(edittextChatbox.getText().toString(), gFilePart.get());
             }
-            edittext_chatbox.setText("");
+            edittextChatbox.setText("");
         }
     }
 
@@ -336,13 +332,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         chooseFile.setAction(Intent.ACTION_GET_CONTENT);
         intent = Intent.createChooser(chooseFile, "Choose a file");
         startActivityForResult(intent, 444);
-        upload_group.setClickable(false);
+        uploadGroup.setClickable(false);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
         gFilePart.ActivityResult(requestCode, resultCode, resultData);
-        upload_group.setClickable(true);
+        uploadGroup.setClickable(true);
     }
 
     protected boolean shouldAskPermissions() {

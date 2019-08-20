@@ -26,14 +26,11 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
-import com.newmedia.erxeslibrary.model.Geo;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.User;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 import com.newmedia.erxeslibrary.ui.login.ErxesActivity;
-import com.newmedia.erxeslibrary.ErxesObserver;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import org.json.JSONObject;
@@ -46,15 +43,29 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+public class Config {
 
-public class Config implements ErxesObserver {
+    private Config(Context context) {
+        this.context = context;
+        dataManager = DataManager.getInstance(context);
+        LoadDefaultValues();
+    }
 
-    public String HOST_3100 = "";
-    public String HOST_3300 = "";
-    public String HOST_UPLOAD = "";
+    public static Config getInstance(Context context) {
+        if (config == null) {
+            config = new Config(context);
+            config.erxesRequest = ErxesRequest.getInstance(config);
+            if (config.host3100 != null)
+                config.erxesRequest.set_client();
+        }
+        return config;
+    }
+
+    String host3100 = "";
+    String host3300 = "";
+    public String hostUpload = "";
     public String customerId;
     public String integrationId;
-    private String color;
     public String language, wallpaper;
     public Messengerdata messengerdata;
     public int colorCode;
@@ -62,23 +73,21 @@ public class Config implements ErxesObserver {
     public String brandCode;
     private boolean isMessengerOnline = false;
     private DataManager dataManager;
-    public Activity activity, activityConfig;
+    private Activity activityConfig;
     public Context context;
     private ErxesRequest erxesRequest;
     private static Config config;
     public FormConnect formConnect;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
-    public Geo geo;
     public String geoResponse;
     public KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
     public List<User> supporters = new ArrayList<>();
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
-    public boolean isFirstStart = false, requireAuth = false,
-            showChat = true, showLauncher = true, forceLogoutWhenResolve = false;
+    public boolean isFirstStart = false, requireAuth = false;
 
-    public String convert_datetime(Long createDate) {
-        Long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
+    public String convertDatetime(long createDate) {
+        long diffTime = Calendar.getInstance().getTimeInMillis() - createDate;
 
         diffTime = diffTime / 1000;
         long weeks = diffTime / 604800;
@@ -113,11 +122,10 @@ public class Config implements ErxesObserver {
         }
     }
 
-    public String Message_datetime(String createDate_s) {
-
-        Long createDate = null;
+    public String MessageDatetime(String createDateS) {
+        long createDate;
         try {
-            createDate = Long.valueOf(createDate_s);
+            createDate = Long.valueOf(createDateS);
         } catch (NumberFormatException e) {
             return "";
         }
@@ -154,34 +162,26 @@ public class Config implements ErxesObserver {
     }
 
     public String now() {
-
-
         Date date = new Date();
-
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
                 new SimpleDateFormat("MMM dd, yyyy h:mm a");
-
 
         if (this.language.equalsIgnoreCase("en")) {
             return format2.format(date);
         } else {
             return format.format(date);
         }
-
-
     }
 
-    public String full_date(String createDate_s) {
-
-        Long createDate;
+    public String FullDate(String createDateS) {
+        long createDate;
         try {
-            createDate = Long.valueOf(createDate_s);
+            createDate = Long.parseLong(createDateS);
         } catch (NumberFormatException e) {
             return "";
         }
-
 
         Date date = new Date();
         date.setTime(createDate);
@@ -206,78 +206,23 @@ public class Config implements ErxesObserver {
         return simpleDateFormat.format(date);
     }
 
-    @Override
-    public void notify(int returnType, String conversationId, String message) {
-        if (ReturnType.LOGIN_SUCCESS == returnType) {
-//            Intent a = new Intent(activity, ErxesActivity.class);
-//            activity.startActivity(a);
-        }
-    }
-
-    public static Config getInstance(Activity activity) {
-        if (config == null) {
-            config = new Config(activity);
-            config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null) {
-                try {
-                    config.erxesRequest.set_client();
-                } catch (GeneralSecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return config;
-    }
-
-    static public Config getInstance(Context context) {
-        if (config == null) {
-            config = new Config(context);
-            config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null) {
-                try {
-                    config.erxesRequest.set_client();
-                } catch (GeneralSecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return config;
-    }
-
     public void setActivityConfig(Activity activity) {
         activityConfig = activity;
-        Log.e("TAG", "getInstance: " + activity.getClass().getName() );
-        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName() );
+        Log.e("TAG", "getInstance: " + activity.getClass().getName());
+        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
-    private Config(Activity activity) {
-        dataManager = DataManager.getInstance(activity);
-        this.activity = activity;
-        LoadDefaultValues();
-    }
-
-    private Config(Context context) {
-        dataManager = DataManager.getInstance(context);
-        this.context = context;
-        LoadDefaultValues();
-    }
-
-    private void Init(String brandcode, String ip_3100, String ip_3300, String ip_upload_file) {
-        HOST_3100 = ip_3100;
-        HOST_3300 = ip_3300;
-        HOST_UPLOAD = ip_upload_file;
+    private void Init(String brandcode, String host3100, String host3300, String hostUpload) {
+        this.host3100 = host3100;
+        this.host3300 = host3300;
+        this.hostUpload = hostUpload;
         this.brandCode = brandcode;
-        dataManager.setData("HOST3100", HOST_3100);
-        dataManager.setData("HOST3300", HOST_3300);
-        dataManager.setData("HOSTUPLOAD", HOST_UPLOAD);
+        dataManager.setData("host3100", this.host3100);
+        dataManager.setData("host3300", this.host3300);
+        dataManager.setData("hostUpload", this.hostUpload);
         dataManager.setData("BRANDCODE", brandcode);
         LoadDefaultValues();
-        try {
-            erxesRequest.set_client();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-
+        erxesRequest.set_client();
     }
 
     public void Start() {
@@ -291,16 +236,16 @@ public class Config implements ErxesObserver {
     public void initActivity(boolean hasData, String email, String phone, JSONObject jsonObject) {
         initializeIcon();
         initializeFresco();
-        dataManager.setData(DataManager.isUser, hasData);
-        dataManager.setData(DataManager.email, email);
-        dataManager.setData(DataManager.phone, phone);
-        dataManager.setData(DataManager.customData, jsonObject.toString());
-        Intent a = new Intent(activity, ErxesActivity.class);
+        dataManager.setData(DataManager.ISUSER, hasData);
+        dataManager.setData(DataManager.EMAIL, email);
+        dataManager.setData(DataManager.PHONE, phone);
+        dataManager.setData(DataManager.CUSTOMDATA, jsonObject.toString());
+        Intent a = new Intent(context, ErxesActivity.class);
         a.putExtra("hasData", hasData);
         a.putExtra("customData", jsonObject.toString());
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
-        activity.startActivity(a);
+        context.startActivity(a);
     }
 
     private void checkRequired(boolean hasData, String email, String phone, JSONObject jsonObject) {
@@ -308,23 +253,22 @@ public class Config implements ErxesObserver {
     }
 
     public void LoadDefaultValues() {
-
-        dataManager = DataManager.getInstance(activity);
-        HOST_3100 = dataManager.getDataS("HOST3100");
-        HOST_3300 = dataManager.getDataS("HOST3300");
-        HOST_UPLOAD = dataManager.getDataS("HOSTUPLOAD");
+        dataManager = DataManager.getInstance(context);
+        host3100 = dataManager.getDataS("host3100");
+        host3300 = dataManager.getDataS("host3300");
+        hostUpload = dataManager.getDataS("hostUpload");
         brandCode = dataManager.getDataS("BRANDCODE");
 
-        customerId = dataManager.getDataS(DataManager.customerId);
-        integrationId = dataManager.getDataS(DataManager.integrationId);
+        customerId = dataManager.getDataS(DataManager.CUSTOMERID);
+        integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
         messengerdata = dataManager.getMessenger();
-        color = dataManager.getDataS(DataManager.color);
+        String color = dataManager.getDataS(DataManager.COLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
         else
             colorCode = Color.parseColor("#5629B6");
         wallpaper = dataManager.getDataS("wallpaper");
-        language = dataManager.getDataS(DataManager.language);
+        language = dataManager.getDataS(DataManager.LANGUAGE);
         changeLanguage(language);
 
     }
@@ -341,15 +285,15 @@ public class Config implements ErxesObserver {
     }
 
     public boolean isLoggedIn() {
-        return dataManager.getDataS(DataManager.customerId) != null;
+        return dataManager.getDataS(DataManager.CUSTOMERID) != null;
     }
 
     public void Logout(Activity activity) {
         customerId = null;
-        dataManager.setData(DataManager.customerId, null);
-        dataManager.setData(DataManager.integrationId, null);
-        dataManager.setData(DataManager.email, null);
-        dataManager.setData(DataManager.phone, null);
+        dataManager.setData(DataManager.CUSTOMERID, null);
+        dataManager.setData(DataManager.INTEGRATIONID, null);
+        dataManager.setData(DataManager.EMAIL, null);
+        dataManager.setData(DataManager.PHONE, null);
         if (activity.getClass().getName().contains("ConversationListActivity")) {
             if (activityConfig.getClass().getName().contains("ConversationListActivity")) {
                 activity.startActivity(new Intent(activity, ErxesActivity.class));
@@ -367,7 +311,7 @@ public class Config implements ErxesObserver {
     }
 
     public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
@@ -380,7 +324,7 @@ public class Config implements ErxesObserver {
             return;
 
         this.language = lang;
-        dataManager.setData(DataManager.language, this.language);
+        dataManager.setData(DataManager.LANGUAGE, this.language);
 
         Locale myLocale;
         myLocale = new Locale(lang);
@@ -388,9 +332,8 @@ public class Config implements ErxesObserver {
         Locale.setDefault(myLocale);
         android.content.res.Configuration config = new android.content.res.Configuration();
         config.locale = myLocale;
-        activity.getResources().updateConfiguration(config,
-                activity.getResources().getDisplayMetrics());
-
+        context.getResources().updateConfiguration(config,
+                context.getResources().getDisplayMetrics());
     }
 
     public static class Builder {
@@ -427,17 +370,17 @@ public class Config implements ErxesObserver {
     }
 
     private void initializeFresco() {
-            ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(activity)
-                    .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
-                    .setResizeAndRotateEnabledForNetwork(true)
-                    .setDiskCacheEnabled(true)
-                    .setDownsampleEnabled(true)
-                    .build();
-            Fresco.initialize(activity, imagePipelineConfig);
+        ImagePipelineConfig imagePipelineConfig = ImagePipelineConfig.newBuilder(context)
+                .setProgressiveJpegConfig(new SimpleProgressiveJpegConfig())
+                .setResizeAndRotateEnabledForNetwork(true)
+                .setDiskCacheEnabled(true)
+                .setDownsampleEnabled(true)
+                .build();
+        Fresco.initialize(context, imagePipelineConfig);
     }
 
     private void initializeIcon() {
-        Iconics.init(activity);
+        Iconics.init(context);
 
         GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
         erxesSDKGF.registerIcon("send", '\ueb09');
@@ -624,7 +567,7 @@ public class Config implements ErxesObserver {
 
     public int getInColor(int backgroundColor) {
         if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
-            return activity.getResources().getColor(R.color.md_white_1000);
-        else return activity.getResources().getColor(R.color.md_black_1000);
+            return context.getResources().getColor(R.color.md_white_1000);
+        else return context.getResources().getColor(R.color.md_black_1000);
     }
 }

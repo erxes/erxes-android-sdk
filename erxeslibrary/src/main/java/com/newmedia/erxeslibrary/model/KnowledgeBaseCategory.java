@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KnowledgeBaseCategory {
-    public String _id;
+    public String id;
     public String title;
     public String description;
     public int numOfArticles;
@@ -18,7 +18,7 @@ public class KnowledgeBaseCategory {
         List<KnowledgeBaseCategory> categories = new ArrayList<>();
         for(int  i = 0 ; i <  itemuser.size(); i++ ) {
             temp = new KnowledgeBaseCategory();
-            temp._id = itemuser.get(i)._id();
+            temp.id = itemuser.get(i)._id();
             temp.title = itemuser.get(i).title();
             temp.icon = itemuser.get(i).icon();
             temp.description = itemuser.get(i).description();

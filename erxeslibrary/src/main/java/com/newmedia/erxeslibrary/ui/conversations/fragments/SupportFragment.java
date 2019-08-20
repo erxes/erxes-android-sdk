@@ -34,28 +34,23 @@ import com.newmedia.erxeslibrary.ui.message.MessageActivity;
  * create an instance of this fragment.
  */
 public class SupportFragment extends Fragment {
-    private ImageView addnew_conversation;
+    private ImageView addnewConversation;
     public RecyclerView recyclerView;
     private Config config;
     private CardView leadCardView, getLeadCardView, joinLeadCardView, getJoinLeadCardView;
     private TextView titleLead, getTitleLead, descriptionLead, getDescriptionLead, textJoinLead, getTextJoinLead;
     private ImageView imageLead;
     private RecyclerView getRecyclerView;
-    private LeadAdapter leadAdapter;
     public Boolean[] booleans;
     public String[] resultChecks;
-    private LinearLayout newConversationClick;
-    private CardView chatContainer;
 
     public String[] values;
 
     public SupportFragment() {
-        // Required empty public constructor
     }
 
     public static SupportFragment newInstance() {
-        SupportFragment fragment = new SupportFragment();
-        return fragment;
+        return new SupportFragment();
     }
 
 
@@ -68,9 +63,8 @@ public class SupportFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_support, container, false);
-        chatContainer = v.findViewById(R.id.chatContainer);
+        CardView chatContainer = v.findViewById(R.id.chatContainer);
         getRecyclerView = v.findViewById(R.id.getRecyclerView);
         leadCardView = v.findViewById(R.id.leadCardView);
         getLeadCardView = v.findViewById(R.id.getLeadCardView);
@@ -88,8 +82,8 @@ public class SupportFragment extends Fragment {
 
         if (config.messengerdata.isShowChat()) {
             chatContainer.setVisibility(View.VISIBLE);
-            addnew_conversation = v.findViewById(R.id.newconversation);
-            newConversationClick = v.findViewById(R.id.newConversationCLick);
+            addnewConversation = v.findViewById(R.id.newconversation);
+            LinearLayout newConversationClick = v.findViewById(R.id.newConversationCLick);
             recyclerView = v.findViewById(R.id.chat_recycler_view);
             initIcon();
             recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
@@ -113,7 +107,7 @@ public class SupportFragment extends Fragment {
     private void initIcon() {
         Glide.with(this).load(config.getPlusIcon(getActivity(),0))
                 .optionalCircleCrop()
-                .into(addnew_conversation);
+                .into(addnewConversation);
     }
 
     public void setLead() {
@@ -176,7 +170,7 @@ public class SupportFragment extends Fragment {
 
         getRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         getRecyclerView.setHasFixedSize(true);
-        leadAdapter = new LeadAdapter(config.formConnect.getLead().getFields(), this);
+        LeadAdapter leadAdapter = new LeadAdapter(config.formConnect.getLead().getFields(), this);
         getRecyclerView.setAdapter(leadAdapter);
 
         getTextJoinLead.setText(config.formConnect.getLead().getButtonText());

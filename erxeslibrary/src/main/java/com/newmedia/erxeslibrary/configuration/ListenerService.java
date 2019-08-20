@@ -39,9 +39,8 @@ import okhttp3.OkHttpClient;
 public class ListenerService extends Service {
 
     private static final String TAG = ListenerService.class.getName();
-    private OkHttpClient okHttpClient;
     private ApolloClient apolloClient;
-    private ErxesRequest ER;
+    private ErxesRequest erxesRequest;
     private CompositeDisposable disposables = new CompositeDisposable();
     Config config;
 
@@ -56,15 +55,15 @@ public class ListenerService extends Service {
         super.onCreate();
 
         config = Config.getInstance(this);
-        ER = ErxesRequest.getInstance(config);
+        erxesRequest = ErxesRequest.getInstance(config);
         DataManager dataManager;
         dataManager = DataManager.getInstance(this);
 
-        okHttpClient = new OkHttpClient.Builder().build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
-                .serverUrl(dataManager.getDataS("HOST3100"))
+                .serverUrl(dataManager.getDataS("host3100"))
                 .okHttpClient(okHttpClient)
-                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("HOST3300"), okHttpClient))
+                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("host3300"), okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                 .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON, new JsonCustomTypeAdapter())
                 .build();
@@ -98,18 +97,14 @@ public class ListenerService extends Service {
                 id = bundle.getString("id", null);
         }
         if (id == null) {
-            DataManager dataManager;
-            dataManager = DataManager.getInstance(this);
-            Log.e(TAG, "start " + config.conversations.size());
             if (disposables.size() != config.conversations.size()) {
                 disposables.clear();
                 for (int i = 0; i < config.conversations.size(); i++) {
-                    conversation_listen(config.conversations.get(i)._id);
+                    conversation_listen(config.conversations.get(i).id);
                 }
             }
         } else {
             conversation_listen(id);
-            Log.e(TAG, "start only one");
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -119,7 +114,6 @@ public class ListenerService extends Service {
 
     private boolean run_thread(final String conversationId) {
         if (!isNetworkConnected()) {
-            //internetgui yud gesen ug
             new Thread(new Runnable() {
                 public void run() {
                     try {
@@ -144,7 +138,7 @@ public class ListenerService extends Service {
             return;
         subscriptionCall = apolloClient
                 .subscribe(ConversationMessageInsertedSubscription.builder()
-                        ._id(conversationId)
+                        .id(conversationId)
                         .build());
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
@@ -155,12 +149,12 @@ public class ListenerService extends Service {
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.e(TAG, "onstarted " + conversationId);
+                                Log.e(TAG, "onStarted " + conversationId);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, "onerror " + conversationId);
+                                Log.e(TAG, "onError " + conversationId);
                                 e.printStackTrace();
                                 run_thread(conversationId);
                             }
@@ -170,25 +164,24 @@ public class ListenerService extends Service {
                                 if (!response.hasErrors()) {
                                     if (response.data().conversationMessageInserted() != null) {
                                         DataManager dataManager = DataManager.getInstance(ListenerService.this);
-                                        if (dataManager.getDataB("chat_is_going")) {
+                                        if (dataManager.getDataB("chatIsGoing")) {
                                             ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
-                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1)._id
-                                                        .equals(conversationMessage._id) && !conversationMessage.internal) {
+                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
+                                                        .equals(conversationMessage.id) && !conversationMessage.internal) {
                                                     config.conversationMessages.add(conversationMessage);
                                                 }
                                             }
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i)._id.equals(conversationId)) {
+                                                if (config.conversations.get(i).id.equals(conversationId)) {
                                                     config.conversations.get(i).conversationMessages.add(conversationMessage);
                                                     break;
                                                 }
                                             }
-                                            Log.e(TAG, "onNext: " + conversationMessage.content);
-                                            ER.notefyAll(ReturnType.ComingNewMessage, null, null);
+                                            erxesRequest.notefyAll(Returntype.COMINGNEWMESSAGE, null, null);
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i)._id.equals(response.data().conversationMessageInserted().conversationId())) {
+                                                if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().conversationId())) {
                                                     config.conversations.get(i).content = response.data().conversationMessageInserted().content();
                                                     config.conversations.get(i).isread = false;
                                                 }
@@ -211,14 +204,14 @@ public class ListenerService extends Service {
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "subsrioption ehsouced");
+                                Log.e(TAG, "onComplete");
                             }
                         }
                 )
         );
     }
 
-    private void createNotificationChannel(String chat_message, String name, String conversion_id) {
+    private void createNotificationChannel(String chatMessage, String name, String conversionId) {
 
 
         Intent intent = new Intent(this, ErxesActivity.class);
@@ -229,7 +222,7 @@ public class ListenerService extends Service {
 //        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "erxeschannel")
 //                .setBadgeIconType(R.drawable.icon)
 //                .setContentTitle(name)
-//                .setContentText(Html.fromHtml( chat_message))
+//                .setContentText(Html.fromHtml( chatMessage))
 //                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //                // Set the intent that will fire when the user taps the notification
 //                .setContentIntent(pendingIntent)
@@ -238,12 +231,12 @@ public class ListenerService extends Service {
 //        notificationManager.notify(0, mBuilder.build());
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (Build.VERSION.SDK_INT >= 26) {
-            String CHANNEL_ID = "erxes";
+            String channelId = "erxes";
             CharSequence name1 = "erxes_channel";
-            String Description = "erxes notification";
+            String description = "erxes notification";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name1, importance);
-            mChannel.setDescription(Description);
+            NotificationChannel mChannel = new NotificationChannel(channelId, name1, importance);
+            mChannel.setDescription(description);
             mChannel.enableLights(true);
             mChannel.setLightColor(Color.RED);
             mChannel.enableVibration(true);
@@ -251,24 +244,22 @@ public class ListenerService extends Service {
             mChannel.setShowBadge(false);
             notificationManager.createNotificationChannel(mChannel);
 
-            Notification notification = new Notification.Builder(this, CHANNEL_ID)
-                    .setContentTitle("таньд мессеж ирлээ")
-                    .setContentText(Html.fromHtml(chat_message))
+            Notification notification = new Notification.Builder(this, channelId)
+                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
+                    .setContentText(Html.fromHtml(chatMessage))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)
                     .setContentIntent(pendingIntent).getNotification();
             notificationManager.notify(123, notification);
         } else {
             Notification notification = new Notification.Builder(this)
-                    .setContentTitle("таньд мессеж ирлээ")
-                    .setContentText(Html.fromHtml(chat_message))
+                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
+                    .setContentText(Html.fromHtml(chatMessage))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)
                     .setContentIntent(pendingIntent).getNotification();
             notificationManager.notify(123, notification);
         }
-
-        Log.d(TAG, "notification can");
     }
 
 
