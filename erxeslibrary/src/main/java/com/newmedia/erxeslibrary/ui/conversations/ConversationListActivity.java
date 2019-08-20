@@ -50,7 +50,6 @@ import io.reactivex.subscribers.DisposableSubscriber;
 
 public class ConversationListActivity extends AppCompatActivity implements ErxesObserver {
 
-    private String TAG = "conversationListActivity";
     public static boolean chatIsGoing = false;
 
     private RecyclerView supporterView;
@@ -198,13 +197,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
                             @Override
                             public void onError(Throwable t) {
-                                Log.e(TAG, "onerrorChanged ");
+                                Log.e(getClass().getName(), "onerrorChanged ");
                                 t.printStackTrace();
                             }
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "oncompleteChanged");
+                                Log.e(getClass().getName(), "oncompleteChanged");
                             }
                         }
                 )

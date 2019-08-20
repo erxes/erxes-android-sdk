@@ -26,7 +26,6 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
-import com.newmedia.erxeslibrary.model.Geo;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
@@ -55,15 +54,15 @@ public class Config {
         if (config == null) {
             config = new Config(context);
             config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST3100 != null)
+            if (config.host3100 != null)
                 config.erxesRequest.set_client();
         }
         return config;
     }
 
-    String HOST3100 = "";
-    String HOST3300 = "";
-    public String HOSTUPLOAD = "";
+    String host3100 = "";
+    String host3300 = "";
+    public String hostUpload = "";
     public String customerId;
     public String integrationId;
     public String language, wallpaper;
@@ -212,14 +211,14 @@ public class Config {
         Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
-    private void Init(String brandcode, String ip3100, String ip3300, String ipUploadFile) {
-        HOST3100 = ip3100;
-        HOST3300 = ip3300;
-        HOSTUPLOAD = ipUploadFile;
+    private void Init(String brandcode, String host3100, String host3300, String hostUpload) {
+        this.host3100 = host3100;
+        this.host3300 = host3300;
+        this.hostUpload = hostUpload;
         this.brandCode = brandcode;
-        dataManager.setData("HOST3100", HOST3100);
-        dataManager.setData("HOST3300", HOST3300);
-        dataManager.setData("HOSTUPLOAD", HOSTUPLOAD);
+        dataManager.setData("host3100", this.host3100);
+        dataManager.setData("host3300", this.host3300);
+        dataManager.setData("hostUpload", this.hostUpload);
         dataManager.setData("BRANDCODE", brandcode);
         LoadDefaultValues();
         erxesRequest.set_client();
@@ -255,9 +254,9 @@ public class Config {
 
     public void LoadDefaultValues() {
         dataManager = DataManager.getInstance(context);
-        HOST3100 = dataManager.getDataS("HOST3100");
-        HOST3300 = dataManager.getDataS("HOST3300");
-        HOSTUPLOAD = dataManager.getDataS("HOSTUPLOAD");
+        host3100 = dataManager.getDataS("host3100");
+        host3300 = dataManager.getDataS("host3300");
+        hostUpload = dataManager.getDataS("hostUpload");
         brandCode = dataManager.getDataS("BRANDCODE");
 
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);

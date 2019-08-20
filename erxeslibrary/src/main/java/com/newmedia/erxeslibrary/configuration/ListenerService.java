@@ -61,9 +61,9 @@ public class ListenerService extends Service {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         apolloClient = ApolloClient.builder()
-                .serverUrl(dataManager.getDataS("HOST3100"))
+                .serverUrl(dataManager.getDataS("host3100"))
                 .okHttpClient(okHttpClient)
-                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("HOST3300"), okHttpClient))
+                .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("host3300"), okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                 .addCustomTypeAdapter(com.newmedia.erxes.subscription.type.CustomType.JSON, new JsonCustomTypeAdapter())
                 .build();

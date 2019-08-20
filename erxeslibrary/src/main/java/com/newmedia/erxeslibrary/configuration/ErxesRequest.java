@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 
-public class ErxesRequest {
+public final class ErxesRequest {
     public ApolloClient apolloClient;
     private Context context;
     private List<ErxesObserver> observers;
@@ -68,7 +68,7 @@ public class ErxesRequest {
 //                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
 //                .build();
 
-        if (config.HOST3100 != null) {
+        if (config.host3100 != null) {
             //                    .connectionSpecs(Collections.singletonList(spec))
             //                    .addInterceptor(logging)
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
@@ -80,9 +80,9 @@ public class ErxesRequest {
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
-                    .serverUrl(config.HOST3100)
+                    .serverUrl(config.host3100)
                     .okHttpClient(okHttpClient)
-                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST3300, okHttpClient))
+                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
                     .build();

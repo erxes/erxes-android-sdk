@@ -79,7 +79,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
                 .build();
 
         Request request = new Request.Builder()
-                .url(config.HOSTUPLOAD)
+                .url(config.hostUpload)
                 .addHeader("Authorization","")
                 .post(new ProgressRequestBody(formBody,this)).build();
 
