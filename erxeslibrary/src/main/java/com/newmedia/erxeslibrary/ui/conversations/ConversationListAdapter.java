@@ -8,7 +8,6 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         @Override
         public void onClick(View view) {
             Intent a = new Intent(activity, MessageActivity.class);
-            config.conversationId = conversationList.get((int) view.getTag())._id;
+            config.conversationId = conversationList.get((int) view.getTag()).id;
             if (config.conversationMessages != null && config.conversationMessages.size() > 0) {
                 config.conversationMessages.clear();
             }
@@ -108,7 +107,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
             long createDate = Long.parseLong(conversationList.get(position).date);
-//            holder.date.setText(config.convert_datetime(createDate));
+//            holder.date.setText(config.convertDatetime(createDate));
             holder.date.setText(config.conversationDate(createDate));
             holder.parent.setTag(position);
         }

@@ -1,8 +1,6 @@
 package com.newmedia.erxeslibrary.configuration;
 
-import android.app.Activity;
 import android.content.Context;
-import android.net.ConnectivityManager;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Operation;
@@ -19,13 +17,13 @@ import com.newmedia.erxes.basic.type.CustomType;
 import com.newmedia.erxeslibrary.graphqlfunction.GetGEO;
 import com.newmedia.erxeslibrary.graphqlfunction.GetKnowledge;
 import com.newmedia.erxeslibrary.ErxesObserver;
-import com.newmedia.erxeslibrary.graphqlfunction.GetInteg;
+import com.newmedia.erxeslibrary.graphqlfunction.GetIntegration;
 import com.newmedia.erxeslibrary.graphqlfunction.GetLead;
-import com.newmedia.erxeslibrary.graphqlfunction.GetSup;
-import com.newmedia.erxeslibrary.graphqlfunction.Getconv;
-import com.newmedia.erxeslibrary.graphqlfunction.Getmess;
-import com.newmedia.erxeslibrary.graphqlfunction.Insertmess;
-import com.newmedia.erxeslibrary.graphqlfunction.Insertnewmess;
+import com.newmedia.erxeslibrary.graphqlfunction.GetSupporter;
+import com.newmedia.erxeslibrary.graphqlfunction.GetConversation;
+import com.newmedia.erxeslibrary.graphqlfunction.GetMessage;
+import com.newmedia.erxeslibrary.graphqlfunction.InsertMessage;
+import com.newmedia.erxeslibrary.graphqlfunction.InsertNewMessage;
 import com.newmedia.erxeslibrary.graphqlfunction.SendLead;
 import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
@@ -42,16 +40,13 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
-public class ErxesRequest {
-    final private String TAG = "erxesrequest";
-
+public final class ErxesRequest {
     public ApolloClient apolloClient;
-    private OkHttpClient okHttpClient;
-    private Activity activity;
+    private Context context;
     private List<ErxesObserver> observers;
     private Config config;
 
-    static public ErxesRequest erxesRequest;
+    private static ErxesRequest erxesRequest;
 
     static public ErxesRequest getInstance(Config config) {
         if (erxesRequest == null)
@@ -60,14 +55,14 @@ public class ErxesRequest {
     }
 
     private ErxesRequest(Config config) {
-        this.activity = config.activity;
+        this.context = config.context;
         this.config = config;
-        Helper.Init(activity);
+        ErxesHelper.Init(context);
     }
 
-    public void set_client() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+    void set_client() {
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -83,7 +78,7 @@ public class ErxesRequest {
 //                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
 //                .build();
 
-        ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(this.activity, "db_cache");
+        ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(context, "db_cache");
 
         // Create NormalizedCacheFactory
         NormalizedCacheFactory cacheFactory = new SqlNormalizedCacheFactory(apolloSqlHelper);
@@ -111,20 +106,17 @@ public class ErxesRequest {
             }
         };
 
-        if (config.HOST_3100 != null) {
-            okHttpClient = new OkHttpClient.Builder()
-//                    .connectionSpecs(Collections.singletonList(spec))
+        if (config.host3100 != null) {
+            OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-                    .addInterceptor(logging)
-                    .addInterceptor(new AddCookiesInterceptor(this.activity))
-                    .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
+                    .addInterceptor(new AddCookiesInterceptor(this.context))
+                    .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
-                    .serverUrl(config.HOST_3100)
-                    .normalizedCache(cacheFactory, resolver)
+                    .serverUrl(config.host3100)
                     .okHttpClient(okHttpClient)
-                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
+                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
                     .build();
@@ -132,94 +124,94 @@ public class ErxesRequest {
     }
 
     public void setConnect(String email, String phone, boolean isUser, String data) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        SetConnect setConnect = new SetConnect(this, activity);
+        SetConnect setConnect = new SetConnect(this, context);
         setConnect.run(email, phone, isUser, data);
     }
 
     public void getGEO() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetGEO getGEO = new GetGEO(this, activity);
+        GetGEO getGEO = new GetGEO(context);
         getGEO.run();
     }
 
-    public void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
-        if (!isNetworkConnected()) {
+    void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetInteg getIntegration = new GetInteg(this, activity);
+        GetIntegration getIntegration = new GetIntegration(this, context);
         getIntegration.run(hasData,email,phone,jsonObject);
     }
 
     public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Insertmess insertmessage = new Insertmess(this, activity);
+        InsertMessage insertmessage = new InsertMessage(this, context);
         insertmessage.run(message, conversationId, list);
     }
 
     public void InsertNewMessage(final String message, List<AttachmentInput> list) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
 
-        Insertnewmess insertnewmessage = new Insertnewmess(this, activity);
+        InsertNewMessage insertnewmessage = new InsertNewMessage(this, context);
         insertnewmessage.run(message, list);
     }
 
     public void getConversations() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Getconv getconversation = new Getconv(this, activity);
+        GetConversation getconversation = new GetConversation(this, context);
         getconversation.run();
 
 
     }
 
     public void getMessages(String conversationid) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        Getmess getmess = new Getmess(this, activity);
-        getmess.run(conversationid);
+        GetMessage getMessage = new GetMessage(this, context);
+        getMessage.run(conversationid);
 
     }
 
     public void getSupporters() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetSup getSup = new GetSup(this, activity);
-        getSup.run();
+        GetSupporter getSupporter = new GetSupporter(this, context);
+        getSupporter.run();
     }
 
     public void getFAQ() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetKnowledge getSup = new GetKnowledge(this, activity);
+        GetKnowledge getSup = new GetKnowledge(this, context);
         getSup.run();
     }
 
     public void getLead() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        GetLead getLead = new GetLead(this, activity);
+        GetLead getLead = new GetLead(this, context);
         getLead.run();
     }
 
     public void sendLead() {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             return;
         }
-        SendLead sendLead = new SendLead(this, activity);
+        SendLead sendLead = new SendLead(this, context);
         sendLead.run();
     }
 
@@ -228,35 +220,6 @@ public class ErxesRequest {
             observers = new ArrayList<>();
         observers.clear();
         observers.add(e);
-    }
-
-    //    public void isMessengerOnline(){
-//        if(!isNetworkConnected()){
-//            return;
-//        }
-//
-//        apolloClient.query(IsMessengerOnlineQuery.builder().integrationId(config.integrationId)
-//                .build()).enqueue(new ApolloCall.Callback<IsMessengerOnlineQuery.Data>() {
-//            @Override
-//            public void onResponse(@Nonnull Response<IsMessengerOnlineQuery.Data> response) {
-//                if(!response.hasErrors()){
-//                    config.isMessengerOnline =  response.data().isMessengerOnline();
-//                    notefyAll(ReturnType.IsMessengerOnline,null,null);
-//                }
-//                else
-//                    notefyAll(ReturnType.SERVERERROR,null,null);
-//            }
-//
-//            @Override
-//            public void onFailure(@Nonnull ApolloException e) {
-//                Log.d(TAG,"IsMessengerOnline failed ");
-//                notefyAll(ReturnType.CONNECTIONFAILED,null,null);
-//            }
-//        });
-//    }
-    public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
     }
 
     public void remove(ErxesObserver e) {

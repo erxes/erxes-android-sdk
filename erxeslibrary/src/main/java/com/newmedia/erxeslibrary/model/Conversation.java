@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Conversation {
-    public String _id;
+    public String id;
     public String customerId;
     public String integrationId;
     public String status;
@@ -25,20 +25,20 @@ public class Conversation {
 
     static public List<Conversation> convert(Response<ConversationsQuery.Data> response, Config config){
         List<ConversationsQuery.Conversation> data = response.data().conversations();
-        List<Conversation> data_converted = new ArrayList<>();
-        Conversation this_o;
+        List<Conversation> dataConverted = new ArrayList<>();
+        Conversation thisO;
         for(ConversationsQuery.Conversation item:data) {
-            this_o = new Conversation();
-            this_o._id = item._id();
-            this_o.date = item.createdAt();
-            this_o.content = item.content();
-            this_o.status = item.status();
-            this_o.customerId = item.customerId();
-            this_o.integrationId = item.integrationId();
+            thisO = new Conversation();
+            thisO.id = item._id();
+            thisO.date = item.createdAt();
+            thisO.content = item.content();
+            thisO.status = item.status();
+            thisO.customerId = item.customerId();
+            thisO.integrationId = item.integrationId();
             if (item.messages() != null && item.messages().size() > 0) {
                 for (int i = 0 ; i < item.messages().size() ; i ++) {
                     ConversationMessage message = new ConversationMessage();
-                    message._id = item.messages().get(i)._id();
+                    message.id = item.messages().get(i)._id();
                     message.content = item.messages().get(i).content();
                     message.conversationId = item.messages().get(i).conversationId();
                     message.createdAt = item.messages().get(i).createdAt();
@@ -47,26 +47,26 @@ public class Conversation {
                         message.internal = item.messages().get(i).internal();
                     if (item.messages().get(i).user() != null) {
                         User user = new User();
-                        user._id = item.messages().get(i).user()._id();
+                        user.id = item.messages().get(i).user()._id();
                         if (item.messages().get(i).user().details() != null) {
                             user.avatar = item.messages().get(i).user().details().avatar();
                             user.fullName = item.messages().get(i).user().details().fullName();
                         }
                         message.user = user;
                     }
-                    this_o.conversationMessages.add(message);
+                    thisO.conversationMessages.add(message);
                 }
             }
-            data_converted.add(this_o);
+            dataConverted.add(thisO);
 
         }
-        return data_converted;
+        return dataConverted;
 
     }
     static public Conversation update(InsertMessageMutation.InsertMessage a, String message,Config config){
         config.conversationId = a.conversationId();
         Conversation conversation = new Conversation();
-        conversation._id = config.conversationId;
+        conversation.id = config.conversationId;
         conversation.content = message;
         conversation.status = "open";
         conversation.date = a.createdAt();

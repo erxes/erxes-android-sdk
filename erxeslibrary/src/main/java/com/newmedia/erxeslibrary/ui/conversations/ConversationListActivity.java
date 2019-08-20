@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 
-import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
@@ -28,8 +27,8 @@ import com.bumptech.glide.Glide;
 import com.newmedia.erxes.subscription.ConversationChangedSubscription;
 import com.newmedia.erxeslibrary.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
-import com.newmedia.erxeslibrary.configuration.ReturnType;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
+import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ListenerService;
 import com.newmedia.erxeslibrary.DataManager;
@@ -52,19 +51,17 @@ import io.reactivex.subscribers.DisposableSubscriber;
 
 public class ConversationListActivity extends AppCompatActivity implements ErxesObserver {
 
-    static private String TAG = "ConversationListActivity";
-    static public boolean chat_is_going = false;
+    public static boolean chatIsGoing = false;
 
     private RecyclerView supporterView;
     private TextView welcometext, date, title;
-    private CustomViewPager viewpager;
-    private ViewGroup info_header, container;
+    private ViewGroup infoHeader, container;
     private Config config;
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
     private TabAdapter tabAdapter;
     private TabLayout tabLayout;
-    private ImageView fb, tw, yt, cancelImageView;
+    private ImageView cancelImageView;
     private LinearLayout tabsContainer;
     private Intent intent;
     private List<String> disposabledChanged = new ArrayList<>();
@@ -77,14 +74,14 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             @Override
             public void run() {
                 switch (returnType) {
-                    case ReturnType.ComingNewMessage:
+                    case Returntype.COMINGNEWMESSAGE:
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
                         break;
-                    case ReturnType.Getconversation:
+                    case Returntype.GETCONVERSATION:
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
@@ -98,31 +95,25 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             }
                         }
                         break;
-                    case ReturnType.CONNECTIONFAILED:
-                        break;
-                    case ReturnType.LOGIN_SUCCESS:
-//                        init();
-                        break;
-                    case ReturnType.SERVERERROR:
+                    case Returntype.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
-                    case ReturnType.LEAD:
-                        Log.d("GetLead","called");
+                    case Returntype.LEAD:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLead();
                         break;
-                    case ReturnType.FAQ:
+                    case Returntype.FAQ:
                         if (tabLayout != null) {
                             tabsContainer.setVisibility(View.VISIBLE);
                             if (tabAdapter != null)
                                 ((FaqFragment) tabAdapter.getItem(1)).init();
                         }
                         break;
-                    case ReturnType.savedLead:
+                    case Returntype.SAVEDLEAD:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLeadAgain();
                         break;
-                    case ReturnType.GetSupporters:
+                    case Returntype.GETSUPPORTERS:
                         if (supporterView != null && supporterView.getAdapter() != null)
                             supporterView.getAdapter().notifyDataSetChanged();
                         break;
@@ -154,18 +145,18 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             if (disposabledChanged.size() > 0) {
                 boolean have = false;
                 for (int j = 0; j < disposabledChanged.size(); j++) {
-                    if (disposabledChanged.get(j).equals(config.conversations.get(i)._id)) {
+                    if (disposabledChanged.get(j).equals(config.conversations.get(i).id)) {
                         have = true;
                         break;
                     }
                 }
                 if (!have) {
-                    disposabledChanged.add(config.conversations.get(i)._id);
-                    clientChangedListen(config.conversations.get(i)._id);
+                    disposabledChanged.add(config.conversations.get(i).id);
+                    clientChangedListen(config.conversations.get(i).id);
                 }
             } else {
-                disposabledChanged.add(config.conversations.get(i)._id);
-                clientChangedListen(config.conversations.get(i)._id);
+                disposabledChanged.add(config.conversations.get(i).id);
+                clientChangedListen(config.conversations.get(i).id);
             }
         }
     }
@@ -178,7 +169,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         if (conversationId != null) {
                 opensourceChangedCall = erxesRequest.apolloClient
                         .subscribe(ConversationChangedSubscription.builder()
-                                ._id(conversationId)
+                                .id(conversationId)
                                 .build());
                 initChangedConversation();
         }
@@ -202,13 +193,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
                             @Override
                             public void onError(Throwable t) {
-                                Log.e(TAG, "onerrorChanged ");
+                                Log.e(getClass().getName(), "onerrorChanged ");
                                 t.printStackTrace();
                             }
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "oncompleteChanged");
+                                Log.e(getClass().getName(), "oncompleteChanged");
                             }
                         }
                 )
@@ -237,13 +228,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         config.setActivityConfig(this);
         erxesRequest = ErxesRequest.getInstance(config);
         erxesRequest.add(this);
-        if (dataManager.getDataS(DataManager.customerId) == null) {
+        if (dataManager.getDataS(DataManager.CUSTOMERID) == null) {
             startActivity();
             return;
         }
-        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.email)) &&
-                TextUtils.isEmpty(dataManager.getDataS(DataManager.phone))) {
-            dataManager.setData(DataManager.customerId, null);
+        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.EMAIL)) &&
+                TextUtils.isEmpty(dataManager.getDataS(DataManager.PHONE))) {
+            dataManager.setData(DataManager.CUSTOMERID, null);
             startActivity();
             return;
         }
@@ -253,18 +244,18 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
         config.conversationId = null;
 
-        dataManager.setData("chat_is_going", true);
+        dataManager.setData("chatIsGoing", true);
 
-        info_header.setBackgroundColor(config.colorCode);
+        infoHeader.setBackgroundColor(config.colorCode);
 
-        chat_is_going = true;
+        chatIsGoing = true;
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        chat_is_going = false;
-        dataManager.setData("chat_is_going", false);
+        chatIsGoing = false;
+        dataManager.setData("chatIsGoing", false);
         stopService(intent);
         disposabledChanged.clear();
         disposablesChanged.dispose();
@@ -277,19 +268,19 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         erxesRequest = ErxesRequest.getInstance(config);
         config = Config.getInstance(this);
 
-        Helper.changeLanguage(this,config.language);
+        ErxesHelper.changeLanguage(this,config.language);
         setContentView(R.layout.activity_conversation);
 
-        viewpager = findViewById(R.id.viewpager);
-        info_header = findViewById(R.id.info_header);
+        CustomViewPager viewpager = findViewById(R.id.viewpager);
+        infoHeader = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
         welcometext = findViewById(R.id.greetingMessage);
         title = findViewById(R.id.greetingTitle);
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
-        fb = findViewById(R.id.fb);
-        tw = findViewById(R.id.tw);
-        yt = findViewById(R.id.yt);
+        ImageView fb = findViewById(R.id.fb);
+        ImageView tw = findViewById(R.id.tw);
+        ImageView yt = findViewById(R.id.yt);
         tabLayout = findViewById(R.id.tabs);
         tabsContainer = findViewById(R.id.tabsContainer);
         cancelImageView = this.findViewById(R.id.cancelImageView);
@@ -318,12 +309,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         supporterView.setAdapter(new SupportAdapter(this, config.supporters));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
-        Helper.display_configure(this, container, "#66000000");
+        ErxesHelper.display_configure(this, container, "#66000000");
 
 
         erxesRequest.getSupporters();
         erxesRequest.getLead();
-        erxesRequest.getGEO();
 
         fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
@@ -379,13 +369,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         else this.findViewById(R.id.ytcontainer).setVisibility(View.GONE);
     }
 
-    private void startYoutube(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+    private void startYoutube(String s) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(s));
         startActivity(intent);
     }
 
-    private void startFacebook(String facebookUrl) {
-
+    private void startFacebook(String s) {
+        String mUri = s;
         try {
             Uri uri;
 
@@ -394,32 +384,33 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                     .versionCode;
 
             if (versionCode >= 3002850) {
-                facebookUrl = facebookUrl.toLowerCase().replace("www.", "m.");
-                if (!facebookUrl.startsWith("https")) {
-                    facebookUrl = "https://" + facebookUrl;
+                mUri = mUri.toLowerCase().replace("www.", "m.");
+                if (!mUri.startsWith("https")) {
+                    mUri = "https://" + mUri;
                 }
-                uri = Uri.parse("fb://facewebmodal/f?href=" + facebookUrl);
+                uri = Uri.parse("fb://facewebmodal/f?href=" + mUri);
             } else {
-                String pageID = facebookUrl.substring(facebookUrl.lastIndexOf("/"));
+                String pageID = mUri.substring(mUri.lastIndexOf("/"));
 
                 uri = Uri.parse("fb://page" + pageID);
             }
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         } catch (Throwable e) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(mUri)));
         }
     }
 
-    private void startTwitter(String url) {
-        if (url.startsWith("https://twitter.com/")) {
-            url = url.replace("https://twitter.com/", "");
+    private void startTwitter(String s) {
+        String mUri = s;
+        if (mUri.startsWith("https://twitter.com/")) {
+            mUri = mUri.replace("https://twitter.com/", "");
         }
-        String Username = url;
+        String uName = mUri;
         try {
             getPackageManager().getPackageInfo("com.twitter.android", 0);
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + Username)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?screen_name=" + uName)));
         } catch (Exception e) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + Username)));
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/#!/" + uName)));
         }
     }
 }

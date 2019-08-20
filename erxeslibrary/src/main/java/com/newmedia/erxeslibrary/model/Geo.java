@@ -4,14 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Geo {
-    private String _id, network, countryCode, region, city, zipCode, latitude, longitude, countryName;
+    private String id, network, countryCode, region, city, zipCode, latitude, longitude, countryName;
 
     public static Geo convert(String response) {
         try {
             JSONObject jsonObject = new JSONObject(response);
             Geo geo = new Geo();
-            if (jsonObject.has("_id"))
-                geo.set_id(jsonObject.getString("_id"));
+            if (jsonObject.has("id"))
+                geo.setId(jsonObject.getString("id"));
             if (jsonObject.has("network"))
                 geo.setNetwork(jsonObject.getString("network"));
             if (jsonObject.has("countryCode"))
@@ -35,12 +35,12 @@ public class Geo {
         }
     }
 
-    public String get_id() {
-        return _id;
+    public String getId() {
+        return id;
     }
 
-    public void set_id(String _id) {
-        this._id = _id;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getNetwork() {

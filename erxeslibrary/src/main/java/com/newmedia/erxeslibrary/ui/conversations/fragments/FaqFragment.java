@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.ui.conversations.adapter.FaqAdapter;
+import com.newmedia.erxeslibrary.ui.faq.FaqAdapter;
 
 /**
  * A simple {@link Fragment} subclass.

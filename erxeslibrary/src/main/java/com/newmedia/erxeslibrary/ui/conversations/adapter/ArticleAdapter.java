@@ -59,7 +59,7 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
         holder.title.setText(articles.get(position).title);
         holder.summary.setText(Html.fromHtml(articles.get(position).summary));
         holder.parent.setTag(position);
-        holder.parent.setTag(articles.get(position)._id);
+        holder.parent.setTag(articles.get(position).id);
         holder.parent.setOnClickListener(onClickListener);
     }
 

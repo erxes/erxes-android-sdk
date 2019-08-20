@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.ArticleAdapter;
@@ -26,8 +26,6 @@ public class FaqActivity extends AppCompatActivity {
     private ViewGroup container;
     private Point size;
     private Config config;
-    private TextView general,general_number,general_description;
-    private RecyclerView recyclerView;
     private ImageView backImageView, cancelImageView;
 
     @Override
@@ -55,7 +53,7 @@ public class FaqActivity extends AppCompatActivity {
         cancelImageView = this.findViewById(R.id.cancelImageView);
         initIcon();
 
-        size = Helper.display_configure(this,container,"#00000000");
+        size = ErxesHelper.display_configure(this,container,"#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;
@@ -85,24 +83,24 @@ public class FaqActivity extends AppCompatActivity {
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
         this.findViewById(R.id.cancelImageView).setOnClickListener(v -> logout());
         this.findViewById(R.id.backImageView).setOnClickListener(v -> finish());
-        recyclerView = this.findViewById(R.id.recycler_view);
-        general = this.findViewById(R.id.general);
-        general_number = this.findViewById(R.id.general_number);
-        general_description = this.findViewById(R.id.general_description);
+        RecyclerView recyclerView = this.findViewById(R.id.recycler_view);
+        TextView general = this.findViewById(R.id.general);
+        TextView generalNumber = this.findViewById(R.id.general_number);
+        TextView generalDescription = this.findViewById(R.id.general_description);
         String id = getIntent().getStringExtra("id");
         if( id != null) {
             KnowledgeBaseCategory knowledgeBaseCategory = null;
             String categoryId = null;
             for (int i = 0; i < config.knowledgeBaseTopic.categories.size(); i ++) {
-                if (config.knowledgeBaseTopic.categories.get(i)._id.equals(id)) {
+                if (config.knowledgeBaseTopic.categories.get(i).id.equals(id)) {
                     knowledgeBaseCategory = config.knowledgeBaseTopic.categories.get(i);
-                    categoryId = knowledgeBaseCategory._id;
+                    categoryId = knowledgeBaseCategory.id;
                     break;
                 }
             }
             general.setText(knowledgeBaseCategory.title);
-            general_number.setText("("+knowledgeBaseCategory.numOfArticles+")");
-            general_description.setText(knowledgeBaseCategory.description);
+            generalNumber.setText("("+knowledgeBaseCategory.numOfArticles+")");
+            generalDescription.setText(knowledgeBaseCategory.description);
             recyclerView.setAdapter(new ArticleAdapter(this, knowledgeBaseCategory.articles,categoryId));
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
         }

@@ -23,9 +23,7 @@
     <string name="FAQ">FAQ</string>
     <string name="start_new_conversation">Start new conversation</string>
     <string name="talk_with_support_staff">Talk with support staff</string>
-
-
-
+    <string name="message_has_arrived">Message has arrived</string>
 
     <string name="Welcome">Welcome!</string>
     <string name="Close">Close</string>

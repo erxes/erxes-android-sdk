@@ -14,41 +14,34 @@ import org.json.JSONObject;
 /**
  * Created by lol on 3/23/16.
  */
-public class DataManager {
-    SharedPreferences pref;
-    int PRIVATE_MODE = 0;
-    // Editor reference for Shared preferences
-    SharedPreferences.Editor editor;
+public final class DataManager {
+
+    private DataManager() {}
+
+    private static DataManager dataManager = new DataManager();
+
+    private SharedPreferences pref;
+    private SharedPreferences.Editor editor;
+
     private static final String PREFER_NAME = "ERXES_LIB";
-    public static final String brandcode = "rxx_brandcode";
-    public static final String email = "rxx_email";
-    public static final String phone = "rxx_phone";
-    public static final String integrationId = "rxx_integrationId";
-    public static final String customerId = "rxx_customerId";
-    public static final String color = "rxx_color";
-    public static final String language = "rxx_language";
-    public static final String isUser = "rxx_isUser";
-    public static final String customData = "rxx_customData";
+    public static final String EMAIL = "rxx_email";
+    public static final String PHONE = "rxx_phone";
+    public static final String INTEGRATIONID = "rxx_integrationId";
+    public static final String CUSTOMERID = "rxx_customerId";
+    public static final String COLOR = "rxx_color";
+    public static final String LANGUAGE = "rxx_language";
+    public static final String ISUSER = "rxx_isUser";
+    public static final String CUSTOMDATA = "rxx_customData";
 
 
-    static private DataManager dataManager;
-    static public DataManager getInstance(Activity activity){
-        if(dataManager == null)
-            dataManager = new DataManager(activity);
-
-        return dataManager;
-    }
-    static public DataManager getInstance(Context context){
+    public static DataManager getInstance(Context context){
         if(dataManager == null)
             dataManager = new DataManager(context);
-
         return dataManager;
     }
-    // Context
-    Context _context;
+
     private DataManager(Context context) {
-        this._context = context;
-        pref = _context.getSharedPreferences(PREFER_NAME, PRIVATE_MODE);
+        pref = context.getSharedPreferences(PREFER_NAME, 0);
         editor = pref.edit();
     }
     public void setData(String key, String data) {
@@ -85,7 +78,7 @@ public class DataManager {
     public Messengerdata getMessenger(){
         if (pref.getString("message", null) != null) {
             try {
-                return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))), pref.getString(language, null));
+                return Messengerdata.convert(new Json(new JSONObject(pref.getString("message", null))), pref.getString(LANGUAGE, null));
             } catch (JSONException e) {
                 e.printStackTrace();
                 return null;

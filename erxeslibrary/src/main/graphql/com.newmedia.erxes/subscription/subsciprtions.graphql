@@ -1,5 +1,5 @@
-subscription ConversationMessageInserted($_id: String!){
-  conversationMessageInserted(_id: $_id) {
+subscription ConversationMessageInserted($id: String!){
+  conversationMessageInserted(_id: $id) {
     _id
     content
     conversationId
@@ -25,8 +25,8 @@ subscription ConversationMessageInserted($_id: String!){
   }
 }
 
-subscription ConversationChanged($_id: String!) {
-    conversationChanged(_id: $_id) {
+subscription ConversationChanged($id: String!) {
+    conversationChanged(_id: $id) {
         conversationId
         type
     }
