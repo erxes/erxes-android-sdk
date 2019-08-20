@@ -138,7 +138,7 @@ public class ListenerService extends Service {
             return;
         subscriptionCall = apolloClient
                 .subscribe(ConversationMessageInsertedSubscription.builder()
-                        ._id(conversationId)
+                        .id(conversationId)
                         .build());
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
@@ -211,7 +211,7 @@ public class ListenerService extends Service {
         );
     }
 
-    private void createNotificationChannel(String chat_message, String name, String conversion_id) {
+    private void createNotificationChannel(String chatMessage, String name, String conversionId) {
 
 
         Intent intent = new Intent(this, ErxesActivity.class);
@@ -222,7 +222,7 @@ public class ListenerService extends Service {
 //        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "erxeschannel")
 //                .setBadgeIconType(R.drawable.icon)
 //                .setContentTitle(name)
-//                .setContentText(Html.fromHtml( chat_message))
+//                .setContentText(Html.fromHtml( chatMessage))
 //                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
 //                // Set the intent that will fire when the user taps the notification
 //                .setContentIntent(pendingIntent)
@@ -231,12 +231,12 @@ public class ListenerService extends Service {
 //        notificationManager.notify(0, mBuilder.build());
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (Build.VERSION.SDK_INT >= 26) {
-            String CHANNEL_ID = "erxes";
+            String channelId = "erxes";
             CharSequence name1 = "erxes_channel";
-            String Description = "erxes notification";
+            String description = "erxes notification";
             int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name1, importance);
-            mChannel.setDescription(Description);
+            NotificationChannel mChannel = new NotificationChannel(channelId, name1, importance);
+            mChannel.setDescription(description);
             mChannel.enableLights(true);
             mChannel.setLightColor(Color.RED);
             mChannel.enableVibration(true);
@@ -244,9 +244,9 @@ public class ListenerService extends Service {
             mChannel.setShowBadge(false);
             notificationManager.createNotificationChannel(mChannel);
 
-            Notification notification = new Notification.Builder(this, CHANNEL_ID)
+            Notification notification = new Notification.Builder(this, channelId)
                     .setContentTitle(getResources().getString(R.string.message_has_arrived))
-                    .setContentText(Html.fromHtml(chat_message))
+                    .setContentText(Html.fromHtml(chatMessage))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)
                     .setContentIntent(pendingIntent).getNotification();
@@ -254,7 +254,7 @@ public class ListenerService extends Service {
         } else {
             Notification notification = new Notification.Builder(this)
                     .setContentTitle(getResources().getString(R.string.message_has_arrived))
-                    .setContentText(Html.fromHtml(chat_message))
+                    .setContentText(Html.fromHtml(chatMessage))
                     .setSmallIcon(R.drawable.icon)
                     .setSound(alarmSound)
                     .setContentIntent(pendingIntent).getNotification();

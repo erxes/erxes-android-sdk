@@ -85,13 +85,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && config.messengerdata.getWelcome(config.language) != null)
+        int mPosition = position;
+        if (mPosition == 0 && config.messengerdata.getWelcome(config.language) != null)
             return 2; //welcomeMessage
 
         if (config.messengerdata.getWelcome(config.language) != null)
-            position = position - 1;
+            mPosition = mPosition - 1;
 
-        if (config.customerId.equalsIgnoreCase(mMessageList.get(position).customerId))
+        if (config.customerId.equalsIgnoreCase(mMessageList.get(mPosition).customerId))
             return 0;
         else return 1;
     }

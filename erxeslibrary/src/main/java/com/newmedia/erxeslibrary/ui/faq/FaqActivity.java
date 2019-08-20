@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseCategory;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.ArticleAdapter;
@@ -53,7 +53,7 @@ public class FaqActivity extends AppCompatActivity {
         cancelImageView = this.findViewById(R.id.cancelImageView);
         initIcon();
 
-        size = Helper.display_configure(this,container,"#00000000");
+        size = ErxesHelper.display_configure(this,container,"#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;

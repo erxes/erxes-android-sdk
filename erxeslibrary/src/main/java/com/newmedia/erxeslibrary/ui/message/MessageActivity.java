@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
@@ -160,7 +160,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     void load_findViewByid() {
         container = this.findViewById(R.id.container);
 
-        size = Helper.display_configure(this, container, "#00000000");
+        size = ErxesHelper.display_configure(this, container, "#00000000");
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;
@@ -216,7 +216,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         int index = Integer.getInteger(config.wallpaper, -1);
         if (index > -1 && index < 5)
-            mMessageRecycler.setBackgroundResource(Helper.backgrounds[index]);
+            mMessageRecycler.setBackgroundResource(ErxesHelper.backgrounds[index]);
     }
 
     private void initIcon() {

@@ -34,14 +34,15 @@ public class InsertNewMessage {
     }
 
     public void run(String mContent, List<AttachmentInput> list) {
-        if (TextUtils.isEmpty(mContent)) {
-            mContent = "This message has an attachment";
-        }
         this.mContent = mContent;
+        if (TextUtils.isEmpty(this.mContent)) {
+            this.mContent = "This message has an attachment";
+        }
+
         erxesRequest.apolloClient.mutate(InsertMessageMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)
-                .message(mContent)
+                .message(this.mContent)
                 .conversationId("")
                 .attachments(list)
                 .build())

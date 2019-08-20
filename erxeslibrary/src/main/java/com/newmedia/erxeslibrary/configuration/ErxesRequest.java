@@ -47,7 +47,7 @@ public final class ErxesRequest {
     private ErxesRequest(Config config) {
         this.context = config.context;
         this.config = config;
-        Helper.Init(context);
+        ErxesHelper.Init(context);
     }
 
     void set_client() {

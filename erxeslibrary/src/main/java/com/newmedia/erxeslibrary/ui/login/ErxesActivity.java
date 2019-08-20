@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
@@ -64,7 +64,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         cancelImageView = this.findViewById(R.id.cancelImageView);
         TextView contact = this.findViewById(R.id.contact);
 
-        Helper.display_configure(this, container, "#66000000");
+        ErxesHelper.display_configure(this, container, "#66000000");
         change_color();
         cancelImageView.setOnClickListener(touchListener);
         initIcon();

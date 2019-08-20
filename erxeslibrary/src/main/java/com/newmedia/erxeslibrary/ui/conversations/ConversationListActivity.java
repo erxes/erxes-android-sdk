@@ -27,7 +27,7 @@ import com.bumptech.glide.Glide;
 import com.newmedia.erxes.subscription.ConversationChangedSubscription;
 import com.newmedia.erxeslibrary.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ListenerService;
@@ -173,7 +173,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         if (conversationId != null) {
                 opensourceChangedCall = erxesRequest.apolloClient
                         .subscribe(ConversationChangedSubscription.builder()
-                                ._id(conversationId)
+                                .id(conversationId)
                                 .build());
                 initChangedConversation();
         }
@@ -311,7 +311,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         supporterView.setAdapter(new SupportAdapter(this, config.supporters));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
-        Helper.display_configure(this, container, "#66000000");
+        ErxesHelper.display_configure(this, container, "#66000000");
 
 
         erxesRequest.getSupporters();

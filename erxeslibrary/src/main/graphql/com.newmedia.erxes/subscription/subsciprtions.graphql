@@ -1,6 +1,6 @@
 subscription ConversationMessageInserted($id: String!){
-  conversationMessageInserted(id: $id) {
-    id
+  conversationMessageInserted(_id: $id) {
+    _id
     content
     conversationId
     internal
@@ -15,7 +15,7 @@ subscription ConversationMessageInserted($id: String!){
     isCustomerRead
     formWidgetData
     user{
-         id
+         _id
              details
              {
                     avatar
@@ -26,7 +26,7 @@ subscription ConversationMessageInserted($id: String!){
 }
 
 subscription ConversationChanged($id: String!) {
-    conversationChanged(id: $id) {
+    conversationChanged(_id: $id) {
         conversationId
         type
     }

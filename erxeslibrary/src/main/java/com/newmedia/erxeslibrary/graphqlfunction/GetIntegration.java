@@ -8,7 +8,7 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import org.json.JSONObject;
 
 public class GetIntegration {
@@ -42,8 +42,8 @@ public class GetIntegration {
             if (!response.hasErrors()) {
                 try {
                     config.changeLanguage(response.data().getMessengerIntegration().languageCode());
-                    Helper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
-                    Helper.load_messengerData(response.data().getMessengerIntegration().messengerData());
+                    ErxesHelper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
+                    ErxesHelper.load_messengerData(response.data().getMessengerIntegration().messengerData());
                     if (config.messengerdata != null) {
                         if (!config.messengerdata.isShowLauncher()) {
                             erxesRequest.setConnect(email, phone, true, jsonObject.toString());

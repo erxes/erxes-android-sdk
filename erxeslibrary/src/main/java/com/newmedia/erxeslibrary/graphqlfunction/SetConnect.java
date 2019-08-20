@@ -8,7 +8,7 @@ import com.apollographql.apollo.exception.ApolloException;
 import com.newmedia.erxes.basic.MessengerConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.configuration.Helper;
+import com.newmedia.erxeslibrary.configuration.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.DataManager;
 import com.newmedia.erxeslibrary.helper.Json;
@@ -61,8 +61,8 @@ public class SetConnect {
                     dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
 
                     config.changeLanguage(response.data().messengerConnect().languageCode());
-                    Helper.load_uiOptions(response.data().messengerConnect().uiOptions());
-                    Helper.load_messengerData(response.data().messengerConnect().messengerData());
+                    ErxesHelper.load_uiOptions(response.data().messengerConnect().uiOptions());
+                    ErxesHelper.load_messengerData(response.data().messengerConnect().messengerData());
 
                     erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
                 }

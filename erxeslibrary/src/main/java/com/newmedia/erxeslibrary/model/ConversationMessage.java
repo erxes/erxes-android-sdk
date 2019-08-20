@@ -27,19 +27,19 @@ public class ConversationMessage {
 
     public static List<ConversationMessage> convert(Response<MessagesQuery.Data> response, String ConversationId) {
         List<MessagesQuery.Message> data = response.data().messages();
-        List<ConversationMessage> data_converted = new ArrayList<>();
-        ConversationMessage this_o;
+        List<ConversationMessage> dataConverted = new ArrayList<>();
+        ConversationMessage thisO;
         for (MessagesQuery.Message item : data) {
-            this_o = new ConversationMessage();
-            this_o.id = item._id();
-            this_o.createdAt = item.createdAt();
-            this_o.customerId = item.customerId();
-            this_o.content = item.content();
-            this_o.internal = item.internal();
+            thisO = new ConversationMessage();
+            thisO.id = item._id();
+            thisO.createdAt = item.createdAt();
+            thisO.customerId = item.customerId();
+            thisO.content = item.content();
+            thisO.internal = item.internal();
             if (item.user() != null) {
                 User user = new User();
                 user.convert(item.user());
-                this_o.user = user;
+                thisO.user = user;
             }
             if (item.attachments() != null) {
                 JSONArray array = new JSONArray();
@@ -55,12 +55,12 @@ public class ConversationMessage {
                         e.printStackTrace();
                     }
                 }
-                this_o.attachments = array.toString();
+                thisO.attachments = array.toString();
             }
-            this_o.conversationId = ConversationId;
-            data_converted.add(this_o);
+            thisO.conversationId = ConversationId;
+            dataConverted.add(thisO);
         }
-        return data_converted;
+        return dataConverted;
     }
 
     public static ConversationMessage convert(InsertMessageMutation.InsertMessage a, String message, Config config) {

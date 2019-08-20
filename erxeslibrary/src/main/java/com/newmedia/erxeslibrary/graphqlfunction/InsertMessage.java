@@ -27,15 +27,16 @@ public class InsertMessage {
         config = Config.getInstance(context);
     }
     public void run( String mContent, final String conversationId,List<AttachmentInput> list){
-        if (TextUtils.isEmpty(mContent)) {
-            mContent = "This message has an attachment";
-        }
         this.mContent = mContent;
+        if (TextUtils.isEmpty(this.mContent)) {
+            this.mContent = "This message has an attachment";
+        }
+
         this.conversationId = conversationId;
         InsertMessageMutation.Builder temp =InsertMessageMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)
-                .message(mContent)
+                .message(this.mContent)
                 .attachments(list)
                 .conversationId(conversationId);
         erxesRequest.apolloClient.mutate(temp.build()).enqueue(request);
