@@ -59,7 +59,7 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CipherSuite;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+//import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -83,8 +83,8 @@ public final class ErxesRequest {
     }
 
     void set_client() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -132,7 +132,7 @@ public final class ErxesRequest {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-                    .addInterceptor(logging)
+//                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.context))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
