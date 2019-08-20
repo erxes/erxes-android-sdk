@@ -370,13 +370,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         else this.findViewById(R.id.ytcontainer).setVisibility(View.GONE);
     }
 
-    private void startYoutube(String mUri) {
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mUri));
+    private void startYoutube(String s) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(s));
         startActivity(intent);
     }
 
-    private void startFacebook(String mUri) {
-
+    private void startFacebook(String s) {
+        String mUri = s;
         try {
             Uri uri;
 
@@ -401,7 +401,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         }
     }
 
-    private void startTwitter(String mUri) {
+    private void startTwitter(String s) {
+        String mUri = s;
         if (mUri.startsWith("https://twitter.com/")) {
             mUri = mUri.replace("https://twitter.com/", "");
         }

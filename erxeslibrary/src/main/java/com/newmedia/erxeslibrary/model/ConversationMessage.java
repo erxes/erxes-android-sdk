@@ -25,7 +25,7 @@ public class ConversationMessage {
     public String attachments;
 
 
-    public static List<ConversationMessage> convert(Response<MessagesQuery.Data> response, String ConversationId) {
+    public static List<ConversationMessage> convert(Response<MessagesQuery.Data> response, String conversationId) {
         List<MessagesQuery.Message> data = response.data().messages();
         List<ConversationMessage> dataConverted = new ArrayList<>();
         ConversationMessage thisO;
@@ -57,7 +57,7 @@ public class ConversationMessage {
                 }
                 thisO.attachments = array.toString();
             }
-            thisO.conversationId = ConversationId;
+            thisO.conversationId = conversationId;
             dataConverted.add(thisO);
         }
         return dataConverted;
