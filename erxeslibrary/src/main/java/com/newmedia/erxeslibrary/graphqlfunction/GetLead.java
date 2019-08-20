@@ -7,13 +7,17 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.FormConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.FormConnect;
 
-import org.jetbrains.annotations.NotNull;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GetLead {
 
@@ -27,28 +31,45 @@ public class GetLead {
     }
 
     public void run() {
-        if (!TextUtils.isEmpty(config.messengerdata.getFormCode()))
-            erxesRequest.apolloClient.mutate(FormConnectMutation.builder()
-                    .brandCode(config.brandCode)
-                    .formCode(config.messengerdata.getFormCode())
-                    .build()).enqueue(formConnect);
+        if (!TextUtils.isEmpty(config.messengerdata.getFormCode())) {
+            Rx2Apollo.from(erxesRequest.apolloClient
+                    .mutate(FormConnectMutation.builder()
+                            .brandCode(config.brandCode)
+                            .formCode(config.messengerdata.getFormCode())
+                            .build()))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
+        }
     }
-
-    private ApolloCall.Callback<FormConnectMutation.Data> formConnect = new ApolloCall.Callback<FormConnectMutation.Data>() {
+    private Observer observer = new Observer<Response<FormConnectMutation.Data>>() {
         @Override
-        public void onResponse(@NotNull Response<FormConnectMutation.Data> response) {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Response<FormConnectMutation.Data> response) {
             if (!response.hasErrors()) {
                 config.formConnect = FormConnect.convert(response);
                 erxesRequest.notefyAll(Returntype.LEAD, null, null);
+                Log.e(TAG, "no Error");
+
             } else {
                 Log.e(TAG, "onResponse: " + response.errors().get(0).message());
             }
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
+        public void onError(Throwable e) {
             e.printStackTrace();
-            Log.e(TAG, "onFailure: formConnect");
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     };
 }

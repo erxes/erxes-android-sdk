@@ -1,18 +1,20 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
+import android.util.Log;
 import android.content.Context;
-
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.SaveLeadMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.helper.Json;
-
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class SendLead {
     final static String TAG = "SendLead";
@@ -25,18 +27,26 @@ public class SendLead {
     }
 
     public void run() {
-        erxesRequest.apolloClient.mutate(SaveLeadMutation.builder()
+        SaveLeadMutation mutate = SaveLeadMutation.builder()
                 .formId(config.formConnect.getLead().getId())
                 .integrationId(config.integrationId)
                 .submissions(config.fieldValueInputs)
                 .browserInfo(new Json(new JSONObject()))
-                .build())
-                .enqueue(request);
+                .build();
+        Rx2Apollo.from(erxesRequest.apolloClient
+                .mutate(mutate))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
-
-    private ApolloCall.Callback<SaveLeadMutation.Data> request = new ApolloCall.Callback<SaveLeadMutation.Data>() {
+    private Observer observer = new Observer<Response<SaveLeadMutation.Data>>() {
         @Override
-        public void onResponse(@NotNull Response<SaveLeadMutation.Data> response) {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Response<SaveLeadMutation.Data> response) {
             if (!response.hasErrors()) {
                 if (response.data().saveForm().status().equalsIgnoreCase("ok")) {
                     erxesRequest.notefyAll(Returntype.SAVEDLEAD, null, response.data().saveForm().status());
@@ -44,14 +54,21 @@ public class SendLead {
                     erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.data().saveForm().status());
                 }
             } else {
+                Log.e(TAG, "errors " + response.errors().toString());
                 erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
+        public void onError(Throwable e) {
             e.printStackTrace();
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     };
 }

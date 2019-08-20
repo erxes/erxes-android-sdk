@@ -2,16 +2,19 @@ package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.content.Context;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.FaqGetQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 
-import org.jetbrains.annotations.NotNull;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GetKnowledge {
     final static String TAG = "GetKnowledge";
@@ -24,14 +27,23 @@ public class GetKnowledge {
     }
 
     public void run() {
-        if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null)
-            erxesRequest.apolloClient.query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
-                    .enqueue(request);
+        if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null) {
+            Rx2Apollo.from(erxesRequest.apolloClient
+                    .query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
+                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(observer);
+        }
     }
-
-    private ApolloCall.Callback<FaqGetQuery.Data> request = new ApolloCall.Callback<FaqGetQuery.Data>() {
+    private Observer observer = new Observer<Response<FaqGetQuery.Data>>() {
         @Override
-        public void onResponse(@NotNull final Response<FaqGetQuery.Data> response) {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Response<FaqGetQuery.Data> response) {
             if (!response.hasErrors()) {
                 config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
                 erxesRequest.notefyAll(Returntype.FAQ, null, null);
@@ -41,9 +53,14 @@ public class GetKnowledge {
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
+        public void onError(Throwable e) {
             e.printStackTrace();
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+
+        }
+
+        @Override
+        public void onComplete() {
 
         }
     };

@@ -1,16 +1,19 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.content.Context;
-import com.apollographql.apollo.ApolloCall;
+
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.ConversationsQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.Returntype;
 import com.newmedia.erxeslibrary.model.Conversation;
-
-import org.jetbrains.annotations.NotNull;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GetConversation {
     final static String TAG = "SETCONNECT";
@@ -21,31 +24,47 @@ public class GetConversation {
         config = Config.getInstance(context);
     }
     public void run(){
-        erxesRequest.apolloClient.query(ConversationsQuery.builder()
+        Rx2Apollo.from(erxesRequest.apolloClient
+                .query(ConversationsQuery.builder()
                         .integrationId(config.integrationId)
                         .customerId(config.customerId).build())
-                .enqueue(request);
+                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
-    private ApolloCall.Callback<ConversationsQuery.Data> request = new ApolloCall.Callback<ConversationsQuery.Data>() {
+
+    private Observer observer = new Observer<Response<ConversationsQuery.Data>>() {
         @Override
-        public void onResponse(@NotNull Response<ConversationsQuery.Data> response) {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Response<ConversationsQuery.Data> response) {
             if(response.data().conversations().size()>0) {
                 if (config.conversations != null && config.conversations.size() > 0)
                     config.conversations.clear();
                 if (config.conversations != null) {
                     for (Conversation conversation : Conversation.convert(response,config)) {
                         if (conversation.status.equalsIgnoreCase("open"))
-                        config.conversations.add(conversation);
+                            config.conversations.add(conversation);
                     }
                 }
+
             }
             erxesRequest.notefyAll(Returntype.GETCONVERSATION,null,null);
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
+        public void onError(Throwable e) {
             e.printStackTrace();
             erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     };
 }

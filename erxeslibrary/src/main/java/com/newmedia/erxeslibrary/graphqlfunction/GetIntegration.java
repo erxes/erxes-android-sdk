@@ -1,15 +1,22 @@
 package com.newmedia.erxeslibrary.graphqlfunction;
 
 import android.content.Context;
+import android.util.Log;
 
-import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.GetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.ErxesHelper;
+import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+
 import org.json.JSONObject;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GetIntegration {
     final static String TAG = "GETINTEG";
@@ -30,15 +37,23 @@ public class GetIntegration {
         this.email = email;
         this.phone = phone;
         this.jsonObject = jsonObject;
-        erxesRequest.apolloClient.query(GetMessengerIntegrationQuery.builder()
-                .brandCode(config.brandCode)
-                .build()
-        ).enqueue(request);
-    }
 
-    private ApolloCall.Callback<GetMessengerIntegrationQuery.Data> request = new ApolloCall.Callback<GetMessengerIntegrationQuery.Data>() {
+        Rx2Apollo.from(erxesRequest.apolloClient
+                .query(GetMessengerIntegrationQuery.builder().brandCode(config.brandCode)
+                        .build())
+                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+    private Observer observer = new Observer<Response<GetMessengerIntegrationQuery.Data>>() {
         @Override
-        public void onResponse(Response<GetMessengerIntegrationQuery.Data> response) {
+        public void onSubscribe(Disposable d) {
+            Log.e(TAG,"onsubscribe");
+        }
+
+        @Override
+        public void onNext(Response<GetMessengerIntegrationQuery.Data> response) {
             if (!response.hasErrors()) {
                 try {
                     config.changeLanguage(response.data().getMessengerIntegration().languageCode());
@@ -54,12 +69,20 @@ public class GetIntegration {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+            } else {
+                Log.e(TAG, "errors " + response.errors().toString());
             }
         }
 
         @Override
-        public void onFailure(ApolloException e) {
+        public void onError(Throwable e) {
             e.printStackTrace();
+
+        }
+
+        @Override
+        public void onComplete() {
+            Log.e(TAG,"onComplete");
         }
     };
 }

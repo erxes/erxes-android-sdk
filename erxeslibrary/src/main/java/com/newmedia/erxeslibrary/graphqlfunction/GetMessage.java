@@ -4,7 +4,9 @@ import android.content.Context;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -14,6 +16,11 @@ import com.newmedia.erxeslibrary.model.ConversationMessage;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class GetMessage {
     final static String TAG = "SETCONNECT";
@@ -28,15 +35,24 @@ public class GetMessage {
 
     public void run(String conversationid) {
         this.conversationid = conversationid;
-        erxesRequest.apolloClient.query(MessagesQuery.builder()
+        MessagesQuery query = MessagesQuery.builder()
                 .conversationId(conversationid)
-                .build()).enqueue(request);
+                .build();
+        Rx2Apollo.from(erxesRequest.apolloClient
+                .query(query)
+                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
-
-    private ApolloCall.Callback<MessagesQuery.Data> request = new ApolloCall.Callback<MessagesQuery.Data>() {
+    private Observer observer = new Observer<Response<MessagesQuery.Data>>() {
         @Override
-        public void onResponse(@NotNull Response<MessagesQuery.Data> response) {
+        public void onSubscribe(Disposable d) {
 
+        }
+
+        @Override
+        public void onNext(Response<MessagesQuery.Data> response) {
             if (response.data().messages().size() > 0) {
                 if (config.conversationMessages.size() > 0)
                     config.conversationMessages.clear();
@@ -51,8 +67,15 @@ public class GetMessage {
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, conversationid, null);
+        public void onError(Throwable e) {
+            e.printStackTrace();
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     };
 }

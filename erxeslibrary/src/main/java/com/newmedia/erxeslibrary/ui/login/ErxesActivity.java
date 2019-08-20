@@ -48,6 +48,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+        ErxesHelper.changeLanguage(this,config.language);
         setContentView(R.layout.activity_erxes);
 
         loaderView = this.findViewById(R.id.loaderView);

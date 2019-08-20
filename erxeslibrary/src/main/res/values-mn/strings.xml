@@ -23,4 +23,47 @@
     <string name="FAQ">АСУУЛТ</string>
     <string name="start_new_conversation">Харилцан яриа эхлүүлэх</string>
     <string name="talk_with_support_staff">Туслах ажилтантай ярилцах</string>
+    <string name="message_has_arrived">Таньд мессеж ирлээ</string>
+
+
+    <string name="Welcome">Сайн байна уу!</string>
+    <string name="Close">Хаах</string>
+    <string name="Offline">Оффлайн</string>
+    <string name="Online">Онлайн</string>
+    <string name="Send_a_message">Зурвас илгээх</string>
+    <string name="Send">Илгээх</string>
+    <string name="Support">Тусламж</string>
+    <string name="Faq">Асуулт</string>
+    <string name="Start_new_conversation">Харилцан яриа эхлүүлэх</string>
+    <string name="Write_a_reply">Хариу бичих</string>
+    <string name="Conversation">Харилцан яриа</string>
+    <string name="with_Support_staff">Туслах ажилтан</string>
+    <string name="Click_to_select_a_date">Он сар өдөр сонгох</string>
+    <string name="Thanks_for_your_message">Зурвас илгээсэнд баярлалаа, Би аль болох хурдан хариу өгнө</string>
+    <string name="Create_new">Шинийг үүсгэх</string>
+    <string name="Written_by">Бичсэн</string>
+    <string name="Modified">Өөрчлөгдсөн </string>
+    <string name="Created">Үүссэн </string>
+    <string name="There_are">Энэ төрөлд</string>
+    <string name="articles_in_this_category">нийтлэл байна</string>
+    <string name="Back_to_categories">Ангилал-руу буцах</string>
+    <string name="Back_to_top">Дээшлэх</string>
+    <string name="Back_to_articles">Нийтлэл-рүү буцах</string>
+    <string name="Contact">Харилцагч та</string>
+    <string name="Give_us_your_contact_information">дараах холбогдох мэдээллийг оруулна уу.</string>
+    <string name="Email">И-мэйл</string>
+    <string name="SMS">Утас</string>
+    <string name="email_domain_com">email@domain.com</string>
+    <string name="phone_number">утасны дугаар</string>
+    <string name="Support_staff">Туслах ажилтан</string>
+    <string name="Conversations">Харилцан яриа</string>
+    <string name="Recent_conversations">Харилцан ярианууд</string>
+    <string name="with_Support_staffs">Туслах ажилтан</string>
+    <string name="Talk_with_support_staff">Туслах ажилтантай ярилцах</string>
+    <string name="Do_you_want_to_end_this_conversation">Харилцан яриаг дуусгах уу?</string>
+    <string name="Welcome_description">Танд асуух асуулт байна уу? Бид танд туслахад бэлэн байна.</string>
+    <string name="Failed">Алдаа гарлаа</string>
+    <string name="No_articles_found">Бичвэр олдсонгүй</string>
+    <string name="Search">Хайх</string>
+    <string name="End_conversation">Харилцан яриа дуусгах</string>
 </resources>

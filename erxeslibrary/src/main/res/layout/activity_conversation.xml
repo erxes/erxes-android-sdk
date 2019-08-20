@@ -51,13 +51,13 @@
                     android:id="@+id/tabItem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/SUPPORT" />
+                    android:text="@string/Support" />
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/FAQ" />
+                    android:text="@string/Faq" />
             </android.support.design.widget.TabLayout>
 
             <View

@@ -3,6 +3,13 @@ package com.newmedia.erxeslibrary.configuration;
 import android.content.Context;
 
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Operation;
+import com.apollographql.apollo.api.ResponseField;
+import com.apollographql.apollo.cache.normalized.CacheKey;
+import com.apollographql.apollo.cache.normalized.CacheKeyResolver;
+import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory;
+import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper;
+import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 import com.newmedia.erxes.basic.type.AttachmentInput;
@@ -22,6 +29,7 @@ import com.newmedia.erxeslibrary.graphqlfunction.SetConnect;
 import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -34,6 +42,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
@@ -45,6 +54,7 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CipherSuite;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -85,14 +95,38 @@ public final class ErxesRequest {
 //                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
 //                .build();
 
+        ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(context, "db_cache");
+
+        // Create NormalizedCacheFactory
+        NormalizedCacheFactory cacheFactory = new SqlNormalizedCacheFactory(apolloSqlHelper);
+
+        // Create the cache key resolver, this example works well when all types have globally unique ids.
+        CacheKeyResolver resolver = new CacheKeyResolver() {
+            @NotNull
+            @Override
+            public CacheKey fromFieldRecordSet(@NotNull ResponseField field, @NotNull Map<String, Object> recordSet) {
+                return formatCacheKey((String) recordSet.get("id"));
+            }
+
+            @NotNull
+            @Override
+            public CacheKey fromFieldArguments(@NotNull ResponseField field, @NotNull Operation.Variables variables) {
+                return formatCacheKey((String) field.resolveArgument("id", variables));
+            }
+
+            private CacheKey formatCacheKey(String id) {
+                if (id == null || id.isEmpty()) {
+                    return CacheKey.NO_KEY;
+                } else {
+                    return CacheKey.from(id);
+                }
+            }
+        };
+
         if (config.host3100 != null) {
-            //                    .connectionSpecs(Collections.singletonList(spec))
-            //                    .addInterceptor(logging)
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
-//                    .connectionSpecs(Collections.singletonList(spec))
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-//                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.context))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();

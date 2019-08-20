@@ -5,6 +5,7 @@ import android.content.Context;
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.MessengerConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -16,6 +17,11 @@ import com.newmedia.erxeslibrary.helper.Json;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 
 public class SetConnect {
@@ -39,42 +45,54 @@ public class SetConnect {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        erxesRequest.apolloClient.mutate(MessengerConnectMutation.builder()
+        MessengerConnectMutation mutate = MessengerConnectMutation.builder()
                 .brandCode(config.brandCode)
                 .email(email)
                 .phone(phone)
                 .isUser(isUser)
                 .data(new Json(customData))
-                .build()
-        ).enqueue(request);
+                .build();
+        Rx2Apollo.from(erxesRequest.apolloClient
+                .mutate(mutate))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
-
-    private ApolloCall.Callback<MessengerConnectMutation.Data> request = new ApolloCall.Callback<MessengerConnectMutation.Data>() {
+    private Observer observer = new Observer<Response<MessengerConnectMutation.Data>>() {
         @Override
-        public void onResponse(@NotNull Response<MessengerConnectMutation.Data> response) {
+        public void onSubscribe(Disposable d) {
+
+        }
+
+        @Override
+        public void onNext(Response<MessengerConnectMutation.Data> response) {
             if (!response.hasErrors()) {
-                if (config.messengerdata.isShowLauncher()) {
-                    config.customerId = response.data().messengerConnect().customerId();
-                    config.integrationId = response.data().messengerConnect().integrationId();
+                config.customerId = response.data().messengerConnect().customerId();
+                config.integrationId = response.data().messengerConnect().integrationId();
 
-                    dataManager.setData(DataManager.CUSTOMERID, config.customerId);
-                    dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
+                dataManager.setData(DataManager.CUSTOMERID, config.customerId);
+                dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
 
-                    config.changeLanguage(response.data().messengerConnect().languageCode());
-                    ErxesHelper.load_uiOptions(response.data().messengerConnect().uiOptions());
-                    ErxesHelper.load_messengerData(response.data().messengerConnect().messengerData());
+                config.changeLanguage(response.data().messengerConnect().languageCode());
+                ErxesHelper.load_uiOptions(response.data().messengerConnect().uiOptions());
+                ErxesHelper.load_messengerData(response.data().messengerConnect().messengerData());
 
-                    erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
-                }
+                erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
             } else {
                 erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
-        public void onFailure(@NotNull ApolloException e) {
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
+        public void onError(Throwable e) {
             e.printStackTrace();
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+
+        }
+
+        @Override
+        public void onComplete() {
+
         }
     };
 }
