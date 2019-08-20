@@ -31,6 +31,7 @@ import com.newmedia.erxeslibrary.configuration.ReturnType;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.configuration.SoftKeyboard;
 import com.newmedia.erxeslibrary.ErxesObserver;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.R;
 
@@ -215,8 +216,18 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
         });
 
-        logoutImageView.setOnClickListener(v -> logout());
-        backImageView.setOnClickListener(v -> finish());
+        logoutImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         int index = Integer.getInteger(config.wallpaper, -1);
         if (index > -1 && index < 5)
@@ -253,7 +264,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             }
             subscribe_conversation();
         } else {
-            mMessageRecycler.setAdapter(new MessageListAdapter(this, new ArrayList<>()));
+            mMessageRecycler.setAdapter(new MessageListAdapter(this, new ArrayList<ConversationMessage>()));
         }
         header_profile_change();
 

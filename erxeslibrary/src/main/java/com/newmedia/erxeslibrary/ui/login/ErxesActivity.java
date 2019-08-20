@@ -216,9 +216,12 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     }
 
-    private View.OnClickListener touchListener = v -> {
-        if (v.getId() == R.id.cancelImageView)
-            logout();
+    private View.OnClickListener touchListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.cancelImageView)
+                logout();
+        }
     };
 
     public static boolean isValidEmail(CharSequence target) {

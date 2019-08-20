@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -83,8 +84,18 @@ public class FaqActivity extends AppCompatActivity {
             }
         });
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        this.findViewById(R.id.cancelImageView).setOnClickListener(v -> logout());
-        this.findViewById(R.id.backImageView).setOnClickListener(v -> finish());
+        this.findViewById(R.id.cancelImageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+        this.findViewById(R.id.backImageView).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         recyclerView = this.findViewById(R.id.recycler_view);
         general = this.findViewById(R.id.general);
         general_number = this.findViewById(R.id.general_number);

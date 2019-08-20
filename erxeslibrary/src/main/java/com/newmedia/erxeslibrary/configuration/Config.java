@@ -38,6 +38,7 @@ import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import org.json.JSONObject;
 
+import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -217,8 +218,13 @@ public class Config implements ErxesObserver {
         if (config == null) {
             config = new Config(activity);
             config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null)
-                config.erxesRequest.set_client();
+            if (config.HOST_3100 != null) {
+                try {
+                    config.erxesRequest.set_client();
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return config;
     }
@@ -227,8 +233,13 @@ public class Config implements ErxesObserver {
         if (config == null) {
             config = new Config(context);
             config.erxesRequest = ErxesRequest.getInstance(config);
-            if (config.HOST_3100 != null)
-                config.erxesRequest.set_client();
+            if (config.HOST_3100 != null) {
+                try {
+                    config.erxesRequest.set_client();
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return config;
     }
@@ -261,7 +272,11 @@ public class Config implements ErxesObserver {
         dataManager.setData("HOSTUPLOAD", HOST_UPLOAD);
         dataManager.setData("BRANDCODE", brandcode);
         LoadDefaultValues();
-        erxesRequest.set_client();
+        try {
+            erxesRequest.set_client();
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
 
     }
 

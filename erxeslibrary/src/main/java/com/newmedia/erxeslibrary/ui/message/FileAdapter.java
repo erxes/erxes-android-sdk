@@ -115,7 +115,7 @@ public class FileAdapter extends RecyclerView.Adapter {
             imageView = itemView.findViewById(R.id.fileImage);
         }
 
-        void bind(FileAttachment fileAttachment, int position) {
+        void bind(final FileAttachment fileAttachment, int position) {
             if (fileAttachment.getType().contains("application/pdf")) {
                 imageView.setImageResource(R.drawable.filepdf);
             } else if (fileAttachment.getType().contains("application") && fileAttachment.getType().contains("word")){
@@ -123,12 +123,15 @@ public class FileAdapter extends RecyclerView.Adapter {
             } else {
                 imageView.setImageResource(R.drawable.file);
             }
-            imageView.setOnClickListener(v -> {
-                if (fileAttachment.getUrl().startsWith("http")) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fileAttachment.getUrl()));
-                    activity.startActivity(browserIntent);
-                } else {
-                    Toast.makeText(activity, "Invalid file",Toast.LENGTH_SHORT).show();
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fileAttachment.getUrl().startsWith("http")) {
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(fileAttachment.getUrl()));
+                        activity.startActivity(browserIntent);
+                    } else {
+                        Toast.makeText(activity, "Invalid file",Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
         }
@@ -144,12 +147,12 @@ public class FileAdapter extends RecyclerView.Adapter {
             imageView = itemView.findViewById(R.id.image);
         }
 
-        void bind(FileAttachment fileAttachment, int position) {
+        void bind(FileAttachment fileAttachment, final int position) {
             Uri uri = Uri.parse(fileAttachment.getUrl());
             imageView.setHierarchy(builder.build());
             imageView.setImageURI(uri);
 
-            List<FileAttachment> fileAttachmentList = new ArrayList<>();
+            final List<FileAttachment> fileAttachmentList = new ArrayList<>();
             for (FileAttachment attachment : fileAttachments) {
                 if (attachment.getType().contains("image") &&
                         !attachment.getType().contains("image/svg")) {
@@ -157,15 +160,23 @@ public class FileAdapter extends RecyclerView.Adapter {
                 }
             }
 
-            imageView.setOnClickListener(v -> {
-                new ImageViewer.Builder(activity, fileAttachmentList)
-                        .setFormatter((ImageViewer.Formatter<FileAttachment>) attachment1 -> attachment1.getUrl())
-                        .setStartPosition(position)
-                        .setBackgroundColor(config.colorCode)
-                        .setImageMarginPx(20)
-                        .allowZooming(true)
-                        .allowSwipeToDismiss(true)
-                        .show();
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new ImageViewer.Builder(activity, fileAttachmentList)
+                            .setFormatter(new ImageViewer.Formatter<FileAttachment>() {
+                                @Override
+                                public String format(FileAttachment fileAttachment1) {
+                                    return fileAttachment1.getUrl();
+                                }
+                            })
+                            .setStartPosition(position)
+                            .setBackgroundColor(config.colorCode)
+                            .setImageMarginPx(20)
+                            .allowZooming(true)
+                            .allowSwipeToDismiss(true)
+                            .show();
+                }
             });
         }
     }

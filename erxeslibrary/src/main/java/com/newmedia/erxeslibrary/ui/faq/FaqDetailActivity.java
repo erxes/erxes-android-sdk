@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -70,8 +71,18 @@ public class FaqDetailActivity extends AppCompatActivity {
             }
         });
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        cancelImageView.setOnClickListener(v -> logout());
-        backImageView.setOnClickListener(v -> finish());
+        cancelImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+        backImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         general = this.findViewById(R.id.general);
         article_header = this.findViewById(R.id.article_header);

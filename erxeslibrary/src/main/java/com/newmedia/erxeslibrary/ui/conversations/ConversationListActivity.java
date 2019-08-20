@@ -215,13 +215,16 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
     private boolean runThreadInserted(final String conversationId) {
         if (!config.isNetworkConnected()) {
-            new Thread(() -> {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e1) {
-                    e1.printStackTrace();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    clientChangedListen(conversationId);
                 }
-                clientChangedListen(conversationId);
             }).start();
             return true;
         }
@@ -289,7 +292,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         tabLayout = findViewById(R.id.tabs);
         tabsContainer = findViewById(R.id.tabsContainer);
         cancelImageView = this.findViewById(R.id.cancelImageView);
-        cancelImageView.setOnClickListener(v -> finish());
+        cancelImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         initIcon();
 
         dataManager = DataManager.getInstance(this);

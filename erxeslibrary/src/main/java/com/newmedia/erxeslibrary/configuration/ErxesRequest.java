@@ -26,17 +26,34 @@ import com.newmedia.erxeslibrary.helper.JsonCustomTypeAdapter2;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.security.GeneralSecurityException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import okhttp3.CipherSuite;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class ErxesRequest {
     final private String TAG = "erxesrequest";
 
     public ApolloClient apolloClient;
-    private OkHttpClient okHttpClient;
+    private OkHttpClient.Builder okHttpClientBuilder;
     private Activity activity;
     private List<ErxesObserver> observers;
     private Config config;
@@ -55,40 +72,165 @@ public class ErxesRequest {
         Helper.Init(activity);
     }
 
-    public void set_client() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
-//                .cipherSuites(
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
-//                .build();
-
+    public void set_client() throws GeneralSecurityException {
         if (config.HOST_3100 != null) {
-            okHttpClient = new OkHttpClient.Builder()
-//                    .connectionSpecs(Collections.singletonList(spec))
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+            okHttpClientBuilder = new OkHttpClient.Builder()
+                    .followRedirects(true)
+                    .followSslRedirects(true)
+                    .retryOnConnectionFailure(true)
+                    .cache(null)
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-//                    .addInterceptor(logging)
+                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.activity))
-                    .addInterceptor(new ReceivedCookiesInterceptor(this.activity))
-                    .build();
+                    .addInterceptor(new ReceivedCookiesInterceptor(this.activity));
+//            if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+//                try {
+//                    final ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                            .cipherSuites(customCipherSuites.toArray(new CipherSuite[0]))
+//                            .build();
+//                    X509TrustManager trustManager = defaultTrustManager();
+//                    SSLSocketFactory sslSocketFactory = defaultSslSocketFactory(trustManager);
+//                    SSLSocketFactory customSslSocketFactory = new DelegatingSSLSocketFactory(sslSocketFactory) {
+//                        @Override
+//                        protected SSLSocket configureSocket(SSLSocket socket) throws IOException {
+//                            socket.setEnabledCipherSuites(javaNames(spec.cipherSuites()));
+//                            return socket;
+//                        }
+//                    };
+//                    okHttpClientBuilder.sslSocketFactory(customSslSocketFactory,trustManager);
+//
+//                    } catch (Exception exc) {
+//                    Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc);
+//                }
+//            }
+//            if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+//                try {
+//                    SSLContext sc = SSLContext.getInstance("TLSv1.2");
+//                    sc.init(null, null, null);
+//                    okHttpClientBuilder.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+//
+//                    ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+//                            .tlsVersions(TlsVersion.TLS_1_2)
+//                            .build();
+//
+//                    List<ConnectionSpec> specs = new ArrayList<>();
+//                    specs.add(cs);
+//                    specs.add(ConnectionSpec.COMPATIBLE_TLS);
+//                    specs.add(ConnectionSpec.CLEARTEXT);
+//
+//                    okHttpClientBuilder.connectionSpecs(specs);
+//                } catch (Exception exc) {
+//                    Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc);
+//                }
+//            }
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.HOST_3100)
-                    .okHttpClient(okHttpClient)
-                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClient))
+                    .okHttpClient(okHttpClientBuilder.build())
+                    .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.HOST_3300, okHttpClientBuilder.build()))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
                     .build();
+        }
+    }
+
+    private List<CipherSuite> customCipherSuites = Arrays.asList(
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+            CipherSuite.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
+            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256);
+
+    private SSLSocketFactory defaultSslSocketFactory(X509TrustManager trustManager)
+            throws NoSuchAlgorithmException, KeyManagementException {
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{trustManager}, null);
+
+        return sslContext.getSocketFactory();
+    }
+
+    /**
+     * Returns a trust manager that trusts the VM's default certificate authorities.
+     */
+    private X509TrustManager defaultTrustManager() throws GeneralSecurityException {
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
+                TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+            throw new IllegalStateException("Unexpected default trust managers:"
+                    + Arrays.toString(trustManagers));
+        }
+        return (X509TrustManager) trustManagers[0];
+    }
+
+    private String[] javaNames(List<CipherSuite> cipherSuites) {
+        String[] result = new String[cipherSuites.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = cipherSuites.get(i).javaName();
+        }
+        return result;
+    }
+
+    /**
+     * An SSL socket factory that forwards all calls to a delegate. Override {@link #configureSocket}
+     * to customize a created socket before it is returned.
+     */
+    static class DelegatingSSLSocketFactory extends SSLSocketFactory {
+        protected final SSLSocketFactory delegate;
+
+        DelegatingSSLSocketFactory(SSLSocketFactory delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public String[] getDefaultCipherSuites() {
+            return delegate.getDefaultCipherSuites();
+        }
+
+        @Override
+        public String[] getSupportedCipherSuites() {
+            return delegate.getSupportedCipherSuites();
+        }
+
+        @Override
+        public Socket createSocket(
+                Socket socket, String host, int port, boolean autoClose) throws IOException {
+            return configureSocket((SSLSocket) delegate.createSocket(socket, host, port, autoClose));
+        }
+
+        @Override
+        public Socket createSocket(String host, int port) throws IOException {
+            return configureSocket((SSLSocket) delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(
+                String host, int port, InetAddress localHost, int localPort) throws IOException {
+            return configureSocket((SSLSocket) delegate.createSocket(host, port, localHost, localPort));
+        }
+
+        @Override
+        public Socket createSocket(InetAddress host, int port) throws IOException {
+            return configureSocket((SSLSocket) delegate.createSocket(host, port));
+        }
+
+        @Override
+        public Socket createSocket(
+                InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+            return configureSocket((SSLSocket) delegate.createSocket(
+                    address, port, localAddress, localPort));
+        }
+
+        private static final String[] TLS_V1_2 = {"TLSv1.2"};
+
+        protected SSLSocket configureSocket(SSLSocket socket) throws IOException {
+            if (socket != null) {
+                socket.setEnabledProtocols(TLS_V1_2);
+            }
+            return socket;
         }
     }
 
@@ -113,7 +255,7 @@ public class ErxesRequest {
             return;
         }
         GetInteg getIntegration = new GetInteg(this, activity);
-        getIntegration.run(hasData,email,phone,jsonObject);
+        getIntegration.run(hasData, email, phone, jsonObject);
     }
 
     public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {
