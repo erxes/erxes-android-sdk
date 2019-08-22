@@ -509,10 +509,10 @@ public class Config {
         }
     }
 
-    public Drawable getCancelIcon(Activity activity, int colorCode) {
+    public Drawable getCancelIcon(int colorCode) {
         if (colorCode != 0)
-            return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24).color(colorCode);
-        else return new IconicsDrawable(activity).icon("rxx-cancel").sizeDp(24);
+            return new IconicsDrawable(context).icon("rxx-cancel").sizeDp(24).color(colorCode);
+        else return new IconicsDrawable(context).icon("rxx-cancel").sizeDp(24);
     }
 
     public Drawable getsendIcon(Activity activity, int colorCode) {

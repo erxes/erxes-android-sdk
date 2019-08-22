@@ -10,9 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.connection.helper.ProgressRequestBody;
@@ -106,20 +109,33 @@ public class GFilePart implements ProgressRequestBody.Listener {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if(response.isSuccessful()) {
-
                     if (response.body() != null) {
                         fileInfo.filepath = response.body().string();
                     }
                     uploadJsons.add(fileInfo.get());
-                    Log.i("erxes_api", "upload complete");
                     messageActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             LayoutInflater layoutInflater = LayoutInflater.from(messageActivity);
                             View view = layoutInflater.inflate(R.layout.upload_file, filelist, false);
+                            View spaceView = view.findViewById(R.id.spaceView);
+                            LinearLayout itemBackground = view.findViewById(R.id.itemBackground);
                             TextView filename = view.findViewById(R.id.filename);
-                            view.findViewById(R.id.remove).setTag(uploadJsons.get(uploadJsons.size()-1));
-                            view.findViewById(R.id.remove).setOnClickListener(removeFun);
+                            ImageView imageView = view.findViewById(R.id.remove);
+                            ImageView icon = view.findViewById(R.id.image_input);
+                            itemBackground.setBackgroundColor(config.colorCode);
+                            spaceView.setBackgroundColor(config.getInColor(config.colorCode));
+                            filename.setTextColor(config.getInColor(config.colorCode));
+                            icon.getDrawable()
+                                    .setColorFilter(
+                                            config.getInColor(config.colorCode),
+                                            PorterDuff.Mode.SRC_ATOP
+                                    );
+                            Glide.with(config.context)
+                                    .load(config.getCancelIcon(config.getInColor(config.colorCode)))
+                                    .into(imageView);
+                            imageView.setTag(uploadJsons.get(uploadJsons.size()-1));
+                            imageView.setOnClickListener(removeFun);
                             filename.setText("" + fileInfo.name);
                             filelist.addView(view);
                             progressBar.setProgress(0);

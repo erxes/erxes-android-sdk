@@ -93,7 +93,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private void initIcon() {
         Glide.with(this).load(config.getsendIcon(this, 0)).into(sendImageView);
-        Glide.with(this).load(config.getCancelIcon(this, config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getCancelIcon(config.getInColor(config.colorCode))).into(cancelImageView);
         Glide.with(this)
                 .load(config.getEmailIcon(this, getResources().getColor(R.color.md_white_1000)))
                 .into(mailImageView);

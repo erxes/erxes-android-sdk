@@ -368,7 +368,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getCancelIcon(this, config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getCancelIcon(config.getInColor(config.colorCode))).into(cancelImageView);
     }
 
     private void init() {

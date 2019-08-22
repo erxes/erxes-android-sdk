@@ -52,8 +52,8 @@
     <string name="Give_us_your_contact_information">Give us your contact information</string>
     <string name="Email">Email</string>
     <string name="SMS">SMS</string>
-    <string name="email_domain_com">email@domain.com</string>
-    <string name="phone_number">phone number</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">Phone number</string>
     <string name="Support_staff">Support staff</string>
     <string name="Conversations">Conversations</string>
     <string name="Recent_conversations">Recent conversations</string>
