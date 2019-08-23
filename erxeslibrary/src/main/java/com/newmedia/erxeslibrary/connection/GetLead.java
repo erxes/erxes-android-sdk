@@ -51,10 +51,6 @@ public class GetLead {
             if (!response.hasErrors()) {
                 config.formConnect = FormConnect.convert(response);
                 erxesRequest.notefyAll(Returntype.LEAD, null, null);
-                Log.e(TAG, "no Error");
-
-            } else {
-                Log.e(TAG, "onResponse: " + response.errors().get(0).message());
             }
         }
 
@@ -62,7 +58,6 @@ public class GetLead {
         public void onError(Throwable e) {
             e.printStackTrace();
             erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
-
         }
 
         @Override

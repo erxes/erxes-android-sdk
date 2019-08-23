@@ -190,17 +190,6 @@ public class ListenerService extends Service {
                                                     config.conversations.get(i).isread = false;
                                                 }
                                             }
-                                        } else {
-//                                            Log.e(TAG, "dead");
-//                                            String chat_message = response.data().conversationMessageInserted().content();
-//                                            String name = "";
-//                                            try {
-//                                                if (response.data().conversationMessageInserted().user().details() != null)
-//                                                    name = response.data().conversationMessageInserted().user().details().fullName();
-//                                            } catch (Exception ignored) {
-//                                            }
-//
-//                                            createNotificationChannel(chat_message, name, response.data().conversationMessageInserted().conversationId());
                                         }
                                     }
                                 }
@@ -214,57 +203,5 @@ public class ListenerService extends Service {
                 )
         );
     }
-
-    private void createNotificationChannel(String chatMessage, String name, String conversionId) {
-
-
-        Intent intent = new Intent(this, ErxesActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-        NotificationManager notificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
-//        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, "erxeschannel")
-//                .setBadgeIconType(R.drawable.icon)
-//                .setContentTitle(name)
-//                .setContentText(Html.fromHtml( chatMessage))
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//                // Set the intent that will fire when the user taps the notification
-//                .setContentIntent(pendingIntent)
-//                .setAutoCancel(true);
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-//        notificationManager.notify(0, mBuilder.build());
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        if (Build.VERSION.SDK_INT >= 26) {
-            String channelId = "erxes";
-            CharSequence name1 = "erxes_channel";
-            String description = "erxes notification";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(channelId, name1, importance);
-            mChannel.setDescription(description);
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.RED);
-            mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 200});
-            mChannel.setShowBadge(false);
-            notificationManager.createNotificationChannel(mChannel);
-
-            Notification notification = new Notification.Builder(this, channelId)
-                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
-                    .setContentText(Html.fromHtml(chatMessage))
-                    .setSmallIcon(R.drawable.icon)
-                    .setSound(alarmSound)
-                    .setContentIntent(pendingIntent).getNotification();
-            notificationManager.notify(123, notification);
-        } else {
-            Notification notification = new Notification.Builder(this)
-                    .setContentTitle(getResources().getString(R.string.message_has_arrived))
-                    .setContentText(Html.fromHtml(chatMessage))
-                    .setSmallIcon(R.drawable.icon)
-                    .setSound(alarmSound)
-                    .setContentIntent(pendingIntent).getNotification();
-            notificationManager.notify(123, notification);
-        }
-    }
-
 
 }

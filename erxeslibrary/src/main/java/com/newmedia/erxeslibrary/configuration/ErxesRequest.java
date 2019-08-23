@@ -59,7 +59,7 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CipherSuite;
 import okhttp3.OkHttpClient;
-//import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -83,8 +83,8 @@ public final class ErxesRequest {
     }
 
     void set_client() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 //        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
 //                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
 //                .cipherSuites(
@@ -132,13 +132,13 @@ public final class ErxesRequest {
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
                     .writeTimeout(30, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
-//                    .addInterceptor(logging)
+                    .addInterceptor(logging)
                     .addInterceptor(new AddCookiesInterceptor(this.context))
                     .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                     .build();
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.host3100)
-                    .normalizedCache(cacheFactory,resolver)
+//                    .normalizedCache(cacheFactory, resolver)
                     .okHttpClient(okHttpClient)
                     .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
@@ -245,12 +245,12 @@ public final class ErxesRequest {
         }
     }
 
-    public void setConnect(String email, String phone, boolean isUser, String data) {
+    public void setConnect(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
         if (!config.isNetworkConnected()) {
             return;
         }
         SetConnect setConnect = new SetConnect(this, context);
-        setConnect.run(email, phone, isUser, data);
+        setConnect.run(isCheckRequired, isUser, hasData, email, phone, data);
     }
 
     public void getGEO() {
@@ -266,7 +266,7 @@ public final class ErxesRequest {
             return;
         }
         GetIntegration getIntegration = new GetIntegration(this, context);
-        getIntegration.run(hasData,email,phone,jsonObject);
+        getIntegration.run(hasData, email, phone, jsonObject);
     }
 
     public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {

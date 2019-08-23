@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
@@ -10,6 +11,7 @@ import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.Returntype;
 import com.newmedia.erxeslibrary.model.Conversation;
+
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -18,12 +20,14 @@ import io.reactivex.schedulers.Schedulers;
 public class GetConversation {
     final static String TAG = "SETCONNECT";
     private ErxesRequest erxesRequest;
-    private Config config ;
+    private Config config;
+
     public GetConversation(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
-    public void run(){
+
+    public void run() {
         Rx2Apollo.from(erxesRequest.apolloClient
                 .query(ConversationsQuery.builder()
                         .integrationId(config.integrationId)
@@ -42,24 +46,23 @@ public class GetConversation {
 
         @Override
         public void onNext(Response<ConversationsQuery.Data> response) {
-            if(response.data().conversations().size()>0) {
+            if (response.data().conversations().size() > 0) {
                 if (config.conversations != null && config.conversations.size() > 0)
                     config.conversations.clear();
                 if (config.conversations != null) {
-                    for (Conversation conversation : Conversation.convert(response,config)) {
+                    for (Conversation conversation : Conversation.convert(response, config)) {
                         if (conversation.status.equalsIgnoreCase("open"))
                             config.conversations.add(conversation);
                     }
                 }
-
+                erxesRequest.notefyAll(Returntype.GETCONVERSATION, null, null);
             }
-            erxesRequest.notefyAll(Returntype.GETCONVERSATION,null,null);
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
         }
 
         @Override

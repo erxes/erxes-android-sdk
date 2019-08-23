@@ -26,6 +26,8 @@ public class SetConnect {
     private ErxesRequest erxesRequest;
     private Config config;
     private DataManager dataManager;
+    private boolean isCheckRequired, hasData, isUser;
+    private String email, phone, customData;
 
     public SetConnect(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
@@ -33,7 +35,13 @@ public class SetConnect {
         dataManager = DataManager.getInstance(context);
     }
 
-    public void run(String email, String phone, boolean isUser, String data) {
+    public void run(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
+        this.isCheckRequired = isCheckRequired;
+        this.hasData = hasData;
+        this.email = email;
+        this.phone = phone;
+        this.customData = data;
+        this.isUser = isUser;
         JSONObject customData = new JSONObject();
         try {
             if (data != null) {
@@ -55,6 +63,7 @@ public class SetConnect {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
+
     private Observer observer = new Observer<Response<MessengerConnectMutation.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
@@ -64,17 +73,22 @@ public class SetConnect {
         @Override
         public void onNext(Response<MessengerConnectMutation.Data> response) {
             if (!response.hasErrors()) {
-                config.customerId = response.data().messengerConnect().customerId();
-                config.integrationId = response.data().messengerConnect().integrationId();
-
-                dataManager.setData(DataManager.CUSTOMERID, config.customerId);
-                dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
-
-                config.changeLanguage(response.data().messengerConnect().languageCode());
-                ErxesHelper.load_uiOptions(response.data().messengerConnect().uiOptions());
                 ErxesHelper.load_messengerData(response.data().messengerConnect().messengerData());
-
-                erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
+                if (isCheckRequired) {
+                    if (config.messengerdata != null) {
+                        if (config.messengerdata.isShowLauncher()) {
+                            prepareData(response);
+                            config.initActivity(hasData, email, phone, customData);
+                        } else {
+                            erxesRequest.setConnect(!isCheckRequired, isUser, hasData, email, phone, customData);
+                        }
+                    }
+                } else {
+                    if (config.messengerdata != null && config.messengerdata.isShowLauncher()) {
+                        prepareData(response);
+                        erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
+                    }
+                }
             } else {
                 erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
             }
@@ -83,7 +97,7 @@ public class SetConnect {
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
 
         }
 
@@ -92,4 +106,15 @@ public class SetConnect {
 
         }
     };
+
+    private void prepareData(Response<MessengerConnectMutation.Data> response) {
+        config.customerId = response.data().messengerConnect().customerId();
+        config.integrationId = response.data().messengerConnect().integrationId();
+
+        dataManager.setData(DataManager.CUSTOMERID, config.customerId);
+        dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
+
+        config.changeLanguage(response.data().messengerConnect().languageCode());
+        ErxesHelper.load_uiOptions(response.data().messengerConnect().uiOptions());
+    }
 }

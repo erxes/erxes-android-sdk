@@ -22,9 +22,6 @@ public class GetIntegration {
     final static String TAG = "GETINTEG";
     private ErxesRequest erxesRequest;
     private Config config;
-    private boolean hasData;
-    private String email, phone;
-    private JSONObject jsonObject;
 
     public GetIntegration(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
@@ -33,10 +30,6 @@ public class GetIntegration {
     }
 
     public void run(boolean hasData, String email, String phone, JSONObject jsonObject) {
-        this.hasData = hasData;
-        this.email = email;
-        this.phone = phone;
-        this.jsonObject = jsonObject;
 
         Rx2Apollo.from(erxesRequest.apolloClient
                 .query(GetMessengerIntegrationQuery.builder().brandCode(config.brandCode)
@@ -59,13 +52,6 @@ public class GetIntegration {
                     config.changeLanguage(response.data().getMessengerIntegration().languageCode());
                     ErxesHelper.load_uiOptions(response.data().getMessengerIntegration().uiOptions());
                     ErxesHelper.load_messengerData(response.data().getMessengerIntegration().messengerData());
-                    if (config.messengerdata != null) {
-                        if (!config.messengerdata.isShowLauncher()) {
-                            erxesRequest.setConnect(email, phone, true, jsonObject.toString());
-                        } else {
-                            config.initActivity(hasData, email, phone, jsonObject);
-                        }
-                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
