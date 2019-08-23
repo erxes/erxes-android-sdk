@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">Добро пожаловать!</string>
+    <string name="Close">Близко</string>
+    <string name="Offline">Не в сети</string>
+    <string name="Online">Онлайн</string>
+    <string name="Send_a_message">Отправить сообщение</string>
+    <string name="Send">Послать</string>
+    <string name="Support">Служба поддержки</string>
+    <string name="Faq">Часто задаваемые вопросы</string>
+    <string name="Start_new_conversation">Начать новый чат</string>
+    <string name="Write_a_reply">Напишите ответ</string>
+    <string name="Conversation">Разговор</string>
+    <string name="with_Support_staff">с сотрудниками поддержки</string>
+    <string name="Click_to_select_a_date">Нажмите, чтобы выбрать дату</string>
+    <string name="Thanks_for_your_message">Спасибо за ваше сообщение. Мы ответим как только мы можем.</string>
+    <string name="Create_new">Создать новый</string>
+    <string name="Written_by">Написано</string>
+    <string name="Modified">Модифицированный </string>
+    <string name="Created">Созданный </string>
+    <string name="There_are">Есть </string>
+    <string name="articles_in_this_category">статьи в этой категории</string>
+    <string name="Back_to_categories">Назад к категориям</string>
+    <string name="Back_to_top">Вернуться к началу</string>
+    <string name="Back_to_articles">Вернуться к статьям</string>
+    <string name="Contact">Контакт</string>
+    <string name="Give_us_your_contact_information">Дайте нам свою контактную информацию</string>
+    <string name="Email">Эл. адрес</string>
+    <string name="SMS">СМС</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">Номер телефона</string>
+    <string name="Support_staff">Вспомогательный персонал</string>
+    <string name="Conversations">Диалоги</string>
+    <string name="Recent_conversations">Недавние разговоры </string>
+    <string name="with_Support_staffs">при поддержке сотрудников</string>
+    <string name="Talk_with_support_staff">Поговорите с обслуживающим персоналом</string>
+    <string name="Do_you_want_to_end_this_conversation">Вы хотите, чтобы закончить этот разговор?</string>
+    <string name="Welcome_description">Добро пожаловать описание</string>
+    <string name="Failed">Не удалось</string>
+    <string name="No_articles_found">Статьи не найдены</string>
+    <string name="Search">Поиск</string>
+</resources>

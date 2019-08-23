@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">Bienvenue!</string>
+    <string name="Close">Fermer</string>
+    <string name="Offline">Hors ligne</string>
+    <string name="Online">En ligne</string>
+    <string name="Send_a_message">Envoyer un message</string>
+    <string name="Send">Envoyer</string>
+    <string name="Support">Soutien</string>
+    <string name="Faq">FAQ</string>
+    <string name="Start_new_conversation">Commencer une nouvelle conversation</string>
+    <string name="Write_a_reply">Écrire une réponse</string>
+    <string name="Conversation">Conversation</string>
+    <string name="with_Support_staff">avec le personnel de soutien</string>
+    <string name="Click_to_select_a_date">Cliquez pour sélectionner une date</string>
+    <string name="Thanks_for_your_message">Merci pour votre message. Nous répondrons dès que possible.</string>
+    <string name="Create_new">Créer un nouveau</string>
+    <string name="Written_by">Écrit par</string>
+    <string name="Modified">Modifié</string>
+    <string name="Created">Créé</string>
+    <string name="There_are">Il y a</string>
+    <string name="articles_in_this_category">articles dans cette catégorie</string>
+    <string name="Back_to_categories">Retour aux catégories</string>
+    <string name="Back_to_top">Retour au sommet</string>
+    <string name="Back_to_articles">Retour aux articles</string>
+    <string name="Contact">Contact</string>
+    <string name="Give_us_your_contact_information">Donnez-nous vos coordonnées</string>
+    <string name="Email">Email</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">Numéro de téléphone</string>
+    <string name="Support_staff">Le personnel de soutien</string>
+    <string name="Conversations">Conversations récentes</string>
+    <string name="Recent_conversations">Recent conversations</string>
+    <string name="with_Support_staffs">avec le personnel de soutien</string>
+    <string name="Talk_with_support_staff">Parler avec le personnel de soutien</string>
+    <string name="Do_you_want_to_end_this_conversation">Voulez-vous mettre fin à cette conversation?</string>
+    <string name="Welcome_description">Faites moi savoir si vous avez des questions! Nous serions heureux d\'aider</string>
+    <string name="Failed">Échoué</string>
+    <string name="No_articles_found">Aucun article trouvé</string>
+    <string name="Search">Chercher</string>
+</resources>

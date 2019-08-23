@@ -9,6 +9,7 @@
     <color name="erxesColor">#5629B6</color>
     <color name="messageBackground">#faf9fb</color>
     <color name="messageItemBG">#eaebed</color>
+    <color name="gray_greetings">#f7f4f4</color>
 
     <color name="md_amber_100">#FFECB3</color>
     <color name="md_amber_200">#FFE082</color>

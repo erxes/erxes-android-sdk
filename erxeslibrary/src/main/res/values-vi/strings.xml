@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">Hoan Nghênh!</string>
+    <string name="Close">Đóng</string>
+    <string name="Offline">Ẩn</string>
+    <string name="Online">Hiện</string>
+    <string name="Send_a_message">Gửi tin nhắn</string>
+    <string name="Send">Gửi</string>
+    <string name="Support">Hỗ trợ</string>
+    <string name="Faq">Những câu hỏi hay gặp</string>
+    <string name="Start_new_conversation">Bắt đầu hội thoại mới</string>
+    <string name="Write_a_reply">Viết trả lời</string>
+    <string name="Conversation">Hội thoại</string>
+    <string name="with_Support_staff">với nhân viên hỗ trợ</string>
+    <string name="Click_to_select_a_date">Nhấn chuột để chọn ngày</string>
+    <string name="Thanks_for_your_message">Cảm ơn vì tin nhắn của bạn. Chúng tôi sẽ trả lời sớm nhất có thể.</string>
+    <string name="Create_new">Tạo mới</string>
+    <string name="Written_by">Viết bởi</string>
+    <string name="Modified">Thay đổi lúc</string>
+    <string name="Created">Đã tạo </string>
+    <string name="There_are">Có từng </string>
+    <string name="articles_in_this_category">Những bài mục trong thể loại này</string>
+    <string name="Back_to_categories">Trở lại thể loại</string>
+    <string name="Back_to_top">Trở lại trên cùng</string>
+    <string name="Back_to_articles">Trở lại mục</string>
+    <string name="Contact">Số liên lạc</string>
+    <string name="Give_us_your_contact_information">Xin cung cấp thông tin liên lạc</string>
+    <string name="Email">Thư điện tử</string>
+    <string name="SMS">Tin nhắn SMS</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">Số điện thoại</string>
+    <string name="Support_staff">Nhân viên hỗ trợ</string>
+    <string name="Conversations">Những cuộc hội thoại</string>
+    <string name="Recent_conversations">Những cuộc hội thoại gần đây</string>
+    <string name="with_Support_staffs">với những nhân viên Hỗ trợ</string>
+    <string name="Talk_with_support_staff">Liên lạc với nhân viên hỗ trợ</string>
+    <string name="Do_you_want_to_end_this_conversation">Bạn có muốn kết thúc cuộc hội thoại này ?</string>
+    <string name="Welcome_description">Xin chào mừng đến với Erxes Inc!</string>
+    <string name="Failed">Thất bại</string>
+    <string name="No_articles_found">Không tìm thấy bài báo</string>
+    <string name="Search">Tìm kiếm</string>
+</resources>

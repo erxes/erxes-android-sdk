@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">환영!</string>
+    <string name="Close">닫기</string>
+    <string name="Offline">오프라인</string>
+    <string name="Online">온라인으로</string>
+    <string name="Send_a_message">메시지를 보내다</string>
+    <string name="Send">보내다</string>
+    <string name="Support">지원하다</string>
+    <string name="Faq">자주하는 질문</string>
+    <string name="Start_new_conversation">새 대화 시작</string>
+    <string name="Write_a_reply">대답을 적다</string>
+    <string name="Conversation">대화</string>
+    <string name="with_Support_staff">지원 직원</string>
+    <string name="Click_to_select_a_date">날짜를 선택합니다</string>
+    <string name="Thanks_for_your_message">메시지를 보내 줘서 고마워요. 우리는 가능한 빨리 응답 할 것입니다.</string>
+    <string name="Create_new">새로 만들기</string>
+    <string name="Written_by">글</string>
+    <string name="Modified">수정</string>
+    <string name="Created">만들어진 </string>
+    <string name="There_are">있다 </string>
+    <string name="articles_in_this_category">이 카테고리의 기사</string>
+    <string name="Back_to_categories">돌아 범주</string>
+    <string name="Back_to_top">맨 위로</string>
+    <string name="Back_to_articles">돌아 가기 기사</string>
+    <string name="Contact">접촉</string>
+    <string name="Give_us_your_contact_information">우리에게 귀하의 연락처 정보를 제공</string>
+    <string name="Email">이메일</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">전화 번호</string>
+    <string name="Support_staff">지원 담당자</string>
+    <string name="Conversations">대화</string>
+    <string name="Recent_conversations">최근 대화</string>
+    <string name="with_Support_staffs">지원 직원과</string>
+    <string name="Talk_with_support_staff">지원 담당자와 상담</string>
+    <string name="Do_you_want_to_end_this_conversation">이 대화를 종료 하시겠습니까?</string>
+    <string name="Welcome_description">에 오신 것을 환영합니다 설명</string>
+    <string name="Failed">실패한</string>
+    <string name="No_articles_found">기사를 찾을 수 없습니다</string>
+    <string name="Search">수색</string>
+</resources>

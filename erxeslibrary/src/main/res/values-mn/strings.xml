@@ -1,30 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Эрхэс</string>
-    <string name="cantconnect">Холбогдох боломжгүй байна!</string>
-    <string name="serverror">Буруу мэдээлэл!</string>
-    <string name="fileerror">Илгээх боломжгүй файл байна!</string>
-    <string name="logout">Гарах</string>
-    <string name="email">И-мейл</string>
-    <string name="email_hint">Email@domain.com</string>
-    <string name="phone">Утас</string>
-    <string name="connnect">Холбогдох</string>
-    <string name="contact">Холбогдох</string>
-    <string name="contact_info">Холбоо барих мэдээллээ үлдээнэ үү</string>
-    <string name="sms">Утасны дугаар</string>
-    <string name="writereply">Хариу бичих</string>
-    <string name="newconversation">Шинэ харилцаа</string>
-    <string name="online">Онлайн</string>
-    <string name="offline">Офлайн</string>
-    <string name="no_correct_mail">Имейл хаяг буруу</string>
-    <string name="no_correct_phone">Утасны дугаар буруу</string>
-    <string name="conversation">Харилцан ярианууд</string>
-    <string name="SUPPORT">ТУСЛАМЖ</string>
-    <string name="FAQ">АСУУЛТ</string>
-    <string name="start_new_conversation">Харилцан яриа эхлүүлэх</string>
-    <string name="talk_with_support_staff">Туслах ажилтантай ярилцах</string>
-    <string name="message_has_arrived">Таньд мессеж ирлээ</string>
-
 
     <string name="Welcome">Сайн байна уу!</string>
     <string name="Close">Хаах</string>
@@ -54,7 +30,7 @@
     <string name="Email">И-мэйл</string>
     <string name="SMS">Утас</string>
     <string name="email_domain_com">Email@domain.com</string>
-    <string name="phone_number">утасны дугаар</string>
+    <string name="phone_number">Утасны дугаар</string>
     <string name="Support_staff">Туслах ажилтан</string>
     <string name="Conversations">Харилцан яриа</string>
     <string name="Recent_conversations">Харилцан ярианууд</string>
@@ -65,5 +41,4 @@
     <string name="Failed">Алдаа гарлаа</string>
     <string name="No_articles_found">Бичвэр олдсонгүй</string>
     <string name="Search">Хайх</string>
-    <string name="End_conversation">Харилцан яриа дуусгах</string>
 </resources>

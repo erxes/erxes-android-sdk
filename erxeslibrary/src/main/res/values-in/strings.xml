@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">Selamat datang!</string>
+    <string name="Close">Dekat</string>
+    <string name="Offline">Offline</string>
+    <string name="Online">On line</string>
+    <string name="Send_a_message">Kirim pesan</string>
+    <string name="Send">Kirim</string>
+    <string name="Support">Mendukung</string>
+    <string name="Faq">Faq</string>
+    <string name="Start_new_conversation">Mulai percakapan baru</string>
+    <string name="Write_a_reply">Menulis balasan</string>
+    <string name="Conversation">Percakapan</string>
+    <string name="with_Support_staff">dengan staf Dukungan</string>
+    <string name="Click_to_select_a_date">Klik untuk memilih tanggal</string>
+    <string name="Thanks_for_your_message">Terima kasih atas pesan Anda. Kami akan merespon secepat kami bisa.</string>
+    <string name="Create_new">Membuat baru</string>
+    <string name="Written_by">Ditulis oleh</string>
+    <string name="Modified">Diubah</string>
+    <string name="Created">dibuat </string>
+    <string name="There_are">Ada </string>
+    <string name="articles_in_this_category">artikel dalam kategori ini</string>
+    <string name="Back_to_categories">Kembali ke kategori</string>
+    <string name="Back_to_top">Kembali ke atas</string>
+    <string name="Back_to_articles">Kembali ke artikel</string>
+    <string name="Contact">Kontak</string>
+    <string name="Give_us_your_contact_information">Memberikan informasi kontak Anda</string>
+    <string name="Email">E-mail</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">Nomor telepon</string>
+    <string name="Support_staff">Staf pendukung</string>
+    <string name="Conversations">Percakapan</string>
+    <string name="Recent_conversations">Percakapan terbaru</string>
+    <string name="with_Support_staffs">dengan staf Dukungan</string>
+    <string name="Talk_with_support_staff">Berbicara dengan staf dukungan</string>
+    <string name="Do_you_want_to_end_this_conversation">Apakah Anda ingin mengakhiri percakapan ini?</string>
+    <string name="Welcome_description">Selamat Datang deskripsi</string>
+    <string name="Failed">Gagal</string>
+    <string name="No_articles_found">tidak ada artikel yang ditemukan</string>
+    <string name="Search">Pencarian</string>
+</resources>

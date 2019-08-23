@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">स्वागतम!</string>
+    <string name="Close">बन्द</string>
+    <string name="Offline">अफलाईन</string>
+    <string name="Online">अनलाईन</string>
+    <string name="Send_a_message">सन्देश पठाउनुहोस</string>
+    <string name="Send">पठाउनुहोस</string>
+    <string name="Support">सहयोग</string>
+    <string name="Faq">Faq</string>
+    <string name="Start_new_conversation">नया संवाद सुरु गर्नुहोस</string>
+    <string name="Write_a_reply">जबाफ लेखनुहोस</string>
+    <string name="Conversation">वार्तालाप</string>
+    <string name="with_Support_staff">सहयोगीसंग</string>
+    <string name="Click_to_select_a_date">मिती छान्व थिच्नुहोस</string>
+    <string name="Thanks_for_your_message">संदेशकोलागी धन्यबाद। हामी जतिसक्दो छिटो उत्र पठाउने छैा</string>
+    <string name="Create_new">नँया बनाउनुहोस</string>
+    <string name="Written_by">दव्ारा लिखित</string>
+    <string name="Modified">परिवर्तित </string>
+    <string name="Created">बनाईएको </string>
+    <string name="There_are">त्याहा </string>
+    <string name="articles_in_this_category">यो वर्गमा रहेका सामाग्री</string>
+    <string name="Back_to_categories">बर्गहरुमा जनुहोस</string>
+    <string name="Back_to_top">माथि जानुस</string>
+    <string name="Back_to_articles">सामाग्रीहरुमा फुर्ता जानुस</string>
+    <string name="Contact">सम्पर्क</string>
+    <string name="Give_us_your_contact_information">तपाईको सम्पर्क ठेगाना दिनुहोस</string>
+    <string name="Email">ईमेल</string>
+    <string name="SMS">एसएमएस</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">सम्पर्क नंबर</string>
+    <string name="Support_staff">सहयिगी</string>
+    <string name="Conversations">कुराकानि</string>
+    <string name="Recent_conversations">भर्खरको कुराकानि</string>
+    <string name="with_Support_staffs">सहयिगीहरुसंग</string>
+    <string name="Talk_with_support_staff">सहयोगिसंग कुरा गर्नुहोस</string>
+    <string name="Do_you_want_to_end_this_conversation">यो कुराकानी रोक्न चाहानुहुना्छ ?</string>
+    <string name="Welcome_description">केहि प्र्सन भए मलाई सोध्नुहिस! हामी सहयोग गर्न त्तपर छैा</string>
+    <string name="Failed">अनुत्तीर्ण होना</string>
+    <string name="No_articles_found">कोई लेख नहीं मिला</string>
+    <string name="Search">खोजी गर्नुहोस्</string>
+</resources>

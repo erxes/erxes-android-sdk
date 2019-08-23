@@ -1,32 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Erxes</string>
-    <string name="cantconnect">Não pode se conectar agora</string>
-    <string name="serverror">Não pode se conectar agora</string>
-    <string name="fileerror">Can\'t send this file</string>
-    <string name="logout">sair</string>
-    <string name="email">Email</string>
-    <string name="email_hint">Email@domain.com</string>
-    <string name="phone">sair</string>
-    <string name="connnect">Conectar</string>
-    <string name="contact">contato</string>
-    <string name="contact_info">Dê-nos sua informação de contato</string>
-    <string name="sms">número de telefone</string>
-    <string name="writereply">Write a reply</string>
-    <string name="newconversation">Start new conversation with our supporters</string>
-    <string name="online">Online now</string>
-    <string name="offline">Offline now</string>
-    <string name="no_correct_mail">Por favor insira um endereço de e-mail válido</string>
-    <string name="no_correct_phone">Please enter a valid phone number</string>
-    <string name="conversation">Por favor insira um número de telefone válido</string>
-    <string name="SUPPORT">SUPORTE</string>
-    <string name="FAQ">FAQ</string>
-    <string name="start_new_conversation">Iniciar nova conversa</string>
-    <string name="talk_with_support_staff">Fale com a equipe de suporte</string>
-    <string name="message_has_arrived">Message has arrived</string>
-
-
 
     <string name="Welcome">Bem vindo!</string>
     <string name="Close">Fechar</string>
@@ -55,7 +29,7 @@
     <string name="Give_us_your_contact_information">Envie suas informações de contato</string>
     <string name="Email">Email</string>
     <string name="SMS">SMS</string>
-    <string name="email_domain_com">email@domain.com</string>
+    <string name="email_domain_com">Email@domain.com</string>
     <string name="phone_number">Numero de telefone</string>
     <string name="Support_staff">Equipe de suporte</string>
     <string name="Conversations">Conversas</string>
@@ -67,5 +41,4 @@
     <string name="Failed">Falhou</string>
     <string name="No_articles_found">Nenhum artigo encontrado</string>
     <string name="Search">Procurar</string>
-    <string name="End_conversation">encerrar conversa</string>
 </resources>

@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Erxes</string>
-    <string name="cantconnect">Can\'t connect right now</string>
-    <string name="serverror">Wrong data</string>
-    <string name="fileerror">Can\'t send this file</string>
-    <string name="logout">Logout</string>
-    <string name="email">Email</string>
-    <string name="email_hint">Email@domain.com</string>
-    <string name="phone">phone</string>
-    <string name="connnect">Connect</string>
-    <string name="contact">Contact</string>
-    <string name="contact_info">Give us your contact information</string>
-    <string name="sms">Phone number</string>
-    <string name="writereply">Write a reply</string>
-    <string name="newconversation">Start new conversation with our supporters</string>
-    <string name="online">Online now</string>
-    <string name="offline">Offline now</string>
-    <string name="no_correct_mail">Please enter a valid email address</string>
-    <string name="no_correct_phone">Please enter a valid phone number</string>
-    <string name="conversation">Recent conversations</string>
-    <string name="SUPPORT">SUPPORT</string>
-    <string name="FAQ">FAQ</string>
-    <string name="start_new_conversation">Start new conversation</string>
-    <string name="talk_with_support_staff">Talk with support staff</string>
-    <string name="message_has_arrived">Message has arrived</string>
 
     <string name="Welcome">Welcome!</string>
     <string name="Close">Close</string>
@@ -37,12 +14,12 @@
     <string name="Write_a_reply">Write a reply</string>
     <string name="Conversation">Conversation</string>
     <string name="with_Support_staff">with Support staff</string>
-    <string name="Click_to_select_a_date">with Support staff</string>
-    <string name="Thanks_for_your_message">Thanks for your message. We will respond as soon as we can</string>
+    <string name="Click_to_select_a_date">Click to select a date</string>
+    <string name="Thanks_for_your_message">Thanks for your message. We will respond as soon as we can.</string>
     <string name="Create_new">Create new</string>
     <string name="Written_by">Written by</string>
     <string name="Modified">Modified</string>
-    <string name="Created">Created</string>
+    <string name="Created">Created </string>
     <string name="There_are">There are </string>
     <string name="articles_in_this_category">articles in this category</string>
     <string name="Back_to_categories">Back to categories</string>
@@ -64,5 +41,4 @@
     <string name="Failed">Failed</string>
     <string name="No_articles_found">No articles found</string>
     <string name="Search">Search</string>
-    <string name="End_conversation">End conversation</string>
 </resources>

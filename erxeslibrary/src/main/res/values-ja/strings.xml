@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">ようこそ!</string>
+    <string name="Close">閉じる</string>
+    <string name="Offline">オフライン</string>
+    <string name="Online">オンライン</string>
+    <string name="Send_a_message">メッセージを送る</string>
+    <string name="Send">送ります</string>
+    <string name="Support">サポート</string>
+    <string name="Faq">よくある質問</string>
+    <string name="Start_new_conversation">新しい会話を開始</string>
+    <string name="Write_a_reply">返事を書く</string>
+    <string name="Conversation">会話</string>
+    <string name="with_Support_staff">サポートスタッフと</string>
+    <string name="Click_to_select_a_date">日付をクリックして選択します</string>
+    <string name="Thanks_for_your_message">メッセージありがとうございます。我々はできるだけ早く我々はできる限り対応させていただきます。</string>
+    <string name="Create_new">新しく作る</string>
+    <string name="Written_by">によって書かれた</string>
+    <string name="Modified">変更されました</string>
+    <string name="Created">作成した </string>
+    <string name="There_are">がある </string>
+    <string name="articles_in_this_category">このカテゴリに記事</string>
+    <string name="Back_to_categories">カテゴリーに戻ります</string>
+    <string name="Back_to_top">トップに戻る</string>
+    <string name="Back_to_articles">戻る記事へ</string>
+    <string name="Contact">接触</string>
+    <string name="Give_us_your_contact_information">私達にあなたの連絡先情報を与えます</string>
+    <string name="Email">Eメール</string>
+    <string name="SMS">SMS</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">電話番号</string>
+    <string name="Support_staff">サポートスタッフ</string>
+    <string name="Conversations">会話</string>
+    <string name="Recent_conversations">最近の会話</string>
+    <string name="with_Support_staffs">サポートスタッフと</string>
+    <string name="Talk_with_support_staff">サポートスタッフと話</string>
+    <string name="Do_you_want_to_end_this_conversation">あなたはこの会話を終了しますか？</string>
+    <string name="Welcome_description">ようこそ説明</string>
+    <string name="Failed">失敗した</string>
+    <string name="No_articles_found">記事が見つかりません</string>
+    <string name="Search">サーチ</string>
+</resources>

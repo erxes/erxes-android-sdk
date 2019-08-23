@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Erxes</string>
+
+    <string name="Welcome">欢迎!</string>
+    <string name="Close">關閉</string>
+    <string name="Offline">离线</string>
+    <string name="Online">上綫</string>
+    <string name="Send_a_message">發送信息</string>
+    <string name="Send">發送</string>
+    <string name="Support">支持</string>
+    <string name="Faq">常問問題</string>
+    <string name="Start_new_conversation">開始新對話</string>
+    <string name="Write_a_reply">写回复</string>
+    <string name="Conversation">對話</string>
+    <string name="with_Support_staff">助理干事</string>
+    <string name="Click_to_select_a_date">单击以选择日期</string>
+    <string name="Thanks_for_your_message">谢谢你的留言。 我们会尽快回复。</string>
+    <string name="Create_new">创造新的</string>
+    <string name="Written_by">寫的</string>
+    <string name="Modified">修改</string>
+    <string name="Created">已建立 </string>
+    <string name="There_are">有 </string>
+    <string name="articles_in_this_category">此目錄的文章</string>
+    <string name="Back_to_categories">返回目錄</string>
+    <string name="Back_to_top">返回頂部</string>
+    <string name="Back_to_articles">返回文章</string>
+    <string name="Contact">聯係</string>
+    <string name="Give_us_your_contact_information">告诉我们您的联系信息</string>
+    <string name="Email">郵箱</string>
+    <string name="SMS">短信</string>
+    <string name="email_domain_com">Email@domain.com</string>
+    <string name="phone_number">電話號碼</string>
+    <string name="Support_staff">支持团队</string>
+    <string name="Conversations">對話</string>
+    <string name="Recent_conversations">最近對話</string>
+    <string name="with_Support_staffs">助理干事</string>
+    <string name="Talk_with_support_staff">与支持人员交谈</string>
+    <string name="Do_you_want_to_end_this_conversation">你想结束这次谈话吗？</string>
+    <string name="Welcome_description">如果您有任何疑问，请告诉我！ 我们很乐意提供帮助</string>
+    <string name="Failed">失败</string>
+    <string name="No_articles_found">找不到文章</string>
+    <string name="Search">搜索</string>
+</resources>
