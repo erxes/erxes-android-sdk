@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.ui;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -22,7 +21,7 @@ import com.bumptech.glide.Glide;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
@@ -187,18 +186,18 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             @Override
             public void run() {
                 switch (returnType) {
-                    case Returntype.LOGINSUCCESS:
+                    case ReturntypeUtil.LOGINSUCCESS:
                         Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
                         a.putExtra("isFromLogin", true);
                         ErxesActivity.this.startActivity(a);
                         ErxesActivity.this.finish();
                         break;
 
-                    case Returntype.CONNECTIONFAILED:
+                    case ReturntypeUtil.CONNECTIONFAILED:
                         Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         break;
 
-                    case Returntype.SERVERERROR:
+                    case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
                     default:

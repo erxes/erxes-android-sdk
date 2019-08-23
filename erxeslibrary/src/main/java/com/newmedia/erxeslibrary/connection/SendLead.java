@@ -7,7 +7,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.SaveLeadMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.helper.Json;
 import org.json.JSONObject;
 
@@ -49,20 +49,20 @@ public class SendLead {
         public void onNext(Response<SaveLeadMutation.Data> response) {
             if (!response.hasErrors()) {
                 if (response.data().saveForm().status().equalsIgnoreCase("ok")) {
-                    erxesRequest.notefyAll(Returntype.SAVEDLEAD, null, response.data().saveForm().status());
+                    erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().saveForm().status());
                 } else {
-                    erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.data().saveForm().status());
+                    erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().saveForm().status());
                 }
             } else {
                 Log.e(TAG, "errors " + response.errors().toString());
-                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
 
         }
 

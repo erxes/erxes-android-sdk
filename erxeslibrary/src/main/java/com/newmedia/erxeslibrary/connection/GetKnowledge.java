@@ -8,7 +8,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.FaqGetQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 
 import io.reactivex.Observer;
@@ -46,16 +46,16 @@ public class GetKnowledge {
         public void onNext(Response<FaqGetQuery.Data> response) {
             if (!response.hasErrors()) {
                 config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
-                erxesRequest.notefyAll(Returntype.FAQ, null, null);
+                erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null);
             } else {
-                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
 
         }
 

@@ -9,7 +9,7 @@ import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import java.util.List;
@@ -58,18 +58,18 @@ public class InsertMessage {
         @Override
         public void onNext(Response<InsertMessageMutation.Data> response) {
             if(response.hasErrors()) {
-                erxesRequest.notefyAll(Returntype.SERVERERROR,conversationId,response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR,conversationId,response.errors().get(0).message());
             } else {
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),mContent,config);
                 config.conversationMessages.add(a);
-                erxesRequest.notefyAll(Returntype.MUTATION,conversationId,null);
+                erxesRequest.notefyAll(ReturntypeUtil.MUTATION,conversationId,null);
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
 
         }
 

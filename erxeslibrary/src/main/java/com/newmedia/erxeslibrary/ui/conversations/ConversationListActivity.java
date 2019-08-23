@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 
@@ -29,7 +28,7 @@ import com.newmedia.erxes.subscription.ConversationChangedSubscription;
 import com.newmedia.erxeslibrary.helper.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
 import com.newmedia.erxeslibrary.utils.DataManager;
@@ -74,14 +73,14 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             @Override
             public void run() {
                 switch (returnType) {
-                    case Returntype.COMINGNEWMESSAGE:
+                    case ReturntypeUtil.COMINGNEWMESSAGE:
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
                         break;
-                    case Returntype.GETCONVERSATION:
+                    case ReturntypeUtil.GETCONVERSATION:
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
@@ -91,25 +90,25 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             initParentConversationChanged();
                         }
                         break;
-                    case Returntype.SERVERERROR:
+                    case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
-                    case Returntype.LEAD:
+                    case ReturntypeUtil.LEAD:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLead();
                         break;
-                    case Returntype.FAQ:
+                    case ReturntypeUtil.FAQ:
                         if (tabLayout != null) {
                             tabsContainer.setVisibility(View.VISIBLE);
                             if (tabAdapter != null)
                                 ((FaqFragment) tabAdapter.getItem(1)).init();
                         }
                         break;
-                    case Returntype.SAVEDLEAD:
+                    case ReturntypeUtil.SAVEDLEAD:
                         if (tabAdapter != null)
                             ((SupportFragment) tabAdapter.getItem(0)).setLeadAgain();
                         break;
-                    case Returntype.GETSUPPORTERS:
+                    case ReturntypeUtil.GETSUPPORTERS:
                         if (supporterView != null && supporterView.getAdapter() != null)
                             supporterView.getAdapter().notifyDataSetChanged();
                         break;

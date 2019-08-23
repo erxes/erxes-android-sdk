@@ -8,7 +8,7 @@ import com.newmedia.erxes.basic.MessengerConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.helper.Json;
 
@@ -86,18 +86,18 @@ public class SetConnect {
                 } else {
                     if (config.messengerdata != null && config.messengerdata.isShowLauncher()) {
                         prepareData(response);
-                        erxesRequest.notefyAll(Returntype.LOGINSUCCESS, null, null);
+                        erxesRequest.notefyAll(ReturntypeUtil.LOGINSUCCESS, null, null);
                     }
                 }
             } else {
-                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED, null, e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
 
         }
 

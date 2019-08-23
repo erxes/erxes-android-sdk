@@ -8,7 +8,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.MessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import java.util.List;
@@ -58,14 +58,14 @@ public class GetMessage {
                         config.conversationMessages.add(message);
                 }
 
-                erxesRequest.notefyAll(Returntype.GETMESSAGES, conversationid, null);
+                erxesRequest.notefyAll(ReturntypeUtil.GETMESSAGES, conversationid, null);
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
 
         }
 

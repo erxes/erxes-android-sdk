@@ -10,7 +10,7 @@ import com.newmedia.erxes.basic.InsertMessageMutation;
 import com.newmedia.erxes.basic.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
@@ -63,7 +63,7 @@ public class InsertNewMessage {
         @Override
         public void onNext(Response<InsertMessageMutation.Data> response) {
             if(response.hasErrors()) {
-                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
             } else {
                 Conversation conversation = Conversation.update(response.data().insertMessage(), mContent, config);
                 ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(), mContent, config);
@@ -73,14 +73,14 @@ public class InsertNewMessage {
                 intent.putExtra("id",config.conversationId);
                 context.startService(intent);
 
-                erxesRequest.notefyAll(Returntype.MUTATIONNEW,response.data().insertMessage().conversationId(),null);
+                erxesRequest.notefyAll(ReturntypeUtil.MUTATIONNEW,response.data().insertMessage().conversationId(),null);
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
         }
 
         @Override

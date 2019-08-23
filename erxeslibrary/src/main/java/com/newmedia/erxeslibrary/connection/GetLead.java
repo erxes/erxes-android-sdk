@@ -2,14 +2,13 @@ package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.FormConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.FormConnect;
 
 import io.reactivex.Observer;
@@ -50,14 +49,14 @@ public class GetLead {
         public void onNext(Response<FormConnectMutation.Data> response) {
             if (!response.hasErrors()) {
                 config.formConnect = FormConnect.convert(response);
-                erxesRequest.notefyAll(Returntype.LEAD, null, null);
+                erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null);
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
         }
 
         @Override

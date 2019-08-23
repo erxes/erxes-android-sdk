@@ -3,7 +3,7 @@ package com.newmedia.erxeslibrary.utils;
 // Adding a single ENUM will increase the size (13x times than the Integer constant) of final DEX file.
 // It also generates the problem of runtime overhead and your app will required more space.
 // don't use enum type
-public class Returntype {
+public class ReturntypeUtil {
     public static final int SERVERERROR = 0;
     public static final int CONNECTIONFAILED = 1;
     public static final int LOGINSUCCESS = 2;

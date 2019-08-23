@@ -26,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.SoftKeyboard;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
@@ -58,13 +58,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             public void run() {
                 MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
                 switch (returnType) {
-                    case Returntype.COMINGNEWMESSAGE:
+                    case ReturntypeUtil.COMINGNEWMESSAGE:
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
                             mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
                         }
                         break;
-                    case Returntype.GETMESSAGES:
+                    case ReturntypeUtil.GETMESSAGES:
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
                             if (adapter.getItemCount() > 2 && adapter.RefreshData())
@@ -72,7 +72,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         break;
-                    case Returntype.MUTATION:
+                    case ReturntypeUtil.MUTATION:
                         if (adapter != null) {
                             if (adapter.getItemCount() > 2 && adapter.RefreshData())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
@@ -81,22 +81,22 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             gFilePart.end_of();
                         }
                         break;
-                    case Returntype.MUTATIONNEW:
+                    case ReturntypeUtil.MUTATIONNEW:
                         subscribe_conversation();
                         gFilePart.end_of();
                         break;
-                    case Returntype.ISMESSENGERONLINE:
+                    case ReturntypeUtil.ISMESSENGERONLINE:
                         header_profile_change();
                         break;
-                    case Returntype.SERVERERROR:
+                    case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
-                    case Returntype.CONNECTIONFAILED:
+                    case ReturntypeUtil.CONNECTIONFAILED:
                         Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
-                    case Returntype.GETSUPPORTERS:
+                    case ReturntypeUtil.GETSUPPORTERS:
                         header_profile_change();
                         break;
                 }

@@ -8,7 +8,7 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.newmedia.erxes.basic.MessengerSupportersQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.User;
 
 import io.reactivex.Observer;
@@ -50,16 +50,16 @@ public class GetSupporter {
                 if (config.supporters != null) {
                     config.supporters.addAll(User.convert(response.data().messengerSupporters()));
                 }
-                erxesRequest.notefyAll(Returntype.GETSUPPORTERS, null, null);
+                erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null);
             } else {
-                erxesRequest.notefyAll(Returntype.SERVERERROR, null, response.errors().get(0).message());
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(Returntype.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
 
         }
 

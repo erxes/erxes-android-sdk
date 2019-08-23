@@ -1,21 +1,12 @@
 package com.newmedia.erxeslibrary.connection.service;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.text.Html;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
@@ -28,11 +19,9 @@ import com.newmedia.erxes.subscription.ConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.Returntype;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
-import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
-import com.newmedia.erxeslibrary.R;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -182,7 +171,7 @@ public class ListenerService extends Service {
                                                     break;
                                                 }
                                             }
-                                            erxesRequest.notefyAll(Returntype.COMINGNEWMESSAGE, null, null);
+                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
                                                 if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().conversationId())) {
