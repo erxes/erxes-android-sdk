@@ -112,6 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
+                android:text="@string/Welcome"
                 android:textSize="@dimen/header_big"
                 android:textStyle="bold" />
 
@@ -121,6 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
+                android:text="@string/Welcome_description"
                 android:textSize="@dimen/header_small" />
         </LinearLayout>
 

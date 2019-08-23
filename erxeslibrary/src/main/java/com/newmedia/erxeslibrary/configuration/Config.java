@@ -201,14 +201,12 @@ public class Config {
         date.setTime(createdDate);
 
         SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat("h:mm a", Locale.GERMAN);
+                new SimpleDateFormat("h:mm a");
         return simpleDateFormat.format(date);
     }
 
     public void setActivityConfig(Activity activity) {
         activityConfig = activity;
-        Log.e("TAG", "getInstance: " + activity.getClass().getName());
-        Log.e("TAG", "getInstance: " + activityConfig.getClass().getName());
     }
 
     private void Init(String brandCode, String host3100, String host3300, String hostUpload) {

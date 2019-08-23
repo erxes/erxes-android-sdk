@@ -1,5 +1,7 @@
 package com.newmedia.erxeslibrary.model;
 
+import android.util.Log;
+
 import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONArray;
@@ -17,6 +19,7 @@ public class Messengerdata {
     private String availabilityMethod;
     private String formCode;
     private String facebook, twitter, youtube;
+    private Messages messages;
 
     public static Messengerdata convert(Json jsonObject, String languageCode) {
         Messengerdata messengerdata = new Messengerdata();
@@ -141,7 +144,7 @@ public class Messengerdata {
     }
 
     //    public Map<String, Messages> messages;
-    public Messages messages;
+
 
     public static class Messages {
         private String welcome, away, thank;
@@ -198,12 +201,6 @@ public class Messengerdata {
         public void setTitle(String title) {
             this.title = title;
         }
-    }
-
-    public String getWelcome(String lan) {
-        if (getMessages() == null || getMessages().getWelcome() == null)
-            return "";
-        return getMessages().getWelcome();
     }
 
     public String getFormCode() {

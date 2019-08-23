@@ -142,6 +142,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             initConversationChanged();
         }
     }
+
     private void initConversationChanged() {
         for (int i = 0; i < config.conversations.size(); i++) {
             if (disposabledChanged.size() > 0) {
@@ -380,11 +381,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private void init() {
         date.setText(config.now());
         date.setTextColor(config.getInColorGray(config.colorCode));
+        title.setTextColor(config.getInColor(config.colorCode));
+        welcometext.setTextColor(config.getInColorGray(config.colorCode));
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
-            title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
-            title.setTextColor(config.getInColor(config.colorCode));
-            welcometext.setText(config.messengerdata.getMessages().getGreetings().getMessage());
-            welcometext.setTextColor(config.getInColorGray(config.colorCode));
+            if (!TextUtils.isEmpty(config.messengerdata.getMessages().getGreetings().getTitle()))
+                title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
+            if (!TextUtils.isEmpty(config.messengerdata.getMessages().getGreetings().getMessage()))
+                welcometext.setText(config.messengerdata.getMessages().getGreetings().getMessage());
         }
         if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().startsWith("http"))
             this.findViewById(R.id.fbcontainer).setVisibility(View.VISIBLE);

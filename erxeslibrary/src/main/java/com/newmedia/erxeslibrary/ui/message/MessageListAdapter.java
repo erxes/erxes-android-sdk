@@ -7,6 +7,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +50,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             int zoruu = mMessageList.size() - previousSize;
 
             previousSize = mMessageList.size();
-            if (config.messengerdata.getWelcome(config.language) != null) {
+            if (config.messengerdata.getMessages().getWelcome() != null) {
                 if (zoruu == 1)
                     notifyItemInserted(mMessageList.size());
                 else
@@ -86,10 +87,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemViewType(int position) {
         int mPosition = position;
-        if (mPosition == 0 && config.messengerdata.getWelcome(config.language) != null)
+        if (mPosition == 0 && !TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()))
             return 2; //welcomeMessage
 
-        if (config.messengerdata.getWelcome(config.language) != null)
+        if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()))
             mPosition = mPosition - 1;
 
         if (config.customerId.equalsIgnoreCase(mMessageList.get(mPosition).customerId))
@@ -100,11 +101,11 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ConversationMessage message;
-        if (config.messengerdata.getWelcome(config.language) != null && (position == 0)) {
+        if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()) && (position == 0)) {
             message = new ConversationMessage();
-            message.content = (config.messengerdata.getWelcome(config.language));
+            message.content = (config.messengerdata.getMessages().getWelcome());
             message.createdAt = ("");
-        } else if (config.messengerdata.getWelcome(config.language) != null)
+        } else if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()))
             message = mMessageList.get(position - 1);
         else
             message = mMessageList.get(position);
@@ -124,7 +125,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        if (config.messengerdata.getWelcome(config.language) != null)
+        if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()))
             return mMessageList.size() + 1;
         else
             return mMessageList.size();

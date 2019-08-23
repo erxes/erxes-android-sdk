@@ -189,7 +189,7 @@
                     android:layout_toLeftOf="@+id/upload_group"
                     android:background="#fff"
                     android:maxLines="5"
-                    android:hint="@string/Write_a_reply"
+                    android:hint="@string/Send_a_message"
                     android:paddingStart="@dimen/main_margin"
                     android:paddingLeft="@dimen/main_margin"
                     android:paddingTop="10dp"

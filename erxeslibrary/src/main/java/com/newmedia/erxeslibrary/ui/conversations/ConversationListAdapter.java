@@ -97,7 +97,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
 
-            Long createDate = Long.valueOf(message.createdAt);
+            long createDate = Long.valueOf(message.createdAt);
             holder.date.setText(config.conversationDate(createDate));
             holder.parent.setTag(position);
         } else {

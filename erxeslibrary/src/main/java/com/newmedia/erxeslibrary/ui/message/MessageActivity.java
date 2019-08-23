@@ -79,11 +79,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                             swipeRefreshLayout.setRefreshing(false);
 
                             gFilePart.end_of();
+                            edittextChatbox.setText("");
                         }
                         break;
                     case ReturntypeUtil.MUTATIONNEW:
                         subscribe_conversation();
                         gFilePart.end_of();
+                        edittextChatbox.setText("");
+                        edittextChatbox.setHint(getResources().getString(R.string.Write_a_reply));
                         break;
                     case ReturntypeUtil.ISMESSENGERONLINE:
                         header_profile_change();
@@ -253,6 +256,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         mMessageRecycler.setLayoutManager(linearLayoutManager);
 
         if (config.conversationId != null) {
+            edittextChatbox.setHint(getResources().getString(R.string.Write_a_reply));
             linearLayoutManager.setStackFromEnd(true);
             for (int i = 0; i < config.conversations.size(); i++) {
                 if (config.conversations.get(i).id.equals(config.conversationId)) {
@@ -293,7 +297,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             } else {
                 erxesRequest.InsertNewMessage(edittextChatbox.getText().toString(), gFilePart.get());
             }
-            edittextChatbox.setText("");
         }
     }
 
