@@ -88,11 +88,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
                         if (config.conversations.size() > 0) {
-                            stopService(intent);
-                            startService(intent);
-                            if (config.messengerdata.isForceLogoutWhenResolve()) {
-                                initConversationChanged();
-                            }
+                            initParentConversationChanged();
                         }
                         break;
                     case Returntype.SERVERERROR:
@@ -140,6 +136,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         erxesRequest.sendLead();
     }
 
+    private void initParentConversationChanged() {
+        stopService(intent);
+        startService(intent);
+        if (config.messengerdata.isForceLogoutWhenResolve()) {
+            initConversationChanged();
+        }
+    }
     private void initConversationChanged() {
         for (int i = 0; i < config.conversations.size(); i++) {
             if (disposabledChanged.size() > 0) {
@@ -320,7 +323,10 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         viewpager.setAdapter(tabAdapter);
         tabLayout.setupWithViewPager(viewpager);
         tabLayout.setSelectedTabIndicatorColor(config.colorCode);
-        tabLayout.setTabTextColors(getResources().getColor(R.color.md_grey_500), config.colorCode);
+        tabLayout.setTabRippleColorResource(R.color.md_deep_purple_300);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tabLayout.setTabTextColors(getResources().getColor(R.color.md_grey_500),
+                getResources().getColor(R.color.md_black_1000));
 
         erxesRequest.getSupporters();
         erxesRequest.getLead();
@@ -337,9 +343,10 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         ErxesHelper.display_configure(this, container, "#66000000");
 
 
-        fb.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
-        tw.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
-        yt.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
+        fb.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
+        tw.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
+        yt.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
+//        yt.getDrawable().setColorFilter(Color.parseColor("#dad8d8"), PorterDuff.Mode.SRC_ATOP);
         this.findViewById(R.id.fbcontainer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -373,9 +380,12 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
     private void init() {
         date.setText(config.now());
+        date.setTextColor(config.getInColorGray(config.colorCode));
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
             title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
+            title.setTextColor(config.getInColor(config.colorCode));
             welcometext.setText(config.messengerdata.getMessages().getGreetings().getMessage());
+            welcometext.setTextColor(config.getInColorGray(config.colorCode));
         }
         if (config.messengerdata.getFacebook() != null && config.messengerdata.getFacebook().startsWith("http"))
             this.findViewById(R.id.fbcontainer).setVisibility(View.VISIBLE);

@@ -44,7 +44,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private RecyclerView mMessageRecycler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageView profile1, profile2, backImageView, logoutImageView, sendImageView, attachmentImageView;
-    private TextView names, isMessenOnlineImage;
+    private TextView names, isOnline;
     private ViewGroup container, uploadGroup;
     private Config config;
     private ErxesRequest erxesRequest;
@@ -89,11 +89,11 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         header_profile_change();
                         break;
                     case Returntype.SERVERERROR:
-                        Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
                     case Returntype.CONNECTIONFAILED:
-                        Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         swipeRefreshLayout.setRefreshing(false);
                         break;
                     case Returntype.GETSUPPORTERS:
@@ -109,7 +109,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private void subscription() {
         MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
         header_profile_change();
-        isMessenOnlineImage.setText(R.string.online);
+        isOnline.setText(R.string.Online);
         if (adapter.getItemCount() > 2 && adapter.RefreshData())
             mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
         swipeRefreshLayout.setRefreshing(false);
@@ -140,7 +140,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     private void header_profile_change() {
         if (config.supporters.size() > 0)
-            isMessenOnlineImage.setVisibility(View.VISIBLE);
+            isOnline.setVisibility(View.VISIBLE);
         else
             names.setVisibility(View.INVISIBLE);
 
@@ -151,7 +151,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         if (config.supporters.size() > 1) bind(config.supporters.get(1), profile2);
         else profile2.setVisibility(View.INVISIBLE);
 
-        isMessenOnlineImage.setText(config.messenger_status_check() ? R.string.Online : R.string.Offline);
+        isOnline.setText(config.messenger_status_check() ? R.string.Online : R.string.Offline);
 
 //        isMessenOnlineImage.setVisibility(
 //                (Config.isNetworkConnected()&&Config.ISMESSENGERONLINE) ?View.VISIBLE:View.INVISIBLE);
@@ -193,8 +193,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         swipeRefreshLayout = this.findViewById(R.id.swipeRefreshLayout);
         profile1 = this.findViewById(R.id.profile1);
         profile2 = this.findViewById(R.id.profile2);
-        isMessenOnlineImage = this.findViewById(R.id.isOnline);
+        isOnline = this.findViewById(R.id.isOnline);
+        isOnline.setTextColor(config.getInColorGray(config.colorCode));
         names = this.findViewById(R.id.names);
+        names.setTextColor(config.getInColor(config.colorCode));
         edittextChatbox = this.findViewById(R.id.edittext_chatbox);
         mMessageRecycler = this.findViewById(R.id.reyclerview_message_list);
         backImageView = this.findViewById(R.id.backImageView);
@@ -281,7 +283,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     public void send_message(View view) {
         if (!config.isNetworkConnected()) {
-            Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
             return;
         }
         if (!edittextChatbox.getText().toString().equalsIgnoreCase("") ||

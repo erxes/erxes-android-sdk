@@ -101,7 +101,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
                         buttonChatboxSend.setClickable(true);
                         senddrawable.stop();
                         progressBar.setProgress(0);
-                        Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -147,7 +147,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
                         @Override
                         public void run() {
                             progressBar.setProgress(0);
-                            Snackbar.make(container, R.string.serverror, Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -178,7 +178,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
     };
     public void upload()  {
         if(!config.isNetworkConnected()) {
-            Snackbar.make(container,R.string.cantconnect,Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(container,R.string.Failed,Snackbar.LENGTH_SHORT).show();
             return;
         }
         senddrawable.start();
@@ -216,7 +216,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
             }
             else{
                 Log.i("erxes_api", "result3");
-                Snackbar.make(container, R.string.fileerror, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
             }
         }
         Log.i("erxes_api", "result2"+requestCode+" ?"+resultCode+" "+Activity.RESULT_OK);

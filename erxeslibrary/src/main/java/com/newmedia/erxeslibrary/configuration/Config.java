@@ -201,7 +201,7 @@ public class Config {
         date.setTime(createdDate);
 
         SimpleDateFormat simpleDateFormat =
-                new SimpleDateFormat("h:mm a",Locale.GERMAN);
+                new SimpleDateFormat("h:mm a", Locale.GERMAN);
         return simpleDateFormat.format(date);
     }
 
@@ -232,23 +232,25 @@ public class Config {
         checkRequired(true, email, phone, jsonObject);
     }
 
-    public void initActivity(boolean hasData, String email, String phone, JSONObject jsonObject) {
+    public void initActivity(boolean hasData, String email, String phone, String customData) {
         initializeIcon();
         initializeFresco();
         dataManager.setData(DataManager.ISUSER, hasData);
         dataManager.setData(DataManager.EMAIL, email);
         dataManager.setData(DataManager.PHONE, phone);
-        dataManager.setData(DataManager.CUSTOMDATA, jsonObject.toString());
+        dataManager.setData(DataManager.CUSTOMDATA, customData);
         Intent a = new Intent(context, ErxesActivity.class);
         a.putExtra("hasData", hasData);
-        a.putExtra("customData", jsonObject.toString());
+        a.putExtra("customData", customData);
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
         context.startActivity(a);
     }
 
     private void checkRequired(boolean hasData, String email, String phone, JSONObject jsonObject) {
-        erxesRequest.getIntegration(hasData, email, phone, jsonObject);
+        if (hasData)
+            erxesRequest.setConnect(true, true, hasData, email, phone, jsonObject.toString());
+        else erxesRequest.setConnect(true, false, hasData, email, phone, jsonObject.toString());
     }
 
     public void LoadDefaultValues() {
@@ -322,7 +324,8 @@ public class Config {
         if (lang == null || lang.equalsIgnoreCase(""))
             return;
 
-        this.language = lang.substring(0,2);
+        Log.e("TAG", "changeLanguage: " + lang);
+        this.language = lang.substring(0, 2);
         dataManager.setData(DataManager.LANGUAGE, this.language);
 
         Locale myLocale;
@@ -374,7 +377,8 @@ public class Config {
                 .setDiskCacheEnabled(true)
                 .setDownsampleEnabled(true)
                 .build();
-        Fresco.initialize(context, imagePipelineConfig);
+        if (!Fresco.hasBeenInitialized())
+            Fresco.initialize(context, imagePipelineConfig);
     }
 
     private void initializeIcon() {
@@ -567,5 +571,11 @@ public class Config {
         if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
             return context.getResources().getColor(R.color.md_white_1000);
         else return context.getResources().getColor(R.color.md_black_1000);
+    }
+
+    public int getInColorGray(int backgroundColor) {
+        if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
+            return context.getResources().getColor(R.color.md_grey_400);
+        else return context.getResources().getColor(R.color.md_grey_600);
     }
 }

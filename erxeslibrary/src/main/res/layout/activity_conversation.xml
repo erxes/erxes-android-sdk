@@ -40,12 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="5dp"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabIndicatorHeight="2dp"
-                app:tabInlineLabel="true"
-                app:tabMode="fixed"
-                app:tabRippleColor="@color/md_deep_purple_300"
-                app:tabSelectedTextColor="@color/colorPrimary">
+                app:tabIndicatorHeight="3dp"
+                app:tabInlineLabel="true">
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem"

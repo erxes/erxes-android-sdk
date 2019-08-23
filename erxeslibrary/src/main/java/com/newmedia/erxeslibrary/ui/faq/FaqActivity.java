@@ -98,8 +98,11 @@ public class FaqActivity extends AppCompatActivity {
         this.findViewById(R.id.backImageView).setOnClickListener(v -> finish());
         RecyclerView recyclerView = this.findViewById(R.id.recycler_view);
         TextView general = this.findViewById(R.id.general);
+        general.setTextColor(config.getInColor(config.colorCode));
         TextView generalNumber = this.findViewById(R.id.general_number);
+        generalNumber.setTextColor(config.getInColorGray(config.colorCode));
         TextView generalDescription = this.findViewById(R.id.general_description);
+        generalDescription.setTextColor(config.getInColorGray(config.colorCode));
         String id = getIntent().getStringExtra("id");
         if( id != null) {
             KnowledgeBaseCategory knowledgeBaseCategory = null;

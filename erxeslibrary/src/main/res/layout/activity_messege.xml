@@ -74,7 +74,6 @@
                             android:id="@+id/names"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="#fff"
                             android:textSize="@dimen/header_big"
                             android:textStyle="bold"
                             android:visibility="invisible" />
@@ -84,7 +83,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/Offline"
-                            android:textColor="#c1c1c1"
                             android:textSize="@dimen/header_small"
                             android:visibility="invisible" />
                     </LinearLayout>

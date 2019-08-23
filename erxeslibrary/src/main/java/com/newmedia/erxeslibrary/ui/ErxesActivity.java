@@ -48,7 +48,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        ErxesHelper.changeLanguage(this,config.language);
+        ErxesHelper.changeLanguage(this, config.language);
         setContentView(R.layout.activity_erxes);
 
         loaderView = this.findViewById(R.id.loaderView);
@@ -64,6 +64,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         sendImageView = this.findViewById(R.id.sendImageView);
         cancelImageView = this.findViewById(R.id.cancelImageView);
         TextView contact = this.findViewById(R.id.contact);
+        contact.setTextColor(config.getInColor(config.colorCode));
 
         ErxesHelper.display_configure(this, container, "#66000000");
         change_color();
@@ -75,19 +76,17 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         String mEmail = getIntent().getStringExtra("mEmail");
         String mPhone = getIntent().getStringExtra("mPhone");
         if (hasData) {
-            erxesRequest.setConnect(mEmail, mPhone, true, customData);
+            erxesRequest.setConnect(false, true, true, mEmail, mPhone, customData);
+        } else if (config.isLoggedIn()) {
+            config.LoadDefaultValues();
+            Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
+            a.putExtra("isFromLogin", false);
+            ErxesActivity.this.startActivity(a);
+            finish();
         } else {
-            if (config.isLoggedIn()) {
-                config.LoadDefaultValues();
-                Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-                a.putExtra("isFromLogin", false);
-                ErxesActivity.this.startActivity(a);
-                finish();
-            } else {
-                change_color();
-                contact.setVisibility(View.VISIBLE);
-                loaderView.setVisibility(View.GONE);
-            }
+            change_color();
+            contact.setVisibility(View.VISIBLE);
+            loaderView.setVisibility(View.GONE);
         }
     }
 
@@ -112,37 +111,33 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private void change_color() {
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        mailCardView.setCardBackgroundColor(config.colorCode);
-        smsButton.setTextColor(config.colorCode);
-        changePhoneColor(config.colorCode);
-
         Drawable drawable = this.findViewById(R.id.selector).getBackground();
         drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
-
+        email_click(null);
     }
 
     public void email_click(View v) {
         email.setVisibility(View.VISIBLE);
         phone.setVisibility(View.GONE);
 
-        smsCardView.setCardBackgroundColor(Color.WHITE);
-        emailButton.setTextColor(Color.WHITE);
-        changeEmailColor(getResources().getColor(R.color.md_white_1000));
-        smsButton.setTextColor(config.colorCode);
-        ((CardView) v).setCardBackgroundColor(config.colorCode);
-        changePhoneColor(config.colorCode);
+        mailCardView.setCardBackgroundColor(config.colorCode);
+        emailButton.setTextColor(config.getInColor(config.colorCode));
+        changeEmailColor(config.getInColor(config.colorCode));
+        smsCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
+        smsButton.setTextColor(config.getInColorGray(config.colorCode));
+        changePhoneColor(config.getInColorGray(config.colorCode));
     }
 
     public void sms_click(View v) {
         email.setVisibility(View.GONE);
         phone.setVisibility(View.VISIBLE);
 
-        mailCardView.setCardBackgroundColor(Color.WHITE);
-        smsButton.setTextColor(Color.WHITE);
-        changePhoneColor(getResources().getColor(R.color.md_white_1000));
-        emailButton.setTextColor(config.colorCode);
-        ((CardView) v).setCardBackgroundColor(config.colorCode);
-        changeEmailColor(config.colorCode);
+        smsCardView.setCardBackgroundColor(config.colorCode);
+        smsButton.setTextColor(config.getInColor(config.colorCode));
+        changePhoneColor(config.getInColor(config.colorCode));
+        mailCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
+        emailButton.setTextColor(config.getInColorGray(config.colorCode));
+        changeEmailColor(config.getInColorGray(config.colorCode));
     }
 
     public void logout() {
@@ -154,20 +149,20 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.PHONE, phone.getText().toString());
-                    erxesRequest.setConnect("", phone.getText().toString(), false, null);
+                    erxesRequest.setConnect(false, false, false, "", phone.getText().toString(), null);
                     phone.setError(null);
                 } else
-                    phone.setError(getResources().getString(R.string.no_correct_phone));
+                    phone.setError(getResources().getString(R.string.Failed));
             } else {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.EMAIL, email.getText().toString());
-                    erxesRequest.setConnect("" + email.getText().toString(), "", false, null);
+                    erxesRequest.setConnect(false, false, false, email.getText().toString(), "", null);
                 } else
-                    email.setError(getResources().getString(R.string.no_correct_mail));
+                    email.setError(getResources().getString(R.string.Failed));
             }
         } else {
-            Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -200,7 +195,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                         break;
 
                     case Returntype.CONNECTIONFAILED:
-                        Snackbar.make(container, R.string.cantconnect, Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
                         break;
 
                     case Returntype.SERVERERROR:

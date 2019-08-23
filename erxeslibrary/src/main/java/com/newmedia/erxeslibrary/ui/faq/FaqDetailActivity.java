@@ -84,6 +84,7 @@ public class FaqDetailActivity extends AppCompatActivity {
         });
 
         TextView general = this.findViewById(R.id.general);
+        general.setTextColor(config.getInColor(config.colorCode));
         TextView articleHeader = this.findViewById(R.id.article_header);
         TextView date = this.findViewById(R.id.article_date);
         TextView content1 = this.findViewById(R.id.article_content1);

@@ -99,8 +99,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_marginLeft="@dimen/chooser_offset"
                         android:onClick="sms_click"
-                        android:shape="ring"
-                        app:cardCornerRadius="@dimen/chooser_raduis"
+                        app:cardCornerRadius="15dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginStart="@dimen/chooser_offset"
                         android:layout_alignStart="@id/strut">
@@ -113,10 +112,11 @@
 
                             <ImageView
                                 android:id="@+id/phonezurag"
-                                android:layout_width="@dimen/icon_size"
-                                android:layout_height="@dimen/icon_size"
-                                android:layout_marginRight="14dp"
-                                android:layout_marginEnd="14dp" />
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:padding="7dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginEnd="10dp" />
 
                             <TextView
                                 android:id="@+id/sms_button"
@@ -124,8 +124,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center_horizontal"
                                 android:text="@string/phone_number"
-                                android:textColor="#000"
-                                android:textSize="@dimen/chooser_font_size" />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
@@ -136,9 +135,8 @@
                         android:layout_alignRight="@id/strut"
                         android:layout_alignParentLeft="true"
                         android:onClick="email_click"
-                        android:shape="ring"
                         app:cardBackgroundColor="#5629B6"
-                        app:cardCornerRadius="@dimen/chooser_raduis"
+                        app:cardCornerRadius="15dp"
                         android:layout_alignEnd="@id/strut"
                         android:layout_alignParentStart="true">
 
@@ -150,17 +148,18 @@
 
                             <ImageView
                                 android:id="@+id/mail_zurag"
-                                android:layout_width="@dimen/icon_size"
-                                android:layout_height="@dimen/icon_size"
-                                android:layout_marginRight="14dp"/>
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:padding="7dp"
+                                android:layout_marginRight="10dp"
+                                android:layout_marginEnd="10dp" />
 
                             <TextView
                                 android:id="@+id/email_button"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/Email"
-                                android:textColor="#fff"
-                                android:textSize="@dimen/chooser_font_size" />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </android.support.v7.widget.CardView>
 
