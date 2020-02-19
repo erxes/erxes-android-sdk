@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
-import com.newmedia.erxes.basic.type.AttachmentInput;
+import com.erxes.io.opens.type.AttachmentInput;
 
 import java.io.File;
 import java.io.FileOutputStream;

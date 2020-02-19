@@ -2,11 +2,12 @@ package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.InsertMessageMutation;
-import com.newmedia.erxes.basic.type.AttachmentInput;
+import com.erxes.io.opens.WidgetsInsertMessageMutation;
+import com.erxes.io.opens.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
@@ -20,22 +21,24 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class InsertMessage {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "InsertMessage";
     private ErxesRequest erxesRequest;
-    private Config config ;
-    private String conversationId,mContent;
+    private Config config;
+    private String conversationId, mContent;
+
     public InsertMessage(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
         config = Config.getInstance(context);
     }
-    public void run( String mContent, final String conversationId,List<AttachmentInput> list){
+
+    public void run(String mContent, final String conversationId, List<AttachmentInput> list) {
         this.mContent = mContent;
         if (TextUtils.isEmpty(this.mContent)) {
             this.mContent = "This message has an attachment";
         }
 
         this.conversationId = conversationId;
-        InsertMessageMutation.Builder temp =InsertMessageMutation.builder()
+        WidgetsInsertMessageMutation.Builder temp = WidgetsInsertMessageMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)
                 .message(this.mContent)
@@ -49,27 +52,30 @@ public class InsertMessage {
                 .subscribe(observer);
     }
 
-    private Observer observer = new Observer<Response<InsertMessageMutation.Data>>() {
+    private Observer observer = new Observer<Response<WidgetsInsertMessageMutation.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<InsertMessageMutation.Data> response) {
-            if(response.hasErrors()) {
-                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR,conversationId,response.errors().get(0).message());
+        public void onNext(Response<WidgetsInsertMessageMutation.Data> response) {
+            if (response.hasErrors()) {
+                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.errors().get(0).message());
             } else {
-                ConversationMessage a = ConversationMessage.convert(response.data().insertMessage(),mContent,config);
-                config.conversationMessages.add(a);
-                erxesRequest.notefyAll(ReturntypeUtil.MUTATION,conversationId,null);
+                ConversationMessage a = ConversationMessage.convert(response.data().widgetsInsertMessage(), mContent, config);
+                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
+                        .equals(a.id) && !a.internal) {
+                    config.conversationMessages.add(a);
+                }
+                erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null);
             }
         }
 
         @Override
         public void onError(Throwable e) {
             e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
 
         }
 

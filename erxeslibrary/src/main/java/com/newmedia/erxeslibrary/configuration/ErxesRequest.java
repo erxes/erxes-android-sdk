@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.configuration;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
@@ -13,10 +14,13 @@ import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper;
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
-import com.newmedia.erxes.basic.type.AttachmentInput;
-import com.newmedia.erxes.basic.type.CustomType;
+import com.erxes.io.opens.type.AttachmentInput;
+import com.erxes.io.opens.type.CustomType;
 import com.newmedia.erxeslibrary.connection.GetGEO;
 import com.newmedia.erxeslibrary.connection.GetKnowledge;
+import com.newmedia.erxeslibrary.connection.helper.AddCookiesInterceptor;
+import com.newmedia.erxeslibrary.connection.helper.ReceivedCookiesInterceptor;
+import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.connection.GetIntegration;
 import com.newmedia.erxeslibrary.connection.GetLead;
@@ -27,10 +31,7 @@ import com.newmedia.erxeslibrary.connection.InsertMessage;
 import com.newmedia.erxeslibrary.connection.InsertNewMessage;
 import com.newmedia.erxeslibrary.connection.SendLead;
 import com.newmedia.erxeslibrary.connection.SetConnect;
-import com.newmedia.erxeslibrary.connection.helper.AddCookiesInterceptor;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
-import com.newmedia.erxeslibrary.connection.helper.ReceivedCookiesInterceptor;
-import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter2;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 
 
@@ -58,8 +59,10 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CipherSuite;
+import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
-//import okhttp3.logging.HttpLoggingInterceptor;
+import okhttp3.TlsVersion;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -83,29 +86,10 @@ public final class ErxesRequest {
     }
 
     void set_client() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-//        ConnectionSpec spec = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-//                .tlsVersions(TlsVersion.TLS_1_0, TlsVersion.TLS_1_1, TlsVersion.TLS_1_2, TlsVersion.SSL_3_0)
-//                .cipherSuites(
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
-//                        CipherSuite.TLS_ECDHE_ECDSA_WITH_RC4_128_SHA,
-//                        CipherSuite.TLS_ECDHE_RSA_WITH_RC4_128_SHA,
-//                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_CBC_SHA)
-//                .build();
-
         ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(context, "db_cache");
 
-        // Create NormalizedCacheFactory
         NormalizedCacheFactory cacheFactory = new SqlNormalizedCacheFactory(apolloSqlHelper);
 
-        // Create the cache key resolver, this example works well when all types have globally unique ids.
         CacheKeyResolver resolver = new CacheKeyResolver() {
             @NotNull
             @Override
@@ -129,22 +113,60 @@ public final class ErxesRequest {
         };
 
         if (config.host3100 != null) {
-            OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                    .writeTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-//                    .addInterceptor(logging)
-                    .addInterceptor(new AddCookiesInterceptor(this.context))
-                    .addInterceptor(new ReceivedCookiesInterceptor(this.context))
-                    .build();
+            OkHttpClient okHttpClient = getHttpClient();
+
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.host3100)
 //                    .normalizedCache(cacheFactory, resolver)
                     .okHttpClient(okHttpClient)
                     .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
-                    .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter2())
                     .build();
         }
+    }
+
+    private OkHttpClient getHttpClient() {
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient.Builder client = new OkHttpClient.Builder()
+                .followRedirects(true)
+                .followSslRedirects(true)
+                .retryOnConnectionFailure(true)
+                .cache(null)
+                .addInterceptor(logging)
+                .addInterceptor(new AddCookiesInterceptor(this.context))
+                .addInterceptor(new ReceivedCookiesInterceptor(this.context))
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS);
+
+        return enableTls12(client).build();
+    }
+
+    private OkHttpClient.Builder enableTls12(OkHttpClient.Builder client) {
+        if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+            try {
+                SSLContext sc = SSLContext.getInstance("TLSv1.2");
+                sc.init(null, null, null);
+                client.sslSocketFactory(new Tls12SocketFactory(sc.getSocketFactory()));
+
+                ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                        .tlsVersions(TlsVersion.TLS_1_2)
+                        .build();
+
+                List<ConnectionSpec> specs = new ArrayList<>();
+                specs.add(cs);
+                specs.add(ConnectionSpec.COMPATIBLE_TLS);
+                specs.add(ConnectionSpec.CLEARTEXT);
+
+                client.connectionSpecs(specs);
+            } catch (Exception exc) {
+                Log.e("OkHttpTLSCompat", "Error while setting TLS 1.2", exc);
+            }
+        }
+
+        return client;
     }
 
     private List<CipherSuite> customCipherSuites = Arrays.asList(
@@ -162,9 +184,6 @@ public final class ErxesRequest {
         return sslContext.getSocketFactory();
     }
 
-    /**
-     * Returns a trust manager that trusts the VM's default certificate authorities.
-     */
     private X509TrustManager defaultTrustManager() throws GeneralSecurityException {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
                 TrustManagerFactory.getDefaultAlgorithm());
@@ -185,10 +204,6 @@ public final class ErxesRequest {
         return result;
     }
 
-    /**
-     * An SSL socket factory that forwards all calls to a delegate. Override {@link #configureSocket}
-     * to customize a created socket before it is returned.
-     */
     static class DelegatingSSLSocketFactory extends SSLSocketFactory {
         protected final SSLSocketFactory delegate;
 
@@ -245,12 +260,12 @@ public final class ErxesRequest {
         }
     }
 
-    public void setConnect(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
+    public void setConnect(boolean isFromProvider, boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
         if (!config.isNetworkConnected()) {
             return;
         }
         SetConnect setConnect = new SetConnect(this, context);
-        setConnect.run(isCheckRequired, isUser, hasData, email, phone, data);
+        setConnect.run(isFromProvider, isCheckRequired, isUser, hasData, email, phone, data);
     }
 
     public void getGEO() {
@@ -287,28 +302,23 @@ public final class ErxesRequest {
     }
 
     public void getConversations() {
-        if (!config.isNetworkConnected()) {
+        if (!config.isNetworkConnected())
             return;
-        }
         GetConversation getconversation = new GetConversation(this, context);
         getconversation.run();
-
-
     }
 
     public void getMessages(String conversationid) {
-        if (!config.isNetworkConnected()) {
+        if (!config.isNetworkConnected())
             return;
-        }
         GetMessage getMessage = new GetMessage(this, context);
         getMessage.run(conversationid);
 
     }
 
     public void getSupporters() {
-        if (!config.isNetworkConnected()) {
+        if (!config.isNetworkConnected())
             return;
-        }
         GetSupporter getSupporter = new GetSupporter(this, context);
         getSupporter.run();
     }

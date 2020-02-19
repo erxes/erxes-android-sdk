@@ -5,7 +5,7 @@ import android.content.Context;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.FaqGetQuery;
+import com.erxes.io.opens.KnowledgeBaseTopicDetailQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
@@ -29,21 +29,22 @@ public class GetKnowledge {
     public void run() {
         if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null) {
             Rx2Apollo.from(erxesRequest.apolloClient
-                    .query(FaqGetQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
-                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                    .query(KnowledgeBaseTopicDetailQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
+//                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
+            )
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(observer);
         }
     }
-    private Observer observer = new Observer<Response<FaqGetQuery.Data>>() {
+    private Observer observer = new Observer<Response<KnowledgeBaseTopicDetailQuery.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<FaqGetQuery.Data> response) {
+        public void onNext(Response<KnowledgeBaseTopicDetailQuery.Data> response) {
             if (!response.hasErrors()) {
                 config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
                 erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null);

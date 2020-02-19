@@ -8,19 +8,23 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 
 
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.graphics.ColorUtils;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 
+import com.erxes.io.opens.type.FieldValueInput;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig;
 import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.GenericFont;
-import com.newmedia.erxes.basic.type.FieldValueInput;
+import com.newmedia.erxeslibrary.connection.service.ListenerService;
+import com.newmedia.erxeslibrary.connection.service.SaasListenerService;
 import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.R;
@@ -33,6 +37,7 @@ import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
+import com.newmedia.erxeslibrary.utils.ListTagHandler;
 
 import org.json.JSONObject;
 
@@ -69,10 +74,16 @@ public class Config {
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
     public boolean isFirstStart = false, requireAuth = false;
+    public Intent intent;
 
     private Config(Context context) {
         this.context = context;
         dataManager = DataManager.getInstance(context);
+        if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
+            intent = new Intent(context, ListenerService.class);
+        } else {
+            intent = new Intent(context, SaasListenerService.class);
+        }
     }
 
     public static Config getInstance(Context context) {
@@ -223,14 +234,14 @@ public class Config {
     }
 
     public void Start() {
-        checkRequired(false, null, null, new JSONObject());
+        checkRequired(false, false, null, null, null);
     }
 
-    public void Start(String email, String phone, JSONObject jsonObject) {
-        checkRequired(true, email, phone, jsonObject);
+    public void Start(String email, String phone, String jsonObject) {
+        checkRequired(false, true, email, phone, jsonObject);
     }
 
-    public void initActivity(boolean hasData, String email, String phone, String customData) {
+    public void initActivity(boolean isProvider, boolean hasData, String email, String phone, String customData) {
         initializeIcon();
         initializeFresco();
         dataManager.setData(DataManager.ISUSER, hasData);
@@ -242,13 +253,20 @@ public class Config {
         a.putExtra("customData", customData);
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
+        a.putExtra("isProvider", isProvider);
         context.startActivity(a);
     }
 
-    private void checkRequired(boolean hasData, String email, String phone, JSONObject jsonObject) {
-        if (hasData)
-            erxesRequest.setConnect(true, true, hasData, email, phone, jsonObject.toString());
-        else erxesRequest.setConnect(true, false, hasData, email, phone, jsonObject.toString());
+    private void checkRequired(boolean isFromProvider, boolean hasData, String email, String phone, String jsonObject) {
+        Log.e("TAG", "checkRequired: " + dataManager.getDataB(DataManager.HASPROVIDER));
+        if (Build.VERSION.SDK_INT >= 16 &&
+                Build.VERSION.SDK_INT < 22 &&
+                !dataManager.getDataB(DataManager.HASPROVIDER)) {
+            initActivity(true, hasData, email, phone, jsonObject);
+        } else if (hasData)
+            erxesRequest.setConnect(isFromProvider, true, true, hasData, email, phone, jsonObject);
+        else
+            erxesRequest.setConnect(isFromProvider, true, false, hasData, email, phone, jsonObject);
     }
 
     public void LoadDefaultValues() {
@@ -260,7 +278,7 @@ public class Config {
 
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);
         integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
-        messengerdata = dataManager.getMessenger();
+//        messengerdata = dataManager.getMessenger();
         String color = dataManager.getDataS(DataManager.COLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
@@ -273,14 +291,38 @@ public class Config {
     }
 
     public CharSequence getHtml(String content) {
+
         Spanned htmlDescription;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            htmlDescription = Html.fromHtml(content, Html.FROM_HTML_MODE_LEGACY);
+            htmlDescription = Html.fromHtml(
+                    customizeListTags(content),
+                    Html.FROM_HTML_MODE_LEGACY,
+                    null,
+                    new ListTagHandler());
         } else {
-            htmlDescription = Html.fromHtml(content);
+            htmlDescription = Html.fromHtml(
+                    customizeListTags(content),
+                    null,
+                    new ListTagHandler());
         }
         String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
         return htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length());
+    }
+
+    private String customizeListTags(@Nullable String content) {
+        String mContent = content;
+        if (mContent == null) {
+            return null;
+        }
+        mContent = mContent.replaceAll("<ul", "<rxxUL");
+        mContent = mContent.replaceAll("</ul>", "</rxxUL>");
+        mContent = mContent.replaceAll("<ol", "<rxxOL");
+        mContent = mContent.replaceAll("</ol>", "</rxxOL>");
+        mContent = mContent.replaceAll("<dd", "<rxxDD");
+        mContent = mContent.replaceAll("</dd>", "</rxxDD>");
+        mContent = mContent.replaceAll("<li", "<rxxLI");
+        mContent = mContent.replaceAll("</li>", "</rxxLI>");
+        return mContent;
     }
 
     public boolean isLoggedIn() {
@@ -573,7 +615,7 @@ public class Config {
 
     public int getInColorGray(int backgroundColor) {
         if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
-            return context.getResources().getColor(R.color.md_grey_400);
+            return context.getResources().getColor(R.color.md_white_1000);
         else return context.getResources().getColor(R.color.md_grey_600);
     }
 }

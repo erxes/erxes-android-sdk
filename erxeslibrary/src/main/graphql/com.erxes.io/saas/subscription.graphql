@@ -1,4 +1,4 @@
-subscription ConversationMessageInserted($id: String!){
+subscription SaasConversationMessageInserted($id: String!){
   conversationMessageInserted(_id: $id) {
     _id
     content
@@ -14,18 +14,11 @@ subscription ConversationMessageInserted($id: String!){
     }
     isCustomerRead
     formWidgetData
-    user{
-         _id
-             details
-             {
-                    avatar
-                    fullName
-             }
-      }
+    user
   }
 }
 
-subscription ConversationChanged($id: String!) {
+subscription SaasConversationChanged($id: String!) {
     conversationChanged(_id: $id) {
         conversationId
         type

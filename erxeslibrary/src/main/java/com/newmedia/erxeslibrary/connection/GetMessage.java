@@ -5,7 +5,7 @@ import android.content.Context;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.MessagesQuery;
+import com.erxes.io.opens.WidgetsMessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
@@ -19,7 +19,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class GetMessage {
-    final static String TAG = "SETCONNECT";
+    final static String TAG = "GetMessage";
     private ErxesRequest erxesRequest;
     private String conversationid;
     private Config config;
@@ -31,25 +31,25 @@ public class GetMessage {
 
     public void run(String conversationid) {
         this.conversationid = conversationid;
-        MessagesQuery query = MessagesQuery.builder()
+        WidgetsMessagesQuery query = WidgetsMessagesQuery.builder()
                 .conversationId(conversationid)
                 .build();
         Rx2Apollo.from(erxesRequest.apolloClient
                 .query(query)
-                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
-    private Observer observer = new Observer<Response<MessagesQuery.Data>>() {
+    private Observer observer = new Observer<Response<WidgetsMessagesQuery.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<MessagesQuery.Data> response) {
-            if (response.data().messages().size() > 0) {
+        public void onNext(Response<WidgetsMessagesQuery.Data> response) {
+            if (response.data().widgetsMessages().size() > 0) {
                 if (config.conversationMessages.size() > 0)
                     config.conversationMessages.clear();
                 List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);

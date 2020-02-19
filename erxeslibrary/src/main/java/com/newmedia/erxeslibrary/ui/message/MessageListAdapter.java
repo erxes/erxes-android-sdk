@@ -144,36 +144,32 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
-            timeText.setText(config.MessageDatetime(message.createdAt));
-            if (!TextUtils.isEmpty(message.attachments)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(message.attachments);
-                    if (jsonArray.length() > 0) {
-                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            FileAttachment fileAttachment = new FileAttachment();
-                            fileAttachment.setName(jsonObject.getString("name"));
-                            fileAttachment.setSize(jsonObject.getString("size"));
-                            fileAttachment.setType(jsonObject.getString("type"));
-                            fileAttachment.setUrl(jsonObject.getString("url"));
-                            fileAttachmentList.add(fileAttachment);
-                        }
-                        GridLayoutManager gridLayoutManager;
-                        if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(activity, 3);
-                        } else {
-                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
-                        }
-                        fileRecyclerView.setVisibility(View.VISIBLE);
-                        fileRecyclerView.setLayoutManager(gridLayoutManager);
-                        fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
-                    } else {
-                        fileRecyclerView.setVisibility(View.GONE);
+//            timeText.setText(config.MessageDatetime(message.createdAt));
+            timeText.setText(message.createdAt);
+            Log.e("TAG", "bind: " + message.attachments.size() );
+            if (message.attachments != null) {
+                if (message.attachments.size() > 0) {
+                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                    for (int i = 0; i < message.attachments.size(); i++) {
+                        FileAttachment fileAttachment = new FileAttachment();
+                        fileAttachment.setName(message.attachments.get(i).getName());
+                        fileAttachment.setSize(message.attachments.get(i).getSize());
+                        fileAttachment.setType(message.attachments.get(i).getType());
+                        fileAttachment.setUrl(message.attachments.get(i).getUrl());
+                        fileAttachmentList.add(fileAttachment);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    GridLayoutManager gridLayoutManager;
+                    if (fileAttachmentList.size() > 2) {
+                        gridLayoutManager = new GridLayoutManager(activity, 3);
+                    } else {
+                        gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
+                    }
+                    fileRecyclerView.setVisibility(View.VISIBLE);
+                    fileRecyclerView.setLayoutManager(gridLayoutManager);
+                    fileRecyclerView.setHasFixedSize(true);
+                    fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
+                } else {
+                    fileRecyclerView.setVisibility(View.GONE);
                 }
             } else {
                 fileRecyclerView.setVisibility(View.GONE);
@@ -201,7 +197,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 messageText.setMovementMethod(LinkMovementMethod.getInstance());
             else messageText.setMovementMethod(null);
 
-            timeText.setText(config.MessageDatetime(message.createdAt));
+//            timeText.setText(config.MessageDatetime(message.createdAt));
+            timeText.setText(message.createdAt);
 
             if (message.user != null) {
                 Glide.with(activity).load(message.user.avatar)
@@ -216,35 +213,29 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(profileImage);
 
-            if (!TextUtils.isEmpty(message.attachments)) {
-                try {
-                    JSONArray jsonArray = new JSONArray(message.attachments);
-                    if (jsonArray.length() > 0) {
-                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                        for (int i = 0; i < jsonArray.length(); i++) {
-                            JSONObject jsonObject = jsonArray.getJSONObject(i);
-                            FileAttachment fileAttachment = new FileAttachment();
-                            fileAttachment.setName(jsonObject.getString("name"));
-                            fileAttachment.setSize(jsonObject.getString("size"));
-                            fileAttachment.setType(jsonObject.getString("type"));
-                            fileAttachment.setUrl(jsonObject.getString("url"));
-                            fileAttachmentList.add(fileAttachment);
-                        }
-                        GridLayoutManager gridLayoutManager;
-                        if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(activity, 3);
-                        } else {
-                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
-                        }
-                        fileRecyclerView.setVisibility(View.VISIBLE);
-                        fileRecyclerView.setLayoutManager(gridLayoutManager);
-                        fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
-                    } else {
-                        fileRecyclerView.setVisibility(View.GONE);
+            if (message.attachments != null) {
+                if (message.attachments.size() > 0) {
+                    List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                    for (int i = 0; i < message.attachments.size(); i++) {
+                        FileAttachment fileAttachment = new FileAttachment();
+                        fileAttachment.setName(message.attachments.get(i).getName());
+                        fileAttachment.setSize(message.attachments.get(i).getSize());
+                        fileAttachment.setType(message.attachments.get(i).getType());
+                        fileAttachment.setUrl(message.attachments.get(i).getUrl());
+                        fileAttachmentList.add(fileAttachment);
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    GridLayoutManager gridLayoutManager;
+                    if (fileAttachmentList.size() > 2) {
+                        gridLayoutManager = new GridLayoutManager(activity, 3);
+                    } else {
+                        gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
+                    }
+                    fileRecyclerView.setVisibility(View.VISIBLE);
+                    fileRecyclerView.setLayoutManager(gridLayoutManager);
+                    fileRecyclerView.setHasFixedSize(true);
+                    fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
+                } else {
+                    fileRecyclerView.setVisibility(View.GONE);
                 }
             } else {
                 fileRecyclerView.setVisibility(View.GONE);

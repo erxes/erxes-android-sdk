@@ -4,12 +4,13 @@ import android.util.Log;
 import android.content.Context;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.SaveLeadMutation;
+import com.erxes.io.opens.WidgetsSaveLeadMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.helper.Json;
-import org.json.JSONObject;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
+
+import java.util.Map;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -27,11 +28,12 @@ public class SendLead {
     }
 
     public void run() {
-        SaveLeadMutation mutate = SaveLeadMutation.builder()
+        Map browserInfo = (Map) (new Object());
+        WidgetsSaveLeadMutation mutate = WidgetsSaveLeadMutation.builder()
                 .formId(config.formConnect.getLead().getId())
                 .integrationId(config.integrationId)
                 .submissions(config.fieldValueInputs)
-                .browserInfo(new Json(new JSONObject()))
+                .browserInfo(new Json(browserInfo))
                 .build();
         Rx2Apollo.from(erxesRequest.apolloClient
                 .mutate(mutate))
@@ -39,19 +41,19 @@ public class SendLead {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
-    private Observer observer = new Observer<Response<SaveLeadMutation.Data>>() {
+    private Observer observer = new Observer<Response<WidgetsSaveLeadMutation.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<SaveLeadMutation.Data> response) {
+        public void onNext(Response<WidgetsSaveLeadMutation.Data> response) {
             if (!response.hasErrors()) {
-                if (response.data().saveForm().status().equalsIgnoreCase("ok")) {
-                    erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().saveForm().status());
+                if (response.data().widgetsSaveLead().status().equalsIgnoreCase("ok")) {
+                    erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().widgetsSaveLead().status());
                 } else {
-                    erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().saveForm().status());
+                    erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().widgetsSaveLead().status());
                 }
             } else {
                 Log.e(TAG, "errors " + response.errors().toString());

@@ -7,18 +7,21 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.R;
 
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
@@ -53,7 +56,7 @@ public class ErxesHelper {
     static public void load_messengerData(Json js) {
         if (js == null)
             return;
-        dataManager.setMessengerData(js.toString());
+//        dataManager.setMessengerData(js.object.toString());
         config.messengerdata = Messengerdata.convert(js, config.language);
     }
 
@@ -80,9 +83,15 @@ public class ErxesHelper {
         }
         return size;
     }
-    static public void changeLanguage(Context context,String language){
-        Configuration config = new android.content.res.Configuration();
-        config.locale  = new Locale(language);
-        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+    public static void changeLanguage(Context context,String language){
+        if (!TextUtils.isEmpty(language)) {
+            Configuration config = new android.content.res.Configuration();
+            config.locale = new Locale(language);
+            context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+        }
     }
+
+    public static SimpleDateFormat sdf = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    public static SimpleDateFormat outputFormat = new SimpleDateFormat("h:mm a");
 }

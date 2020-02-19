@@ -16,7 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.newmedia.erxes.basic.type.AttachmentInput;
+import com.erxes.io.opens.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.connection.helper.ProgressRequestBody;
 import com.newmedia.erxeslibrary.helper.FileInfo;

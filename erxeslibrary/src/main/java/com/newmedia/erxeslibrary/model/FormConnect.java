@@ -1,17 +1,17 @@
 package com.newmedia.erxeslibrary.model;
 
 import com.apollographql.apollo.api.Response;
-import com.newmedia.erxes.basic.FormConnectMutation;
+import com.erxes.io.opens.WidgetsLeadConnectMutation;
 
 public class FormConnect {
     private Lead lead;
     private LeadIntegration leadIntegration;
 
-    public static FormConnect convert(Response<FormConnectMutation.Data> response) {
+    public static FormConnect convert(Response<WidgetsLeadConnectMutation.Data> response) {
         FormConnect formConnect = new FormConnect();
-        if (response.data() != null && response.data().formConnect() != null) {
-            formConnect.setLead(Lead.convert(response.data().formConnect().form()));
-            formConnect.setLeadIntegration(LeadIntegration.convert(response.data().formConnect().integration()));
+        if (response.data() != null && response.data().widgetsLeadConnect() != null) {
+            formConnect.setLead(Lead.convert(response.data().widgetsLeadConnect().form()));
+            formConnect.setLeadIntegration(LeadIntegration.convert(response.data().widgetsLeadConnect().integration()));
         }
         return formConnect;
     }

@@ -5,7 +5,7 @@ import android.text.TextUtils;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.FormConnectMutation;
+import com.erxes.io.opens.WidgetsLeadConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
@@ -30,7 +30,7 @@ public class GetLead {
     public void run() {
         if (!TextUtils.isEmpty(config.messengerdata.getFormCode())) {
             Rx2Apollo.from(erxesRequest.apolloClient
-                    .mutate(FormConnectMutation.builder()
+                    .mutate(WidgetsLeadConnectMutation.builder()
                             .brandCode(config.brandCode)
                             .formCode(config.messengerdata.getFormCode())
                             .build()))
@@ -39,14 +39,14 @@ public class GetLead {
                     .subscribe(observer);
         }
     }
-    private Observer observer = new Observer<Response<FormConnectMutation.Data>>() {
+    private Observer observer = new Observer<Response<WidgetsLeadConnectMutation.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<FormConnectMutation.Data> response) {
+        public void onNext(Response<WidgetsLeadConnectMutation.Data> response) {
             if (!response.hasErrors()) {
                 config.formConnect = FormConnect.convert(response);
                 erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null);

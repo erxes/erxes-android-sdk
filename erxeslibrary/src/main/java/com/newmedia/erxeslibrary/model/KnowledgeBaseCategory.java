@@ -1,6 +1,6 @@
 package com.newmedia.erxeslibrary.model;
 
-import com.newmedia.erxes.basic.FaqGetQuery;
+import com.erxes.io.opens.KnowledgeBaseTopicDetailQuery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class KnowledgeBaseCategory {
     public List<User> authors;
     public List<KnowledgeBaseArticle> articles;
     public String icon;
-    static public List<KnowledgeBaseCategory> convert(List<FaqGetQuery.Category> itemuser){
+    static public List<KnowledgeBaseCategory> convert(List<KnowledgeBaseTopicDetailQuery.Category> itemuser){
         KnowledgeBaseCategory temp;
         List<KnowledgeBaseCategory> categories = new ArrayList<>();
         for(int  i = 0 ; i <  itemuser.size(); i++ ) {

@@ -3,34 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.newmedia.erxeslibrary">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <application android:largeHeap="true">
+
+        <activity
+            android:name=".ui.faq.FaqDetailActivity"
+            android:theme="@style/Theme_erxes_dialog"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.faq.FaqActivity"
+            android:theme="@style/Theme_erxes_dialog"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.ErxesActivity"
+            android:theme="@style/Theme_erxes_dialog"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".ui.conversations.ConversationListActivity"
+            android:theme="@style/Theme_erxes_dialog"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.message.MessageActivity"
+            android:theme="@style/Theme_erxes_dialog"
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTask"/>
+
+        <service android:name=".connection.service.ListenerService" />
+        <service android:name=".connection.service.SaasListenerService" />
+
+
+    </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <application
-        android:largeHeap="true">
-
-        <activity
-            android:name=".ui.faq.FaqDetailActivity"
-            android:theme="@style/Theme_erxes_dialog" />
-        <activity
-            android:name=".ui.faq.FaqActivity"
-            android:theme="@style/Theme_erxes_dialog" />
-        <activity
-            android:name=".ui.ErxesActivity"
-            android:theme="@style/Theme_erxes_dialog"/>
-        <activity
-            android:name=".ui.conversations.ConversationListActivity"
-            android:theme="@style/Theme_erxes_dialog" />
-        <activity
-            android:name=".ui.message.MessageActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme_erxes_dialog" />
-
-        <service android:name=".connection.service.ListenerService" />
-
-
-    </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
 </manifest>

@@ -24,10 +24,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.newmedia.erxes.subscription.ConversationChangedSubscription;
+import com.erxes.io.opens.ConversationChangedSubscription;
+import com.erxes.io.saas.SaasConversationChangedSubscription;
+import com.newmedia.erxeslibrary.connection.service.SaasListenerService;
 import com.newmedia.erxeslibrary.helper.CustomViewPager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
@@ -66,6 +69,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private List<String> disposabledChanged = new ArrayList<>();
     private CompositeDisposable disposablesChanged = new CompositeDisposable();
     private ApolloSubscriptionCall<ConversationChangedSubscription.Data> opensourceChangedCall;
+    private ApolloSubscriptionCall<SaasConversationChangedSubscription.Data> saasChangedCall;
 
     @Override
     public void notify(final int returnType, final String conversationId, final String message) {
@@ -93,10 +97,10 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                     case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
                         break;
-                    case ReturntypeUtil.LEAD:
-                        if (tabAdapter != null)
-                            ((SupportFragment) tabAdapter.getItem(0)).setLead();
-                        break;
+//                    case ReturntypeUtil.LEAD:
+//                        if (tabAdapter != null)
+//                            ((SupportFragment) tabAdapter.getItem(0)).setLead();
+//                        break;
                     case ReturntypeUtil.FAQ:
                         if (tabLayout != null) {
                             tabsContainer.setVisibility(View.VISIBLE);
@@ -112,6 +116,16 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         if (supporterView != null && supporterView.getAdapter() != null)
                             supporterView.getAdapter().notifyDataSetChanged();
                         break;
+//                    case ReturntypeUtil.MUTATIONNEW:
+//                        if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
+//                                .recyclerView != null) {
+//                            ((SupportFragment) tabAdapter.getItem(0))
+//                                    .recyclerView.getAdapter().notifyDataSetChanged();
+//                        }
+//                        if (config.conversations.size() > 0) {
+//                            initParentConversationChanged();
+//                        }
+//                        break;
                     default:
                         break;
                 }
@@ -120,176 +134,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        erxesRequest.remove(this);
-    }
-
-    private void startActivity() {
-        Intent a = new Intent(ConversationListActivity.this, ErxesActivity.class);
-        startActivity(a);
-        this.finish();
-    }
-
-    public void sendLead() {
-        erxesRequest.sendLead();
-    }
-
-    private void initParentConversationChanged() {
-        stopService(intent);
-        startService(intent);
-        if (config.messengerdata.isForceLogoutWhenResolve()) {
-            initConversationChanged();
-        }
-    }
-
-    private void initConversationChanged() {
-        for (int i = 0; i < config.conversations.size(); i++) {
-            if (disposabledChanged.size() > 0) {
-                boolean have = false;
-                for (int j = 0; j < disposabledChanged.size(); j++) {
-                    if (disposabledChanged.get(j).equals(config.conversations.get(i).id)) {
-                        have = true;
-                        break;
-                    }
-                }
-                if (!have) {
-                    disposabledChanged.add(config.conversations.get(i).id);
-                    clientChangedListen(config.conversations.get(i).id);
-                }
-            } else {
-                disposabledChanged.add(config.conversations.get(i).id);
-                clientChangedListen(config.conversations.get(i).id);
-            }
-        }
-    }
-
-    public void clientChangedListen(final String conversationId) {
-        if (runThreadInserted(conversationId))
-            return;
-        if (erxesRequest.apolloClient == null)
-            return;
-        if (conversationId != null) {
-            opensourceChangedCall = erxesRequest.apolloClient
-                    .subscribe(ConversationChangedSubscription.builder()
-                            .id(conversationId)
-                            .build());
-            initChangedConversation();
-        }
-    }
-
-    private void initChangedConversation() {
-        disposablesChanged.add(Rx2Apollo.from(opensourceChangedCall)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(
-                        new DisposableSubscriber<Response<ConversationChangedSubscription.Data>>() {
-                            @Override
-                            public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
-                                if (!dataResponse.hasErrors()) {
-                                    if (dataResponse.data() != null &&
-                                            dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
-                                        config.Logout(ConversationListActivity.this);
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable t) {
-                                Log.e(getClass().getName(), "onerrorChanged ");
-                                t.printStackTrace();
-                            }
-
-                            @Override
-                            public void onComplete() {
-                                Log.e(getClass().getName(), "oncompleteChanged");
-                            }
-                        }
-                )
-        );
-    }
-
-    private boolean runThreadInserted(final String conversationId) {
-        if (!config.isNetworkConnected()) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    clientChangedListen(conversationId);
-                }
-            }).start();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        config = Config.getInstance(this);
-        config.setActivityConfig(this);
-        erxesRequest = ErxesRequest.getInstance(config);
-        erxesRequest.add(this);
-        if (dataManager.getDataS(DataManager.CUSTOMERID) == null) {
-            startActivity();
-            return;
-        }
-        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.EMAIL)) &&
-                TextUtils.isEmpty(dataManager.getDataS(DataManager.PHONE))) {
-            dataManager.setData(DataManager.CUSTOMERID, null);
-            startActivity();
-            return;
-        }
-        if (config.messengerdata.isShowChat()) {
-            erxesRequest.getConversations();
-        }
-
-        if (config.formConnect != null && tabAdapter != null) {
-            ((SupportFragment) tabAdapter.getItem(0)).setLead();
-        }
-        if (config.supporters != null && config.supporters.size() > 0) {
-            if (supporterView != null && supporterView.getAdapter() != null)
-                supporterView.getAdapter().notifyDataSetChanged();
-        }
-        if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
-            if (tabLayout != null && tabsContainer.getVisibility() == View.GONE) {
-                tabsContainer.setVisibility(View.VISIBLE);
-                if (tabAdapter != null)
-                    ((FaqFragment) tabAdapter.getItem(1)).init();
-            }
-        }
-
-        config.conversationId = null;
-
-        dataManager.setData("chatIsGoing", true);
-
-        infoHeader.setBackgroundColor(config.colorCode);
-
-        chatIsGoing = true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        chatIsGoing = false;
-        dataManager.setData("chatIsGoing", false);
-        stopService(intent);
-        disposabledChanged.clear();
-        disposablesChanged.dispose();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         erxesRequest = ErxesRequest.getInstance(config);
         config = Config.getInstance(this);
-
         ErxesHelper.changeLanguage(this, config.language);
+
         setContentView(R.layout.activity_conversation);
 
         CustomViewPager viewpager = findViewById(R.id.viewpager);
@@ -315,7 +166,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
         dataManager = DataManager.getInstance(this);
 
-        intent = new Intent(ConversationListActivity.this, ListenerService.class);
+        if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
+            intent = new Intent(ConversationListActivity.this, ListenerService.class);
+        } else {
+            intent = new Intent(ConversationListActivity.this, SaasListenerService.class);
+        }
 
         viewpager.setPagingEnabled(false);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
@@ -329,7 +184,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                 getResources().getColor(R.color.md_black_1000));
 
         erxesRequest.getSupporters();
-        erxesRequest.getLead();
+//        erxesRequest.getLead();
         erxesRequest.getFAQ();
         init();
 
@@ -401,6 +256,227 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             this.findViewById(R.id.ytcontainer).setVisibility(View.VISIBLE);
         else this.findViewById(R.id.ytcontainer).setVisibility(View.GONE);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        erxesRequest.remove(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        config = Config.getInstance(this);
+        config.setActivityConfig(this);
+        erxesRequest = ErxesRequest.getInstance(config);
+        erxesRequest.add(this);
+        if (dataManager.getDataS(DataManager.CUSTOMERID) == null) {
+            startActivity();
+            return;
+        }
+        if (TextUtils.isEmpty(dataManager.getDataS(DataManager.EMAIL)) &&
+                TextUtils.isEmpty(dataManager.getDataS(DataManager.PHONE))) {
+            dataManager.setData(DataManager.CUSTOMERID, null);
+            startActivity();
+            return;
+        }
+        if (config.messengerdata.isShowChat()) {
+            erxesRequest.getConversations();
+        }
+
+//        if (config.formConnect != null && tabAdapter != null) {
+//            ((SupportFragment) tabAdapter.getItem(0)).setLead();
+//        }
+        if (config.supporters != null && config.supporters.size() > 0) {
+            if (supporterView != null && supporterView.getAdapter() != null)
+                supporterView.getAdapter().notifyDataSetChanged();
+        }
+        if (config.knowledgeBaseTopic != null && config.knowledgeBaseTopic.categories != null) {
+            if (tabLayout != null && tabsContainer.getVisibility() == View.GONE) {
+                tabsContainer.setVisibility(View.VISIBLE);
+                if (tabAdapter != null)
+                    ((FaqFragment) tabAdapter.getItem(1)).init();
+            }
+        }
+
+        config.conversationId = null;
+
+        dataManager.setData("chatIsGoing", true);
+
+        infoHeader.setBackgroundColor(config.colorCode);
+
+        chatIsGoing = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        chatIsGoing = false;
+        dataManager.setData("chatIsGoing", false);
+        stopService(intent);
+        disposabledChanged.clear();
+        disposablesChanged.dispose();
+    }
+
+    private void startActivity() {
+        Intent a = new Intent(ConversationListActivity.this, ErxesActivity.class);
+        startActivity(a);
+        this.finish();
+    }
+
+    public void sendLead() {
+        erxesRequest.sendLead();
+    }
+
+    private void initParentConversationChanged() {
+        stopService(config.intent);
+        startService(config.intent);
+        initConversationChanged();
+    }
+
+    private void initConversationChanged() {
+        for (int i = 0; i < config.conversations.size(); i++) {
+            if (disposabledChanged.size() > 0) {
+                boolean have = false;
+                for (int j = 0; j < disposabledChanged.size(); j++) {
+                    if (disposabledChanged.get(j).equals(config.conversations.get(i).id)) {
+                        have = true;
+                        break;
+                    }
+                }
+                if (!have) {
+                    disposabledChanged.add(config.conversations.get(i).id);
+                    clientChangedListen(config.conversations.get(i).id);
+                }
+            } else {
+                disposabledChanged.add(config.conversations.get(i).id);
+                clientChangedListen(config.conversations.get(i).id);
+            }
+        }
+    }
+
+    public void clientChangedListen(final String conversationId) {
+        if (runThreadInserted(conversationId))
+            return;
+        if (erxesRequest.apolloClient == null)
+            return;
+        if (conversationId != null) {
+            if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
+                opensourceChangedCall = erxesRequest.apolloClient
+                        .subscribe(ConversationChangedSubscription.builder()
+                                .id(conversationId)
+                                .build());
+                initChangedConversation();
+            } else {
+                saasChangedCall = erxesRequest.apolloClient
+                        .subscribe(SaasConversationChangedSubscription.builder()
+                                .id(conversationId)
+                                .build());
+                initChangedConversationSaas();
+            }
+        }
+    }
+
+    private void initChangedConversation() {
+        disposablesChanged.add(Rx2Apollo.from(opensourceChangedCall)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(
+                        new DisposableSubscriber<Response<ConversationChangedSubscription.Data>>() {
+                            @Override
+                            public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
+                                if (!dataResponse.hasErrors()) {
+                                    if (dataResponse.data() != null && dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
+                                        if (config.messengerdata.isForceLogoutWhenResolve()) {
+                                                config.Logout(ConversationListActivity.this);
+                                        } else {
+                                            for (int i = 0 ; i < config.conversations.size(); i ++) {
+                                                if (config.conversations.get(i).id.equals(dataResponse.data().conversationChanged().conversationId())) {
+                                                    config.conversations.get(i).status = dataResponse.data().conversationChanged().type();
+                                                    config.conversations.remove(i);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e(getClass().getName(), "onerrorChanged ");
+                                t.printStackTrace();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.e(getClass().getName(), "oncompleteChanged");
+                            }
+                        }
+                )
+        );
+    }
+
+    private void initChangedConversationSaas() {
+        disposablesChanged.add(Rx2Apollo.from(saasChangedCall)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(
+                        new DisposableSubscriber<Response<SaasConversationChangedSubscription.Data>>() {
+                            @Override
+                            public void onNext(Response<SaasConversationChangedSubscription.Data> dataResponse) {
+                                if (!dataResponse.hasErrors()) {
+                                    if (dataResponse.data() != null && dataResponse.data().conversationChanged().type().equals("closed")) {
+                                        if (config.messengerdata.isForceLogoutWhenResolve()) {
+                                                config.Logout(ConversationListActivity.this);
+                                        } else {
+                                            for (int i = 0 ; i < config.conversations.size(); i ++) {
+                                                if (config.conversations.get(i).id.equals(dataResponse.data().conversationChanged().conversationId())) {
+                                                    config.conversations.get(i).status = dataResponse.data().conversationChanged().type();
+                                                    config.conversations.remove(i);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                Log.e(getClass().getName(), "onerrorChanged ");
+                                t.printStackTrace();
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.e(getClass().getName(), "oncompleteChanged");
+                            }
+                        }
+                )
+        );
+    }
+
+    private boolean runThreadInserted(final String conversationId) {
+        if (!config.isNetworkConnected()) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                    clientChangedListen(conversationId);
+                }
+            }).start();
+            return true;
+        }
+        return false;
+    }
+
 
     private void startYoutube(String s) {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(s));

@@ -15,11 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxes.basic.type.FieldValueInput;
+import com.erxes.io.opens.type.FieldValueInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.R;
-import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.LeadAdapter;
@@ -78,7 +76,7 @@ public class SupportFragment extends Fragment {
         getTextJoinLead = v.findViewById(R.id.getTextJoinLead);
         imageLead = v.findViewById(R.id.imageLead);
 
-        setLead();
+//        setLead();
 
         if (config.messengerdata.isShowChat()) {
             chatContainer.setVisibility(View.VISIBLE);
@@ -112,25 +110,25 @@ public class SupportFragment extends Fragment {
 
     public void setLead() {
         if (isAdded() && config.formConnect != null) {
-            Json leadObject = config.formConnect.getLead().getCallout();
-            if (leadObject != null) {
-                leadCardView.setVisibility(View.VISIBLE);
-                getLeadCardView.setVisibility(View.GONE);
-                if (!TextUtils.isEmpty(leadObject.getString("featuredImage")) &&
-                        leadObject.getString("featuredImage").contains("http")) {
-                    Glide.with(this)
-                            .load(leadObject.getString("featuredImage"))
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(imageLead);
-                } else {
-                    imageLead.setVisibility(View.GONE);
-                }
-                titleLead.setText(leadObject.getString("title"));
-                descriptionLead.setText(leadObject.getString("body"));
-                textJoinLead.setText(leadObject.getString("buttonText"));
-//                    joinLeadCardView.setCardBackgroundColor(Color.parseColor(config.formConnect.getLead().getThemeColor()));
-                initLead();
-            }
+//            Json leadObject = config.formConnect.getLead().getCallout();
+//            if (leadObject != null) {
+//                leadCardView.setVisibility(View.VISIBLE);
+//                getLeadCardView.setVisibility(View.GONE);
+//                if (!TextUtils.isEmpty(leadObject.getString("featuredImage")) &&
+//                        leadObject.getString("featuredImage").contains("http")) {
+//                    Glide.with(this)
+//                            .load(leadObject.getString("featuredImage"))
+//                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+//                            .into(imageLead);
+//                } else {
+//                    imageLead.setVisibility(View.GONE);
+//                }
+//                titleLead.setText(leadObject.getString("title"));
+//                descriptionLead.setText(leadObject.getString("body"));
+//                textJoinLead.setText(leadObject.getString("buttonText"));
+////                    joinLeadCardView.setCardBackgroundColor(Color.parseColor(config.formConnect.getLead().getThemeColor()));
+//                initLead();
+//            }
         }
     }
 
@@ -138,7 +136,7 @@ public class SupportFragment extends Fragment {
         getLeadCardView.setVisibility(View.GONE);
         leadCardView.setVisibility(View.VISIBLE);
         titleLead.setText(config.formConnect.getLead().getTitle());
-        descriptionLead.setText(config.formConnect.getLeadIntegration().getFormData().getString("thankContent"));
+        descriptionLead.setText(config.formConnect.getLeadIntegration().getLeadData().getString("thankContent"));
         textJoinLead.setText(R.string.Create_new);
         imageLead.setVisibility(View.GONE);
 //                    joinLeadCardView.setCardBackgroundColor(Color.parseColor(config.formConnect.getLead().getThemeColor()));

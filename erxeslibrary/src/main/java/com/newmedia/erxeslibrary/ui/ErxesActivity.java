@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
@@ -27,11 +29,11 @@ import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.R;
 
-public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
+public class ErxesActivity extends AppCompatActivity implements ErxesObserver/*, ProviderInstaller.ProviderInstallListener*/  {
 
     private EditText email, phone;
     private TextView smsButton;
-    private TextView emailButton;
+    private TextView emailButton, contact;
     private LinearLayout container;
     private ImageView mailImageView, phoneImageView, sendImageView, cancelImageView;
     private CardView mailCardView, smsCardView;
@@ -39,6 +41,11 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
     private LinearLayout loaderView;
+    private String customData, mEmail, mPhone;
+
+    private static final int ERROR_DIALOG_REQUEST_CODE = 1;
+
+    private boolean retryProviderInstall, hasData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +69,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         phoneImageView = this.findViewById(R.id.phonezurag);
         sendImageView = this.findViewById(R.id.sendImageView);
         cancelImageView = this.findViewById(R.id.cancelImageView);
-        TextView contact = this.findViewById(R.id.contact);
+        contact = this.findViewById(R.id.contact);
         contact.setTextColor(config.getInColor(config.colorCode));
 
         ErxesHelper.display_configure(this, container, "#66000000");
@@ -70,12 +77,21 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         cancelImageView.setOnClickListener(touchListener);
         initIcon();
 
-        boolean hasData = getIntent().getBooleanExtra("hasData", false);
-        String customData = getIntent().getStringExtra("customData");
-        String mEmail = getIntent().getStringExtra("mEmail");
-        String mPhone = getIntent().getStringExtra("mPhone");
+        boolean isProvider = getIntent().getBooleanExtra("isProvider", false);
+        hasData = getIntent().getBooleanExtra("hasData", false);
+        customData = getIntent().getStringExtra("customData");
+        mEmail = getIntent().getStringExtra("mEmail");
+        mPhone = getIntent().getStringExtra("mPhone");
+//        if (isProvider) {
+//            ProviderInstaller.installIfNeededAsync(this, this);
+//        } else {
+            init();
+//        }
+    }
+
+    private void init() {
         if (hasData) {
-            erxesRequest.setConnect(false, true, true, mEmail, mPhone, customData);
+            erxesRequest.setConnect(false,false, true, true, mEmail, mPhone, customData);
         } else if (config.isLoggedIn()) {
             config.LoadDefaultValues();
             Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
@@ -87,6 +103,75 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             contact.setVisibility(View.VISIBLE);
             loaderView.setVisibility(View.GONE);
         }
+    }
+
+//    @Override
+//    public void onProviderInstalled() {
+//        Log.e("TAG", "onProviderInstalled: " );
+//        dataManager.setData(DataManager.HASPROVIDER,true);
+//        if (hasData)
+//            erxesRequest.setConnect(true, true, true, hasData, mEmail, mPhone, customData);
+//        else erxesRequest.setConnect(true, true, false, hasData, mEmail, mPhone, customData);
+//    }
+//
+//    @Override
+//    public void onProviderInstallFailed(int errorCode, Intent intent) {
+//        Log.e("TAG", "onProviderInstallFailed: " );
+//        GoogleApiAvailability availability = GoogleApiAvailability.getInstance();
+//        if (availability.isUserResolvableError(errorCode)) {
+//            // Recoverable error. Show a dialog prompting the user to
+//            // install/update/enable Google Play services.
+//            availability.showErrorDialogFragment(
+//                    this,
+//                    errorCode,
+//                    ERROR_DIALOG_REQUEST_CODE,
+//                    new DialogInterface.OnCancelListener() {
+//                        @Override
+//                        public void onCancel(DialogInterface dialog) {
+//                            // The user chose not to take the recovery action
+//
+//                            onProviderInstallerNotAvailable();
+//                        }
+//                    });
+//        } else {
+//            // Google Play services is not available.
+//            onProviderInstallerNotAvailable();
+//        }
+//    }
+//
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode,
+//                                    Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == ERROR_DIALOG_REQUEST_CODE) {
+//            // Adding a fragment via GoogleApiAvailability.showErrorDialogFragment
+//            // before the instance state is restored throws an error. So instead,
+//            // set a flag here, which will cause the fragment to delay until
+//            // onPostResume.
+//            retryProviderInstall = true;
+//        }
+//    }
+
+    /**
+     * On resume, check to see if we flagged that we need to reinstall the
+     * provider.
+     */
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+//        if (retryProviderInstall) {
+//            // We can now safely retry installation.
+//            ProviderInstaller.installIfNeededAsync(this, this);
+//        }
+//        retryProviderInstall = false;
+    }
+
+    private void onProviderInstallerNotAvailable() {
+        Log.e("TAG", "onProviderInstallerNotAvailable: " );
+        // This is reached if the provider cannot be updated for some reason.
+        // App should consider all HTTP communication to be vulnerable, and take
+        // appropriate action.
+        finish();
     }
 
     private void initIcon() {
@@ -120,11 +205,11 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         phone.setVisibility(View.GONE);
 
         mailCardView.setCardBackgroundColor(config.colorCode);
-        emailButton.setTextColor(config.getInColor(config.colorCode));
-        changeEmailColor(config.getInColor(config.colorCode));
         smsCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
-        smsButton.setTextColor(config.getInColorGray(config.colorCode));
-        changePhoneColor(config.getInColorGray(config.colorCode));
+        emailButton.setTextColor(config.getInColor(config.colorCode));
+        smsButton.setTextColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        changeEmailColor(config.getInColor(config.colorCode));
+        changePhoneColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
     }
 
     public void sms_click(View v) {
@@ -132,11 +217,11 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         phone.setVisibility(View.VISIBLE);
 
         smsCardView.setCardBackgroundColor(config.colorCode);
-        smsButton.setTextColor(config.getInColor(config.colorCode));
-        changePhoneColor(config.getInColor(config.colorCode));
         mailCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
-        emailButton.setTextColor(config.getInColorGray(config.colorCode));
-        changeEmailColor(config.getInColorGray(config.colorCode));
+        smsButton.setTextColor(config.getInColor(config.colorCode));
+        emailButton.setTextColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        changePhoneColor(config.getInColor(config.colorCode));
+        changeEmailColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
     }
 
     public void logout() {
@@ -148,7 +233,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.PHONE, phone.getText().toString());
-                    erxesRequest.setConnect(false, false, false, "", phone.getText().toString(), null);
+                    erxesRequest.setConnect(false,false, false, false, "", phone.getText().toString(), null);
                     phone.setError(null);
                 } else
                     phone.setError(getResources().getString(R.string.Failed));
@@ -156,7 +241,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 if (isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.EMAIL, email.getText().toString());
-                    erxesRequest.setConnect(false, false, false, email.getText().toString(), "", null);
+                    erxesRequest.setConnect(false,false, false, false, email.getText().toString(), "", null);
                 } else
                     email.setError(getResources().getString(R.string.Failed));
             }
@@ -224,4 +309,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
     }
+
+
 }

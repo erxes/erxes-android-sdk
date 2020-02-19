@@ -14,24 +14,26 @@ import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
-import com.erxes.io.opens.ConversationMessageInsertedSubscription;
-import com.erxes.io.opens.type.CustomType;
-import com.newmedia.erxeslibrary.utils.DataManager;
+import com.erxes.io.saas.SaasConversationMessageInsertedSubscription;
+import com.erxes.io.saas.SubsConversationMessageInsertedSubscription;
+import com.erxes.io.saas.type.CustomType;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
-public class ListenerService extends Service {
+public class SaasListenerService extends Service {
 
-    private static final String TAG = ListenerService.class.getName();
+    private static final String TAG = SaasListenerService.class.getName();
     private ApolloClient apolloClient;
     private ErxesRequest erxesRequest;
     private CompositeDisposable disposables = new CompositeDisposable();
@@ -52,7 +54,12 @@ public class ListenerService extends Service {
         DataManager dataManager;
         dataManager = DataManager.getInstance(this);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(logging)
+                .build();
         apolloClient = ApolloClient.builder()
                 .serverUrl(dataManager.getDataS("host3100"))
                 .okHttpClient(okHttpClient)
@@ -125,51 +132,54 @@ public class ListenerService extends Service {
     public void conversation_listen(final String conversationId) {
         if (run_thread(conversationId))
             return;
-        ApolloSubscriptionCall<ConversationMessageInsertedSubscription.Data> subscriptionCall;
+        ApolloSubscriptionCall<SaasConversationMessageInsertedSubscription.Data> subscriptionCall;
         if (apolloClient == null)
             return;
         subscriptionCall = apolloClient
-                .subscribe(ConversationMessageInsertedSubscription.builder()
+                .subscribe(SaasConversationMessageInsertedSubscription.builder()
                         .id(conversationId)
                         .build());
         disposables.add(Rx2Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(
-                        new DisposableSubscriber<Response<ConversationMessageInsertedSubscription.Data>>() {
+                        new DisposableSubscriber<Response<SaasConversationMessageInsertedSubscription.Data>>() {
 
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.e(TAG, "onStartedOpens " + conversationId);
+                                Log.e(TAG, "onStartedSaas " + conversationId);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, "onErrorOpens " + conversationId);
+                                Log.e(TAG, "onErrorSaas " + conversationId);
                                 e.printStackTrace();
                                 run_thread(conversationId);
                             }
 
                             @Override
-                            public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
+                            public void onNext(Response<SaasConversationMessageInsertedSubscription.Data> response) {
                                 if (!response.hasErrors()) {
                                     if (response.data().conversationMessageInserted() != null) {
-                                        DataManager dataManager = DataManager.getInstance(ListenerService.this);
+                                        DataManager dataManager = DataManager.getInstance(SaasListenerService.this);
                                         if (dataManager.getDataB("chatIsGoing")) {
-                                            ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
+                                            ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.data().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
                                                 if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
                                                         .equals(conversationMessage.id) && !conversationMessage.internal) {
                                                     config.conversationMessages.add(conversationMessage);
                                                 }
                                             }
-//                                            for (int i = 0; i < config.conversations.size(); i++) {
-//                                                if (config.conversations.get(i).id.equals(conversationId)) {
-//                                                    config.conversations.get(i).conversationMessages.add(conversationMessage);
-//                                                    break;
-//                                                }
-//                                            }
+                                            for (int i = 0; i < config.conversations.size(); i++) {
+                                                if (config.conversations.get(i).id.equals(conversationId)) {
+                                                    if (!config.conversations.get(i).conversationMessages
+                                                            .get(config.conversations.get(i).conversationMessages.size() - 1).id
+                                                            .equals(conversationMessage.id) && !conversationMessage.internal)
+                                                        config.conversations.get(i).conversationMessages.add(conversationMessage);
+                                                    break;
+                                                }
+                                            }
                                             erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
@@ -185,7 +195,7 @@ public class ListenerService extends Service {
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "onCompleteOpens");
+                                Log.e(TAG, "onCompleteSaas");
                             }
                         }
                 )

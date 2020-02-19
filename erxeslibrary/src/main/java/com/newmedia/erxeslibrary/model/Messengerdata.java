@@ -1,18 +1,12 @@
 package com.newmedia.erxeslibrary.model;
 
-import android.util.Log;
-
 import com.newmedia.erxeslibrary.helper.Json;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Messengerdata {
-    private boolean isOnline, requireAuth, showChat, showLauncher,forceLogoutWhenResolve;
+    private boolean isOnline, requireAuth, showChat, showLauncher, forceLogoutWhenResolve;
     private String timezone;
     private List<String> supporterIds;
     private String knowledgeBaseTopicId;
@@ -23,92 +17,90 @@ public class Messengerdata {
 
     public static Messengerdata convert(Json jsonObject, String languageCode) {
         Messengerdata messengerdata = new Messengerdata();
-        try {
-            if (jsonObject.has("isOnline")) {
-                messengerdata.setOnline(jsonObject.getBoolean("isOnline"));
-            }
-            if (jsonObject.has("timezone"))
-                messengerdata.setTimezone(jsonObject.getString("timezone"));
-            if (jsonObject.has("supporterIds")) {
-                JSONArray jsonArray = jsonObject.getJSONArray("supporterIds");
-                List<String> supIds = new ArrayList<>();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    supIds.add(jsonArray.get(i).toString());
-                }
-                messengerdata.setSupporterIds(supIds);
-            }
-            if (jsonObject.has("requireAuth"))
-                messengerdata.setRequireAuth(jsonObject.getBoolean("requireAuth"));
-            if (jsonObject.has("showChat"))
-                messengerdata.setShowChat(jsonObject.getBoolean("showChat"));
-            if (jsonObject.has("showLauncher"))
-                messengerdata.setShowLauncher(jsonObject.getBoolean("showLauncher"));
-            if (jsonObject.has("forceLogoutWhenResolve"))
-                messengerdata.setForceLogoutWhenResolve(jsonObject.getBoolean("forceLogoutWhenResolve"));
-
-            if (jsonObject.has("knowledgeBaseTopicId"))
-                messengerdata.setKnowledgeBaseTopicId(jsonObject.getString("knowledgeBaseTopicId"));
-            if (jsonObject.has("availabilityMethod"))
-                messengerdata.setAvailabilityMethod(jsonObject.getString("availabilityMethod"));
-            if (jsonObject.has("formCode"))
-                messengerdata.setFormCode(jsonObject.getString("formCode"));
-            if (jsonObject.has("links")) {
-                JSONObject links = jsonObject.getJSONObject("links");
-                if (links.has("facebook"))
-                    messengerdata.setFacebook(links.getString("facebook"));
-                if (links.has("twitter"))
-                    messengerdata.setTwitter(links.getString("twitter"));
-                if (links.has("youtube"))
-                    messengerdata.setYoutube(links.getString("youtube"));
-            }
-            if (jsonObject.has("messages")) {
-                JSONObject messageJson = jsonObject.getJSONObject("messages");
-                if (languageCode != null && messageJson.has(languageCode)) {
-                    JSONObject lanJson = messageJson.getJSONObject(languageCode);
-                    Messages messages = new Messages();
-                    if (lanJson.has("welcome"))
-                        messages.setWelcome(lanJson.getString("welcome"));
-                    if (lanJson.has("away"))
-                        messages.setAway(lanJson.getString("away"));
-                    if (lanJson.has("thank"))
-                        messages.setThank(lanJson.getString("thank"));
-                    if (lanJson.has("greetings")) {
-                        Greetings greetings = new Greetings();
-                        JSONObject greetingsJson = lanJson.getJSONObject("greetings");
-
-                        if (greetingsJson.has("title"))
-                            greetings.setTitle(greetingsJson.getString("title"));
-                        if (greetingsJson.has("message"))
-                            greetings.setMessage(greetingsJson.getString("message"));
-                        messages.setGreetings(greetings);
-                    }
-                    messengerdata.setMessages(messages);
-                } else {
-                    Messages messages = new Messages();
-                    if (messageJson.has("welcome"))
-                        messages.setWelcome(messageJson.getString("welcome"));
-                    if (messageJson.has("away"))
-                        messages.setAway(messageJson.getString("away"));
-                    if (messageJson.has("thank"))
-                        messages.setThank(messageJson.getString("thank"));
-                    if (messageJson.has("greetings")) {
-                        Greetings greetings = new Greetings();
-                        JSONObject greetingsJson = messageJson.getJSONObject("greetings");
-
-                        if (greetingsJson.has("title"))
-                            greetings.setTitle(greetingsJson.getString("title"));
-                        if (greetingsJson.has("message"))
-                            greetings.setMessage(greetingsJson.getString("message"));
-                        messages.setGreetings(greetings);
-                    }
-                    messengerdata.setMessages(messages);
-                }
-            }
-            return messengerdata;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+        Map data = jsonObject.object;
+        if (data.containsKey("isOnline") && data.get("isOnline") != null) {
+            messengerdata.setOnline((Boolean) data.get("isOnline"));
         }
+        if (data.containsKey("timezone"))
+            messengerdata.setTimezone((String) data.get("timezone"));
+//        if (data.containsKey("supporterIds")) {
+//            List<Map> supporterIds = (List<Map>) data.get("supporterIds");
+//            List<String> supIds = new ArrayList<>();
+//            if (supporterIds != null) {
+//                for (int i = 0; i < supporterIds.size(); i++) {
+//                    supIds.add(supporterIds.get(i).toString());
+//                }
+//            }
+//            messengerdata.setSupporterIds(supIds);
+//        }
+        if (data.containsKey("requireAuth"))
+            messengerdata.setRequireAuth((Boolean) data.get("requireAuth"));
+        if (data.containsKey("showChat"))
+            messengerdata.setShowChat((Boolean) data.get("showChat"));
+        if (data.containsKey("showLauncher"))
+            messengerdata.setShowLauncher((Boolean) data.get("showLauncher"));
+        if (data.containsKey("forceLogoutWhenResolve"))
+            messengerdata.setForceLogoutWhenResolve((Boolean) data.get("forceLogoutWhenResolve"));
+
+        if (data.containsKey("knowledgeBaseTopicId"))
+            messengerdata.setKnowledgeBaseTopicId((String) data.get("knowledgeBaseTopicId"));
+        if (data.containsKey("availabilityMethod"))
+            messengerdata.setAvailabilityMethod((String) data.get("availabilityMethod"));
+        if (data.containsKey("formCode"))
+            messengerdata.setFormCode((String) data.get("formCode"));
+        if (data.containsKey("links")) {
+            Map links = (Map) data.get("links");
+            if (links.containsKey("facebook"))
+                messengerdata.setFacebook((String) links.get("facebook"));
+            if (links.containsKey("twitter"))
+                messengerdata.setTwitter((String) links.get("twitter"));
+            if (links.containsKey("youtube"))
+                messengerdata.setYoutube((String) links.get("youtube"));
+        }
+        if (data.containsKey("messages")) {
+            Map messageJson = (Map) data.get("messages");
+            if (languageCode != null && messageJson.containsKey(languageCode)) {
+                Map lanJson = (Map) messageJson.get(languageCode);
+                Messages messages = new Messages();
+                if (lanJson.containsKey("welcome"))
+                    messages.setWelcome((String) lanJson.get("welcome"));
+                if (lanJson.containsKey("away"))
+                    messages.setAway((String) lanJson.get("away"));
+                if (lanJson.containsKey("thank"))
+                    messages.setThank((String) lanJson.get("thank"));
+                if (lanJson.containsKey("greetings")) {
+                    Greetings greetings = new Greetings();
+                    Map greetingsJson = (Map) lanJson.get("greetings");
+
+                    if (greetingsJson.containsKey("title"))
+                        greetings.setTitle((String) greetingsJson.get("title"));
+                    if (greetingsJson.containsKey("message"))
+                        greetings.setMessage((String) greetingsJson.get("message"));
+                    messages.setGreetings(greetings);
+                }
+                messengerdata.setMessages(messages);
+            } else {
+                Messages messages = new Messages();
+                if (messageJson.containsKey("welcome"))
+                    messages.setWelcome((String) messageJson.get("welcome"));
+                if (messageJson.containsKey("away"))
+                    messages.setAway((String) messageJson.get("away"));
+                if (messageJson.containsKey("thank"))
+                    messages.setThank((String) messageJson.get("thank"));
+                if (messageJson.containsKey("greetings")) {
+                    Greetings greetings = new Greetings();
+                    Map greetingsJson = (Map) messageJson.get("greetings");
+
+                    if (greetingsJson.containsKey("title"))
+                        greetings.setTitle((String) greetingsJson.get("title"));
+                    if (greetingsJson.containsKey("message"))
+                        greetings.setMessage((String) greetingsJson.get("message"));
+                    messages.setGreetings(greetings);
+                }
+                messengerdata.setMessages(messages);
+            }
+        }
+        return messengerdata;
     }
 
     public boolean isRequireAuth() {

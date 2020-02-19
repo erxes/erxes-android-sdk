@@ -1,9 +1,7 @@
 package com.newmedia.erxeslibrary.model;
 
-import com.newmedia.erxes.basic.FormConnectMutation;
+import com.erxes.io.opens.WidgetsLeadConnectMutation;
 import com.newmedia.erxeslibrary.helper.Json;
-
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -12,14 +10,14 @@ public class Lead {
     private Json callout;
     private List<LeadField> fields;
 
-    public static Lead convert(FormConnectMutation.Form responseForm) {
+    public static Lead convert(WidgetsLeadConnectMutation.Form responseForm) {
         Lead lead = new Lead();
         lead.setId(responseForm._id());
         lead.setTitle(responseForm.title());
         lead.setDescription(responseForm.description());
         lead.setButtonText(responseForm.buttonText());
-        lead.setThemeColor(responseForm.themeColor());
-        lead.setCallout(responseForm.callout());
+//        lead.setThemeColor(responseForm.themeColor());
+//        lead.setCallout(responseForm.callout());
         if (responseForm.fields() != null)
             lead.setFields(LeadField.convert(responseForm.fields()));
         return lead;

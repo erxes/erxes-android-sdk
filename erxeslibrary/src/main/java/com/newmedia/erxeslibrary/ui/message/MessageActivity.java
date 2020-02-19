@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -56,6 +57,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.e("TAG", "runS: ");
                 MessageListAdapter adapter = (MessageListAdapter) mMessageRecycler.getAdapter();
                 switch (returnType) {
                     case ReturntypeUtil.COMINGNEWMESSAGE:
@@ -65,7 +67,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         }
                         break;
                     case ReturntypeUtil.GETMESSAGES:
+                        Log.e("TAG", "run: getmess");
                         if (adapter != null) {
+                            Log.e("TAG", "run: ");
                             adapter.notifyDataSetChanged();
                             if (adapter.getItemCount() > 2 && adapter.RefreshData())
                                 mMessageRecycler.smoothScrollToPosition(adapter.getItemCount() - 1);
@@ -105,8 +109,6 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 }
             }
         });
-
-
     }
 
     private void subscription() {
@@ -154,7 +156,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         if (config.supporters.size() > 1) bind(config.supporters.get(1), profile2);
         else profile2.setVisibility(View.INVISIBLE);
 
-        isOnline.setText(config.messenger_status_check() ? R.string.Online : R.string.Offline);
+        isOnline.setText(config.messengerdata.isOnline() ? R.string.Online : R.string.Offline);
 
 //        isMessenOnlineImage.setVisibility(
 //                (Config.isNetworkConnected()&&Config.ISMESSENGERONLINE) ?View.VISIBLE:View.INVISIBLE);
@@ -266,13 +268,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             }
             subscribe_conversation();
         } else {
-            mMessageRecycler.setAdapter(new MessageListAdapter(this, new ArrayList<ConversationMessage>()));
+            config.conversationMessages.clear();
+            mMessageRecycler.setAdapter(new MessageListAdapter(this, config.conversationMessages));
         }
         header_profile_change();
 
-        if (shouldAskPermissions()) {
-            askPermissions();
-        }
+        askPermissions();
     }
 
     private void subscribe_conversation() {
@@ -312,6 +313,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (config.intent != null)
+            stopService(config.intent);
     }
 
     @Override
@@ -346,17 +349,15 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         uploadGroup.setClickable(true);
     }
 
-    protected boolean shouldAskPermissions() {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
-    }
-
-    @TargetApi(23)
     protected void askPermissions() {
-        String[] permissions = {
-                "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE"
-        };
-        int requestCode = 200;
-        requestPermissions(permissions, requestCode);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            String[] permissions = {
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE"
+            };
+            int requestCode = 200;
+
+            requestPermissions(permissions, requestCode);
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.model;
 
-import com.newmedia.erxes.basic.FormConnectMutation;
-import com.newmedia.erxes.basic.GetFormQuery;
+import com.erxes.io.opens.WidgetsLeadConnectMutation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +12,12 @@ public class LeadField {
     private boolean isRequired = false;
     private int order = 0;
 
-    public static List<LeadField> convert(List<FormConnectMutation.Field> fields) {
+    public static List<LeadField> convert(List<WidgetsLeadConnectMutation.Field> fields) {
         List<LeadField> leadFieldList = new ArrayList<>();
-        for (FormConnectMutation.Field field : fields) {
+        for (WidgetsLeadConnectMutation.Field field : fields) {
             LeadField leadField = new LeadField();
             leadField.setId(field._id());
-            leadField.setFormId(field.formId());
             leadField.setType(field.type());
-            leadField.setCheck(field.check());
             leadField.setText(field.text());
             leadField.setDescription(field.description());
             leadField.setName(field.name());

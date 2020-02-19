@@ -1,19 +1,17 @@
 package com.newmedia.erxeslibrary.model;
 
-import com.newmedia.erxes.basic.FormConnectMutation;
+import com.erxes.io.opens.WidgetsLeadConnectMutation;
 import com.newmedia.erxeslibrary.helper.Json;
-
-import org.json.JSONObject;
 
 public class LeadIntegration {
     private String id, name;
-    private Json formData;
+    private Json leadData;
 
-    public static LeadIntegration convert(FormConnectMutation.Integration integration) {
+    public static LeadIntegration convert(WidgetsLeadConnectMutation.Integration integration) {
         LeadIntegration leadIntegration = new LeadIntegration();
         leadIntegration.setId(integration._id());
         leadIntegration.setName(integration.name());
-        leadIntegration.setFormData(integration.formData());
+        leadIntegration.setLeadData(integration.leadData());
 
         return leadIntegration;
     }
@@ -34,11 +32,11 @@ public class LeadIntegration {
         this.name = name;
     }
 
-    public Json getFormData() {
-        return formData;
+    public Json getLeadData() {
+        return leadData;
     }
 
-    public void setFormData(Json formData) {
-        this.formData = formData;
+    public void setLeadData(Json formData) {
+        this.leadData = formData;
     }
 }

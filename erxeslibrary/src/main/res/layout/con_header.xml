@@ -40,8 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:textSize="@dimen/header_small"
-                    android:textStyle="bold" />
+                    android:textSize="@dimen/header_small"/>
 
                 <View
                     android:layout_width="0dp"

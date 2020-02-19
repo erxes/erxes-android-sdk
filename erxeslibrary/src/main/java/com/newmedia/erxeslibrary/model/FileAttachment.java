@@ -1,7 +1,8 @@
 package com.newmedia.erxeslibrary.model;
 
 public class FileAttachment {
-    private String type, size, name, url;
+    private String type, name, url;
+    private Double size;
 
     public String getType() {
         return type;
@@ -11,11 +12,11 @@ public class FileAttachment {
         this.type = type;
     }
 
-    public String getSize() {
+    public Double getSize() {
         return size;
     }
 
-    public void setSize(String size) {
+    public void setSize(Double size) {
         this.size = size;
     }
 

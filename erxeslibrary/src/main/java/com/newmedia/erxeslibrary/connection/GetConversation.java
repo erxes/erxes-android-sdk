@@ -5,7 +5,7 @@ import android.content.Context;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
 import com.apollographql.apollo.rx2.Rx2Apollo;
-import com.newmedia.erxes.basic.ConversationsQuery;
+import com.erxes.io.opens.WidgetsConversationsQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
@@ -28,24 +28,24 @@ public class GetConversation {
 
     public void run() {
         Rx2Apollo.from(erxesRequest.apolloClient
-                .query(ConversationsQuery.builder()
+                .query(WidgetsConversationsQuery.builder()
                         .integrationId(config.integrationId)
                         .customerId(config.customerId).build())
-                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
 
-    private Observer observer = new Observer<Response<ConversationsQuery.Data>>() {
+    private Observer observer = new Observer<Response<WidgetsConversationsQuery.Data>>() {
         @Override
         public void onSubscribe(Disposable d) {
 
         }
 
         @Override
-        public void onNext(Response<ConversationsQuery.Data> response) {
-            if (response.data().conversations().size() > 0) {
+        public void onNext(Response<WidgetsConversationsQuery.Data> response) {
+            if (response.data().widgetsConversations().size() > 0) {
                 if (config.conversations != null && config.conversations.size() > 0)
                     config.conversations.clear();
                 if (config.conversations != null) {
