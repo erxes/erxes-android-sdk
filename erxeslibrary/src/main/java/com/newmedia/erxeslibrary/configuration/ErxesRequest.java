@@ -62,7 +62,6 @@ import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -126,15 +125,15 @@ public final class ErxesRequest {
     }
 
     private OkHttpClient getHttpClient() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(true)
                 .cache(null)
-                .addInterceptor(logging)
+//                .addInterceptor(logging)
                 .addInterceptor(new AddCookiesInterceptor(this.context))
                 .addInterceptor(new ReceivedCookiesInterceptor(this.context))
                 .connectTimeout(15, TimeUnit.SECONDS)

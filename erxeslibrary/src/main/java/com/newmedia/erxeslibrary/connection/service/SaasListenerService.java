@@ -15,7 +15,6 @@ import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.saas.SaasConversationMessageInsertedSubscription;
-import com.erxes.io.saas.SubsConversationMessageInsertedSubscription;
 import com.erxes.io.saas.type.CustomType;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -29,7 +28,6 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 public class SaasListenerService extends Service {
 
@@ -54,11 +52,7 @@ public class SaasListenerService extends Service {
         DataManager dataManager;
         dataManager = DataManager.getInstance(this);
 
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(logging)
                 .build();
         apolloClient = ApolloClient.builder()
                 .serverUrl(dataManager.getDataS("host3100"))
