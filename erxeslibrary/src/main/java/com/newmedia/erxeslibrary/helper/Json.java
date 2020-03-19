@@ -11,7 +11,7 @@ public class Json {
     public Map object;
 
     public String getString(String name) {
-        if (object != null) {
+        if (object != null && object.get(name) != null) {
             return object.get(name).toString();
         }
         return null;

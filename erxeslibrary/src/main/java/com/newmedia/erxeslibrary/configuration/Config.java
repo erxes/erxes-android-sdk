@@ -79,11 +79,6 @@ public class Config {
     private Config(Context context) {
         this.context = context;
         dataManager = DataManager.getInstance(context);
-        if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
-            intent = new Intent(context, ListenerService.class);
-        } else {
-            intent = new Intent(context, SaasListenerService.class);
-        }
     }
 
     public static Config getInstance(Context context) {
@@ -229,6 +224,12 @@ public class Config {
         dataManager.setData("host3300", this.host3300);
         dataManager.setData("hostUpload", this.hostUpload);
         dataManager.setData("BRANDCODE", this.brandCode);
+        if (dataManager.getDataS("host3300") != null)
+            if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
+                intent = new Intent(context, ListenerService.class);
+            } else {
+                intent = new Intent(context, SaasListenerService.class);
+            }
         LoadDefaultValues();
         erxesRequest.set_client();
     }
