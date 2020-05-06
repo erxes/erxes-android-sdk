@@ -5,21 +5,13 @@ import android.os.Build;
 import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
-import com.apollographql.apollo.api.Operation;
-import com.apollographql.apollo.api.ResponseField;
-import com.apollographql.apollo.cache.normalized.CacheKey;
-import com.apollographql.apollo.cache.normalized.CacheKeyResolver;
-import com.apollographql.apollo.cache.normalized.NormalizedCacheFactory;
-import com.apollographql.apollo.cache.normalized.sql.ApolloSqlHelper;
-import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.opens.type.CustomType;
+import com.newmedia.erxeslibrary.BuildConfig;
 import com.newmedia.erxeslibrary.connection.GetGEO;
 import com.newmedia.erxeslibrary.connection.GetKnowledge;
-import com.newmedia.erxeslibrary.connection.helper.AddCookiesInterceptor;
-import com.newmedia.erxeslibrary.connection.helper.ReceivedCookiesInterceptor;
 import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.connection.GetIntegration;
@@ -35,7 +27,6 @@ import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 
 
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -47,6 +38,7 @@ import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -60,8 +52,12 @@ import javax.net.ssl.X509TrustManager;
 
 import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -84,39 +80,14 @@ public final class ErxesRequest {
         ErxesHelper.Init(context);
     }
 
+    private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
+
     void set_client() {
-        ApolloSqlHelper apolloSqlHelper = ApolloSqlHelper.create(context, "db_cache");
-
-        NormalizedCacheFactory cacheFactory = new SqlNormalizedCacheFactory(apolloSqlHelper);
-
-        CacheKeyResolver resolver = new CacheKeyResolver() {
-            @NotNull
-            @Override
-            public CacheKey fromFieldRecordSet(@NotNull ResponseField field, @NotNull Map<String, Object> recordSet) {
-                return formatCacheKey((String) recordSet.get("id"));
-            }
-
-            @NotNull
-            @Override
-            public CacheKey fromFieldArguments(@NotNull ResponseField field, @NotNull Operation.Variables variables) {
-                return formatCacheKey((String) field.resolveArgument("id", variables));
-            }
-
-            private CacheKey formatCacheKey(String id) {
-                if (id == null || id.isEmpty()) {
-                    return CacheKey.NO_KEY;
-                } else {
-                    return CacheKey.from(id);
-                }
-            }
-        };
-
         if (config.host3100 != null) {
             OkHttpClient okHttpClient = getHttpClient();
 
             apolloClient = ApolloClient.builder()
                     .serverUrl(config.host3100)
-//                    .normalizedCache(cacheFactory, resolver)
                     .okHttpClient(okHttpClient)
                     .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(config.host3300, okHttpClient))
                     .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
@@ -125,17 +96,27 @@ public final class ErxesRequest {
     }
 
     private OkHttpClient getHttpClient() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(true)
                 .cache(null)
-//                .addInterceptor(logging)
-                .addInterceptor(new AddCookiesInterceptor(this.context))
-                .addInterceptor(new ReceivedCookiesInterceptor(this.context))
+                .addInterceptor(logging)
+                .cookieJar(new CookieJar() {
+                    @Override
+                    public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
+                        cookieStore.put(url, cookies);
+                    }
+
+                    @Override
+                    public List<Cookie> loadForRequest(HttpUrl url) {
+                        List<Cookie> cookies = cookieStore.get(url);
+                        return cookies != null ? cookies : new ArrayList<>();
+                    }
+                })
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(15, TimeUnit.SECONDS);
@@ -166,97 +147,6 @@ public final class ErxesRequest {
         }
 
         return client;
-    }
-
-    private List<CipherSuite> customCipherSuites = Arrays.asList(
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
-            CipherSuite.TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-            CipherSuite.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,
-            CipherSuite.TLS_RSA_WITH_AES_128_CBC_SHA256);
-
-    private SSLSocketFactory defaultSslSocketFactory(X509TrustManager trustManager)
-            throws NoSuchAlgorithmException, KeyManagementException {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(null, new TrustManager[]{trustManager}, null);
-
-        return sslContext.getSocketFactory();
-    }
-
-    private X509TrustManager defaultTrustManager() throws GeneralSecurityException {
-        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(
-                TrustManagerFactory.getDefaultAlgorithm());
-        trustManagerFactory.init((KeyStore) null);
-        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
-        if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
-            throw new IllegalStateException("Unexpected default trust managers:"
-                    + Arrays.toString(trustManagers));
-        }
-        return (X509TrustManager) trustManagers[0];
-    }
-
-    private String[] javaNames(List<CipherSuite> cipherSuites) {
-        String[] result = new String[cipherSuites.size()];
-        for (int i = 0; i < result.length; i++) {
-            result[i] = cipherSuites.get(i).javaName();
-        }
-        return result;
-    }
-
-    static class DelegatingSSLSocketFactory extends SSLSocketFactory {
-        protected final SSLSocketFactory delegate;
-
-        DelegatingSSLSocketFactory(SSLSocketFactory delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public String[] getDefaultCipherSuites() {
-            return delegate.getDefaultCipherSuites();
-        }
-
-        @Override
-        public String[] getSupportedCipherSuites() {
-            return delegate.getSupportedCipherSuites();
-        }
-
-        @Override
-        public Socket createSocket(
-                Socket socket, String host, int port, boolean autoClose) throws IOException {
-            return configureSocket((SSLSocket) delegate.createSocket(socket, host, port, autoClose));
-        }
-
-        @Override
-        public Socket createSocket(String host, int port) throws IOException {
-            return configureSocket((SSLSocket) delegate.createSocket(host, port));
-        }
-
-        @Override
-        public Socket createSocket(
-                String host, int port, InetAddress localHost, int localPort) throws IOException {
-            return configureSocket((SSLSocket) delegate.createSocket(host, port, localHost, localPort));
-        }
-
-        @Override
-        public Socket createSocket(InetAddress host, int port) throws IOException {
-            return configureSocket((SSLSocket) delegate.createSocket(host, port));
-        }
-
-        @Override
-        public Socket createSocket(
-                InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
-            return configureSocket((SSLSocket) delegate.createSocket(
-                    address, port, localAddress, localPort));
-        }
-
-        private static final String[] TLS_V1_2 = {"TLSv1.2"};
-
-        protected SSLSocket configureSocket(SSLSocket socket) throws IOException {
-            if (socket != null) {
-                socket.setEnabledProtocols(TLS_V1_2);
-            }
-            return socket;
-        }
     }
 
     public void setConnect(boolean isFromProvider, boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {

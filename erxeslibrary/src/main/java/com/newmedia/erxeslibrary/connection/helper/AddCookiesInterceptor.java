@@ -15,29 +15,20 @@ import okhttp3.Response;
 public class AddCookiesInterceptor implements Interceptor {
 
     private Context context;
-    public AddCookiesInterceptor(Context context){
+
+    public AddCookiesInterceptor(Context context) {
         this.context = context;
     }
 
-    @NonNull
     @Override
-    public Response intercept(@NonNull Interceptor.Chain chain) throws IOException {
+    public Response intercept(Interceptor.Chain chain) throws IOException, NullPointerException {
         Request.Builder builder = chain.request().newBuilder();
-
         HashSet<String> preferences = (HashSet<String>) PreferenceManager
                 .getDefaultSharedPreferences(context)
-                .getStringSet("PREF_COOKIES", new HashSet<String>());
-
-        assert preferences != null;
+                .getStringSet("PREF_COOKIES_ERXESSDK_ANDROID", new HashSet<>());
         for (String cookie : preferences) {
-
-            if(!cookie.contains("route")) {
-                Log.d("cookietest",""+cookie);
-                builder.addHeader("Cookie", cookie);
-            }
-
+            builder.addHeader("Cookie", cookie);
         }
-
         return chain.proceed(builder.build());
     }
 }
