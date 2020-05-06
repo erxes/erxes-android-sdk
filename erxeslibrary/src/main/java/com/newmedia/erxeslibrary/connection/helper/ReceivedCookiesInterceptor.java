@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 
 import okhttp3.Interceptor;
@@ -14,35 +15,27 @@ import okhttp3.Response;
 public class ReceivedCookiesInterceptor implements Interceptor {
 
     private Context context;
+
     public ReceivedCookiesInterceptor(Context context) {
         this.context = context;
     }
-    @NonNull
+
     @Override
-    public Response intercept(@NonNull Interceptor.Chain chain) throws IOException {
+    public Response intercept(Chain chain) throws IOException, NullPointerException {
         Response originalResponse = chain.proceed(chain.request());
-
-        if (!originalResponse.headers("Set-Cookie").isEmpty()) {
-            HashSet<String> cookies = new HashSet<>(originalResponse.headers("Set-Cookie"));
-            if(cookies.size()>0){
-                if(!cookies.iterator().next().contains("route")){
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-                    editor.putStringSet("PREF_COOKIES", cookies)
-                        .apply();
-                }
+        HashSet<String> cookies = new HashSet<>();
+        if (!originalResponse.headers("Set-cookie").isEmpty()) {
+            for (String header : originalResponse.headers("Set-Cookie")) {
+                cookies.add(header);
             }
-
-        } else if (!originalResponse.headers("set-cookie").isEmpty()){
-            HashSet<String> cookies = new HashSet<>(originalResponse.headers("set-cookie"));
-            if(cookies.size()>0){
-                if(!cookies.iterator().next().contains("route")){
-                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(context).edit();
-                    editor.putStringSet("PREF_COOKIES", cookies)
-                        .apply();
-                }
+            try {
+                SharedPreferences.Editor memes = PreferenceManager.getDefaultSharedPreferences(context).edit();
+                memes.putStringSet("PREF_COOKIES_ERXESSDK_ANDROID", cookies).apply();
+                memes.commit();
+            } catch (ConcurrentModificationException e) {
+                e.printStackTrace();
             }
         }
-
         return originalResponse;
     }
 }
