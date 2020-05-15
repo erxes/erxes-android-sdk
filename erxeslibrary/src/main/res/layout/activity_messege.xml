@@ -1,237 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearlayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00000000"
-    android:gravity="bottom"
-    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    android:background="@color/transparent"
     tools:context=".ui.message.MessageActivity">
+
+    <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
+        android:id="@+id/info_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:layout_constraintBaseline_toBaselineOf="@+id/container">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/pattern_repeat"
+            android:minHeight="@dimen/login_bar_height_small"
+            android:orientation="horizontal"
+            android:paddingLeft="@dimen/main_margin_10_dec"
+            android:paddingRight="@dimen/main_margin_10_dec">
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/fab_margin"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="@dimen/fab_margin"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/logoutImageView"
+                app:layout_constraintStart_toEndOf="@id/backImageView"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/profile1"
+                    android:layout_width="@dimen/image_size"
+                    android:layout_height="@dimen/image_size"
+                    android:layout_alignStart="@id/profile2"
+                    android:layout_alignLeft="@id/profile2"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginLeft="20dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:id="@+id/profile2"
+                    android:layout_width="@dimen/image_size"
+                    android:layout_height="@dimen/image_size"
+                    android:layout_centerVertical="true"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toEndOf="@+id/profile1"
+                    android:layout_toRightOf="@+id/profile1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/names"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/header_big"
+                        android:textStyle="bold"
+                        android:visibility="invisible" />
+
+                    <TextView
+                        android:id="@+id/isOnline"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/Offline"
+                        android:textSize="@dimen/header_small"
+                        android:visibility="invisible" />
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/logoutImageView"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:background="?android:attr/actionBarItemBackground"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/backImageView"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:background="?android:attr/actionBarItemBackground"
+                android:padding="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/cornerbackground">
+        android:layout_below="@+id/info_header"
+        android:background="@color/md_white_1000">
 
-        <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
-            android:id="@+id/info_header"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/messageContainer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary">
+            android:layout_height="match_parent">
 
-            <android.support.constraint.ConstraintLayout
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:id="@+id/swipeRefreshLayout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="1dp"
+                android:background="#fff"
+                app:layout_constraintBottom_toTopOf="@+id/fileListContainer"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/reyclerview_message_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/messageBackground"
+                    android:paddingLeft="@dimen/main_margin"
+                    android:paddingRight="@dimen/main_margin" />
+            </android.support.v4.widget.SwipeRefreshLayout>
+
+            <HorizontalScrollView
+                android:id="@+id/fileListContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/pattern_repeat"
-                android:minHeight="@dimen/login_bar_height_small"
-                android:orientation="horizontal"
-                android:paddingLeft="@dimen/main_margin_10_dec"
-                android:paddingRight="@dimen/main_margin_10_dec">
+                android:background="@color/messageBackground"
+                app:layout_constraintBottom_toTopOf="@+id/simpleProgressBar"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
+
+                <LinearLayout
+                    android:id="@+id/filelist"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <ProgressBar
+                android:id="@+id/simpleProgressBar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/chatgroup" />
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/chatgroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                app:cardElevation="3dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent">
 
                 <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/fab_margin"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="@dimen/fab_margin"
-                    android:layout_marginBottom="8dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/logoutImageView"
-                    app:layout_constraintStart_toEndOf="@id/backImageView"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/profile1"
-                        android:layout_width="@dimen/image_size"
-                        android:layout_height="@dimen/image_size"
-                        android:layout_alignStart="@id/profile2"
-                        android:layout_alignLeft="@id/profile2"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginLeft="20dp"
-                        android:visibility="invisible" />
-
-                    <ImageView
-                        android:id="@+id/profile2"
-                        android:layout_width="@dimen/image_size"
-                        android:layout_height="@dimen/image_size"
-                        android:layout_centerVertical="true"
-                        android:visibility="invisible" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_toEndOf="@+id/profile1"
-                        android:layout_toRightOf="@+id/profile1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/names"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/header_big"
-                            android:textStyle="bold"
-                            android:visibility="invisible" />
-
-                        <TextView
-                            android:id="@+id/isOnline"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/Offline"
-                            android:textSize="@dimen/header_small"
-                            android:visibility="invisible" />
-                    </LinearLayout>
-                </RelativeLayout>
-
-                <ImageView
-                    android:id="@+id/logoutImageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?android:attr/actionBarItemBackground"
-                    android:padding="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/backImageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="?android:attr/actionBarItemBackground"
-                    android:padding="10dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-            </android.support.constraint.ConstraintLayout>
-        </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swipeRefreshLayout"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="1dp"
-            android:background="#fff"
-            app:layout_constraintBottom_toTopOf="@+id/fileListContainer"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/info_header"
-            app:layout_constraintVertical_bias="1.0">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/reyclerview_message_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/messageBackground"
-                android:paddingLeft="@dimen/main_margin"
-                android:paddingRight="@dimen/main_margin" />
-        </android.support.v4.widget.SwipeRefreshLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:background="@drawable/toolbarshadow"
-            app:layout_constraintTop_toBottomOf="@+id/info_header" />
-
-        <HorizontalScrollView
-            android:id="@+id/fileListContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/messageBackground"
-            app:layout_constraintBottom_toTopOf="@+id/simpleProgressBar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-
-            <LinearLayout
-                android:id="@+id/filelist"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <ProgressBar
-            android:id="@+id/simpleProgressBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/chatgroup" />
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/chatgroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            app:cardElevation="3dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#fff"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/edittext_chatbox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toStartOf="@+id/upload_group"
-                    android:layout_toLeftOf="@+id/upload_group"
                     android:background="#fff"
-                    android:maxLines="5"
-                    android:hint="@string/Send_a_message"
-                    android:paddingStart="@dimen/main_margin"
-                    android:paddingLeft="@dimen/main_margin"
-                    android:paddingTop="10dp"
-                    android:paddingBottom="10dp" />
+                    android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/upload_group"
-                    android:layout_width="40dp"
-                    android:layout_height="48dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toStartOf="@+id/button_chatbox_send"
-                    android:layout_toLeftOf="@+id/button_chatbox_send"
-                    android:background="?android:attr/actionBarItemBackground"
-                    android:gravity="center"
-                    android:onClick="onBrowse">
+                    <EditText
+                        android:id="@+id/edittext_chatbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/vCallGroup"
+                        android:layout_toLeftOf="@+id/vCallGroup"
+                        android:background="#fff"
+                        android:hint="@string/Send_a_message"
+                        android:maxLines="3"
+                        android:paddingStart="@dimen/main_margin"
+                        android:paddingLeft="@dimen/main_margin"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:textSize="14sp" />
 
-                    <ImageView
-                        android:id="@+id/attachmentImageView"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-                </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/vCallGroup"
+                        android:layout_width="40dp"
+                        android:layout_height="48dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/upload_group"
+                        android:layout_toLeftOf="@+id/upload_group"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:onClick="onVCall">
 
-                <LinearLayout
-                    android:id="@+id/button_chatbox_send"
-                    android:layout_width="40dp"
-                    android:layout_height="48dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/main_margin_10_dec"
-                    android:layout_marginRight="@dimen/main_margin_10_dec"
-                    android:background="?android:attr/actionBarItemBackground"
-                    android:gravity="center"
-                    android:onClick="send_message">
+                        <ImageView
+                            android:id="@+id/vCallImageView"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/sendImageView"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp" />
-                </LinearLayout>
-            </RelativeLayout>
-        </android.support.v7.widget.CardView>
+                    <LinearLayout
+                        android:id="@+id/upload_group"
+                        android:layout_width="40dp"
+                        android:layout_height="48dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/button_chatbox_send"
+                        android:layout_toLeftOf="@+id/button_chatbox_send"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:onClick="onBrowse">
+
+                        <ImageView
+                            android:id="@+id/attachmentImageView"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/button_chatbox_send"
+                        android:layout_width="40dp"
+                        android:layout_height="48dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/main_margin_10_dec"
+                        android:layout_marginRight="@dimen/main_margin_10_dec"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:onClick="send_message">
+
+                        <ImageView
+                            android:id="@+id/sendImageView"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+        </android.support.constraint.ConstraintLayout>
+
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
     </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@+id/info_header"
+        android:background="@drawable/toolbarshadow" />
+</RelativeLayout>

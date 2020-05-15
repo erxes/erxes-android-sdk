@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.newmedia.erxeslibrary.helper.RoundedCornerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.newmedia.erxeslibrary.helper.RoundedCornerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/info_header"
     android:layout_width="match_parent"
@@ -22,8 +23,10 @@
             android:gravity="start"
             android:orientation="vertical"
             android:paddingLeft="@dimen/main_margin"
+            android:paddingStart="@dimen/main_margin"
             android:paddingTop="@dimen/main_margin_10_dec"
             android:paddingRight="@dimen/main_margin_10_dec"
+            android:paddingEnd="@dimen/main_margin_10_dec"
             android:paddingBottom="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintLeft_toRightOf="parent"
@@ -97,8 +100,8 @@
 
                 <ImageView
                     android:id="@+id/cancelImageView"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginLeft="10dp"
                     android:background="?android:attr/actionBarItemBackground"
@@ -130,6 +133,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/main_margin"
+            android:layout_marginRight="@dimen/main_margin"
             android:paddingBottom="@dimen/main_margin"
             app:layout_constraintTop_toBottomOf="@id/textGroup" />
     </android.support.constraint.ConstraintLayout>

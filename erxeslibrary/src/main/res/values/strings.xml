@@ -41,4 +41,7 @@
     <string name="Failed">Failed</string>
     <string name="No_articles_found">No articles found</string>
     <string name="Search">Search</string>
+    <string name="video_call_request_sent">📞 Video call request sent</string>
+    <string name="you_are_invited_to_a_video_call_n">You are invited to a video call\n👏</string>
+    <string name="choose_file">Choose file..</string>
 </resources>

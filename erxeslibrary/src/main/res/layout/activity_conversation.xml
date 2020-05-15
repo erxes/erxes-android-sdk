@@ -1,46 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearlayout"
+    android:layout_gravity="bottom"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#80000000"
-    android:gravity="bottom"
-    android:orientation="vertical"
+    android:background="@color/transparent"
     tools:context=".ui.conversations.ConversationListActivity">
+
+    <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
+        android:id="@+id/info_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        app:layout_constraintBaseline_toBaselineOf="@+id/container">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/pattern_repeat"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/textGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/main_margin"
+                android:paddingStart="@dimen/main_margin"
+                android:paddingTop="@dimen/main_margin_10_dec"
+                android:paddingRight="@dimen/main_margin_10_dec"
+                android:paddingEnd="@dimen/main_margin_10_dec"
+                android:paddingBottom="20dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintLeft_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textSize="@dimen/header_small"/>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <LinearLayout
+                        android:id="@+id/fbcontainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/fb"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/facebooklogo" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/twcontainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/tw"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/twitterlogo" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/ytcontainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:gravity="center"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:id="@+id/yt"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/youtubelogo" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/cancelImageView"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="?android:attr/actionBarItemBackground"
+                        android:padding="10dp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/greetingTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/Welcome"
+                    android:textSize="@dimen/header_big"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/greetingMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="@string/Welcome_description"
+                    android:textSize="@dimen/header_small" />
+            </LinearLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/supporters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/main_margin"
+                android:layout_marginRight="@dimen/main_margin"
+                android:paddingBottom="@dimen/main_margin"
+                app:layout_constraintTop_toBottomOf="@id/textGroup" />
+        </android.support.constraint.ConstraintLayout>
+    </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/cornerbackground"
-        android:orientation="vertical">
-
-        <include
-            android:id="@+id/info_header"
-            layout="@layout/con_header" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:background="@drawable/toolbarshadow"
-            app:layout_constraintTop_toBottomOf="@+id/info_header" />
+        android:background="@color/md_white_1000"
+        android:layout_below="@+id/info_header">
 
         <LinearLayout
             android:id="@+id/tabsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/info_header">
+            android:orientation="vertical"
+            app:layout_constraintBaseline_toBaselineOf="@+id/container">
+
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:elevation="5dp"
-                app:tabIndicatorHeight="3dp"
+                android:elevation="2dp"
+                app:tabTextAppearance="@style/CustomTabText"
+                app:tabIndicatorHeight="2dp"
                 app:tabInlineLabel="true">
 
                 <android.support.design.widget.TabItem
@@ -66,10 +195,14 @@
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabsContainer" />
 
-
     </android.support.constraint.ConstraintLayout>
-</LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@+id/info_header"
+        android:background="@drawable/toolbarshadow" />
+</RelativeLayout>

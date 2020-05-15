@@ -20,4 +20,14 @@
         <item name="colorAccent">#5629B6</item>
 
     </style>
+
+    <style name="vCallColorButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:textColor">@color/md_white_1000</item>
+        <item name="colorButtonNormal">@color/vCallBlue</item>
+    </style>
+
+    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">normal</item>
+    </style>
 </resources>

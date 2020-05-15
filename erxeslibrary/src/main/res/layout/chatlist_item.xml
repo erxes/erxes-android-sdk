@@ -41,7 +41,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:gravity="bottom"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textColor="#000"/>
                 <View
                     android:layout_width="0dp"
@@ -52,6 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_gravity="bottom"
                     android:singleLine="true"
+                    android:textSize="12sp"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
             <TextView

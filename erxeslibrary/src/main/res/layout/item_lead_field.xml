@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -8,49 +9,59 @@
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        android:textStyle="bold" />
+        android:layout_marginTop="5dp"
+        android:gravity="bottom"/>
 
     <TextView
         android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="8dp"
         android:orientation="vertical">
 
+        <TextView
+            android:id="@+id/file"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_file"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:visibility="gone"
+            android:textColor="@color/md_grey_500"
+            android:background="@drawable/rounded_input"/>
         <EditText
             android:id="@+id/input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
             android:background="@drawable/rounded_input"
-            android:textCursorDrawable="@drawable/custom_cursor_color"
+            android:imeOptions="actionDone"
+            android:visibility="gone"
             android:inputType="text"
-            android:textSize="14sp"
-            android:paddingLeft="5dp" />
+            android:textCursorDrawable="@drawable/custom_cursor_color"
+            android:textSize="14sp" />
 
         <EditText
             android:id="@+id/textarea"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_input"
-            android:textCursorDrawable="@drawable/custom_cursor_color"
-            android:gravity="top"
             android:imeOptions="actionDone"
-            android:visibility="gone"
             android:inputType="textMultiLine"
             android:lines="3"
-            android:textSize="14sp" />
+            android:textCursorDrawable="@drawable/custom_cursor_color"
+            android:textSize="14sp"
+            android:gravity="top"
+            android:visibility="gone"/>
 
         <Spinner
             android:id="@+id/select"
-            style="@style/Base.Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_input"
@@ -58,7 +69,7 @@
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/checkList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_input"
@@ -71,8 +82,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_input"
+            android:orientation="vertical"
             android:textSize="14sp"
-            android:visibility="gone"
-            android:orientation="vertical" />
+            android:visibility="gone" />
     </LinearLayout>
 </LinearLayout>

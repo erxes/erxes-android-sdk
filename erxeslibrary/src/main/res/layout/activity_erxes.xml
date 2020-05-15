@@ -4,64 +4,72 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearlayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#80000000"
-    android:gravity="bottom"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@color/transparent"
     android:orientation="vertical"
     tools:context=".ui.ErxesActivity">
+
 
     <LinearLayout
         android:id="@+id/mainView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f5f5f5"
+        android:background="@color/transparent"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/info_header"
+        <com.newmedia.erxeslibrary.helper.RoundedCornerLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
 
-            <TextView
-                android:id="@+id/contact"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_margin="20dp"
-                android:visibility="invisible"
-                android:text="@string/Contact"
-                android:textColor="#fff"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <RelativeLayout
+                android:id="@+id/info_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_margin="20dp"
+                    android:text="@string/Contact"
+                    android:textColor="#fff"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:visibility="invisible" />
 
 
                 <ImageView
                     android:id="@+id/cancelImageView"
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:background="?android:attr/actionBarItemBackground"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-                    android:padding="10dp"/>
+                    android:background="?android:attr/actionBarItemBackground"
+                    android:padding="10dp" />
 
-        </RelativeLayout>
+            </RelativeLayout>
+        </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="5dp"
+            android:layout_height="2dp"
             android:background="@drawable/toolbarshadow" />
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/md_white_1000">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/md_white_1000"
+                android:background="@color/md_grey_100"
                 android:orientation="vertical">
 
                 <TextView
@@ -80,29 +88,29 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="15dp"
-                    android:layout_marginRight="20dp"
-                    android:background="@drawable/selector">
+                    android:layout_marginRight="20dp">
 
                     <View
                         android:id="@+id/strut"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="25dp"
-                        android:layout_marginStart="25dp" />
+                        android:layout_marginStart="25dp"
+                        android:layout_marginLeft="25dp" />
 
                     <android.support.v7.widget.CardView
                         android:id="@+id/smsgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
+                        android:layout_alignStart="@id/strut"
                         android:layout_alignLeft="@id/strut"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="@dimen/chooser_offset"
-                        android:onClick="sms_click"
-                        app:cardCornerRadius="15dp"
                         android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         android:layout_marginStart="@dimen/chooser_offset"
-                        android:layout_alignStart="@id/strut">
+                        android:layout_marginLeft="@dimen/chooser_offset"
+                        android:layout_marginBottom="5dp"
+                        android:onClick="sms_click"
+                        app:cardCornerRadius="15dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -114,9 +122,9 @@
                                 android:id="@+id/phonezurag"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:padding="7dp"
+                                android:layout_marginEnd="10dp"
                                 android:layout_marginRight="10dp"
-                                android:layout_marginEnd="10dp" />
+                                android:padding="7dp" />
 
                             <TextView
                                 android:id="@+id/sms_button"
@@ -132,13 +140,14 @@
                         android:id="@+id/mailgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
+                        android:layout_alignEnd="@id/strut"
                         android:layout_alignRight="@id/strut"
+                        android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
+                        android:layout_marginBottom="5dp"
                         android:onClick="email_click"
                         app:cardBackgroundColor="#5629B6"
-                        app:cardCornerRadius="15dp"
-                        android:layout_alignEnd="@id/strut"
-                        android:layout_alignParentStart="true">
+                        app:cardCornerRadius="15dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -150,9 +159,9 @@
                                 android:id="@+id/mail_zurag"
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
-                                android:padding="7dp"
+                                android:layout_marginEnd="10dp"
                                 android:layout_marginRight="10dp"
-                                android:layout_marginEnd="10dp" />
+                                android:padding="7dp" />
 
                             <TextView
                                 android:id="@+id/email_button"
@@ -168,8 +177,7 @@
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/margin_top"
-                    android:layout_margin="5dp"
+                    android:layout_margin="10dp"
                     app:cardElevation="3dp">
 
                     <RelativeLayout
@@ -182,9 +190,10 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_toStartOf="@+id/loginclick"
                             android:layout_toLeftOf="@+id/loginclick"
-                            android:orientation="vertical"
-                            android:layout_toStartOf="@+id/loginclick">
+                            android:layout_centerVertical="true"
+                            android:orientation="vertical">
 
                             <EditText
                                 android:id="@+id/email"
@@ -194,16 +203,17 @@
                                 android:hint="@string/email_domain_com"
                                 android:inputType="textEmailAddress"
                                 android:maxLines="1"
+                                android:paddingStart="20dp"
                                 android:paddingLeft="20dp"
                                 android:paddingTop="10dp"
                                 android:paddingBottom="10dp"
-                                android:paddingStart="20dp"
-                                tools:ignore="RtlSymmetry" />
+                                android:textSize="14sp" />
 
                             <EditText
                                 android:id="@+id/phone"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_marginStart="20dp"
                                 android:layout_marginLeft="20dp"
                                 android:background="@color/md_white_1000"
                                 android:hint="@string/phone_number"
@@ -211,18 +221,18 @@
                                 android:maxLines="1"
                                 android:paddingTop="10dp"
                                 android:paddingBottom="10dp"
-                                android:visibility="gone"
-                                android:layout_marginStart="20dp" />
+                                android:textSize="14sp"
+                                android:visibility="gone" />
                         </LinearLayout>
 
                         <RelativeLayout
                             android:id="@+id/loginclick"
                             android:layout_width="60dp"
                             android:layout_height="48dp"
+                            android:layout_alignParentEnd="true"
                             android:layout_alignParentRight="true"
                             android:background="?android:attr/actionBarItemBackground"
-                            android:onClick="Connect_click"
-                            android:layout_alignParentEnd="true">
+                            android:onClick="Connect_click">
 
                             <ImageView
                                 android:id="@+id/sendImageView"
