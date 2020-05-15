@@ -5,27 +5,26 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.google.gson.Gson;
-import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.ui.ErxesActivity;
-import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
+import com.newmedia.erxeslibrary.ui.message.MessageActivity;
+import com.newmedia.erxeslibrary.utils.DataManager;
 
 import java.text.SimpleDateFormat;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class ErxesHelper {
     private static DataManager dataManager;
@@ -50,24 +49,22 @@ public class ErxesHelper {
         }
         color = js.getString("wallpaper");
         dataManager.setData("wallpaper", color);
-
+        dataManager.setData("videoCallUsageStatus", js.getBoolean("videoCallUsageStatus"));
+        config.videoCallUsageStatus = js.getBoolean("videoCallUsageStatus");
     }
 
-    static public void load_messengerData(Json js) {
+    public static void load_messengerData(Json js) {
         if (js == null)
             return;
-//        dataManager.setMessengerData(js.object.toString());
         config.messengerdata = Messengerdata.convert(js, config.language);
     }
 
-    static public Point display_configure(AppCompatActivity context, View container, String color) {
-
-
+    public static Point display_configure(AppCompatActivity context, View container, String color) {
         Display display = context.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
         int width = size.x;
-        int height = (int) (size.y * 0.8);
+        int height = size.y * 8 / 10;
 
         context.getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
         Window window = context.getWindow();
@@ -83,7 +80,8 @@ public class ErxesHelper {
         }
         return size;
     }
-    public static void changeLanguage(Context context,String language){
+
+    public static void changeLanguage(Context context, String language) {
         if (!TextUtils.isEmpty(language)) {
             Configuration config = new android.content.res.Configuration();
             config.locale = new Locale(language);
