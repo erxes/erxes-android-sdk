@@ -142,12 +142,10 @@ public class SaasListenerService extends Service {
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.e(TAG, "onStartedSaas " + conversationId);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, "onErrorSaas " + conversationId);
                                 e.printStackTrace();
                                 run_thread(conversationId);
                             }
@@ -160,21 +158,14 @@ public class SaasListenerService extends Service {
                                         if (dataManager.getDataB("chatIsGoing")) {
                                             ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.data().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
-                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
-                                                        .equals(conversationMessage.id) && !conversationMessage.internal) {
+                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
+                                                        && !conversationMessage.internal
+                                                        && conversationMessage.user != null) {
                                                     config.conversationMessages.add(conversationMessage);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
                                                 }
                                             }
-                                            for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(conversationId)) {
-                                                    if (!config.conversations.get(i).conversationMessages
-                                                            .get(config.conversations.get(i).conversationMessages.size() - 1).id
-                                                            .equals(conversationMessage.id) && !conversationMessage.internal)
-                                                        config.conversations.get(i).conversationMessages.add(conversationMessage);
-                                                    break;
-                                                }
-                                            }
-                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
+
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
                                                 if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().conversationId())) {

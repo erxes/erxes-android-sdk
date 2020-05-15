@@ -10,6 +10,7 @@ import com.erxes.io.opens.WidgetsGetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import org.json.JSONObject;
 
@@ -29,7 +30,7 @@ public class GetIntegration {
 
     }
 
-    public void run(boolean hasData, String email, String phone, JSONObject jsonObject) {
+    public void run() {
 
         Rx2Apollo.from(erxesRequest.apolloClient
                 .query(WidgetsGetMessengerIntegrationQuery.builder().brandCode(config.brandCode)
@@ -37,38 +38,38 @@ public class GetIntegration {
                 .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(new Observer<Response<WidgetsGetMessengerIntegrationQuery.Data>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.e(TAG,"onsubscribe");
+                    }
+
+                    @Override
+                    public void onNext(Response<WidgetsGetMessengerIntegrationQuery.Data> response) {
+                        if (!response.hasErrors()) {
+                            try {
+                                config.changeLanguage(response.data().widgetsGetMessengerIntegration().languageCode());
+                                ErxesHelper.load_uiOptions(response.data().widgetsGetMessengerIntegration().uiOptions());
+                                ErxesHelper.load_messengerData(response.data().widgetsGetMessengerIntegration().messengerData());
+                                config.initActivity(false,null,null,null);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Log.e(TAG, "errors " + response.errors().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.e(TAG,"onComplete");
+                    }
+                });
     }
-    private Observer observer = new Observer<Response<WidgetsGetMessengerIntegrationQuery.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-            Log.e(TAG,"onsubscribe");
-        }
-
-        @Override
-        public void onNext(Response<WidgetsGetMessengerIntegrationQuery.Data> response) {
-            if (!response.hasErrors()) {
-                try {
-                    config.changeLanguage(response.data().widgetsGetMessengerIntegration().languageCode());
-                    ErxesHelper.load_uiOptions(response.data().widgetsGetMessengerIntegration().uiOptions());
-                    ErxesHelper.load_messengerData(response.data().widgetsGetMessengerIntegration().messengerData());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Log.e(TAG, "errors " + response.errors().toString());
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-
-        }
-
-        @Override
-        public void onComplete() {
-            Log.e(TAG,"onComplete");
-        }
-    };
 }

@@ -35,43 +35,41 @@ public class GetMessage {
                 .conversationId(conversationid)
                 .build();
         Rx2Apollo.from(erxesRequest.apolloClient
-                .query(query)
-        )
+                .query(query))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(new Observer<Response<WidgetsMessagesQuery.Data>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<WidgetsMessagesQuery.Data> response) {
+                        if (response.data().widgetsMessages().size() > 0) {
+                            if (config.conversationMessages.size() > 0)
+                                config.conversationMessages.clear();
+                            List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);
+                            for (ConversationMessage message : conversationMessages) {
+                                if (!message.internal)
+                                    config.conversationMessages.add(message);
+                            }
+
+                            erxesRequest.notefyAll(ReturntypeUtil.GETMESSAGES, conversationid, null);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
-    private Observer observer = new Observer<Response<WidgetsMessagesQuery.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Response<WidgetsMessagesQuery.Data> response) {
-            if (response.data().widgetsMessages().size() > 0) {
-                if (config.conversationMessages.size() > 0)
-                    config.conversationMessages.clear();
-                List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);
-                for (ConversationMessage message : conversationMessages) {
-                    if (!message.internal)
-                        config.conversationMessages.add(message);
-                }
-
-                erxesRequest.notefyAll(ReturntypeUtil.GETMESSAGES, conversationid, null);
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
-
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
 }

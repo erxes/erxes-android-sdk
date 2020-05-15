@@ -29,40 +29,37 @@ public class GetKnowledge {
     public void run() {
         if (config.messengerdata != null && config.messengerdata.getKnowledgeBaseTopicId() != null) {
             Rx2Apollo.from(erxesRequest.apolloClient
-                    .query(KnowledgeBaseTopicDetailQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build())
-//                    .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
-            )
+                    .query(KnowledgeBaseTopicDetailQuery.builder().topicId(config.messengerdata.getKnowledgeBaseTopicId()).build()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(observer);
+                    .subscribe(new Observer<Response<KnowledgeBaseTopicDetailQuery.Data>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Response<KnowledgeBaseTopicDetailQuery.Data> response) {
+                            if (!response.hasErrors()) {
+                                config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
+                                erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null);
+                            } else {
+                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
         }
     }
-    private Observer observer = new Observer<Response<KnowledgeBaseTopicDetailQuery.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Response<KnowledgeBaseTopicDetailQuery.Data> response) {
-            if (!response.hasErrors()) {
-                config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.data());
-                erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null);
-            } else {
-                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
-
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
 }

@@ -10,6 +10,7 @@ import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import io.reactivex.Observer;
@@ -28,7 +29,7 @@ public class SendLead {
     }
 
     public void run() {
-        Map browserInfo = (Map) (new Object());
+        Map browserInfo = new HashMap();
         WidgetsSaveLeadMutation mutate = WidgetsSaveLeadMutation.builder()
                 .formId(config.formConnect.getLead().getId())
                 .integrationId(config.integrationId)
@@ -39,38 +40,36 @@ public class SendLead {
                 .mutate(mutate))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(new Observer<Response<WidgetsSaveLeadMutation.Data>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<WidgetsSaveLeadMutation.Data> response) {
+                        if (!response.hasErrors()) {
+                            if (response.data().widgetsSaveLead().status().equalsIgnoreCase("ok")) {
+                                erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().widgetsSaveLead().status());
+                            } else {
+                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().widgetsSaveLead().status());
+                            }
+                        } else {
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
-    private Observer observer = new Observer<Response<WidgetsSaveLeadMutation.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Response<WidgetsSaveLeadMutation.Data> response) {
-            if (!response.hasErrors()) {
-                if (response.data().widgetsSaveLead().status().equalsIgnoreCase("ok")) {
-                    erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().widgetsSaveLead().status());
-                } else {
-                    erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().widgetsSaveLead().status());
-                }
-            } else {
-                Log.e(TAG, "errors " + response.errors().toString());
-                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
-
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
 }

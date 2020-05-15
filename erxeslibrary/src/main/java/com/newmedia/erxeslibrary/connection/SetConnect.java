@@ -26,8 +26,7 @@ public class SetConnect {
     private ErxesRequest erxesRequest;
     private Config config;
     private DataManager dataManager;
-    private boolean isCheckRequired, hasData, isUser, isFromProvider;
-    private String email, phone, customData;
+    private String customData;
 
     public SetConnect(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
@@ -35,14 +34,8 @@ public class SetConnect {
         dataManager = DataManager.getInstance(context);
     }
 
-    public void run(boolean isFromProvider, boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
-        this.isCheckRequired = isCheckRequired;
-        this.hasData = hasData;
-        this.email = email;
-        this.phone = phone;
+    public void run(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
         this.customData = data;
-        this.isUser = isUser;
-        this.isFromProvider = isFromProvider;
         Gson gson = new Gson();
         Map customDataMap = gson.fromJson(data, Map.class);
 
@@ -57,55 +50,50 @@ public class SetConnect {
                 .mutate(mutate))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
-    }
+                .subscribe(new Observer<Response<WidgetsMessengerConnectMutation.Data>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
 
-    private Observer observer = new Observer<Response<WidgetsMessengerConnectMutation.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
+                    }
 
-        }
-
-        @Override
-        public void onNext(Response<WidgetsMessengerConnectMutation.Data> response) {
-            if (!response.hasErrors()) {
-                ErxesHelper.load_messengerData(response.data().widgetsMessengerConnect().messengerData());
-                if (isCheckRequired) {
-                    if (config.messengerdata != null) {
-                        if (config.messengerdata.isShowLauncher()) {
-                            prepareData(response);
-                            if (!isFromProvider) {
-                                config.initActivity(false, hasData, email, phone, customData);
+                    @Override
+                    public void onNext(Response<WidgetsMessengerConnectMutation.Data> response) {
+                        if (!response.hasErrors()) {
+                            ErxesHelper.load_messengerData(response.data().widgetsMessengerConnect().messengerData());
+                            if (isCheckRequired) {
+                                if (config.messengerdata != null) {
+                                    if (config.messengerdata.isShowLauncher()) {
+                                        prepareData(response);
+                                        config.initActivity(hasData, email, phone, customData);
+                                    } else {
+                                        erxesRequest.setConnect(!isCheckRequired, isUser, hasData, email, phone, customData);
+                                    }
+                                }
                             } else {
-                                erxesRequest.notefyAll(ReturntypeUtil.PROVIDER, null, null);
+                                if (config.messengerdata != null && config.messengerdata.isShowLauncher()) {
+                                    prepareData(response);
+                                    erxesRequest.notefyAll(ReturntypeUtil.LOGINSUCCESS, null, null);
+                                }
                             }
                         } else {
-                            erxesRequest.setConnect(isFromProvider, !isCheckRequired, isUser, hasData, email, phone, customData);
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
                         }
                     }
-                } else {
-                    if (config.messengerdata != null && config.messengerdata.isShowLauncher()) {
-                        prepareData(response);
-                        erxesRequest.notefyAll(ReturntypeUtil.LOGINSUCCESS, null, null);
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
+
                     }
-                }
-            } else {
-                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
-            }
-        }
 
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
+                    @Override
+                    public void onComplete() {
 
-        }
+                    }
+                });
+    }
 
-        @Override
-        public void onComplete() {
-
-        }
-    };
 
     private void prepareData(Response<WidgetsMessengerConnectMutation.Data> response) {
         config.customerId = response.data().widgetsMessengerConnect().customerId();

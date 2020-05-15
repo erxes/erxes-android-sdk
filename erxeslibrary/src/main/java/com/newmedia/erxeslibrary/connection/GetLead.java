@@ -36,32 +36,31 @@ public class GetLead {
                             .build()))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(observer);
+                    .subscribe(new Observer<Response<WidgetsLeadConnectMutation.Data>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(Response<WidgetsLeadConnectMutation.Data> response) {
+                            if (!response.hasErrors()) {
+                                config.formConnect = FormConnect.convert(response);
+                                erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null);
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
         }
     }
-    private Observer observer = new Observer<Response<WidgetsLeadConnectMutation.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Response<WidgetsLeadConnectMutation.Data> response) {
-            if (!response.hasErrors()) {
-                config.formConnect = FormConnect.convert(response);
-                erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null);
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
 }

@@ -16,12 +16,12 @@ import com.apollographql.apollo.rx2.Rx2Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.opens.ConversationMessageInsertedSubscription;
 import com.erxes.io.opens.type.CustomType;
-import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.utils.DataManager;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -141,12 +141,10 @@ public class ListenerService extends Service {
                             @Override
                             protected void onStart() {
                                 super.onStart();
-                                Log.e(TAG, "onStartedOpens " + conversationId);
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, "onErrorOpens " + conversationId);
                                 e.printStackTrace();
                                 run_thread(conversationId);
                             }
@@ -159,22 +157,17 @@ public class ListenerService extends Service {
                                         if (dataManager.getDataB("chatIsGoing")) {
                                             ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
-                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
-                                                        .equals(conversationMessage.id) && !conversationMessage.internal) {
+                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
+                                                        && !conversationMessage.internal
+                                                        && conversationMessage.user != null) {
                                                     config.conversationMessages.add(conversationMessage);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
                                                 }
                                             }
-//                                            for (int i = 0; i < config.conversations.size(); i++) {
-//                                                if (config.conversations.get(i).id.equals(conversationId)) {
-//                                                    config.conversations.get(i).conversationMessages.add(conversationMessage);
-//                                                    break;
-//                                                }
-//                                            }
-                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().conversationId())) {
-                                                    config.conversations.get(i).content = response.data().conversationMessageInserted().content();
+                                                if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().fragments().messageFragment().conversationId())) {
+                                                    config.conversations.get(i).content = response.data().conversationMessageInserted().fragments().messageFragment().content();
                                                     config.conversations.get(i).isread = false;
                                                 }
                                             }

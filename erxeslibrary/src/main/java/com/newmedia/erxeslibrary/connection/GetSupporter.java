@@ -30,43 +30,41 @@ public class GetSupporter {
                 .integ(config.integrationId).build();
         Rx2Apollo.from(erxesRequest.apolloClient
                 .query(query)
-//                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST)
         )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer);
+                .subscribe(new Observer<Response<WidgetsMessengerSupportersQuery.Data>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(Response<WidgetsMessengerSupportersQuery.Data> response) {
+                        if (!response.hasErrors()) {
+                            if (config.supporters != null && config.supporters.size() > 0)
+                                config.supporters.clear();
+                            if (config.supporters != null) {
+                                config.supporters.addAll(User.convert(response.data().widgetsMessengerSupporters()));
+                            }
+                            erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null);
+                        } else {
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
-    private Observer observer = new Observer<Response<WidgetsMessengerSupportersQuery.Data>>() {
-        @Override
-        public void onSubscribe(Disposable d) {
-
-        }
-
-        @Override
-        public void onNext(Response<WidgetsMessengerSupportersQuery.Data> response) {
-            if (!response.hasErrors()) {
-                if (config.supporters != null && config.supporters.size() > 0)
-                    config.supporters.clear();
-                if (config.supporters != null) {
-                    config.supporters.addAll(User.convert(response.data().widgetsMessengerSupporters()));
-                }
-                erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null);
-            } else {
-                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
-            }
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            e.printStackTrace();
-            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
-
-        }
-
-        @Override
-        public void onComplete() {
-
-        }
-    };
 
 }
