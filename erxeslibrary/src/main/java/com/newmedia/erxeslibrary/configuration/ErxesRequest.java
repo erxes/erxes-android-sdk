@@ -39,8 +39,6 @@ import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
-import okhttp3.logging.HttpLoggingInterceptor;
-//import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -79,15 +77,15 @@ public final class ErxesRequest {
     }
 
     private OkHttpClient getHttpClient() {
-        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+//        logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
                 .followRedirects(true)
                 .followSslRedirects(true)
                 .retryOnConnectionFailure(true)
                 .cache(null)
-                .addInterceptor(logging)
+//                .addInterceptor(logging)
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
