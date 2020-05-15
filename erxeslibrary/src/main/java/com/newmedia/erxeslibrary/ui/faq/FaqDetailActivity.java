@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -110,11 +112,14 @@ public class FaqDetailActivity extends AppCompatActivity {
                     }
                 }
                 if (knowledgeBaseArticle != null) {
+                    Log.e("TAG", "load_findViewByid: " + knowledgeBaseArticle.createdDate );
                     general.setText(knowledgeBaseArticle.title);
                     date.setText("Created : " + config.FullDate(knowledgeBaseArticle.createdDate));
                     articleHeader.setText(knowledgeBaseArticle.title);
                     content1.setText(Html.fromHtml(knowledgeBaseArticle.summary));
+                    content1.setMovementMethod(LinkMovementMethod.getInstance());
                     content2.setText(Html.fromHtml(knowledgeBaseArticle.content));
+                    content2.setMovementMethod(LinkMovementMethod.getInstance());
                 }
             }
         }

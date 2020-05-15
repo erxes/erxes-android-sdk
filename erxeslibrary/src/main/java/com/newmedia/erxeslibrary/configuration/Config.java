@@ -7,9 +7,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
-
-
-import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,7 +15,6 @@ import android.support.v4.graphics.ColorUtils;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,25 +25,24 @@ import com.facebook.imagepipeline.decoder.SimpleProgressiveJpegConfig;
 import com.mikepenz.iconics.Iconics;
 import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.GenericFont;
+import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
 import com.newmedia.erxeslibrary.connection.service.SaasListenerService;
-import com.newmedia.erxeslibrary.model.Messengerdata;
-import com.newmedia.erxeslibrary.utils.DataManager;
-import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
+import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.model.User;
+import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqActivity;
 import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
-import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
+import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ListTagHandler;
 
-import org.json.JSONObject;
-
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -189,24 +184,21 @@ public class Config {
     }
 
     public String FullDate(String createDateS) {
-        long createDate;
-        try {
-            createDate = Long.parseLong(createDateS);
-        } catch (NumberFormatException e) {
-            return "";
-        }
-
-        Date date = new Date();
-        date.setTime(createDate);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
                 new SimpleDateFormat("MMM dd / yyyy h:mm a");
-        if (this.language.equalsIgnoreCase("mn")) {
-            return format.format(date);
-        } else {
-            return format2.format(date);
+        try {
+            if (this.language.equalsIgnoreCase("mn")) {
+                return format.format(sdf.parse(createDateS));
+            } else {
+                return format2.format(sdf.parse(createDateS));
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return createDateS;
         }
     }
 
@@ -251,11 +243,11 @@ public class Config {
     }
 
     public void Start() {
-        checkRequired( false, null, null, null);
+        checkRequired(false, null, null, null);
     }
 
     public void Start(String email, String phone, String jsonObject) {
-        checkRequired( true, email, phone, jsonObject);
+        checkRequired(true, email, phone, jsonObject);
     }
 
     public void initActivity(boolean hasData, String email, String phone, String customData) {
@@ -274,7 +266,7 @@ public class Config {
     }
 
     private void checkRequired(boolean hasData, String email, String phone, String jsonObject) {
-        if (hasData) erxesRequest.setConnect( true, true, hasData, email, phone, jsonObject);
+        if (hasData) erxesRequest.setConnect(true, true, hasData, email, phone, jsonObject);
         else erxesRequest.getIntegration();
     }
 

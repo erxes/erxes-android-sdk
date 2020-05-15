@@ -201,10 +201,12 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
                     case ReturntypeUtil.CONNECTIONFAILED:
                         Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
+                        ErxesActivity.this.finish();
                         break;
 
                     case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
+                        ErxesActivity.this.finish();
                         break;
                     default:
                         break;
