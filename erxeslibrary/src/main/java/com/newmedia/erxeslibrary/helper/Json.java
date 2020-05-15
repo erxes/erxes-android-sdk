@@ -17,6 +17,13 @@ public class Json {
         return null;
     }
 
+    public Boolean getBoolean(String name) {
+        if (object != null && object.get(name) != null) {
+            return (Boolean) object.get(name);
+        }
+        return false;
+    }
+
     public boolean has(String name) {
         return object != null && object.containsKey(name);
     }
