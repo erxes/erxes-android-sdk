@@ -72,8 +72,9 @@ public class GFilePart implements ProgressRequestBody.Listener {
     }
 
     public void test() {
-        OkHttpClient client = new OkHttpClient.Builder().writeTimeout(2,TimeUnit.MINUTES)
-                .readTimeout(2,TimeUnit.MINUTES).build();
+        OkHttpClient client = new OkHttpClient.Builder()
+                .writeTimeout(10,TimeUnit.MINUTES)
+                .readTimeout(10,TimeUnit.MINUTES).build();
 
         RequestBody formBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
@@ -83,7 +84,6 @@ public class GFilePart implements ProgressRequestBody.Listener {
 
         Request request = new Request.Builder()
                 .url(config.hostUpload)
-                .addHeader("Authorization","")
                 .post(new ProgressRequestBody(formBody,this)).build();
 
 
@@ -91,8 +91,6 @@ public class GFilePart implements ProgressRequestBody.Listener {
 
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.i("erxes_api", "failed" );
-
                 e.printStackTrace();
                 messageActivity.runOnUiThread(new Runnable() {
                     @Override
@@ -160,7 +158,6 @@ public class GFilePart implements ProgressRequestBody.Listener {
                     }
                 });
 
-                Log.i("erxes_api", "upload false");
             }
         });
     }
@@ -211,16 +208,12 @@ public class GFilePart implements ProgressRequestBody.Listener {
 
             file = fileInfo.if_not_exist_create_file();
             if(file != null){
-                Log.i("erxes_api", "result1");
                 upload();
             }
             else{
-                Log.i("erxes_api", "result3");
                 Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
             }
         }
-        Log.i("erxes_api", "result2"+requestCode+" ?"+resultCode+" "+Activity.RESULT_OK);
-
     }
 
     File getFile() {
