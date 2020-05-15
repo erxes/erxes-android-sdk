@@ -1,6 +1,8 @@
 package com.newmedia.erxeslibrary.ui;
 
+import android.app.Service;
 import android.content.Intent;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -11,6 +13,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +25,7 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.helper.SoftKeyboard;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
@@ -40,9 +45,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     private LinearLayout loaderView;
     private String customData, mEmail, mPhone;
 
-    private static final int ERROR_DIALOG_REQUEST_CODE = 1;
-
-    private boolean retryProviderInstall, hasData;
+    private boolean hasData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         erxesRequest = ErxesRequest.getInstance(config);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         ErxesHelper.changeLanguage(this, config.language);
+
         setContentView(R.layout.activity_erxes);
 
         loaderView = this.findViewById(R.id.loaderView);
@@ -69,12 +73,14 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         contact = this.findViewById(R.id.contact);
         contact.setTextColor(config.getInColor(config.colorCode));
 
+        config.setCursorColor(email,config.colorCode);
+        config.setCursorColor(phone,config.colorCode);
+
         ErxesHelper.display_configure(this, container, "#66000000");
         change_color();
         cancelImageView.setOnClickListener(touchListener);
         initIcon();
 
-        boolean isProvider = getIntent().getBooleanExtra("isProvider", false);
         hasData = getIntent().getBooleanExtra("hasData", false);
         customData = getIntent().getStringExtra("customData");
         mEmail = getIntent().getStringExtra("mEmail");
@@ -84,13 +90,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private void init() {
         if (hasData) {
-            erxesRequest.setConnect(false, false, true, true, mEmail, mPhone, customData);
-        } else if (config.isLoggedIn()) {
-            config.LoadDefaultValues();
-            Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-            a.putExtra("isFromLogin", false);
-            ErxesActivity.this.startActivity(a);
-            finish();
+            erxesRequest.setConnect( false, true, hasData, mEmail, mPhone, customData);
         } else {
             change_color();
             contact.setVisibility(View.VISIBLE);
@@ -119,8 +119,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private void change_color() {
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
-        Drawable drawable = this.findViewById(R.id.selector).getBackground();
-        drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
         email_click(null);
     }
 
@@ -131,9 +129,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         mailCardView.setCardBackgroundColor(config.colorCode);
         smsCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
         emailButton.setTextColor(config.getInColor(config.colorCode));
-        smsButton.setTextColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        smsButton.setTextColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
         changeEmailColor(config.getInColor(config.colorCode));
-        changePhoneColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        changePhoneColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
     }
 
     public void sms_click(View v) {
@@ -143,9 +141,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         smsCardView.setCardBackgroundColor(config.colorCode);
         mailCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
         smsButton.setTextColor(config.getInColor(config.colorCode));
-        emailButton.setTextColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        emailButton.setTextColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
         changePhoneColor(config.getInColor(config.colorCode));
-        changeEmailColor(config.getInColorGray(getResources().getColor(R.color.md_white_1000)));
+        changeEmailColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
     }
 
     public void logout() {
@@ -157,15 +155,15 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.PHONE, phone.getText().toString());
-                    erxesRequest.setConnect(false, false, false, false, "", phone.getText().toString(), null);
+                    erxesRequest.setConnect( false, false, false, "", phone.getText().toString(), null);
                     phone.setError(null);
                 } else
                     phone.setError(getResources().getString(R.string.Failed));
             } else {
-                if (isValidEmail(email.getText().toString())) {
+                if (config.isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.EMAIL, email.getText().toString());
-                    erxesRequest.setConnect(false, false, false, false, email.getText().toString(), "", null);
+                    erxesRequest.setConnect( false, false, false, email.getText().toString(), "", null);
                 } else
                     email.setError(getResources().getString(R.string.Failed));
             }
@@ -197,7 +195,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 switch (returnType) {
                     case ReturntypeUtil.LOGINSUCCESS:
                         Intent a = new Intent(ErxesActivity.this, ConversationListActivity.class);
-                        a.putExtra("isFromLogin", true);
                         ErxesActivity.this.startActivity(a);
                         ErxesActivity.this.finish();
                         break;
@@ -225,14 +222,5 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 logout();
         }
     };
-
-    public static boolean isValidEmail(CharSequence target) {
-        if (TextUtils.isEmpty(target)) {
-            return false;
-        } else {
-            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
-        }
-    }
-
 
 }
