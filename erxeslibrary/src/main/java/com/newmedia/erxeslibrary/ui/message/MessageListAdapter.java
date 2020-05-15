@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -171,7 +172,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         RecyclerView fileRecyclerView;
         LinearLayout textTypeLayout;
         CardView vCallTypeLayout;
+        CardView vCallTypeEndLayout;
         Button joinVCall;
+        TextView orPassToBrowser;
 
         ReceivedMessageHolder(View itemView) {
             super(itemView);
@@ -181,19 +184,32 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
             textTypeLayout = itemView.findViewById(R.id.textType);
             vCallTypeLayout = itemView.findViewById(R.id.vCallType);
+            vCallTypeEndLayout = itemView.findViewById(R.id.vCallTypeEnd);
             joinVCall = itemView.findViewById(R.id.joinVCall);
+            orPassToBrowser = itemView.findViewById(R.id.orPassToBrowser);
         }
 
         void bind(ConversationMessage message) {
             if (message.contentType.equals(EnumUtil.TYPEVCALL)) {
-                vCallTypeLayout.setVisibility(View.VISIBLE);
                 textTypeLayout.setVisibility(View.GONE);
-                joinVCall.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        activity.vCallWebView(message.vCallUrl,message.vCallStatus, message.vCallName);
-                    }
-                });
+
+                if (!message.vCallStatus.equalsIgnoreCase("end")) {
+                    vCallTypeLayout.setVisibility(View.VISIBLE);
+                    vCallTypeEndLayout.setVisibility(View.GONE);
+                    joinVCall.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            activity.vCallWebView(message.vCallUrl,message.vCallStatus, message.vCallName);
+                        }
+                    });
+                    String thisLink = "(or click " +"<a href=\"" + message.vCallUrl + "\">" + "this link</a>" + " to open a new tab)";
+                    orPassToBrowser.setText(Html.fromHtml(thisLink));
+                    orPassToBrowser.setMovementMethod(LinkMovementMethod.getInstance());
+                } else {
+                    vCallTypeEndLayout.setVisibility(View.VISIBLE);
+                    vCallTypeLayout.setVisibility(View.GONE);
+                }
+
             } else {
                 vCallTypeLayout.setVisibility(View.GONE);
                 textTypeLayout.setVisibility(View.VISIBLE);
