@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui.message;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Point;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -189,6 +191,23 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         mWebView.setVisibility(View.VISIBLE);
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+
+
+        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onPermissionRequest(PermissionRequest request) {
+                MessageActivity.this.runOnUiThread(new Runnable() {
+                    @TargetApi(Build.VERSION_CODES.M)
+                    @Override
+                    public void run() {
+                        request.grant(request.getResources());
+                    }
+                });
+            }
+        });
+
         mWebView.loadUrl(vCallUrl);
     }
 
@@ -364,7 +383,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     "android.permission.READ_EXTERNAL_STORAGE",
                     "android.permission.WRITE_EXTERNAL_STORAGE",
                     "android.permission.RECORD_AUDIO",
-                    "android.permission.CAMERA"
+                    "android.permission.CAMERA",
+                    "android.permission.MODIFY_AUDIO_SETTINGS"
             };
             int requestCode = 200;
 
