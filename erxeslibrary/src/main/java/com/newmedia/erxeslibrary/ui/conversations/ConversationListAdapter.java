@@ -66,14 +66,12 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                 holder.content.setText(config.getHtml(conversationList.get(position).content));
             }
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
-//            holder.name.setTypeface(holder.content.getTypeface(), Typeface.NORMAL);
             holder.content.setTextColor(Color.parseColor("#808080"));
         } else {
             if (!TextUtils.isEmpty(conversationList.get(position).content)) {
                 holder.content.setText(config.getHtml(conversationList.get(position).content));
             }
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
-//            holder.name.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
 
@@ -83,14 +81,14 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                     .get(conversationList.get(position).conversationMessages.size() - 1);
         }
         if (message != null && message.user != null) {
-            String myString = message.user.fullName;
+            String myString = message.user.getFullName();
             String upperString = "Unknown";
             if (myString != null)
                 upperString = myString.substring(0, 1).toUpperCase() + myString.substring(1);
             holder.name.setText(upperString);
 
-            if (message.user.avatar != null)
-                Glide.with(activity).load(message.user.avatar)
+            if (message.user.getAvatar() != null)
+                Glide.with(activity).load(message.user.getAvatar())
                         .placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
@@ -98,11 +96,8 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             else
                 Glide.with(activity).load(R.drawable.avatar)
                         .placeholder(R.drawable.avatar)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(holder.circleImageView);
 
-//            long createDate = Long.valueOf(message.createdAt);
-//            holder.date.setText(config.conversationDate(createDate));
             holder.date.setText(message.createdAt);
             holder.parent.setTag(position);
         } else {
@@ -111,8 +106,6 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
                     .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
-//            long createDate = Long.parseLong(conversationList.get(position).date);
-//            holder.date.setText(config.conversationDate(createDate));
             holder.date.setText(conversationList.get(position).date);
             holder.parent.setTag(position);
         }

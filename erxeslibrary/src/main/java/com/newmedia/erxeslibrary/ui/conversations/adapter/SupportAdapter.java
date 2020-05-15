@@ -20,7 +20,7 @@ import java.util.List;
 
 public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> {
 
-    private List<User> list = new ArrayList<>();
+    private List<User> list;
     private Context context;
 
     public SupportAdapter(Activity context,List<User> users) {
@@ -33,20 +33,25 @@ public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> 
     public Holder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.profile_image_online, parent, false);
-//        view.setOnClickListener(onClickListener);
 
         return new Holder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull Holder holder, int position) {
-        if (list.get(position).avatar != null)
-            Glide.with(context).load(list.get(position).avatar)
+        if (list.get(position).getAvatar() != null)
+            Glide.with(context)
+                    .load(list.get(position).getAvatar())
                     .placeholder(R.drawable.avatar)
                     .optionalCircleCrop()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);
-
+        else {
+            Glide.with(context)
+                    .load(R.drawable.avatar)
+                    .optionalCircleCrop()
+                    .into(holder.circleImageView);
+        }
     }
 
     @Override
@@ -57,7 +62,7 @@ public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> 
     public class Holder extends RecyclerView.ViewHolder {
         ImageView circleImageView;
         TextView date, content, name;
-        View parent;//,isonline;
+        View parent;
 
         public Holder(View itemView) {
             super(itemView);

@@ -20,7 +20,6 @@ import com.newmedia.erxeslibrary.ui.faq.FaqAdapter;
 public class FaqFragment extends Fragment {
 
     public FaqFragment() {
-        // Required empty public constructor
     }
 
     private ErxesRequest erxesRequest;
