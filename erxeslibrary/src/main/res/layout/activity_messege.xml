@@ -205,6 +205,7 @@
                         android:layout_toLeftOf="@+id/upload_group"
                         android:background="?android:attr/actionBarItemBackground"
                         android:gravity="center"
+                        android:visibility="gone"
                         android:onClick="onVCall">
 
                         <ImageView

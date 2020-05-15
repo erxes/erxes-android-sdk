@@ -293,6 +293,7 @@ public class Config {
         else
             colorCode = Color.parseColor("#5629B6");
         wallpaper = dataManager.getDataS("wallpaper");
+        videoCallUsageStatus = dataManager.getDataB("videoCallUsageStatus");
         language = dataManager.getDataS(DataManager.LANGUAGE);
         changeLanguage(language);
 

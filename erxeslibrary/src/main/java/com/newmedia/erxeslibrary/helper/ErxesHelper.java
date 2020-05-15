@@ -47,9 +47,9 @@ public class ErxesHelper {
         else {
             config.colorCode = Color.parseColor("#5629B6");
         }
-        color = js.getString("wallpaper");
-        dataManager.setData("wallpaper", color);
+        dataManager.setData("wallpaper", js.getString("wallpaper"));
         dataManager.setData("videoCallUsageStatus", js.getBoolean("videoCallUsageStatus"));
+        config.wallpaper = js.getString("wallpaper");
         config.videoCallUsageStatus = js.getBoolean("videoCallUsageStatus");
     }
 

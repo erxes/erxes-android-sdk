@@ -147,7 +147,7 @@ public class SupportFragment extends Fragment {
     }
 
     public void setLead() {
-        if (!isHidden() && config.formConnect != null && !isInitedForm) {
+        if (!isHidden() && config != null && config.formConnect != null && !isInitedForm) {
             isInitedForm = true;
             askPermissions();
             getLeadCardView.setVisibility(View.VISIBLE);

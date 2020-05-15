@@ -49,7 +49,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageView profile1, profile2, backImageView, logoutImageView, sendImageView, attachmentImageView, vCallImageView;
     private TextView names, isOnline;
-    private ViewGroup container, uploadGroup, messageContainer, parentLayout;
+    private ViewGroup container, uploadGroup, messageContainer, parentLayout, vCallGroup;
     private Config config;
     private ErxesRequest erxesRequest;
     private Point size;
@@ -90,8 +90,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         vCallImageView = this.findViewById(R.id.vCallImageView);
         parentLayout = this.findViewById(R.id.linearlayout);
         mWebView = this.findViewById(R.id.webView);
+        vCallGroup = this.findViewById(R.id.vCallGroup);
 
         config.setCursorColor(edittextChatbox,config.colorCode);
+        if (config.videoCallUsageStatus) {
+            vCallGroup.setVisibility(View.VISIBLE);
+        }
 
         softKeyboard = new SoftKeyboard(parentLayout, (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE));
         softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
@@ -146,9 +150,17 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
             }
         });
 
-        int index = Integer.getInteger(config.wallpaper, -1);
-        if (index > -1 && index < 5)
-            mMessageRecycler.setBackgroundResource(ErxesHelper.backgrounds[index]);
+        if (config.wallpaper != null) {
+            int index;
+            try {
+                index = Integer.parseInt(config.wallpaper);
+            } catch (NumberFormatException e) {
+                index = 0;
+            }
+            if (index != 0 && index < 5) {
+                mMessageRecycler.setBackgroundDrawable(getResources().getDrawable(ErxesHelper.backgrounds[index - 1]));
+            }
+        }
 
         mMessageRecycler.setLayoutManager(linearLayoutManager);
         messageListAdapter = new MessageListAdapter(this, config.conversationMessages);
