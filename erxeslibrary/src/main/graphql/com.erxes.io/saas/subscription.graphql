@@ -1,21 +1,26 @@
 subscription SaasConversationMessageInserted($id: String!){
-  conversationMessageInserted(_id: $id) {
-    _id
-    content
-    conversationId
-    internal
-    customerId
-    createdAt
-    attachments{
-     size
-     url
-     name
-     type
+    conversationMessageInserted(_id: $id) {
+        _id
+        conversationId
+        customerId
+        content
+        createdAt
+        internal
+        fromBot
+        contentType
+        videoCallData {
+            url
+            name
+            status
+        }
+        attachments {
+            size
+            url
+            type
+            name
+        }
+        user
     }
-    isCustomerRead
-    formWidgetData
-    user
-  }
 }
 
 subscription SaasConversationChanged($id: String!) {

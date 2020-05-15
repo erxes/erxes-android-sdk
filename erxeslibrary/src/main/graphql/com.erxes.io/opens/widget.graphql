@@ -7,16 +7,16 @@ mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: St
         customerId
         brand{
             name
-            code
             description
         }
     }
 }
-mutation widgetsInsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [AttachmentInput]){
-    widgetsInsertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments){
+mutation widgetsInsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [AttachmentInput], $contentType: String){
+    widgetsInsertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments, contentType : $contentType){
         ...MessageFragment
     }
 }
+
 query widgetsConversations($integrationId: String!,$customerId: String!){
     widgetsConversations(integrationId: $integrationId,customerId: $customerId) {
         _id
@@ -39,6 +39,12 @@ fragment MessageFragment on ConversationMessage {
     createdAt
     internal
     fromBot
+    contentType
+    videoCallData {
+        url
+        name
+        status
+    }
     attachments {
         size
         url
@@ -147,7 +153,10 @@ mutation widgetsLeadConnect($brandCode: String!, $formCode: String!) {
     widgetsLeadConnect(brandCode: $brandCode, formCode: $formCode) {
         integration {
             _id
+            kind
             name
+            brandId
+            languageCode
             leadData
         }
         form {
@@ -157,14 +166,16 @@ mutation widgetsLeadConnect($brandCode: String!, $formCode: String!) {
             buttonText
             fields {
                 _id
+                contentType
                 type
+                validation
                 text
+                name
                 description
                 options
                 isRequired
-                name
-                validation
                 order
+                isVisible
             }
         }
     }
@@ -184,27 +195,7 @@ mutation widgetsSaveLead($integrationId: String!, $formId: String!, $submissions
 
 subscription ConversationMessageInserted($id: String!){
     conversationMessageInserted(_id: $id) {
-        _id
-        content
-        conversationId
-        internal
-        customerId
-        createdAt
-        attachments{
-            size
-            url
-            name
-            type
-        }
-        isCustomerRead
-        formWidgetData
-        user {
-            _id
-            details {
-                avatar
-            fullName
-            }
-        }
+        ...MessageFragment
     }
 }
 
