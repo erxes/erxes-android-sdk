@@ -20,7 +20,6 @@ import com.newmedia.erxeslibrary.connection.GetSupporter;
 import com.newmedia.erxeslibrary.connection.GetConversation;
 import com.newmedia.erxeslibrary.connection.GetMessage;
 import com.newmedia.erxeslibrary.connection.InsertMessage;
-import com.newmedia.erxeslibrary.connection.InsertNewMessage;
 import com.newmedia.erxeslibrary.connection.SendLead;
 import com.newmedia.erxeslibrary.connection.SetConnect;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
@@ -29,28 +28,13 @@ import com.newmedia.erxeslibrary.helper.ErxesHelper;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.security.GeneralSecurityException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocket;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
-import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -149,12 +133,12 @@ public final class ErxesRequest {
         return client;
     }
 
-    public void setConnect(boolean isFromProvider, boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
+    public void setConnect(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
         if (!config.isNetworkConnected()) {
             return;
         }
         SetConnect setConnect = new SetConnect(this, context);
-        setConnect.run(isFromProvider, isCheckRequired, isUser, hasData, email, phone, data);
+        setConnect.run(isCheckRequired, isUser, hasData, email, phone, data);
     }
 
     public void getGEO() {
@@ -165,29 +149,20 @@ public final class ErxesRequest {
         getGEO.run();
     }
 
-    void getIntegration(boolean hasData, String email, String phone, JSONObject jsonObject) {
+    void getIntegration() {
         if (!config.isNetworkConnected()) {
             return;
         }
         GetIntegration getIntegration = new GetIntegration(this, context);
-        getIntegration.run(hasData, email, phone, jsonObject);
+        getIntegration.run();
     }
 
-    public void InsertMessage(String message, String conversationId, List<AttachmentInput> list) {
+    public void InsertMessage(String message, String conversationId, List<AttachmentInput> list, String type) {
         if (!config.isNetworkConnected()) {
             return;
         }
         InsertMessage insertmessage = new InsertMessage(this, context);
-        insertmessage.run(message, conversationId, list);
-    }
-
-    public void InsertNewMessage(final String message, List<AttachmentInput> list) {
-        if (!config.isNetworkConnected()) {
-            return;
-        }
-
-        InsertNewMessage insertnewmessage = new InsertNewMessage(this, context);
-        insertnewmessage.run(message, list);
+        insertmessage.run(message, conversationId, list, type);
     }
 
     public void getConversations() {

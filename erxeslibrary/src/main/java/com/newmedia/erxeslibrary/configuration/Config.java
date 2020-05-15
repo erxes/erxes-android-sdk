@@ -4,17 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 
 
 import android.os.Build;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.ColorUtils;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.erxes.io.opens.type.FieldValueInput;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -41,6 +47,7 @@ import com.newmedia.erxeslibrary.utils.ListTagHandler;
 
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,6 +68,7 @@ public class Config {
     public String conversationId = null;
     public String brandCode;
     private boolean isMessengerOnline = false;
+    public boolean videoCallUsageStatus = false;
     private DataManager dataManager;
     private Activity activityConfig;
     public Context context;
@@ -69,11 +77,11 @@ public class Config {
     public FormConnect formConnect = null;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
     public String geoResponse;
-    public KnowledgeBaseTopic knowledgeBaseTopic = new KnowledgeBaseTopic();
+    public KnowledgeBaseTopic knowledgeBaseTopic = null;
     public List<User> supporters = new ArrayList<>();
     public List<Conversation> conversations = new ArrayList<>();
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
-    public boolean isFirstStart = false, requireAuth = false;
+    public boolean requireAuth = false;
     public Intent intent;
 
     private Config(Context context) {
@@ -215,6 +223,14 @@ public class Config {
         activityConfig = activity;
     }
 
+    public boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
     private void Init(String brandCode, String host3100, String host3300, String hostUpload) {
         this.host3100 = host3100;
         this.host3300 = host3300;
@@ -235,14 +251,14 @@ public class Config {
     }
 
     public void Start() {
-        checkRequired(false, false, null, null, null);
+        checkRequired( false, null, null, null);
     }
 
     public void Start(String email, String phone, String jsonObject) {
-        checkRequired(false, true, email, phone, jsonObject);
+        checkRequired( true, email, phone, jsonObject);
     }
 
-    public void initActivity(boolean isProvider, boolean hasData, String email, String phone, String customData) {
+    public void initActivity(boolean hasData, String email, String phone, String customData) {
         initializeIcon();
         initializeFresco();
         dataManager.setData(DataManager.ISUSER, hasData);
@@ -254,20 +270,12 @@ public class Config {
         a.putExtra("customData", customData);
         a.putExtra("mEmail", email);
         a.putExtra("mPhone", phone);
-        a.putExtra("isProvider", isProvider);
         context.startActivity(a);
     }
 
-    private void checkRequired(boolean isFromProvider, boolean hasData, String email, String phone, String jsonObject) {
-        Log.e("TAG", "checkRequired: " + dataManager.getDataB(DataManager.HASPROVIDER));
-        if (Build.VERSION.SDK_INT >= 16 &&
-                Build.VERSION.SDK_INT < 22 &&
-                !dataManager.getDataB(DataManager.HASPROVIDER)) {
-            initActivity(true, hasData, email, phone, jsonObject);
-        } else if (hasData)
-            erxesRequest.setConnect(isFromProvider, true, true, hasData, email, phone, jsonObject);
-        else
-            erxesRequest.setConnect(isFromProvider, true, false, hasData, email, phone, jsonObject);
+    private void checkRequired(boolean hasData, String email, String phone, String jsonObject) {
+        if (hasData) erxesRequest.setConnect( true, true, hasData, email, phone, jsonObject);
+        else erxesRequest.getIntegration();
     }
 
     public void LoadDefaultValues() {
@@ -279,7 +287,6 @@ public class Config {
 
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);
         integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
-//        messengerdata = dataManager.getMessenger();
         String color = dataManager.getDataS(DataManager.COLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
@@ -365,7 +372,6 @@ public class Config {
         if (lang == null || lang.equalsIgnoreCase(""))
             return;
 
-        Log.e("TAG", "changeLanguage: " + lang);
         this.language = lang.substring(0, 2);
         dataManager.setData(DataManager.LANGUAGE, this.language);
 
@@ -428,8 +434,8 @@ public class Config {
         GenericFont erxesSDKGF = new GenericFont("rxx", "fonts/erxes.ttf");
         erxesSDKGF.registerIcon("send", '\ueb09');
         erxesSDKGF.registerIcon("cancel", '\ue80d');
-        erxesSDKGF.registerIcon("email_3", '\ue82c');
-        erxesSDKGF.registerIcon("phonecall_3", '\ue865');
+        erxesSDKGF.registerIcon("envelope_alt", '\ueae2');
+        erxesSDKGF.registerIcon("phone_alt", '\uec1d');
         erxesSDKGF.registerIcon("plus_1", '\uec2d');
         erxesSDKGF.registerIcon("logout", '\ue84f');
         erxesSDKGF.registerIcon("leftarrow", '\ue84a');
@@ -473,6 +479,7 @@ public class Config {
         erxesSDKGF.registerIcon("paste", '\ue861');
         erxesSDKGF.registerIcon("folder", '\ue838');
         erxesSDKGF.registerIcon("image_v", '\ueb90');
+        erxesSDKGF.registerIcon("videocamera", '\ue8a2');
 
         Iconics.registerFont(erxesSDKGF);
     }
@@ -568,14 +575,14 @@ public class Config {
 
     public Drawable getEmailIcon(Activity activity, int colorCode) {
         if (colorCode != 0)
-            return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24).color(colorCode);
-        else return new IconicsDrawable(activity).icon("rxx-email_3").sizeDp(24);
+            return new IconicsDrawable(activity).icon("rxx-envelope_alt").sizeDp(24).color(colorCode);
+        else return new IconicsDrawable(activity).icon("rxx-envelope_alt").sizeDp(24);
     }
 
     public Drawable getPhoneIcon(Activity activity, int colorCode) {
         if (colorCode != 0)
-            return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24).color(colorCode);
-        else return new IconicsDrawable(activity).icon("rxx-phonecall_3").sizeDp(24);
+            return new IconicsDrawable(activity).icon("rxx-phone_alt").sizeDp(24).color(colorCode);
+        else return new IconicsDrawable(activity).icon("rxx-phone_alt").sizeDp(24);
     }
 
     public Drawable getPlusIcon(Activity activity, int colorCode) {
@@ -602,6 +609,12 @@ public class Config {
         else return new IconicsDrawable(activity).icon("rxx-attach").sizeDp(24);
     }
 
+    public Drawable getVCallIcon(Activity activity, int colorCode) {
+        if (colorCode != 0)
+            return new IconicsDrawable(activity).icon("rxx-videocamera").sizeDp(24).color(colorCode);
+        else return new IconicsDrawable(activity).icon("rxx-videocamera").sizeDp(24);
+    }
+
     public Drawable getImageVIcon(Activity activity, int colorCode) {
         if (colorCode != 0)
             return new IconicsDrawable(activity).icon("rxx-image_v").sizeDp(96).color(colorCode);
@@ -616,7 +629,32 @@ public class Config {
 
     public int getInColorGray(int backgroundColor) {
         if (ColorUtils.calculateLuminance(backgroundColor) < 0.5)
-            return context.getResources().getColor(R.color.md_white_1000);
+            return context.getResources().getColor(R.color.md_grey_300);
         else return context.getResources().getColor(R.color.md_grey_600);
+    }
+
+    public void setCursorColor(EditText view, @ColorInt int color) {
+        try {
+            // Get the cursor resource id
+            Field field = TextView.class.getDeclaredField("mCursorDrawableRes");
+            field.setAccessible(true);
+            int drawableResId = field.getInt(view);
+
+            // Get the editor
+            field = TextView.class.getDeclaredField("mEditor");
+            field.setAccessible(true);
+            Object editor = field.get(view);
+
+            // Get the drawable and set a color filter
+            Drawable drawable = ContextCompat.getDrawable(view.getContext(), drawableResId);
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+            Drawable[] drawables = {drawable, drawable};
+
+            // Set the drawables
+            field = editor.getClass().getDeclaredField("mCursorDrawable");
+            field.setAccessible(true);
+            field.set(editor, drawables);
+        } catch (Exception ignored) {
+        }
     }
 }
