@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary.model;
 
 import com.newmedia.erxeslibrary.helper.Json;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,16 +24,9 @@ public class Messengerdata {
         }
         if (data.containsKey("timezone"))
             messengerdata.setTimezone((String) data.get("timezone"));
-//        if (data.containsKey("supporterIds")) {
-//            List<Map> supporterIds = (List<Map>) data.get("supporterIds");
-//            List<String> supIds = new ArrayList<>();
-//            if (supporterIds != null) {
-//                for (int i = 0; i < supporterIds.size(); i++) {
-//                    supIds.add(supporterIds.get(i).toString());
-//                }
-//            }
-//            messengerdata.setSupporterIds(supIds);
-//        }
+        if (data.containsKey("supporterIds")) {
+            messengerdata.setSupporterIds((List<String>) data.get("supporterIds"));
+        }
         if (data.containsKey("requireAuth"))
             messengerdata.setRequireAuth((Boolean) data.get("requireAuth"));
         if (data.containsKey("showChat"))
@@ -50,54 +44,62 @@ public class Messengerdata {
             messengerdata.setFormCode((String) data.get("formCode"));
         if (data.containsKey("links")) {
             Map links = (Map) data.get("links");
-            if (links.containsKey("facebook"))
-                messengerdata.setFacebook((String) links.get("facebook"));
-            if (links.containsKey("twitter"))
-                messengerdata.setTwitter((String) links.get("twitter"));
-            if (links.containsKey("youtube"))
-                messengerdata.setYoutube((String) links.get("youtube"));
+            if (links != null) {
+                if (links.containsKey("facebook"))
+                    messengerdata.setFacebook((String) links.get("facebook"));
+                if (links.containsKey("twitter"))
+                    messengerdata.setTwitter((String) links.get("twitter"));
+                if (links.containsKey("youtube"))
+                    messengerdata.setYoutube((String) links.get("youtube"));
+            }
         }
         if (data.containsKey("messages")) {
             Map messageJson = (Map) data.get("messages");
-            if (languageCode != null && messageJson.containsKey(languageCode)) {
-                Map lanJson = (Map) messageJson.get(languageCode);
-                Messages messages = new Messages();
-                if (lanJson.containsKey("welcome"))
-                    messages.setWelcome((String) lanJson.get("welcome"));
-                if (lanJson.containsKey("away"))
-                    messages.setAway((String) lanJson.get("away"));
-                if (lanJson.containsKey("thank"))
-                    messages.setThank((String) lanJson.get("thank"));
-                if (lanJson.containsKey("greetings")) {
-                    Greetings greetings = new Greetings();
-                    Map greetingsJson = (Map) lanJson.get("greetings");
-
-                    if (greetingsJson.containsKey("title"))
-                        greetings.setTitle((String) greetingsJson.get("title"));
-                    if (greetingsJson.containsKey("message"))
-                        greetings.setMessage((String) greetingsJson.get("message"));
-                    messages.setGreetings(greetings);
+            if (messageJson != null) {
+                if (languageCode != null && messageJson.containsKey(languageCode)) {
+                    Map lanJson = (Map) messageJson.get(languageCode);
+                    if (lanJson != null) {
+                        Messages messages = new Messages();
+                        if (lanJson.containsKey("welcome"))
+                            messages.setWelcome((String) lanJson.get("welcome"));
+                        if (lanJson.containsKey("away"))
+                            messages.setAway((String) lanJson.get("away"));
+                        if (lanJson.containsKey("thank"))
+                            messages.setThank((String) lanJson.get("thank"));
+                        if (lanJson.containsKey("greetings")) {
+                            Greetings greetings = new Greetings();
+                            Map greetingsJson = (Map) lanJson.get("greetings");
+                            if (greetingsJson != null) {
+                                if (greetingsJson.containsKey("title"))
+                                    greetings.setTitle((String) greetingsJson.get("title"));
+                                if (greetingsJson.containsKey("message"))
+                                    greetings.setMessage((String) greetingsJson.get("message"));
+                                messages.setGreetings(greetings);
+                            }
+                        }
+                        messengerdata.setMessages(messages);
+                    }
+                } else {
+                    Messages messages = new Messages();
+                    if (messageJson.containsKey("welcome"))
+                        messages.setWelcome((String) messageJson.get("welcome"));
+                    if (messageJson.containsKey("away"))
+                        messages.setAway((String) messageJson.get("away"));
+                    if (messageJson.containsKey("thank"))
+                        messages.setThank((String) messageJson.get("thank"));
+                    if (messageJson.containsKey("greetings")) {
+                        Greetings greetings = new Greetings();
+                        Map greetingsJson = (Map) messageJson.get("greetings");
+                        if (greetingsJson != null) {
+                            if (greetingsJson.containsKey("title"))
+                                greetings.setTitle((String) greetingsJson.get("title"));
+                            if (greetingsJson.containsKey("message"))
+                                greetings.setMessage((String) greetingsJson.get("message"));
+                            messages.setGreetings(greetings);
+                        }
+                    }
+                    messengerdata.setMessages(messages);
                 }
-                messengerdata.setMessages(messages);
-            } else {
-                Messages messages = new Messages();
-                if (messageJson.containsKey("welcome"))
-                    messages.setWelcome((String) messageJson.get("welcome"));
-                if (messageJson.containsKey("away"))
-                    messages.setAway((String) messageJson.get("away"));
-                if (messageJson.containsKey("thank"))
-                    messages.setThank((String) messageJson.get("thank"));
-                if (messageJson.containsKey("greetings")) {
-                    Greetings greetings = new Greetings();
-                    Map greetingsJson = (Map) messageJson.get("greetings");
-
-                    if (greetingsJson.containsKey("title"))
-                        greetings.setTitle((String) greetingsJson.get("title"));
-                    if (greetingsJson.containsKey("message"))
-                        greetings.setMessage((String) greetingsJson.get("message"));
-                    messages.setGreetings(greetings);
-                }
-                messengerdata.setMessages(messages);
             }
         }
         return messengerdata;

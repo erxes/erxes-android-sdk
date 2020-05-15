@@ -9,20 +9,46 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    public String id;
-    public String avatar;
-    public String fullName;
+    private String id;
+    private String avatar;
+    private String fullName;
 
-    static public List<User> convert(List<WidgetsMessengerSupportersQuery.WidgetsMessengerSupporter> itemuser) {
+    public static List<User> convert(List<WidgetsMessengerSupportersQuery.WidgetsMessengerSupporter> itemuser) {
         User temp;
         List<User> users = new ArrayList<>();
         for (int i = 0; i < itemuser.size(); i++) {
             temp = new User();
             temp.id = itemuser.get(i)._id();
-            temp.avatar = itemuser.get(i).details().avatar();
-            temp.fullName = itemuser.get(i).details().fullName();
+            if (itemuser.get(i).details() != null) {
+                temp.avatar = itemuser.get(i).details().avatar();
+                temp.fullName = itemuser.get(i).details().fullName();
+            }
             users.add(temp);
         }
         return users;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

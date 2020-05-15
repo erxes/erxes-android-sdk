@@ -23,6 +23,10 @@ public class Conversation {
     public String status;
     public String content;
     public String date;
+    public String contentType;
+    public String vCallUrl;
+    public String vCallName;
+    public String vCallStatus;
     public boolean isread = true;
     public List<ConversationMessage> conversationMessages = new ArrayList<>();
     public List<String> readUserIds;
@@ -67,10 +71,10 @@ public class Conversation {
                         message.internal = item.messages().get(i).fragments().messageFragment().internal();
                     if (item.messages().get(i).fragments().messageFragment().user() != null) {
                         User user = new User();
-                        user.id = item.messages().get(i).fragments().messageFragment().user()._id();
+                        user.setId(item.messages().get(i).fragments().messageFragment().user()._id());
                         if (item.messages().get(i).fragments().messageFragment().user().details() != null) {
-                            user.avatar = item.messages().get(i).fragments().messageFragment().user().details().avatar();
-                            user.fullName = item.messages().get(i).fragments().messageFragment().user().details().fullName();
+                            user.setAvatar(item.messages().get(i).fragments().messageFragment().user().details().avatar());
+                            user.setFullName(item.messages().get(i).fragments().messageFragment().user().details().fullName());
                         }
                         message.user = user;
                     }
@@ -86,6 +90,13 @@ public class Conversation {
                         }
                     }
 
+                    message.contentType = item.messages().get(i).fragments().messageFragment().contentType();
+                    if (item.messages().get(i).fragments().messageFragment().videoCallData() != null) {
+                        message.vCallUrl = item.messages().get(i).fragments().messageFragment().videoCallData().url();
+                        message.vCallStatus = item.messages().get(i).fragments().messageFragment().videoCallData().status();
+                        message.vCallName = item.messages().get(i).fragments().messageFragment().videoCallData().name();
+                    }
+
                     thisO.conversationMessages.add(message);
                 }
             }
@@ -96,56 +107,64 @@ public class Conversation {
 
     }
 
-    static public Conversation update(WidgetsInsertMessageMutation.WidgetsInsertMessage a, String content, Config config) {
-        config.conversationId = a.fragments().messageFragment().conversationId();
+    static public Conversation update(WidgetsInsertMessageMutation.WidgetsInsertMessage insertMessage, String content, Config config) {
+        insertMessage.fragments().messageFragment().contentType();
+        config.conversationId = insertMessage.fragments().messageFragment().conversationId();
         Conversation conversation = new Conversation();
         conversation.id = config.conversationId;
         conversation.content = content;
         conversation.status = "open";
         try {
-            Date date = ErxesHelper.sdf.parse(a.fragments().messageFragment().createdAt().toString());
+            Date date = ErxesHelper.sdf.parse(insertMessage.fragments().messageFragment().createdAt().toString());
             conversation.date = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            conversation.date = a.fragments().messageFragment().createdAt().toString();
+            conversation.date = insertMessage.fragments().messageFragment().createdAt().toString();
         }
         conversation.customerId = config.customerId;
         conversation.integrationId = config.integrationId;
 
         ConversationMessage message = new ConversationMessage();
-        message.id = a.fragments().messageFragment()._id();
-        message.content = a.fragments().messageFragment().content();
-        message.conversationId = a.fragments().messageFragment().conversationId();
+        message.id = insertMessage.fragments().messageFragment()._id();
+        message.content = insertMessage.fragments().messageFragment().content();
+        message.conversationId = insertMessage.fragments().messageFragment().conversationId();
         try {
-            Date date = ErxesHelper.sdf.parse(a.fragments().messageFragment().createdAt().toString());
+            Date date = ErxesHelper.sdf.parse(insertMessage.fragments().messageFragment().createdAt().toString());
             message.createdAt = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            message.createdAt = a.fragments().messageFragment().createdAt().toString();
+            message.createdAt = insertMessage.fragments().messageFragment().createdAt().toString();
         }
-        message.customerId = a.fragments().messageFragment().customerId();
-        if (a.fragments().messageFragment().internal() != null)
-            message.internal = a.fragments().messageFragment().internal();
-        if (a.fragments().messageFragment().user() != null) {
+        message.customerId = insertMessage.fragments().messageFragment().customerId();
+        if (insertMessage.fragments().messageFragment().internal() != null)
+            message.internal = insertMessage.fragments().messageFragment().internal();
+        if (insertMessage.fragments().messageFragment().user() != null) {
             User user = new User();
-            user.id = a.fragments().messageFragment().user()._id();
-            if (a.fragments().messageFragment().user().details() != null) {
-                user.avatar = a.fragments().messageFragment().user().details().avatar();
-                user.fullName = a.fragments().messageFragment().user().details().fullName();
+            user.setId(insertMessage.fragments().messageFragment().user()._id());
+            if (insertMessage.fragments().messageFragment().user().details() != null) {
+                user.setAvatar(insertMessage.fragments().messageFragment().user().details().avatar());
+                user.setFullName(insertMessage.fragments().messageFragment().user().details().fullName());
             }
             message.user = user;
         }
-        if (a.fragments().messageFragment().attachments() != null &&
-                a.fragments().messageFragment().attachments().size() > 0) {
-            for (int j = 0; j < a.fragments().messageFragment().attachments().size(); j++) {
+        if (insertMessage.fragments().messageFragment().attachments() != null &&
+                insertMessage.fragments().messageFragment().attachments().size() > 0) {
+            for (int j = 0; j < insertMessage.fragments().messageFragment().attachments().size(); j++) {
                 FileAttachment attachment = new FileAttachment();
-                attachment.setName(a.fragments().messageFragment().attachments().get(j).name());
-                attachment.setSize(a.fragments().messageFragment().attachments().get(j).size());
-                attachment.setType(a.fragments().messageFragment().attachments().get(j).type());
-                attachment.setUrl(a.fragments().messageFragment().attachments().get(j).url());
+                attachment.setName(insertMessage.fragments().messageFragment().attachments().get(j).name());
+                attachment.setSize(insertMessage.fragments().messageFragment().attachments().get(j).size());
+                attachment.setType(insertMessage.fragments().messageFragment().attachments().get(j).type());
+                attachment.setUrl(insertMessage.fragments().messageFragment().attachments().get(j).url());
                 message.attachments.add(attachment);
             }
         }
+        message.contentType = insertMessage.fragments().messageFragment().contentType();
+        if (insertMessage.fragments().messageFragment().videoCallData() != null) {
+            message.vCallUrl = insertMessage.fragments().messageFragment().videoCallData().url();
+            message.vCallName = insertMessage.fragments().messageFragment().videoCallData().name();
+            message.vCallStatus = insertMessage.fragments().messageFragment().videoCallData().status();
+        }
+
         conversation.conversationMessages.add(message);
         return conversation;
     }

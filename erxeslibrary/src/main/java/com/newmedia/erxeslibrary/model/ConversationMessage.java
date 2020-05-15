@@ -33,6 +33,10 @@ public class ConversationMessage {
     public User user;
     public String content;
     public String createdAt;
+    public String contentType;
+    public String vCallUrl;
+    public String vCallName;
+    public String vCallStatus;
     public boolean internal = false;
     public List<FileAttachment> attachments = new ArrayList<>();
     private static SimpleDateFormat simpleDateFormat =
@@ -42,28 +46,30 @@ public class ConversationMessage {
     public static List<ConversationMessage> convert(Response<WidgetsMessagesQuery.Data> response, String conversationId) {
         List<WidgetsMessagesQuery.WidgetsMessage> data = response.data().widgetsMessages();
         List<ConversationMessage> dataConverted = new ArrayList<>();
-        ConversationMessage thisO;
+        ConversationMessage conversationMessage;
         for (WidgetsMessagesQuery.WidgetsMessage item : data) {
-            thisO = new ConversationMessage();
-            thisO.id = item.fragments().messageFragment()._id();
+            conversationMessage = new ConversationMessage();
+            conversationMessage.id = item.fragments().messageFragment()._id();
             Date date = new Date();
             try {
                 date = ErxesHelper.sdf.parse(item.fragments().messageFragment().createdAt().toString());
-                thisO.createdAt = outputFormat.format(date);
+                conversationMessage.createdAt = outputFormat.format(date);
             } catch (ParseException e) {
                 e.printStackTrace();
-                date.setTime(Long.valueOf(Objects.requireNonNull(item.fragments().messageFragment().createdAt()).toString()));
-                thisO.createdAt = simpleDateFormat.format(date);
+                date.setTime(Long.parseLong(item.fragments().messageFragment().createdAt().toString()));
+                conversationMessage.createdAt = simpleDateFormat.format(date);
             }
-            thisO.customerId = item.fragments().messageFragment().customerId();
-            thisO.content = item.fragments().messageFragment().content();
-            thisO.internal = item.fragments().messageFragment().internal();
+            conversationMessage.customerId = item.fragments().messageFragment().customerId();
+            conversationMessage.content = item.fragments().messageFragment().content();
+            conversationMessage.internal = item.fragments().messageFragment().internal();
             if (item.fragments().messageFragment().user() != null) {
                 User user = new User();
-                user.id = item.fragments().messageFragment().user()._id();
-                user.avatar = item.fragments().messageFragment().user().details().avatar();
-                user.fullName = item.fragments().messageFragment().user().details().fullName();
-                thisO.user = user;
+                user.setId(item.fragments().messageFragment().user()._id());
+                if (item.fragments().messageFragment().user().details() != null) {
+                    user.setAvatar(item.fragments().messageFragment().user().details().avatar());
+                    user.setFullName(item.fragments().messageFragment().user().details().fullName());
+                }
+                conversationMessage.user = user;
             }
             if (item.fragments().messageFragment().attachments() != null) {
                 for (int i = 0; i < item.fragments().messageFragment().attachments().size(); i++) {
@@ -72,131 +78,158 @@ public class ConversationMessage {
                     attachment.setSize(item.fragments().messageFragment().attachments().get(i).size());
                     attachment.setType(item.fragments().messageFragment().attachments().get(i).type());
                     attachment.setUrl(item.fragments().messageFragment().attachments().get(i).url());
-                    thisO.attachments.add(attachment);
+                    conversationMessage.attachments.add(attachment);
                 }
             }
-            thisO.conversationId = conversationId;
-            dataConverted.add(thisO);
+            conversationMessage.contentType = item.fragments().messageFragment().contentType();
+            if (item.fragments().messageFragment().videoCallData() != null) {
+                conversationMessage.vCallName = item.fragments().messageFragment().videoCallData().name();
+                conversationMessage.vCallUrl = item.fragments().messageFragment().videoCallData().url();
+                conversationMessage.vCallStatus = item.fragments().messageFragment().videoCallData().status();
+            }
+
+            conversationMessage.conversationId = conversationId;
+            dataConverted.add(conversationMessage);
         }
         return dataConverted;
     }
 
-    public static ConversationMessage convert(WidgetsInsertMessageMutation.WidgetsInsertMessage a, String message, Config config) {
-        ConversationMessage b = new ConversationMessage();
-        b.conversationId = a.fragments().messageFragment().conversationId();
+    public static ConversationMessage convert(WidgetsInsertMessageMutation.WidgetsInsertMessage insertMessage, String message, Config config) {
+        ConversationMessage conversationMessage = new ConversationMessage();
+        conversationMessage.conversationId = insertMessage.fragments().messageFragment().conversationId();
         Date date = new Date();
         try {
-            date = ErxesHelper.sdf.parse(a.fragments().messageFragment().createdAt().toString());
-            b.createdAt = outputFormat.format(date);
+            date = ErxesHelper.sdf.parse(insertMessage.fragments().messageFragment().createdAt().toString());
+            conversationMessage.createdAt = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            date.setTime(Long.valueOf(Objects.requireNonNull(a.fragments().messageFragment().createdAt()).toString()));
-            b.createdAt = simpleDateFormat.format(date);
+            date.setTime(Long.parseLong(insertMessage.fragments().messageFragment().createdAt().toString()));
+            conversationMessage.createdAt = simpleDateFormat.format(date);
         }
-        b.id = a.fragments().messageFragment()._id();
-        b.content = message;
-        if (a.fragments().messageFragment().attachments() != null) {
-            for (int i = 0; i < a.fragments().messageFragment().attachments().size(); i++) {
+        conversationMessage.id = insertMessage.fragments().messageFragment()._id();
+        conversationMessage.content = message;
+        if (insertMessage.fragments().messageFragment().attachments() != null) {
+            for (int i = 0; i < insertMessage.fragments().messageFragment().attachments().size(); i++) {
                 FileAttachment attachment = new FileAttachment();
-                attachment.setName(a.fragments().messageFragment().attachments().get(i).name());
-                attachment.setSize(a.fragments().messageFragment().attachments().get(i).size());
-                attachment.setType(a.fragments().messageFragment().attachments().get(i).type());
-                attachment.setUrl(a.fragments().messageFragment().attachments().get(i).url());
-                b.attachments.add(attachment);
+                attachment.setName(insertMessage.fragments().messageFragment().attachments().get(i).name());
+                attachment.setSize(insertMessage.fragments().messageFragment().attachments().get(i).size());
+                attachment.setType(insertMessage.fragments().messageFragment().attachments().get(i).type());
+                attachment.setUrl(insertMessage.fragments().messageFragment().attachments().get(i).url());
+                conversationMessage.attachments.add(attachment);
             }
         }
-        if (a.fragments().messageFragment().internal() != null)
-            b.internal = a.fragments().messageFragment().internal();
-        else b.internal = false;
-        b.customerId = config.customerId;
-        return b;
+        if (insertMessage.fragments().messageFragment().internal() != null)
+            conversationMessage.internal = insertMessage.fragments().messageFragment().internal();
+        else conversationMessage.internal = false;
+        conversationMessage.customerId = config.customerId;
+        conversationMessage.contentType = insertMessage.fragments().messageFragment().contentType();
+        if (insertMessage.fragments().messageFragment().videoCallData() != null) {
+            conversationMessage.vCallName = insertMessage.fragments().messageFragment().videoCallData().name();
+            conversationMessage.vCallUrl = insertMessage.fragments().messageFragment().videoCallData().url();
+            conversationMessage.vCallStatus = insertMessage.fragments().messageFragment().videoCallData().status();
+        }
+        return conversationMessage;
     }
 
-    public static ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted a) {
-        ConversationMessage b = new ConversationMessage();
-        b.conversationId = a.conversationId();
+    public static ConversationMessage convert(ConversationMessageInsertedSubscription.ConversationMessageInserted messageInserted) {
+        ConversationMessage conversationMessage = new ConversationMessage();
+        conversationMessage.conversationId = messageInserted.fragments().messageFragment().conversationId();
         Date date = new Date();
         try {
-            date = ErxesHelper.sdf.parse(a.createdAt().toString());
-            b.createdAt = outputFormat.format(date);
+            date = ErxesHelper.sdf.parse(messageInserted.fragments().messageFragment().createdAt().toString());
+            conversationMessage.createdAt = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            date.setTime(Long.valueOf(Objects.requireNonNull(a.createdAt()).toString()));
-            b.createdAt = simpleDateFormat.format(date);
+            date.setTime(Long.parseLong(messageInserted.fragments().messageFragment().createdAt().toString()));
+            conversationMessage.createdAt = simpleDateFormat.format(date);
         }
-        b.id = a._id();
-        b.content = a.content();
-        if (a.attachments() != null) {
-            for (int i = 0; i < a.attachments().size(); i++) {
+        conversationMessage.id = messageInserted.fragments().messageFragment()._id();
+        conversationMessage.content = messageInserted.fragments().messageFragment().content();
+        if (messageInserted.fragments().messageFragment().attachments() != null) {
+            for (int i = 0; i < messageInserted.fragments().messageFragment().attachments().size(); i++) {
                 FileAttachment attachment = new FileAttachment();
-                attachment.setName(a.attachments().get(i).name());
-                attachment.setSize(a.attachments().get(i).size());
-                attachment.setType(a.attachments().get(i).type());
-                attachment.setUrl(a.attachments().get(i).url());
-                b.attachments.add(attachment);
+                attachment.setName(messageInserted.fragments().messageFragment().attachments().get(i).name());
+                attachment.setSize(messageInserted.fragments().messageFragment().attachments().get(i).size());
+                attachment.setType(messageInserted.fragments().messageFragment().attachments().get(i).type());
+                attachment.setUrl(messageInserted.fragments().messageFragment().attachments().get(i).url());
+                conversationMessage.attachments.add(attachment);
             }
         }
-        if (a.internal() != null)
-            b.internal = a.internal();
-        else b.internal = false;
-        b.customerId = a.customerId();
-        if (a.user() != null) {
+        if (messageInserted.fragments().messageFragment().internal() != null)
+            conversationMessage.internal = messageInserted.fragments().messageFragment().internal();
+        else conversationMessage.internal = false;
+        conversationMessage.customerId = messageInserted.fragments().messageFragment().customerId();
+        if (messageInserted.fragments().messageFragment().user() != null) {
             User user = new User();
-            user.id = a.user()._id();
-            user.avatar = a.user().details().avatar();
-            user.fullName = a.user().details().fullName();
-            b.user = user;
+            user.setId(messageInserted.fragments().messageFragment().user()._id());
+            if (messageInserted.fragments().messageFragment().user().details() != null) {
+                user.setAvatar(messageInserted.fragments().messageFragment().user().details().avatar());
+                user.setFullName(messageInserted.fragments().messageFragment().user().details().fullName());
+            }
+            conversationMessage.user = user;
         }
-        return b;
+        conversationMessage.contentType = messageInserted.fragments().messageFragment().contentType();
+        if (messageInserted.fragments().messageFragment().videoCallData() != null) {
+            conversationMessage.vCallName = messageInserted.fragments().messageFragment().videoCallData().name();
+            conversationMessage.vCallUrl = messageInserted.fragments().messageFragment().videoCallData().url();
+            conversationMessage.vCallStatus = messageInserted.fragments().messageFragment().videoCallData().status();
+        }
+        return conversationMessage;
     }
 
-    public static ConversationMessage convertSaas(SaasConversationMessageInsertedSubscription.ConversationMessageInserted a) {
-        ConversationMessage b = new ConversationMessage();
-        b.conversationId = a.conversationId();
+    public static ConversationMessage convertSaas(SaasConversationMessageInsertedSubscription.ConversationMessageInserted messageInserted) {
+        ConversationMessage conversationMessage = new ConversationMessage();
+        conversationMessage.conversationId = messageInserted.conversationId();
         Date date = new Date();
         try {
-            date = ErxesHelper.sdf.parse(a.createdAt().toString());
-            b.createdAt = outputFormat.format(date);
+            date = ErxesHelper.sdf.parse(messageInserted.createdAt().toString());
+            conversationMessage.createdAt = outputFormat.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
-            date.setTime(Long.valueOf(Objects.requireNonNull(a.createdAt()).toString()));
-            b.createdAt = simpleDateFormat.format(date);
+            date.setTime(Long.parseLong(messageInserted.createdAt().toString()));
+            conversationMessage.createdAt = simpleDateFormat.format(date);
         }
-        b.id = a._id();
-        b.content = a.content();
-        if (a.attachments() != null) {
-            for (int i = 0; i < a.attachments().size(); i++) {
+        conversationMessage.id = messageInserted._id();
+        conversationMessage.content = messageInserted.content();
+        if (messageInserted.attachments() != null) {
+            for (int i = 0; i < messageInserted.attachments().size(); i++) {
                 FileAttachment attachment = new FileAttachment();
-                attachment.setName(a.attachments().get(i).name());
-                attachment.setSize(a.attachments().get(i).size());
-                attachment.setType(a.attachments().get(i).type());
-                attachment.setUrl(a.attachments().get(i).url());
-                b.attachments.add(attachment);
+                attachment.setName(messageInserted.attachments().get(i).name());
+                attachment.setSize(messageInserted.attachments().get(i).size());
+                attachment.setType(messageInserted.attachments().get(i).type());
+                attachment.setUrl(messageInserted.attachments().get(i).url());
+                conversationMessage.attachments.add(attachment);
             }
         }
-        if (a.internal() != null)
-            b.internal = a.internal();
-        else b.internal = false;
-        b.customerId = a.customerId();
-        if (a.user() != null) {
+        if (messageInserted.internal() != null)
+            conversationMessage.internal = messageInserted.internal();
+        else conversationMessage.internal = false;
+        conversationMessage.customerId = messageInserted.customerId();
+        if (messageInserted.user() != null) {
             User user = new User();
-            Map userJson = a.user().object;
+            Map userJson = messageInserted.user().object;
             if (userJson != null) {
                 if (userJson.containsKey("_id"))
-                    user.id = userJson.get("_id").toString();
+                    user.setId((String) userJson.get("_id"));
                 if (userJson.containsKey("details")) {
                     Map detailJson =  (Map) userJson.get("details");
                     if (detailJson != null) {
                         if (detailJson.containsKey("avatar"))
-                            user.avatar = detailJson.get("avatar").toString();
+                            user.setAvatar((String) detailJson.get("avatar"));
                         if (detailJson.containsKey("fullName"))
-                            user.fullName = detailJson.get("fullName").toString();
+                            user.setFullName((String) detailJson.get("fullName"));
                     }
                 }
             }
-            b.user = user;
+            conversationMessage.user = user;
         }
-        return b;
+        conversationMessage.contentType = messageInserted.contentType();
+        if (messageInserted.videoCallData() != null) {
+            conversationMessage.vCallName = messageInserted.videoCallData().name();
+            conversationMessage.vCallUrl = messageInserted.videoCallData().url();
+            conversationMessage.vCallStatus = messageInserted.videoCallData().status();
+        }
+        return conversationMessage;
     }
 
 }
