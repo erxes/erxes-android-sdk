@@ -35,7 +35,7 @@
                     android:padding="10dp"
                     android:textColor="@color/md_white_1000" />
 
-                <android.support.v7.widget.RecyclerView
+                <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/fileRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -44,13 +44,13 @@
                     android:paddingBottom="10dp"
                     android:visibility="gone">
 
-                </android.support.v7.widget.RecyclerView>
+                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
 
 
         </LinearLayout>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/vCallType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
                 android:padding="10dp"
                 android:text="@string/video_call_request_sent"
                 android:textColor="@color/md_black_1000" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
     </RelativeLayout>
 
     <TextView

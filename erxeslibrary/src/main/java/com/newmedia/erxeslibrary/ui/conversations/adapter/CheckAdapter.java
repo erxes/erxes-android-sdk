@@ -2,8 +2,8 @@ package com.newmedia.erxeslibrary.ui.conversations.adapter;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.v4.widget.CompoundButtonCompat;
-import android.support.v7.widget.RecyclerView;
+import androidx.core.widget.CompoundButtonCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +13,6 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 
-import java.util.Arrays;
 import java.util.List;
 
 public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.ViewHolder> {

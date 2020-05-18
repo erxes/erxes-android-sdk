@@ -7,13 +7,15 @@ import com.newmedia.erxeslibrary.helper.Json;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class JsonCustomTypeAdapter implements CustomTypeAdapter<Json> {
 
-    public Json decode(@NotNull CustomTypeValue value) {
+    public Json decode(CustomTypeValue value) {
         String str = value.value.toString();
         if (str.length() > 0) {
             if (str.charAt(0) == '[') {
@@ -28,11 +30,16 @@ public class JsonCustomTypeAdapter implements CustomTypeAdapter<Json> {
 
     }
 
-    @NotNull
-    public CustomTypeValue encode(@NotNull Json value){
-        if(value.is_object)
+    public CustomTypeValue encode(Json value){
+        if (value.is_object) {
+            if (value.object == null) {
+                value.object = new HashMap();
+            }
             return new CustomTypeValue.GraphQLJsonObject(value.object);
-        else {
+        } else {
+            if (value.array == null) {
+                value.array = new ArrayList<>();
+            }
             return new CustomTypeValue.GraphQLJsonList(Collections.singletonList(value.array));
         }
     }

@@ -5,13 +5,11 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -19,8 +17,6 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.model.Messengerdata;
 import com.newmedia.erxeslibrary.ui.ErxesActivity;
-import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
-import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.utils.DataManager;
 
 import java.text.SimpleDateFormat;

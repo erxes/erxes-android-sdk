@@ -16,7 +16,7 @@
         android:fitsSystemWindows="true"
         app:layout_constraintBaseline_toBaselineOf="@+id/container">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/pattern_repeat"
@@ -136,7 +136,7 @@
                     android:textSize="@dimen/header_small" />
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/supporters"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -144,10 +144,10 @@
                 android:layout_marginRight="@dimen/main_margin"
                 android:paddingBottom="@dimen/main_margin"
                 app:layout_constraintTop_toBottomOf="@id/textGroup" />
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -163,7 +163,7 @@
             app:layout_constraintBaseline_toBaselineOf="@+id/container">
 
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -172,18 +172,18 @@
                 app:tabIndicatorHeight="2dp"
                 app:tabInlineLabel="true">
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/tabItem"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Support" />
 
-                <android.support.design.widget.TabItem
+                <com.google.android.material.tabs.TabItem
                     android:id="@+id/tabItem2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/Faq" />
-            </android.support.design.widget.TabLayout>
+            </com.google.android.material.tabs.TabLayout>
 
             <View
                 android:layout_width="match_parent"
@@ -198,7 +198,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tabsContainer" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
         android:layout_width="match_parent"

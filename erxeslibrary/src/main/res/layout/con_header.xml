@@ -8,7 +8,7 @@
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/pattern_repeat"
@@ -128,7 +128,7 @@
                 android:textSize="@dimen/header_small" />
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/supporters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -136,5 +136,5 @@
             android:layout_marginRight="@dimen/main_margin"
             android:paddingBottom="@dimen/main_margin"
             app:layout_constraintTop_toBottomOf="@id/textGroup" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
