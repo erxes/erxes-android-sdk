@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsInsertMessageMutation;
 import com.erxes.io.opens.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
@@ -15,10 +15,10 @@ import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import java.util.List;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class InsertMessage {
     final static String TAG = "InsertMessage";
@@ -46,7 +46,7 @@ public class InsertMessage {
                 .conversationId(conversationId);
 
         String finalMContent = mContent;
-        Rx2Apollo.from(erxesRequest.apolloClient
+        Rx3Apollo.from(erxesRequest.apolloClient
                 .mutate(temp.build()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,10 +59,10 @@ public class InsertMessage {
                     @Override
                     public void onNext(Response<WidgetsInsertMessageMutation.Data> response) {
                         if (response.hasErrors()) {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.errors().get(0).message());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.getErrors().get(0).getMessage());
                         } else {
                             if (response.data() != null) {
-                                ConversationMessage conversationMessage = ConversationMessage.convert(response.data().widgetsInsertMessage(), finalMContent, config);
+                                ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().widgetsInsertMessage(), finalMContent, config);
                                 if (conversationId != null) {
                                     if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
                                             .equals(conversationMessage.id) && !conversationMessage.internal) {
@@ -70,7 +70,7 @@ public class InsertMessage {
                                         erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null);
                                     }
                                 } else {
-                                    Conversation conversation = Conversation.update(response.data().widgetsInsertMessage(), finalMContent, config);
+                                    Conversation conversation = Conversation.update(response.getData().widgetsInsertMessage(), finalMContent, config);
                                     config.conversations.add(conversation);
                                     config.conversationMessages.add(conversationMessage);
 

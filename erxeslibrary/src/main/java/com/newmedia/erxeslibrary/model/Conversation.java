@@ -34,7 +34,7 @@ public class Conversation {
 
     static public List<Conversation> convert(Response<WidgetsConversationsQuery.Data> response, Config config) {
 
-        List<WidgetsConversationsQuery.WidgetsConversation> data = response.data().widgetsConversations();
+        List<WidgetsConversationsQuery.WidgetsConversation> data = response.getData().widgetsConversations();
         List<Conversation> dataConverted = new ArrayList<>();
         Conversation thisO;
         ErxesHelper.sdf.setTimeZone(TimeZone.getTimeZone("UTC"));

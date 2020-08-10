@@ -80,14 +80,16 @@ query widgetsConversationDetail($id: String, $integ : String!){
 }
 query widgetsMessengerSupporters($integ : String!) {
     widgetsMessengerSupporters(integrationId: $integ) {
-        _id
-        details {
-            avatar
-            shortName
-            position
-            location
-            description
-            fullName
+        supporters {
+            _id
+            details {
+                avatar
+                shortName
+                position
+                location
+                description
+                fullName
+            }
         }
     }
 }

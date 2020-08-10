@@ -13,7 +13,7 @@ public class User {
     private String avatar;
     private String fullName;
 
-    public static List<User> convert(List<WidgetsMessengerSupportersQuery.WidgetsMessengerSupporter> itemuser) {
+    public static List<User> convert(List<WidgetsMessengerSupportersQuery.Supporter> itemuser) {
         User temp;
         List<User> users = new ArrayList<>();
         for (int i = 0; i < itemuser.size(); i++) {

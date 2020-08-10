@@ -9,9 +9,9 @@ public class FormConnect {
 
     public static FormConnect convert(Response<WidgetsLeadConnectMutation.Data> response) {
         FormConnect formConnect = new FormConnect();
-        if (response.data() != null && response.data().widgetsLeadConnect() != null) {
-            formConnect.setLead(Lead.convert(response.data().widgetsLeadConnect().form()));
-            formConnect.setLeadIntegration(LeadIntegration.convert(response.data().widgetsLeadConnect().integration()));
+        if (response.data() != null && response.getData().widgetsLeadConnect() != null) {
+            formConnect.setLead(Lead.convert(response.getData().widgetsLeadConnect().form()));
+            formConnect.setLeadIntegration(LeadIntegration.convert(response.getData().widgetsLeadConnect().integration()));
         }
         return formConnect;
     }

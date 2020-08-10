@@ -9,8 +9,6 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 
 import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.opens.type.CustomType;
-import com.newmedia.erxeslibrary.BuildConfig;
-import com.newmedia.erxeslibrary.connection.GetGEO;
 import com.newmedia.erxeslibrary.connection.GetKnowledge;
 import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
@@ -136,14 +134,6 @@ public final class ErxesRequest {
         }
         SetConnect setConnect = new SetConnect(this, context);
         setConnect.run(isCheckRequired, isUser, hasData, email, phone, data);
-    }
-
-    public void getGEO() {
-        if (!config.isNetworkConnected()) {
-            return;
-        }
-        GetGEO getGEO = new GetGEO(context);
-        getGEO.run();
     }
 
     void getIntegration() {

@@ -4,17 +4,17 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsLeadConnectMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.FormConnect;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetLead {
 
@@ -29,7 +29,7 @@ public class GetLead {
 
     public void run() {
         if (!TextUtils.isEmpty(config.messengerdata.getFormCode())) {
-            Rx2Apollo.from(erxesRequest.apolloClient
+            Rx3Apollo.from(erxesRequest.apolloClient
                     .mutate(WidgetsLeadConnectMutation.builder()
                             .brandCode(config.brandCode)
                             .formCode(config.messengerdata.getFormCode())

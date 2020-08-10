@@ -3,8 +3,7 @@ package com.newmedia.erxeslibrary.connection;
 import android.content.Context;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsMessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -13,15 +12,14 @@ import com.newmedia.erxeslibrary.model.ConversationMessage;
 
 import java.util.List;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetMessage {
     final static String TAG = "GetMessage";
     private ErxesRequest erxesRequest;
-    private String conversationid;
     private Config config;
 
     public GetMessage(ErxesRequest erxesRequest, Context context) {
@@ -30,11 +28,10 @@ public class GetMessage {
     }
 
     public void run(String conversationid) {
-        this.conversationid = conversationid;
         WidgetsMessagesQuery query = WidgetsMessagesQuery.builder()
                 .conversationId(conversationid)
                 .build();
-        Rx2Apollo.from(erxesRequest.apolloClient
+        Rx3Apollo.from(erxesRequest.apolloClient
                 .query(query))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

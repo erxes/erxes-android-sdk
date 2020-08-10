@@ -4,23 +4,19 @@ import android.content.Context;
 import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.api.cache.http.HttpCachePolicy;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsGetMessengerIntegrationQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
-
-import org.json.JSONObject;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetIntegration {
-    final static String TAG = "GETINTEG";
+    final static String TAG = "GetIntegration";
     private ErxesRequest erxesRequest;
     private Config config;
 
@@ -32,38 +28,36 @@ public class GetIntegration {
 
     public void run() {
 
-        Rx2Apollo.from(erxesRequest.apolloClient
+        Rx3Apollo.from(erxesRequest.apolloClient
                 .query(WidgetsGetMessengerIntegrationQuery.builder().brandCode(config.brandCode)
-                        .build())
-                .httpCachePolicy(HttpCachePolicy.CACHE_FIRST))
+                        .build()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Response<WidgetsGetMessengerIntegrationQuery.Data>>() {
                     @Override
-                    public void onSubscribe(Disposable d) {
+                    public void onSubscribe(@NonNull Disposable d) {
                         Log.e(TAG,"onsubscribe");
                     }
 
                     @Override
-                    public void onNext(Response<WidgetsGetMessengerIntegrationQuery.Data> response) {
-                        if (!response.hasErrors()) {
+                    public void onNext(@NonNull Response<WidgetsGetMessengerIntegrationQuery.Data> dataResponse) {
+                        if (!dataResponse.hasErrors()) {
                             try {
-                                config.changeLanguage(response.data().widgetsGetMessengerIntegration().languageCode());
-                                ErxesHelper.load_uiOptions(response.data().widgetsGetMessengerIntegration().uiOptions());
-                                ErxesHelper.load_messengerData(response.data().widgetsGetMessengerIntegration().messengerData());
+                                config.changeLanguage(dataResponse.getData().widgetsGetMessengerIntegration().languageCode());
+                                ErxesHelper.load_uiOptions(dataResponse.getData().widgetsGetMessengerIntegration().uiOptions());
+                                ErxesHelper.load_messengerData(dataResponse.getData().widgetsGetMessengerIntegration().messengerData());
                                 config.initActivity(false,null,null,null);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } else {
-                            Log.e(TAG, "errors " + response.errors().toString());
+                            Log.e(TAG, "errors " + dataResponse.getErrors().toString());
                         }
                     }
 
                     @Override
-                    public void onError(Throwable e) {
+                    public void onError(@NonNull Throwable e) {
                         e.printStackTrace();
-
                     }
 
                     @Override

@@ -44,7 +44,7 @@ public class ConversationMessage {
 
 
     public static List<ConversationMessage> convert(Response<WidgetsMessagesQuery.Data> response, String conversationId) {
-        List<WidgetsMessagesQuery.WidgetsMessage> data = response.data().widgetsMessages();
+        List<WidgetsMessagesQuery.WidgetsMessage> data = response.getData().widgetsMessages();
         List<ConversationMessage> dataConverted = new ArrayList<>();
         ConversationMessage conversationMessage;
         for (WidgetsMessagesQuery.WidgetsMessage item : data) {

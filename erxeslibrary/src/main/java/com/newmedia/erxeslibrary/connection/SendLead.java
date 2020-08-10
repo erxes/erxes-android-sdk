@@ -3,7 +3,7 @@ package com.newmedia.erxeslibrary.connection;
 import android.util.Log;
 import android.content.Context;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsSaveLeadMutation;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -13,10 +13,10 @@ import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SendLead {
     final static String TAG = "SendLead";
@@ -36,7 +36,7 @@ public class SendLead {
                 .submissions(config.fieldValueInputs)
                 .browserInfo(new Json(browserInfo))
                 .build();
-        Rx2Apollo.from(erxesRequest.apolloClient
+        Rx3Apollo.from(erxesRequest.apolloClient
                 .mutate(mutate))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -50,12 +50,12 @@ public class SendLead {
                     public void onNext(Response<WidgetsSaveLeadMutation.Data> response) {
                         if (!response.hasErrors()) {
                             if (response.data().widgetsSaveLead().status().equalsIgnoreCase("ok")) {
-                                erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.data().widgetsSaveLead().status());
+                                erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.getData().widgetsSaveLead().status());
                             } else {
-                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.data().widgetsSaveLead().status());
+                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getData().widgetsSaveLead().status());
                             }
                         } else {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
                         }
                     }
 

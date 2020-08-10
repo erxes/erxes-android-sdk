@@ -3,7 +3,7 @@ package com.newmedia.erxeslibrary.connection;
 import android.content.Context;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsMessengerConnectMutation;
 import com.google.gson.Gson;
 import com.newmedia.erxeslibrary.configuration.Config;
@@ -15,10 +15,10 @@ import com.newmedia.erxeslibrary.utils.DataManager;
 
 import java.util.Map;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 
 public class SetConnect {
@@ -46,7 +46,7 @@ public class SetConnect {
                 .isUser(isUser)
                 .data(new Json(customDataMap))
                 .build();
-        Rx2Apollo.from(erxesRequest.apolloClient
+        Rx3Apollo.from(erxesRequest.apolloClient
                 .mutate(mutate))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -59,7 +59,7 @@ public class SetConnect {
                     @Override
                     public void onNext(Response<WidgetsMessengerConnectMutation.Data> response) {
                         if (!response.hasErrors()) {
-                            ErxesHelper.load_messengerData(response.data().widgetsMessengerConnect().messengerData());
+                            ErxesHelper.load_messengerData(response.getData().widgetsMessengerConnect().messengerData());
                             if (isCheckRequired) {
                                 if (config.messengerdata != null) {
                                     if (config.messengerdata.isShowLauncher()) {
@@ -76,7 +76,7 @@ public class SetConnect {
                                 }
                             }
                         } else {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
                         }
                     }
 

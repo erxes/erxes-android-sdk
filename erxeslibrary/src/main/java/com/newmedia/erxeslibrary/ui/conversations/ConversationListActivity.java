@@ -26,7 +26,7 @@ import android.widget.Toast;
 
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.bumptech.glide.Glide;
 import com.erxes.io.opens.ConversationChangedSubscription;
 import com.erxes.io.saas.SaasConversationChangedSubscription;
@@ -54,10 +54,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -427,7 +427,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void initChangedConversation() {
-        disposablesChanged.add(Rx2Apollo.from(opensourceChangedCall)
+        disposablesChanged.add(Rx3Apollo.from(opensourceChangedCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(
@@ -435,13 +435,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             @Override
                             public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
                                 if (!dataResponse.hasErrors()) {
-                                    if (dataResponse.data() != null && dataResponse.data().conversationChanged().type().equalsIgnoreCase("closed")) {
+                                    if (dataResponse.getData() != null && dataResponse.getData().conversationChanged().type().equalsIgnoreCase("closed")) {
                                         if (config.messengerdata.isForceLogoutWhenResolve()) {
                                             config.Logout(ConversationListActivity.this);
                                         } else {
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(dataResponse.data().conversationChanged().conversationId())) {
-                                                    config.conversations.get(i).status = dataResponse.data().conversationChanged().type();
+                                                if (config.conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
+                                                    config.conversations.get(i).status = dataResponse.getData().conversationChanged().type();
                                                     config.conversations.remove(i);
                                                     erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
                                                     break;
@@ -467,7 +467,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void initChangedConversationSaas() {
-        disposablesChanged.add(Rx2Apollo.from(saasChangedCall)
+        disposablesChanged.add(Rx3Apollo.from(saasChangedCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(
@@ -475,13 +475,13 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             @Override
                             public void onNext(Response<SaasConversationChangedSubscription.Data> dataResponse) {
                                 if (!dataResponse.hasErrors()) {
-                                    if (dataResponse.data() != null && dataResponse.data().conversationChanged().type().equals("closed")) {
+                                    if (dataResponse.getData() != null && dataResponse.getData().conversationChanged().type().equals("closed")) {
                                         if (config.messengerdata.isForceLogoutWhenResolve()) {
                                             config.Logout(ConversationListActivity.this);
                                         } else {
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(dataResponse.data().conversationChanged().conversationId())) {
-                                                    config.conversations.get(i).status = dataResponse.data().conversationChanged().type();
+                                                if (config.conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
+                                                    config.conversations.get(i).status = dataResponse.getData().conversationChanged().type();
                                                     config.conversations.remove(i);
                                                     erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
                                                     break;

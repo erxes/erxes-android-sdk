@@ -12,7 +12,7 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.saas.SaasConversationMessageInsertedSubscription;
 import com.erxes.io.saas.type.CustomType;
@@ -23,10 +23,10 @@ import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
 
 public class SaasListenerService extends Service {
@@ -133,7 +133,7 @@ public class SaasListenerService extends Service {
                 .subscribe(SaasConversationMessageInsertedSubscription.builder()
                         .id(conversationId)
                         .build());
-        disposables.add(Rx2Apollo.from(subscriptionCall)
+        disposables.add(Rx3Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(
@@ -156,7 +156,7 @@ public class SaasListenerService extends Service {
                                     if (response.data().conversationMessageInserted() != null) {
                                         DataManager dataManager = DataManager.getInstance(SaasListenerService.this);
                                         if (dataManager.getDataB("chatIsGoing")) {
-                                            ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.data().conversationMessageInserted());
+                                            ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.getData().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
                                                 if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
                                                         && !conversationMessage.internal
@@ -168,8 +168,8 @@ public class SaasListenerService extends Service {
 
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().conversationId())) {
-                                                    config.conversations.get(i).content = response.data().conversationMessageInserted().content();
+                                                if (config.conversations.get(i).id.equals(response.getData().conversationMessageInserted().conversationId())) {
+                                                    config.conversations.get(i).content = response.getData().conversationMessageInserted().content();
                                                     config.conversations.get(i).isread = false;
                                                 }
                                             }

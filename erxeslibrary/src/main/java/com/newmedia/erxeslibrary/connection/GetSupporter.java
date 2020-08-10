@@ -3,20 +3,20 @@ package com.newmedia.erxeslibrary.connection;
 import android.content.Context;
 
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsMessengerSupportersQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.User;
 
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetSupporter {
-    final static String TAG = "GETSUP";
+    final static String TAG = "GetSupporter";
     private ErxesRequest erxesRequest;
     private Config config;
 
@@ -28,9 +28,8 @@ public class GetSupporter {
     public void run() {
         WidgetsMessengerSupportersQuery query = WidgetsMessengerSupportersQuery.builder()
                 .integ(config.integrationId).build();
-        Rx2Apollo.from(erxesRequest.apolloClient
-                .query(query)
-        )
+        Rx3Apollo.from(erxesRequest.apolloClient
+                .query(query))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Response<WidgetsMessengerSupportersQuery.Data>>() {
@@ -45,11 +44,12 @@ public class GetSupporter {
                             if (config.supporters != null && config.supporters.size() > 0)
                                 config.supporters.clear();
                             if (config.supporters != null) {
-                                config.supporters.addAll(User.convert(response.data().widgetsMessengerSupporters()));
+                                config.supporters.addAll(User.convert(response.getData().widgetsMessengerSupporters().supporters()));
                             }
                             erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null);
                         } else {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.errors().get(0).message());
+                            if (response.getErrors() != null)
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
                         }
                     }
 

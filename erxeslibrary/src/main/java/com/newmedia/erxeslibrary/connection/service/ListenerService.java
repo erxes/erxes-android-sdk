@@ -12,7 +12,7 @@ import android.util.Log;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
-import com.apollographql.apollo.rx2.Rx2Apollo;
+import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.opens.ConversationMessageInsertedSubscription;
 import com.erxes.io.opens.type.CustomType;
@@ -23,10 +23,10 @@ import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
+import io.reactivex.rxjava3.subscribers.DisposableSubscriber;
 import okhttp3.OkHttpClient;
 
 public class ListenerService extends Service {
@@ -132,7 +132,7 @@ public class ListenerService extends Service {
                 .subscribe(ConversationMessageInsertedSubscription.builder()
                         .id(conversationId)
                         .build());
-        disposables.add(Rx2Apollo.from(subscriptionCall)
+        disposables.add(Rx3Apollo.from(subscriptionCall)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(
@@ -152,10 +152,10 @@ public class ListenerService extends Service {
                             @Override
                             public void onNext(Response<ConversationMessageInsertedSubscription.Data> response) {
                                 if (!response.hasErrors()) {
-                                    if (response.data().conversationMessageInserted() != null) {
+                                    if (response.getData().conversationMessageInserted() != null) {
                                         DataManager dataManager = DataManager.getInstance(ListenerService.this);
                                         if (dataManager.getDataB("chatIsGoing")) {
-                                            ConversationMessage conversationMessage = ConversationMessage.convert(response.data().conversationMessageInserted());
+                                            ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().conversationMessageInserted());
                                             if (config.conversationMessages.size() > 0) {
                                                 if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
                                                         && !conversationMessage.internal
@@ -166,8 +166,8 @@ public class ListenerService extends Service {
                                             }
 
                                             for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(response.data().conversationMessageInserted().fragments().messageFragment().conversationId())) {
-                                                    config.conversations.get(i).content = response.data().conversationMessageInserted().fragments().messageFragment().content();
+                                                if (config.conversations.get(i).id.equals(response.getData().conversationMessageInserted().fragments().messageFragment().conversationId())) {
+                                                    config.conversations.get(i).content = response.getData().conversationMessageInserted().fragments().messageFragment().content();
                                                     config.conversations.get(i).isread = false;
                                                 }
                                             }
