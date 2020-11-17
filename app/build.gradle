@@ -37,10 +37,9 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
 
     implementation project(':erxeslibrary')
-//    implementation (name: 'erxeslibrary-release', ext:'aar')
 
 }
