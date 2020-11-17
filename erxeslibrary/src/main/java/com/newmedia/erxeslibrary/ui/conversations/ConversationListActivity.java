@@ -85,8 +85,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private ImageView cancelImageView;
     private LinearLayout tabsContainer;
     private Intent intent;
-    private List<String> disposabledChanged = new ArrayList<>();
-    private CompositeDisposable disposablesChanged = new CompositeDisposable();
+    private final List<String> disposabledChanged = new ArrayList<>();
+    private final CompositeDisposable disposablesChanged = new CompositeDisposable();
     private ApolloSubscriptionCall<ConversationChangedSubscription.Data> opensourceChangedCall;
     private ApolloSubscriptionCall<SaasConversationChangedSubscription.Data> saasChangedCall;
     public List<Conversation> conversations = new ArrayList<>();

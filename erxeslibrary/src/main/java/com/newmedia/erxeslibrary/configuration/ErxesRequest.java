@@ -42,9 +42,9 @@ import okhttp3.logging.HttpLoggingInterceptor;
 public final class ErxesRequest {
     public ApolloClient apolloClient;
     private OkHttpClient.Builder okHttpClientBuilder;
-    private Context context;
+    private final Context context;
     private List<ErxesObserver> observers;
-    private Config config;
+    private final Config config;
 
     private static ErxesRequest erxesRequest;
 

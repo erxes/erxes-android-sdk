@@ -20,8 +20,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetConversationDetail {
     final static String TAG = "GetConversationDetail";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public GetConversationDetail(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

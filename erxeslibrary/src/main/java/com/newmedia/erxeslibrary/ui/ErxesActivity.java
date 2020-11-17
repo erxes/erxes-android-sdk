@@ -229,7 +229,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     }
 
-    private View.OnClickListener touchListener = new View.OnClickListener() {
+    private final View.OnClickListener touchListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.cancelImageView)

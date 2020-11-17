@@ -24,9 +24,9 @@ import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
-    private Context context;
+    private final Context context;
     public List<Conversation> conversationList;
-    private Config config;
+    private final Config config;
 
     public ConversationListAdapter(Context context, List<Conversation> conversationList) {
         this.context = context;
@@ -42,7 +42,7 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
         return new ConversationHolder(view);
     }
 
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
             Intent a = new Intent(context, MessageActivity.class);

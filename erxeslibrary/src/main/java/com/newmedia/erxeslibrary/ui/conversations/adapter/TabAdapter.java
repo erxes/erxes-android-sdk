@@ -13,9 +13,9 @@ import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 
 public class TabAdapter extends FragmentPagerAdapter {
-    private ConversationListActivity context;
-    private SupportFragment supportFragment = new SupportFragment();
-    private FaqFragment faqFragment = new FaqFragment();
+    private final ConversationListActivity context;
+    private final SupportFragment supportFragment = new SupportFragment();
+    private final FaqFragment faqFragment = new FaqFragment();
 
     public TabAdapter(FragmentManager fm, ConversationListActivity context) {
         super(fm);

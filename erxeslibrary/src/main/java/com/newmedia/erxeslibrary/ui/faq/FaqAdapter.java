@@ -25,9 +25,9 @@ import java.util.List;
 public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
 
     private KnowledgeBaseTopic knowledgeBaseTopic;
-    private List<KnowledgeBaseCategory> categories = new ArrayList<>();
-    private Activity context;
-    private Config config;
+    private final List<KnowledgeBaseCategory> categories = new ArrayList<>();
+    private final Activity context;
+    private final Config config;
     private int selectedPosition = -1;
 
     public FaqAdapter(Activity context) {
@@ -69,7 +69,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
         return categories != null ? categories.size() : 0;
     }
 
-    private View.OnClickListener clickListener = new View.OnClickListener() {
+    private final View.OnClickListener clickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
@@ -88,7 +88,7 @@ public class FaqAdapter extends RecyclerView.Adapter<FaqAdapter.Holder> {
             }
         }
     };
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent a = new Intent(context, FaqActivity.class);

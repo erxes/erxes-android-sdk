@@ -35,7 +35,7 @@ public class SaasListenerService extends Service {
     private static final String TAG = SaasListenerService.class.getName();
     private ApolloClient apolloClient;
     private ErxesRequest erxesRequest;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     Config config;
 
     @Nullable

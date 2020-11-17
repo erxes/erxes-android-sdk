@@ -33,10 +33,10 @@ public class FileAdapter extends RecyclerView.Adapter {
 
     private final int imageItem = 0;
     private final int fileItem = 1;
-    private GenericDraweeHierarchyBuilder builder;
-    private Activity activity;
-    private List<FileAttachment> fileAttachments;
-    private Config config;
+    private final GenericDraweeHierarchyBuilder builder;
+    private final Activity activity;
+    private final List<FileAttachment> fileAttachments;
+    private final Config config;
 
     FileAdapter(Activity activity, List<FileAttachment> fileAttachments) {
         this.activity = activity;
@@ -108,7 +108,7 @@ public class FileAdapter extends RecyclerView.Adapter {
 
     class OtherViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageView;
+        private final ImageView imageView;
 
         OtherViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -139,7 +139,7 @@ public class FileAdapter extends RecyclerView.Adapter {
 
     class ImageViewHolder extends RecyclerView.ViewHolder {
 
-        private DraweeView imageView;
+        private final DraweeView imageView;
 
         ImageViewHolder(@NonNull View itemView) {
             super(itemView);

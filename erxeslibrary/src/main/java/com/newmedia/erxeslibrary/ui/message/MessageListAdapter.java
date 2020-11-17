@@ -36,9 +36,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private final int VIEW_SENT = 0;
     private final int VIEW_RECIEVED = 1;
     private final int VIEW_WELCOME = 2;
-    private List<ConversationMessage> mMessageList;
-    private MessageActivity activity;
-    private Config config;
+    private final List<ConversationMessage> mMessageList;
+    private final MessageActivity activity;
+    private final Config config;
 
     MessageListAdapter(MessageActivity activity, List<ConversationMessage> mMessageList) {
         this.activity = activity;

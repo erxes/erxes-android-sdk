@@ -18,8 +18,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetSupporter {
     final static String TAG = "GetSupporter";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public GetSupporter(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

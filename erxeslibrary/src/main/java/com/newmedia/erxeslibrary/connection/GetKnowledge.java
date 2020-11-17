@@ -17,8 +17,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetKnowledge {
     final static String TAG = "GetKnowledge";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public GetKnowledge(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

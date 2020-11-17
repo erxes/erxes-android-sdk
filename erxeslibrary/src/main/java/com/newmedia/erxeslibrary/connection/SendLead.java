@@ -20,8 +20,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SendLead {
     final static String TAG = "SendLead";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public SendLead(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

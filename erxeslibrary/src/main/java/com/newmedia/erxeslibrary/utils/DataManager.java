@@ -16,8 +16,8 @@ public final class DataManager {
 
     private static DataManager dataManager;
 
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
+    private final SharedPreferences pref;
+    private final SharedPreferences.Editor editor;
 
     private static final String PREFER_NAME = "ERXES_LIB";
     public static final String EMAIL = "rxx_email";

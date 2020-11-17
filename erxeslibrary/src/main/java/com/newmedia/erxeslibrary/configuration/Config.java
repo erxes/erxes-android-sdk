@@ -65,7 +65,7 @@ public class Config {
     public int colorCode, textColorCode;
     public String conversationId = null;
     public String brandCode;
-    private boolean isMessengerOnline = false;
+    private final boolean isMessengerOnline = false;
     public boolean showVideoCallRequest = false;
     private DataManager dataManager;
     private Activity activityConfig;
@@ -402,7 +402,7 @@ public class Config {
     }
 
     public static class Builder {
-        private String brand;
+        private final String brand;
         private String apiHost;
         private String subscriptionHost;
         private String uploadHost;

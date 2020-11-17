@@ -16,8 +16,8 @@ import java.io.InputStream;
 public class FileInfo {
     public String filepath = null,name,type,attachments;
     public Double size;
-    private Uri returnUri;
-    private Context context;
+    private final Uri returnUri;
+    private final Context context;
     public FileInfo(Context context, Uri returnUri) {
         this.context = context;
         this.returnUri = returnUri;

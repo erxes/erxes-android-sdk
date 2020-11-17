@@ -23,9 +23,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class SetConnect {
     final static String TAG = "SETCONNECT";
-    private ErxesRequest erxesRequest;
-    private Config config;
-    private DataManager dataManager;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
+    private final DataManager dataManager;
     private String customData;
 
     public SetConnect(ErxesRequest erxesRequest, Context context) {

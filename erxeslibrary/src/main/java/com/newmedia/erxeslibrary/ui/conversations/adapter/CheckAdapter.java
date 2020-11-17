@@ -17,10 +17,10 @@ import java.util.List;
 
 public class CheckAdapter extends RecyclerView.Adapter<CheckAdapter.ViewHolder> {
 
-    private List<String> options;
-    private SupportFragment supportFragment;
-    private int parentPosition;
-    private RecyclerView checkList;
+    private final List<String> options;
+    private final SupportFragment supportFragment;
+    private final int parentPosition;
+    private final RecyclerView checkList;
 
     public CheckAdapter(SupportFragment supportFragment, List<String> options, int parentPosition, RecyclerView checkList) {
         this.checkList = checkList;

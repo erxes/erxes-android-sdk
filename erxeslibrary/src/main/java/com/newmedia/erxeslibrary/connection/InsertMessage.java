@@ -23,9 +23,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class InsertMessage {
     final static String TAG = "InsertMessage";
-    private ErxesRequest erxesRequest;
-    private Config config;
-    private Context context;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
+    private final Context context;
 
     public InsertMessage(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

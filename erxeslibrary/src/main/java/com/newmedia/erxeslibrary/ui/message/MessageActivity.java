@@ -65,8 +65,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private MessageListAdapter messageListAdapter;
     private SoftKeyboard softKeyboard;
     private RelativeLayout profile2Layout, profile1Layout;
-    private List<ConversationMessage> conversationMessages = new ArrayList<>();
-    private List<User> participatedUsers = new ArrayList<>();
+    private final List<ConversationMessage> conversationMessages = new ArrayList<>();
+    private final List<User> participatedUsers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

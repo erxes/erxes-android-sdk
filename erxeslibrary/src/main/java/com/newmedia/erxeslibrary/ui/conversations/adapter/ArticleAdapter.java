@@ -24,11 +24,11 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
 
     private List<KnowledgeBaseArticle> articles = new ArrayList<>();
-    private Activity context;
-    private Config config;
-    private String categoryId;
+    private final Activity context;
+    private final Config config;
+    private final String categoryId;
 
-    private View.OnClickListener onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent a = new Intent(context, FaqDetailActivity.class);

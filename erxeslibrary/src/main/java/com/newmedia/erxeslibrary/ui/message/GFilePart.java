@@ -41,12 +41,14 @@ public class GFilePart implements ProgressRequestBody.Listener {
     static final String TAG = GFilePart.class.getName();
     private File file;
     private FileInfo fileInfo;
-    private Config config;
-    private MessageActivity messageActivity;
-    private ProgressBar progressBar;
-    private ViewGroup container,filelist, buttonChatboxSend;
-    private CircularProgressDrawable senddrawable;
-    private List<AttachmentInput> uploadJsons = new ArrayList<>();
+    private final Config config;
+    private final MessageActivity messageActivity;
+    private final ProgressBar progressBar;
+    private final ViewGroup container;
+    private final ViewGroup filelist;
+    private final ViewGroup buttonChatboxSend;
+    private final CircularProgressDrawable senddrawable;
+    private final List<AttachmentInput> uploadJsons = new ArrayList<>();
 
     GFilePart(Config config, MessageActivity messageActivity) {
         this.messageActivity = messageActivity;
@@ -161,7 +163,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
             }
         });
     }
-    private View.OnClickListener removeFun = new View.OnClickListener() {
+    private final View.OnClickListener removeFun = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 

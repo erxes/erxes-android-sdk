@@ -59,7 +59,7 @@ public class FaqActivity extends AppCompatActivity {
         InputMethodManager im = (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE);
 
         SoftKeyboard softKeyboard;
-        softKeyboard = new SoftKeyboard((ViewGroup)this.findViewById(R.id.linearlayout), im);
+        softKeyboard = new SoftKeyboard(this.findViewById(R.id.linearlayout), im);
         softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
             @Override
             public void onSoftKeyboardHide() {

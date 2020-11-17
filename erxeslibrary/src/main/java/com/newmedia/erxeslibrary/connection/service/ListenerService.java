@@ -34,7 +34,7 @@ public class ListenerService extends Service {
     private static final String TAG = ListenerService.class.getName();
     private ApolloClient apolloClient;
     private ErxesRequest erxesRequest;
-    private CompositeDisposable disposables = new CompositeDisposable();
+    private final CompositeDisposable disposables = new CompositeDisposable();
     Config config;
 
     @Nullable

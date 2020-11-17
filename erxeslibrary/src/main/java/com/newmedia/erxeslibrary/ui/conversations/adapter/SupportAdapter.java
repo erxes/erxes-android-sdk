@@ -20,9 +20,9 @@ import java.util.List;
 
 public class SupportAdapter extends RecyclerView.Adapter<SupportAdapter.Holder> {
 
-    private Config config;
-    private List<User> list;
-    private Context context;
+    private final Config config;
+    private final List<User> list;
+    private final Context context;
 
     public SupportAdapter(Activity context, Config config) {
         this.context = context;

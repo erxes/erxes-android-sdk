@@ -19,8 +19,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class GetMessage {
     final static String TAG = "GetMessage";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public GetMessage(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;

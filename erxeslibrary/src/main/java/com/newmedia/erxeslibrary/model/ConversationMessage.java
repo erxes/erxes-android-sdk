@@ -39,7 +39,7 @@ public class ConversationMessage {
     public String vCallStatus;
     public boolean internal = false;
     public List<FileAttachment> attachments = new ArrayList<>();
-    private static SimpleDateFormat simpleDateFormat =
+    private static final SimpleDateFormat simpleDateFormat =
             new SimpleDateFormat("h:mm a");
 
     public static List<ConversationMessage> convert(Response<WidgetsMessagesQuery.Data> response, String conversationId) {

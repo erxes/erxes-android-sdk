@@ -19,8 +19,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class GetLead {
 
     final static String TAG = "GetLead";
-    private ErxesRequest erxesRequest;
-    private Config config;
+    private final ErxesRequest erxesRequest;
+    private final Config config;
 
     public GetLead(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
