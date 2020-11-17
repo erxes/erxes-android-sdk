@@ -41,16 +41,16 @@ public class GetKnowledge {
                         public void onNext(Response<KnowledgeBaseTopicDetailQuery.Data> response) {
                             if (!response.hasErrors()) {
                                 config.knowledgeBaseTopic = KnowledgeBaseTopic.convert(response.getData());
-                                erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null);
+                                erxesRequest.notefyAll(ReturntypeUtil.FAQ, null, null,null);
                             } else {
-                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
+                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage(),null);
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
-                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage(),null);
 
                         }
 

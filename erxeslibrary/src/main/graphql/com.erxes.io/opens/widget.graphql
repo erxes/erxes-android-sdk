@@ -11,7 +11,7 @@ mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: St
         }
     }
 }
-mutation widgetsInsertMessage($integrationId: String!,$customerId: String!,$message: String,$conversationId: String, $attachments: [AttachmentInput], $contentType: String){
+mutation widgetsInsertMessage($integrationId: String!, $customerId: String!, $message: String, $conversationId: String, $attachments: [AttachmentInput], $contentType: String){
     widgetsInsertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments, contentType : $contentType){
         ...MessageFragment
     }
@@ -25,8 +25,11 @@ query widgetsConversations($integrationId: String!,$customerId: String!){
         status
         content
         createdAt
-        messages {
-            ...MessageFragment
+        participatedUsers {
+            details {
+                avatar
+                fullName
+            }
         }
     }
 }
@@ -69,24 +72,28 @@ query widgetsMessages($conversationId: String){
 query widgetsConversationDetail($id: String, $integ : String!){
     widgetsConversationDetail(_id: $id, integrationId: $integ) {
         isOnline
-        supporters{
+        participatedUsers {
             _id
             details {
                 avatar
+                description
                 fullName
+                shortName
+                position
             }
         }
     }
 }
 query widgetsMessengerSupporters($integ : String!) {
     widgetsMessengerSupporters(integrationId: $integ) {
+        isOnline
+        serverTime
         supporters {
             _id
             details {
                 avatar
                 shortName
                 position
-                location
                 description
                 fullName
             }

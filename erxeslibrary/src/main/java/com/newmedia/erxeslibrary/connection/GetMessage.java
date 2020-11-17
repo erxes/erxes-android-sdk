@@ -7,8 +7,8 @@ import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.erxes.io.opens.WidgetsMessagesQuery;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import java.util.List;
 
@@ -43,23 +43,16 @@ public class GetMessage {
 
                     @Override
                     public void onNext(Response<WidgetsMessagesQuery.Data> response) {
-                        if (response.data().widgetsMessages().size() > 0) {
-                            if (config.conversationMessages.size() > 0)
-                                config.conversationMessages.clear();
+                        if (response.getData().widgetsMessages().size() > 0) {
                             List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);
-                            for (ConversationMessage message : conversationMessages) {
-                                if (!message.internal)
-                                    config.conversationMessages.add(message);
-                            }
-
-                            erxesRequest.notefyAll(ReturntypeUtil.GETMESSAGES, conversationid, null);
+                            erxesRequest.notefyAll(ReturntypeUtil.GETMESSAGES, conversationid, null, conversationMessages);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(), null);
 
                     }
 

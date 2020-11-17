@@ -32,10 +32,12 @@ public class FaqDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_faq_detail);
         config = Config.getInstance(this);
+        ErxesHelper.changeLanguage(this, config.language);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        setContentView(R.layout.activity_faq_detail);
+
         load_findViewByid();
     }
     private void load_findViewByid(){
@@ -86,7 +88,7 @@ public class FaqDetailActivity extends AppCompatActivity {
         });
 
         TextView general = this.findViewById(R.id.general);
-        general.setTextColor(config.getInColor(config.colorCode));
+        general.setTextColor(config.textColorCode);
         TextView articleHeader = this.findViewById(R.id.article_header);
         TextView date = this.findViewById(R.id.article_date);
         TextView content1 = this.findViewById(R.id.article_content1);
@@ -126,8 +128,8 @@ public class FaqDetailActivity extends AppCompatActivity {
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getBackIcon(this,config.getInColor(config.colorCode))).into(backImageView);
-        Glide.with(this).load(config.getLogoutIcon(this,config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getBackIcon(this,config.textColorCode)).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this,config.textColorCode)).into(cancelImageView);
     }
 
     public void logout(){

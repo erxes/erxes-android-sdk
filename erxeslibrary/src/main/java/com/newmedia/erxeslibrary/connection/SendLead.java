@@ -50,19 +50,19 @@ public class SendLead {
                     public void onNext(Response<WidgetsSaveLeadMutation.Data> response) {
                         if (!response.hasErrors()) {
                             if (response.data().widgetsSaveLead().status().equalsIgnoreCase("ok")) {
-                                erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.getData().widgetsSaveLead().status());
+                                erxesRequest.notefyAll(ReturntypeUtil.SAVEDLEAD, null, response.getData().widgetsSaveLead().status(),null);
                             } else {
-                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getData().widgetsSaveLead().status());
+                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getData().widgetsSaveLead().status(),null);
                             }
                         } else {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage(),null);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage(),null);
 
                     }
 

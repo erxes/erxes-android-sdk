@@ -25,6 +25,7 @@ public final class DataManager {
     public static final String INTEGRATIONID = "rxx_integrationId";
     public static final String CUSTOMERID = "rxx_customerId";
     public static final String COLOR = "rxx_color";
+    public static final String TEXTCOLOR = "rxx_textColor";
     public static final String LANGUAGE = "rxx_language";
     public static final String ISUSER = "rxx_isUser";
     public static final String CUSTOMDATA = "rxx_customData";

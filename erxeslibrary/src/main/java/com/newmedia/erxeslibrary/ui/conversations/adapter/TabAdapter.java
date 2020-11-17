@@ -7,15 +7,17 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.FaqFragment;
 import com.newmedia.erxeslibrary.ui.conversations.fragments.SupportFragment;
 
 public class TabAdapter extends FragmentPagerAdapter {
-    private Context context;
+    private ConversationListActivity context;
     private SupportFragment supportFragment = new SupportFragment();
     private FaqFragment faqFragment = new FaqFragment();
 
-    public TabAdapter(FragmentManager fm, Context context) {
+    public TabAdapter(FragmentManager fm, ConversationListActivity context) {
         super(fm);
         this.context = context;
     }
@@ -31,10 +33,10 @@ public class TabAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position){
-            case 0: return context.getResources().getString(R.string.Support);
-            case 1: return context.getResources().getString(R.string.Faq);
+            case 0: return ErxesHelper.getLocalizedResources(context,context.config.language).getString(R.string.Support);
+            case 1: return ErxesHelper.getLocalizedResources(context,context.config.language).getString(R.string.Faq);
             default:
-                return context.getResources().getString(R.string.Faq);
+                return ErxesHelper.getLocalizedResources(context,context.config.language).getString(R.string.Faq);
         }
     }
 

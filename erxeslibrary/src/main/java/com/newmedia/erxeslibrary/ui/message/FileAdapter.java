@@ -48,7 +48,7 @@ public class FileAdapter extends RecyclerView.Adapter {
 
         ProgressBarDrawable progressBarDrawable = new ProgressBarDrawable();
         progressBarDrawable.setColor(config.colorCode);
-        progressBarDrawable.setBackgroundColor(config.getInColor(config.colorCode));
+        progressBarDrawable.setBackgroundColor(config.textColorCode);
 
         progressBarDrawable
                 .setRadius(activity.getResources().getDimensionPixelSize(R.dimen.drawee_hierarchy_progress_radius));

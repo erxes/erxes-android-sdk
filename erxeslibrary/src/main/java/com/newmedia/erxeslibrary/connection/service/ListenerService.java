@@ -59,16 +59,12 @@ public class ListenerService extends Service {
                 .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("host3300"), okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                 .build();
-
-
-        Log.e(TAG, "oncreate");
     }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "destory");
     }
 
 
@@ -89,10 +85,10 @@ public class ListenerService extends Service {
                 id = bundle.getString("id", null);
         }
         if (id == null) {
-            if (disposables.size() != config.conversations.size()) {
+            if (disposables.size() != config.conversationIds.size()) {
                 disposables.clear();
-                for (int i = 0; i < config.conversations.size(); i++) {
-                    conversation_listen(config.conversations.get(i).id);
+                for (int i = 0; i < config.conversationIds.size(); i++) {
+                    conversation_listen(config.conversationIds.get(i));
                 }
             }
         } else {
@@ -156,21 +152,7 @@ public class ListenerService extends Service {
                                         DataManager dataManager = DataManager.getInstance(ListenerService.this);
                                         if (dataManager.getDataB("chatIsGoing")) {
                                             ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().conversationMessageInserted());
-                                            if (config.conversationMessages.size() > 0) {
-                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
-                                                        && !conversationMessage.internal
-                                                        && conversationMessage.user != null) {
-                                                    config.conversationMessages.add(conversationMessage);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
-                                                }
-                                            }
-
-                                            for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(response.getData().conversationMessageInserted().fragments().messageFragment().conversationId())) {
-                                                    config.conversations.get(i).content = response.getData().conversationMessageInserted().fragments().messageFragment().content();
-                                                    config.conversations.get(i).isread = false;
-                                                }
-                                            }
+                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null, conversationMessage);
                                         }
                                     }
                                 }
@@ -178,7 +160,6 @@ public class ListenerService extends Service {
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "onCompleteOpens");
                             }
                         }
                 )

@@ -2,16 +2,19 @@ package com.newmedia.erxeslibrary.helper;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
@@ -35,18 +38,28 @@ public class ErxesHelper {
     static public void load_uiOptions(Json js) {
         if (js == null)
             return;
-        String color;
+        String color, textColor;
         color = js.getString("color");
+        textColor = js.getString("textColor");
         dataManager.setData(DataManager.COLOR, color);
+        dataManager.setData(DataManager.TEXTCOLOR, textColor);
         if (color != null)
             config.colorCode = Color.parseColor(color);
         else {
             config.colorCode = Color.parseColor("#5629B6");
         }
+        if (textColor != null) {
+            try {
+                config.textColorCode = Color.parseColor(textColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+                config.textColorCode = config.getInColor(config.colorCode);
+            }
+        } else {
+            config.textColorCode = config.getInColor(config.colorCode);
+        }
         dataManager.setData("wallpaper", js.getString("wallpaper"));
-        dataManager.setData("videoCallUsageStatus", js.getBoolean("videoCallUsageStatus"));
         config.wallpaper = js.getString("wallpaper");
-        config.videoCallUsageStatus = js.getBoolean("videoCallUsageStatus");
     }
 
     public static void load_messengerData(Json js) {
@@ -79,10 +92,22 @@ public class ErxesHelper {
 
     public static void changeLanguage(Context context, String language) {
         if (!TextUtils.isEmpty(language)) {
-            Configuration config = new android.content.res.Configuration();
-            config.locale = new Locale(language);
+            Configuration config = new Configuration(context.getResources().getConfiguration());
+            config.setLocale(new Locale(language));
+
             context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
         }
+    }
+
+    public static Resources getLocalizedResources(Context context, String language) {
+        if (!TextUtils.isEmpty(language)) {
+            Configuration config = context.getResources().getConfiguration();
+            config = new Configuration(config);
+            config.setLocale(new Locale(language));
+            Context localizedContext = context.createConfigurationContext(config);
+            return localizedContext.getResources();
+        }
+        return context.getResources();
     }
 
     public static SimpleDateFormat sdf = new SimpleDateFormat(

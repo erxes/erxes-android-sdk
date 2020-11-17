@@ -30,12 +30,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:orientation="vertical"
-                android:paddingLeft="@dimen/main_margin"
                 android:paddingStart="@dimen/main_margin"
                 android:paddingTop="@dimen/main_margin_10_dec"
-                android:paddingRight="@dimen/main_margin_10_dec"
                 android:paddingEnd="@dimen/main_margin_10_dec"
-                android:paddingBottom="20dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintLeft_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +47,8 @@
                         android:id="@+id/date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_gravity="center_vertical"
+                        android:alpha=".7"
                         android:textSize="@dimen/header_small"/>
 
                     <View
@@ -121,7 +119,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
                     android:text="@string/Welcome"
                     android:textSize="@dimen/header_big"
                     android:textStyle="bold" />
@@ -131,7 +128,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
+                    android:textColor="@color/md_white_1000"
+                    android:alpha=".8"
                     android:text="@string/Welcome_description"
                     android:textSize="@dimen/header_small" />
             </LinearLayout>
@@ -140,10 +138,35 @@
                 android:id="@+id/supporters"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingVertical="@dimen/main_margin"
+                android:layout_marginLeft="@dimen/main_margin"
+                android:layout_marginRight="@dimen/main_margin"
+                app:layout_constraintTop_toBottomOf="@id/textGroup" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/main_margin"
                 android:layout_marginRight="@dimen/main_margin"
                 android:paddingBottom="@dimen/main_margin"
-                app:layout_constraintTop_toBottomOf="@id/textGroup" />
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/supporters">
+
+                <TextView
+                    android:id="@+id/serverTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="@dimen/header_small" />
+                <TextView
+                    android:id="@+id/timeZone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:textSize="@dimen/header_small" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.newmedia.erxeslibrary.helper.RoundedCornerLayout>
 

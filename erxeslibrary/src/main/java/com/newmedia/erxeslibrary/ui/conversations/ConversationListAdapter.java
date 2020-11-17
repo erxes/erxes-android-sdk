@@ -1,35 +1,36 @@
 package com.newmedia.erxeslibrary.ui.conversations;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.newmedia.erxeslibrary.configuration.Config;
-import com.newmedia.erxeslibrary.ui.message.MessageActivity;
-import com.newmedia.erxeslibrary.model.Conversation;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.R;
+import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 
 import java.util.List;
 
 public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHolder> {
-    private Activity activity;
+    private Context context;
     public List<Conversation> conversationList;
     private Config config;
 
-    public ConversationListAdapter(Activity activity, List<Conversation> conversationList) {
-        this.activity = activity;
-        config = Config.getInstance(activity);
+    public ConversationListAdapter(Context context, List<Conversation> conversationList) {
+        this.context = context;
+        config = Config.getInstance(context);
         this.conversationList = conversationList;
     }
 
@@ -44,15 +45,9 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
     private View.OnClickListener onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            Intent a = new Intent(activity, MessageActivity.class);
+            Intent a = new Intent(context, MessageActivity.class);
             config.conversationId = conversationList.get((int) view.getTag()).id;
-            if (config.conversationMessages != null && config.conversationMessages.size() > 0) {
-                config.conversationMessages.clear();
-            }
-            if (config.conversationMessages != null) {
-                config.conversationMessages.addAll(conversationList.get((int) view.getTag()).conversationMessages);
-            }
-            activity.startActivity(a);
+            context.startActivity(a);
         }
     };
 
@@ -74,35 +69,26 @@ public class ConversationListAdapter extends RecyclerView.Adapter<ConversationHo
             holder.content.setTypeface(holder.content.getTypeface(), Typeface.BOLD);
             holder.content.setTextColor(Color.BLACK);
         }
+        if (conversationList.get(position).participatedUsers.size() > 0) {
 
-        ConversationMessage message = null;
-        if (conversationList.get(position).conversationMessages.size() > 0) {
-            message = conversationList.get(position).conversationMessages
-                    .get(conversationList.get(position).conversationMessages.size() - 1);
-        }
-        if (message != null && message.user != null) {
-            String myString = message.user.getFullName();
-            String upperString = "Unknown";
-            if (myString != null)
-                upperString = myString.substring(0, 1).toUpperCase() + myString.substring(1);
-            holder.name.setText(upperString);
+            holder.name.setText(conversationList.get(position).participatedUsers.get(0).getFullName());
 
-            if (message.user.getAvatar() != null)
-                Glide.with(activity).load(message.user.getAvatar())
+            if (conversationList.get(position).participatedUsers.get(0).getAvatar() != null)
+                Glide.with(context).load(conversationList.get(position).participatedUsers.get(0).getAvatar())
                         .placeholder(R.drawable.avatar)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .circleCrop()
                         .into(holder.circleImageView);
             else
-                Glide.with(activity).load(R.drawable.avatar)
+                Glide.with(context).load(R.drawable.avatar)
                         .placeholder(R.drawable.avatar)
                         .into(holder.circleImageView);
 
-            holder.date.setText(message.createdAt);
+            holder.date.setText(conversationList.get(position).date);
             holder.parent.setTag(position);
         } else {
-            holder.name.setText(R.string.Support_staff);
-            Glide.with(activity).load(R.drawable.avatar)
+            holder.name.setText(ErxesHelper.getLocalizedResources(context,config.language).getString(R.string.Support_staff));
+            Glide.with(context).load(R.drawable.avatar)
                     .placeholder(R.drawable.avatar)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(holder.circleImageView);

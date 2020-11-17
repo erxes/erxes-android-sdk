@@ -63,7 +63,7 @@ public class SupportFragment extends Fragment {
     private ImageView addnewConversation;
     public RecyclerView recyclerView;
     private ViewGroup formFieldsLayout, parentLayout;
-    private Config config;
+    public Config config;
     private CardView getLeadCardView, getJoinLeadCardView;
     private TextView getTitleLead, getDescriptionLead, getTextJoinLead;
     public String[] values;
@@ -81,7 +81,7 @@ public class SupportFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        config = Config.getInstance(this.getActivity());
+        config = Config.getInstance(this.getContext());
     }
 
     @Override
@@ -103,9 +103,9 @@ public class SupportFragment extends Fragment {
             LinearLayout newConversationClick = v.findViewById(R.id.newConversationCLick);
             recyclerView = v.findViewById(R.id.chat_recycler_view);
             initIcon();
-            recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+            recyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-            ConversationListAdapter adapter = new ConversationListAdapter(this.getActivity(), config.conversations);
+            ConversationListAdapter adapter = new ConversationListAdapter(this.getContext(), ((ConversationListActivity)getActivity()).conversations);
             recyclerView.setAdapter(adapter);
             setLead();
 
@@ -113,15 +113,8 @@ public class SupportFragment extends Fragment {
                 start_new_conversation();
             }
 
-            newConversationClick.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    start_new_conversation();
-                }
-            });
-
+            newConversationClick.setOnClickListener(v1 -> start_new_conversation());
         }
-
         return v;
     }
 
@@ -266,7 +259,7 @@ public class SupportFragment extends Fragment {
                 tv.setTextSize(14);
                 if (values[pos] != null && values[pos].equalsIgnoreCase(tv.getText().toString())) {
                     tv.setBackgroundColor(config.colorCode);
-                    tv.setTextColor(config.getInColor(config.colorCode));
+                    tv.setTextColor(config.textColorCode);
                 } else {
                     tv.setBackgroundColor(Color.parseColor("#ffffff"));
                     tv.setTextColor(Color.parseColor("#000000"));
@@ -593,14 +586,16 @@ public class SupportFragment extends Fragment {
     }
 
     public void start_new_conversation() {
-        Intent a = new Intent(this.getActivity(), MessageActivity.class);
+        Intent a = new Intent(this.getContext(), MessageActivity.class);
         startActivity(a);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        softKeyboard.closeSoftKeyboard();
-        softKeyboard.unRegisterSoftKeyboardCallback();
+        if(softKeyboard != null) {
+            softKeyboard.closeSoftKeyboard();
+            softKeyboard.unRegisterSoftKeyboardCallback();
+        }
     }
 }

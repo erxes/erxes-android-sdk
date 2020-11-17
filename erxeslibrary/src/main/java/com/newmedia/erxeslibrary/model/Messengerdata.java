@@ -1,5 +1,7 @@
 package com.newmedia.erxeslibrary.model;
 
+import android.util.Log;
+
 import com.newmedia.erxeslibrary.helper.Json;
 
 import java.util.ArrayList;
@@ -7,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Messengerdata {
-    private boolean isOnline, requireAuth, showChat, showLauncher, forceLogoutWhenResolve;
-    private String timezone;
+    private boolean isOnline, requireAuth, showChat, showLauncher, forceLogoutWhenResolve, showVideoCallRequest = false;
+    private String timezone, serverTime;
     private List<String> supporterIds;
     private String knowledgeBaseTopicId;
     private String availabilityMethod;
@@ -21,6 +23,9 @@ public class Messengerdata {
         Map data = jsonObject.object;
         if (data.containsKey("isOnline") && data.get("isOnline") != null) {
             messengerdata.setOnline((Boolean) data.get("isOnline"));
+        }
+        if (data.containsKey("showVideoCallRequest") && data.get("showVideoCallRequest") != null) {
+            messengerdata.setShowVideoCallRequest((Boolean) data.get("showVideoCallRequest"));
         }
         if (data.containsKey("timezone"))
             messengerdata.setTimezone((String) data.get("timezone"));
@@ -275,5 +280,13 @@ public class Messengerdata {
 
     public void setMessages(Messages messages) {
         this.messages = messages;
+    }
+
+    public boolean isShowVideoCallRequest() {
+        return showVideoCallRequest;
+    }
+
+    public void setShowVideoCallRequest(boolean showVideoCallRequest) {
+        this.showVideoCallRequest = showVideoCallRequest;
     }
 }

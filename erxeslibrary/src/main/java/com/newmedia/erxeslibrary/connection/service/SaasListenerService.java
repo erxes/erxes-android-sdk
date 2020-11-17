@@ -6,8 +6,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.IBinder;
-import androidx.annotation.Nullable;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.ApolloSubscriptionCall;
@@ -60,16 +61,12 @@ public class SaasListenerService extends Service {
                 .subscriptionTransportFactory(new WebSocketSubscriptionTransport.Factory(dataManager.getDataS("host3300"), okHttpClient))
                 .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                 .build();
-
-
-        Log.e(TAG, "oncreate");
     }
 
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "destory");
     }
 
 
@@ -90,10 +87,10 @@ public class SaasListenerService extends Service {
                 id = bundle.getString("id", null);
         }
         if (id == null) {
-            if (disposables.size() != config.conversations.size()) {
+            if (disposables.size() != config.conversationIds.size()) {
                 disposables.clear();
-                for (int i = 0; i < config.conversations.size(); i++) {
-                    conversation_listen(config.conversations.get(i).id);
+                for (int i = 0; i < config.conversationIds.size(); i++) {
+                    conversation_listen(config.conversationIds.get(i));
                 }
             }
         } else {
@@ -107,16 +104,13 @@ public class SaasListenerService extends Service {
 
     private boolean run_thread(final String conversationId) {
         if (!isNetworkConnected()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Log.e(TAG, "subscribe thread running ");
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    conversation_listen(conversationId);
+            new Thread(() -> {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
                 }
+                conversation_listen(conversationId);
             }).start();
             return true;
         }
@@ -153,26 +147,11 @@ public class SaasListenerService extends Service {
                             @Override
                             public void onNext(Response<SaasConversationMessageInsertedSubscription.Data> response) {
                                 if (!response.hasErrors()) {
-                                    if (response.data().conversationMessageInserted() != null) {
+                                    if (response.getData().conversationMessageInserted() != null) {
                                         DataManager dataManager = DataManager.getInstance(SaasListenerService.this);
                                         if (dataManager.getDataB("chatIsGoing")) {
                                             ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.getData().conversationMessageInserted());
-                                            if (config.conversationMessages.size() > 0) {
-                                                if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id.equals(conversationMessage.id)
-                                                        && !conversationMessage.internal
-                                                        && conversationMessage.user != null) {
-                                                    config.conversationMessages.add(conversationMessage);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null);
-                                                }
-                                            }
-
-
-                                            for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(response.getData().conversationMessageInserted().conversationId())) {
-                                                    config.conversations.get(i).content = response.getData().conversationMessageInserted().content();
-                                                    config.conversations.get(i).isread = false;
-                                                }
-                                            }
+                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null, conversationMessage);
                                         }
                                     }
                                 }
@@ -180,7 +159,6 @@ public class SaasListenerService extends Service {
 
                             @Override
                             public void onComplete() {
-                                Log.e(TAG, "onCompleteSaas");
                             }
                         }
                 )

@@ -3,20 +3,23 @@ package com.newmedia.erxeslibrary.configuration;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
+import android.text.Html;
+import android.text.Spanned;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.EditText;
+import android.widget.TextView;
+
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
-import android.text.Html;
-import android.text.Spanned;
-import android.text.TextUtils;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.erxes.io.opens.type.FieldValueInput;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -59,11 +62,11 @@ public class Config {
     public String integrationId;
     public String language, wallpaper;
     public Messengerdata messengerdata;
-    public int colorCode;
+    public int colorCode, textColorCode;
     public String conversationId = null;
     public String brandCode;
     private boolean isMessengerOnline = false;
-    public boolean videoCallUsageStatus = false;
+    public boolean showVideoCallRequest = false;
     private DataManager dataManager;
     private Activity activityConfig;
     public Context context;
@@ -71,13 +74,14 @@ public class Config {
     private static Config config;
     public FormConnect formConnect = null;
     public List<FieldValueInput> fieldValueInputs = new ArrayList<>();
-    public String geoResponse;
     public KnowledgeBaseTopic knowledgeBaseTopic = null;
     public List<User> supporters = new ArrayList<>();
-    public List<Conversation> conversations = new ArrayList<>();
-    public List<ConversationMessage> conversationMessages = new ArrayList<>();
+    public List<String> conversationIds = new ArrayList<>();
+
     public boolean requireAuth = false;
     public Intent intent;
+    public boolean isOnline;
+    public String brandDescription, brandName, serverTime = "";
 
     private Config(Context context) {
         this.context = context;
@@ -171,6 +175,20 @@ public class Config {
 
     public String now() {
         Date date = new Date();
+        SimpleDateFormat format =
+                new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
+        SimpleDateFormat format2 =
+                new SimpleDateFormat("MMM dd, yyyy h:mm a");
+
+        if (this.language.equalsIgnoreCase("mn")) {
+            return format.format(date);
+        } else {
+            return format2.format(date);
+        }
+    }
+
+    public String now(long serverTime) {
+        Date date = new Date(serverTime);
         SimpleDateFormat format =
                 new SimpleDateFormat("yyyy оны MM сарын d, HH:mm");
         SimpleDateFormat format2 =
@@ -280,12 +298,21 @@ public class Config {
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);
         integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
         String color = dataManager.getDataS(DataManager.COLOR);
+        String textColor = dataManager.getDataS(DataManager.TEXTCOLOR);
         if (color != null)
             colorCode = Color.parseColor(color);
         else
             colorCode = Color.parseColor("#5629B6");
+        if (textColor != null) {
+            try {
+                textColorCode = Color.parseColor(textColor);
+            } catch (Exception e) {
+                e.printStackTrace();
+                textColorCode = getInColor(colorCode);
+            }
+        } else
+            textColorCode = getInColor(colorCode);
         wallpaper = dataManager.getDataS("wallpaper");
-        videoCallUsageStatus = dataManager.getDataB("videoCallUsageStatus");
         language = dataManager.getDataS(DataManager.LANGUAGE);
         changeLanguage(language);
 
@@ -361,20 +388,17 @@ public class Config {
         return isNetworkConnected() && isMessengerOnline;
     }
 
-    public void changeLanguage(String lang) {
-        if (lang == null || lang.equalsIgnoreCase(""))
+    public void changeLanguage(String language) {
+        if (language == null || language.equalsIgnoreCase(""))
             return;
 
-        this.language = lang.substring(0, 2);
+        this.language = language.substring(0, 2);
         dataManager.setData(DataManager.LANGUAGE, this.language);
 
-        Locale myLocale;
-        myLocale = new Locale(lang);
-        Locale.setDefault(myLocale);
-        android.content.res.Configuration config = new android.content.res.Configuration();
-        config.locale = myLocale;
-        context.getResources().updateConfiguration(config,
-                context.getResources().getDisplayMetrics());
+        Configuration config = new Configuration(context.getResources().getConfiguration());
+        config.setLocale(new Locale(language));
+
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
     }
 
     public static class Builder {

@@ -122,15 +122,15 @@ public class GFilePart implements ProgressRequestBody.Listener {
                             ImageView imageView = view.findViewById(R.id.remove);
                             ImageView icon = view.findViewById(R.id.image_input);
                             itemBackground.setBackgroundColor(config.colorCode);
-                            spaceView.setBackgroundColor(config.getInColor(config.colorCode));
-                            filename.setTextColor(config.getInColor(config.colorCode));
+                            spaceView.setBackgroundColor(config.textColorCode);
+                            filename.setTextColor(config.textColorCode);
                             icon.getDrawable()
                                     .setColorFilter(
-                                            config.getInColor(config.colorCode),
+                                            config.textColorCode,
                                             PorterDuff.Mode.SRC_ATOP
                                     );
                             Glide.with(config.context)
-                                    .load(config.getCancelIcon(config.getInColor(config.colorCode)))
+                                    .load(config.getCancelIcon(config.textColorCode))
                                     .into(imageView);
                             imageView.setTag(uploadJsons.get(uploadJsons.size()-1));
                             imageView.setOnClickListener(removeFun);
@@ -179,7 +179,7 @@ public class GFilePart implements ProgressRequestBody.Listener {
             return;
         }
         senddrawable.start();
-        buttonChatboxSend.setBackgroundDrawable(senddrawable);
+        buttonChatboxSend.setBackground(senddrawable);
         progressBar.setVisibility(View.VISIBLE);
         buttonChatboxSend.setClickable(false);
         test();

@@ -46,10 +46,8 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
                     android:background="?android:attr/actionBarItemBackground"
                     android:padding="10dp" />
 
@@ -95,19 +93,15 @@
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginStart="25dp"
-                        android:layout_marginLeft="25dp" />
+                        android:layout_marginStart="25dp"/>
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/smsgroup"
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
                         android:layout_alignStart="@id/strut"
-                        android:layout_alignLeft="@id/strut"
                         android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
                         android:layout_marginStart="@dimen/chooser_offset"
-                        android:layout_marginLeft="@dimen/chooser_offset"
                         android:layout_marginBottom="5dp"
                         android:onClick="sms_click"
                         app:cardCornerRadius="15dp">
@@ -123,7 +117,6 @@
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_marginEnd="10dp"
-                                android:layout_marginRight="10dp"
                                 android:padding="7dp" />
 
                             <TextView
@@ -141,9 +134,7 @@
                         android:layout_width="0dp"
                         android:layout_height="@dimen/chooser_height"
                         android:layout_alignEnd="@id/strut"
-                        android:layout_alignRight="@id/strut"
                         android:layout_alignParentStart="true"
-                        android:layout_alignParentLeft="true"
                         android:layout_marginBottom="5dp"
                         android:onClick="email_click"
                         app:cardBackgroundColor="#5629B6"
@@ -160,7 +151,6 @@
                                 android:layout_width="30dp"
                                 android:layout_height="30dp"
                                 android:layout_marginEnd="10dp"
-                                android:layout_marginRight="10dp"
                                 android:padding="7dp" />
 
                             <TextView
@@ -191,7 +181,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_toStartOf="@+id/loginclick"
-                            android:layout_toLeftOf="@+id/loginclick"
                             android:layout_centerVertical="true"
                             android:orientation="vertical">
 
@@ -214,7 +203,6 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="20dp"
-                                android:layout_marginLeft="20dp"
                                 android:background="@color/md_white_1000"
                                 android:hint="@string/phone_number"
                                 android:inputType="phone"
@@ -230,7 +218,6 @@
                             android:layout_width="60dp"
                             android:layout_height="48dp"
                             android:layout_alignParentEnd="true"
-                            android:layout_alignParentRight="true"
                             android:background="?android:attr/actionBarItemBackground"
                             android:onClick="Connect_click">
 
@@ -239,7 +226,6 @@
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_alignParentEnd="true"
-                                android:layout_alignParentRight="true"
                                 android:layout_centerVertical="true"
                                 android:layout_marginLeft="20dp"
                                 android:layout_marginRight="20dp" />

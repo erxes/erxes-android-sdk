@@ -1,17 +1,14 @@
 package com.newmedia.erxeslibrary.ui.message;
 
-import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Point;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import com.google.android.material.snackbar.Snackbar;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -24,21 +21,30 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.material.snackbar.Snackbar;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.helper.SoftKeyboard;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.User;
 import com.newmedia.erxeslibrary.utils.EnumUtil;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class MessageActivity extends AppCompatActivity implements ErxesObserver {
@@ -47,23 +53,28 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private RecyclerView mMessageRecycler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ImageView profile1, profile2, backImageView, logoutImageView, sendImageView, attachmentImageView, vCallImageView;
-    private TextView names, isOnline;
+    private TextView names, isOnline, description;
     private ViewGroup container, uploadGroup, messageContainer, parentLayout, vCallGroup;
     private Config config;
     private ErxesRequest erxesRequest;
     private Point size;
     private GFilePart gFilePart;
     private WebView mWebView;
+    private View activeView1, activeView2;
 
     private MessageListAdapter messageListAdapter;
     private SoftKeyboard softKeyboard;
+    private RelativeLayout profile2Layout, profile1Layout;
+    private List<ConversationMessage> conversationMessages = new ArrayList<>();
+    private List<User> participatedUsers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         config = Config.getInstance(this);
-        config.setActivityConfig(this);
         erxesRequest = ErxesRequest.getInstance(config);
+        ErxesHelper.changeLanguage(this, config.language);
+        config.setActivityConfig(this);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_messege);
@@ -90,9 +101,14 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         parentLayout = this.findViewById(R.id.linearlayout);
         mWebView = this.findViewById(R.id.webView);
         vCallGroup = this.findViewById(R.id.vCallGroup);
+        activeView1 = this.findViewById(R.id.activeView1);
+        activeView2 = this.findViewById(R.id.activeView2);
+        profile1Layout = this.findViewById(R.id.profile1Layout);
+        profile2Layout = this.findViewById(R.id.profile2Layout);
+        description = this.findViewById(R.id.description);
 
-        config.setCursorColor(edittextChatbox,config.colorCode);
-        if (config.videoCallUsageStatus) {
+        config.setCursorColor(edittextChatbox, config.colorCode);
+        if (config.messengerdata.isShowVideoCallRequest()) {
             vCallGroup.setVisibility(View.VISIBLE);
         }
 
@@ -100,41 +116,30 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
             @Override
             public void onSoftKeyboardHide() {
-                MessageActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        parentLayout.getLayoutParams().height = size.y * 8 / 10;
-                        parentLayout.requestLayout();
-                    }
+                MessageActivity.this.runOnUiThread(() -> {
+                    parentLayout.getLayoutParams().height = size.y * 8 / 10;
+                    parentLayout.requestLayout();
                 });
             }
 
             @Override
             public void onSoftKeyboardShow() {
-                MessageActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        parentLayout.getLayoutParams().height = WindowManager.LayoutParams.MATCH_PARENT;
-                        parentLayout.requestLayout();
-                    }
+                MessageActivity.this.runOnUiThread(() -> {
+                    parentLayout.getLayoutParams().height = WindowManager.LayoutParams.MATCH_PARENT;
+                    parentLayout.requestLayout();
                 });
             }
         });
 
         size = ErxesHelper.display_configure(this, parentLayout, "#00000000");
-        isOnline.setTextColor(config.getInColorGray(config.colorCode));
-        names.setTextColor(config.getInColor(config.colorCode));
+        isOnline.setTextColor(config.textColorCode);
+        names.setTextColor(config.textColorCode);
+        description.setTextColor(config.textColorCode);
         initIcon();
 
         this.findViewById(R.id.info_header).setBackgroundColor(config.colorCode);
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                refreshItems();
-            }
-
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::refreshItems);
 
         logoutImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,25 +162,17 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 index = 0;
             }
             if (index != 0 && index < 5) {
-                mMessageRecycler.setBackgroundDrawable(getResources().getDrawable(ErxesHelper.backgrounds[index - 1]));
+                mMessageRecycler.setBackground(getResources().getDrawable(ErxesHelper.backgrounds[index - 1]));
             }
         }
 
         mMessageRecycler.setLayoutManager(linearLayoutManager);
-        messageListAdapter = new MessageListAdapter(this, config.conversationMessages);
+        messageListAdapter = new MessageListAdapter(this, conversationMessages);
         mMessageRecycler.setAdapter(messageListAdapter);
         if (config.conversationId != null) {
             edittextChatbox.setHint(getResources().getString(R.string.Write_a_reply));
             linearLayoutManager.setStackFromEnd(true);
-            for (int i = 0; i < config.conversations.size(); i++) {
-                if (config.conversations.get(i).id.equals(config.conversationId)) {
-                    config.conversations.get(i).isread = true;
-                    break;
-                }
-            }
             erxesRequest.getMessages(config.conversationId);
-        } else {
-            config.conversationMessages.clear();
         }
 
         header_profile_change();
@@ -195,13 +192,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onPermissionRequest(PermissionRequest request) {
-                MessageActivity.this.runOnUiThread(new Runnable() {
-                    @TargetApi(Build.VERSION_CODES.M)
-                    @Override
-                    public void run() {
-                        request.grant(request.getResources());
-                    }
-                });
+                MessageActivity.this.runOnUiThread(() -> request.grant(request.getResources()));
             }
         });
 
@@ -209,30 +200,42 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
 
     @Override
-    public void notify(final int returnType, String conversationId, String message) {
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (returnType) {
-                    case ReturntypeUtil.COMINGNEWMESSAGE:
-                        if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome())) {
-                            messageListAdapter.notifyItemInserted(config.conversationMessages.size());
-                        } else {
-                            messageListAdapter.notifyItemInserted(config.conversationMessages.size() - 1);
+    public void notify(final int returnType, String conversationId, String message, Object object) {
+        this.runOnUiThread(() -> {
+            switch (returnType) {
+                case ReturntypeUtil.COMINGNEWMESSAGE:
+                    if (conversationMessages.size() > 0) {
+                        if (((ConversationMessage) object).user != null) {
+                            conversationMessages.add(((ConversationMessage) object));
+                            if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome())) {
+                                messageListAdapter.notifyItemInserted(conversationMessages.size());
+                            } else {
+                                messageListAdapter.notifyItemInserted(conversationMessages.size() - 1);
+                            }
+                            mMessageRecycler.smoothScrollToPosition(messageListAdapter.getItemCount() - 1);
+                            swipeRefreshLayout.setRefreshing(false);
                         }
-                        mMessageRecycler.smoothScrollToPosition(messageListAdapter.getItemCount() - 1);
-                        swipeRefreshLayout.setRefreshing(false);
-                        break;
-                    case ReturntypeUtil.GETMESSAGES:
+                    }
+                    break;
+                case ReturntypeUtil.GETMESSAGES:
+                    if (object instanceof List) {
+                        conversationMessages.clear();
+                        for (ConversationMessage conversationMessage : ((List<ConversationMessage>) object)) {
+                            if (!conversationMessage.internal)
+                                conversationMessages.add(conversationMessage);
+                        }
                         messageListAdapter.notifyDataSetChanged();
                         mMessageRecycler.smoothScrollToPosition(messageListAdapter.getItemCount() - 1);
                         swipeRefreshLayout.setRefreshing(false);
-                        break;
-                    case ReturntypeUtil.MUTATION:
+                    }
+                    break;
+                case ReturntypeUtil.MUTATION:
+                    if (object instanceof ConversationMessage) {
+                        conversationMessages.add((ConversationMessage) object);
                         if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome())) {
-                            messageListAdapter.notifyItemInserted(config.conversationMessages.size());
+                            messageListAdapter.notifyItemInserted(conversationMessages.size());
                         } else {
-                            messageListAdapter.notifyItemInserted(config.conversationMessages.size() - 1);
+                            messageListAdapter.notifyItemInserted(conversationMessages.size() - 1);
                         }
 
                         mMessageRecycler.smoothScrollToPosition(messageListAdapter.getItemCount() - 1);
@@ -241,19 +244,21 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                         gFilePart.end_of();
                         edittextChatbox.setText("");
                         edittextChatbox.setHint(getResources().getString(R.string.Write_a_reply));
-                        break;
-                    case ReturntypeUtil.SERVERERROR:
-                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                        break;
-                    case ReturntypeUtil.CONNECTIONFAILED:
-                        Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
-                        swipeRefreshLayout.setRefreshing(false);
-                        break;
-                    case ReturntypeUtil.GETSUPPORTERS:
-                        header_profile_change();
-                        break;
-                }
+                    }
+                    break;
+                case ReturntypeUtil.SERVERERROR:
+                    Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    break;
+                case ReturntypeUtil.CONNECTIONFAILED:
+                    Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                    break;
+                case ReturntypeUtil.GETCONVERSATIONDETAIL:
+                    participatedUsers.clear();
+                    participatedUsers.addAll(((List<User>) object));
+                    header_profile_change();
+                    break;
             }
         });
     }
@@ -261,12 +266,12 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     private void bind(User user, ImageView por) {
         por.setVisibility(View.VISIBLE);
         if (user.getAvatar() != null) {
-                Glide.with(MessageActivity.this)
-                        .load(user.getAvatar())
-                        .placeholder(R.drawable.avatar)
-                        .optionalCircleCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .into(por);
+            Glide.with(MessageActivity.this)
+                    .load(user.getAvatar())
+                    .placeholder(R.drawable.avatar)
+                    .optionalCircleCrop()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(por);
 
         } else {
             Glide.with(MessageActivity.this)
@@ -274,34 +279,50 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     .optionalCircleCrop()
                     .into(por);
         }
-
-        String t = user.getFullName();
-        String upperString = t.substring(0, 1).toUpperCase() + t.substring(1);
-        String previous = names.getText().toString();
-        names.setText(previous.length() == 0 ? upperString : previous + "," + upperString);
-        names.setVisibility(View.VISIBLE);
     }
 
     private void header_profile_change() {
-        if (config.supporters.size() > 0)
-            isOnline.setVisibility(View.VISIBLE);
-        else
-            names.setVisibility(View.INVISIBLE);
+        Drawable drawable = getDrawable(R.drawable.circle_inactive);
+        drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
+        profile1.setBackground(drawable);
+        profile2.setBackground(drawable);
+        Drawable activeDrawable = getDrawable(R.drawable.circle_active);
+        Drawable inactiveDrawable = getDrawable(R.drawable.circle_inactive);
+        activeView1.setBackground(config.isOnline ? activeDrawable : inactiveDrawable);
+        activeView2.setBackground(config.isOnline ? activeDrawable : inactiveDrawable);
 
-        names.setText("");
 
-        if (config.supporters.size() > 0) bind(config.supporters.get(0), profile1);
-        else profile1.setVisibility(View.INVISIBLE);
-        if (config.supporters.size() > 1) bind(config.supporters.get(1), profile2);
-        else profile2.setVisibility(View.INVISIBLE);
+        if (participatedUsers.size() > 0) {
+            bind(participatedUsers.get(0), profile1);
+            profile2Layout.setVisibility(View.GONE);
 
-        isOnline.setText(config.messengerdata.isOnline() ? R.string.Online : R.string.Offline);
+            String name;
+            if (!TextUtils.isEmpty(participatedUsers.get(0).getFullName())) {
+                name = participatedUsers.get(0).getFullName();
+            } else {
+                name = participatedUsers.get(0).getShortName();
+            }
+            names.setText(name);
+            isOnline.setText(participatedUsers.get(0).getPosition());
+            if (!TextUtils.isEmpty(participatedUsers.get(0).getDescription())) {
+                description.setVisibility(View.VISIBLE);
+                description.setText(participatedUsers.get(0).getDescription());
+            }
+        } else {
+            description.setVisibility(View.GONE);
+            if (config.supporters.size() > 0) bind(config.supporters.get(0), profile1);
+            else profile1Layout.setVisibility(View.GONE);
+            if (config.supporters.size() > 1) bind(config.supporters.get(1), profile2);
+            else profile2Layout.setVisibility(View.GONE);
+            names.setText(config.brandName);
+            isOnline.setText(config.brandDescription);
+        }
 
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getBackIcon(this, config.getInColor(config.colorCode))).into(backImageView);
-        Glide.with(this).load(config.getLogoutIcon(this, config.getInColor(config.colorCode))).into(logoutImageView);
+        Glide.with(this).load(config.getBackIcon(this, config.textColorCode)).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this, config.textColorCode)).into(logoutImageView);
         Glide.with(this).load(config.getsendIcon(this, 0)).into(sendImageView);
         Glide.with(this).load(config.getAttachmentIcon(this, 0)).into(attachmentImageView);
         Glide.with(this).load(config.getVCallIcon(this, 0)).into(vCallImageView);
@@ -333,10 +354,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        softKeyboard.closeSoftKeyboard();
-        softKeyboard.unRegisterSoftKeyboardCallback();
+        if (softKeyboard != null) {
+            softKeyboard.closeSoftKeyboard();
+            softKeyboard.unRegisterSoftKeyboardCallback();
+        }
         if (config.intent != null)
             stopService(config.intent);
+        participatedUsers.clear();
     }
 
     @Override
@@ -349,6 +373,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     protected void onResume() {
         super.onResume();
         erxesRequest.add(this);
+        erxesRequest.getConversationDetail();
         erxesRequest.getSupporters();
     }
 
@@ -360,7 +385,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         Intent chooseFile;
         Intent intent;
         chooseFile = new Intent(Intent.ACTION_PICK);
-//        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
+        chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
         chooseFile.setType("*/*");
         chooseFile.setAction(Intent.ACTION_GET_CONTENT);
         intent = Intent.createChooser(chooseFile, "Choose a file");
@@ -370,6 +395,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent resultData) {
+        super.onActivityResult(requestCode, resultCode, resultData);
         gFilePart.ActivityResult(requestCode, resultCode, resultData);
         uploadGroup.setClickable(true);
     }
@@ -391,7 +417,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
     @Override
     public void onBackPressed() {
-        if(mWebView.canGoBack()) {
+        if (mWebView.canGoBack()) {
             mWebView.goBack();
         } else {
             super.onBackPressed();

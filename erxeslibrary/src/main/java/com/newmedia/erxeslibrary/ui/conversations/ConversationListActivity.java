@@ -7,12 +7,6 @@ import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,12 +18,20 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.ColorUtils;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.apollographql.apollo.ApolloSubscriptionCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.bumptech.glide.Glide;
 import com.erxes.io.opens.ConversationChangedSubscription;
 import com.erxes.io.saas.SaasConversationChangedSubscription;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.tabs.TabLayout;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
@@ -39,6 +41,8 @@ import com.newmedia.erxeslibrary.helper.CustomViewPager;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.helper.FileInfo;
 import com.newmedia.erxeslibrary.helper.SoftKeyboard;
+import com.newmedia.erxeslibrary.model.Conversation;
+import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.ui.ErxesActivity;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.SupportAdapter;
 import com.newmedia.erxeslibrary.ui.conversations.adapter.TabAdapter;
@@ -71,7 +75,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     public static boolean chatIsGoing = false;
 
     private RecyclerView supporterView;
-    private TextView welcometext, date, title;
+    private TextView welcometext, date, title, timeZone, serverTime;
     private ViewGroup infoHeader, container, parentLayout;
     public Config config;
     private ErxesRequest erxesRequest;
@@ -85,14 +89,23 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     private CompositeDisposable disposablesChanged = new CompositeDisposable();
     private ApolloSubscriptionCall<ConversationChangedSubscription.Data> opensourceChangedCall;
     private ApolloSubscriptionCall<SaasConversationChangedSubscription.Data> saasChangedCall;
+    public List<Conversation> conversations = new ArrayList<>();
+    public Point size;
 
     @Override
-    public void notify(final int returnType, final String conversationId, final String message) {
+    public void notify(int returnType, String conversationId, String message, Object object) {
         this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 switch (returnType) {
                     case ReturntypeUtil.COMINGNEWMESSAGE:
+                        if (object instanceof ConversationMessage)
+                            for (int i = 0; i < conversations.size(); i++) {
+                                if (conversations.get(i).id.equals(((ConversationMessage) object).conversationId)) {
+                                    conversations.get(i).content = ((ConversationMessage) object).content;
+                                    conversations.get(i).isread = false;
+                                }
+                            }
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
@@ -100,12 +113,17 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         }
                         break;
                     case ReturntypeUtil.GETCONVERSATION:
+                        if (object instanceof List) {
+                            conversations.clear();
+                            conversations.addAll((List<Conversation>) object);
+                        }
+
                         if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
                                 .recyclerView != null) {
                             ((SupportFragment) tabAdapter.getItem(0))
                                     .recyclerView.getAdapter().notifyDataSetChanged();
                         }
-                        if (config.conversations.size() > 0) {
+                        if (conversations.size() > 0) {
                             initParentConversationChanged();
                         }
                         break;
@@ -137,8 +155,6 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         });
     }
 
-    public Point size;
-    private SoftKeyboard softKeyboard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +169,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         infoHeader = findViewById(R.id.info_header);
         container = findViewById(R.id.container);
         welcometext = findViewById(R.id.greetingMessage);
+        timeZone = findViewById(R.id.timeZone);
+        serverTime = findViewById(R.id.serverTime);
         title = findViewById(R.id.greetingTitle);
         date = findViewById(R.id.date);
         supporterView = findViewById(R.id.supporters);
@@ -163,12 +181,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         tabsContainer = findViewById(R.id.tabsContainer);
         cancelImageView = this.findViewById(R.id.cancelImageView);
         parentLayout = this.findViewById(R.id.linearlayout);
-        cancelImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        cancelImageView.setOnClickListener(v -> finish());
         initIcon();
 
         dataManager = DataManager.getInstance(this);
@@ -199,11 +212,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
             tabsContainer.setVisibility(View.VISIBLE);
         }
 
-        supporterView.setAdapter(new SupportAdapter(this, config.supporters));
+        supporterView.setAdapter(new SupportAdapter(this, config));
         LinearLayoutManager supManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         supporterView.setLayoutManager(supManager);
 
-        softKeyboard = new SoftKeyboard(parentLayout, (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE));
+        SoftKeyboard softKeyboard = new SoftKeyboard(parentLayout, (InputMethodManager) getSystemService(Service.INPUT_METHOD_SERVICE));
         softKeyboard.setSoftKeyboardCallback(new SoftKeyboard.SoftKeyboardChanged() {
             @Override
             public void onSoftKeyboardHide() {
@@ -230,9 +243,9 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         size = ErxesHelper.display_configure(this, parentLayout, "#66000000");
 
 
-        fb.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
-        tw.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
-        yt.getDrawable().setColorFilter(config.getInColorGray(config.colorCode), PorterDuff.Mode.SRC_ATOP);
+        fb.getDrawable().setColorFilter(ColorUtils.setAlphaComponent(config.textColorCode, 250), PorterDuff.Mode.SRC_ATOP);
+        tw.getDrawable().setColorFilter(ColorUtils.setAlphaComponent(config.textColorCode, 250), PorterDuff.Mode.SRC_ATOP);
+        yt.getDrawable().setColorFilter(ColorUtils.setAlphaComponent(config.textColorCode, 250), PorterDuff.Mode.SRC_ATOP);
         this.findViewById(R.id.fbcontainer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,14 +294,18 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getCancelIcon(config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getCancelIcon(config.textColorCode)).into(cancelImageView);
     }
 
     private void init() {
         date.setText(config.now());
-        date.setTextColor(config.getInColorGray(config.colorCode));
-        title.setTextColor(config.getInColor(config.colorCode));
-        welcometext.setTextColor(config.getInColorGray(config.colorCode));
+        date.setTextColor(config.textColorCode);
+        title.setTextColor(config.textColorCode);
+        welcometext.setTextColor(config.textColorCode);
+        timeZone.setTextColor(config.textColorCode);
+        timeZone.setText("Timezone: " + config.messengerdata.getTimezone());
+        serverTime.setTextColor(config.textColorCode);
+
         if (config.messengerdata.getMessages() != null && config.messengerdata.getMessages().getGreetings() != null) {
             if (!TextUtils.isEmpty(config.messengerdata.getMessages().getGreetings().getTitle()))
                 title.setText(config.messengerdata.getMessages().getGreetings().getTitle());
@@ -319,6 +336,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
         super.onResume();
         config = Config.getInstance(this);
         config.setActivityConfig(this);
+        serverTime.setText("Server time: " + config.serverTime);
         erxesRequest = ErxesRequest.getInstance(config);
         erxesRequest.add(this);
         if (dataManager.getDataS(DataManager.CUSTOMERID) == null) {
@@ -384,22 +402,22 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     }
 
     private void initConversationChanged() {
-        for (int i = 0; i < config.conversations.size(); i++) {
+        for (int i = 0; i < conversations.size(); i++) {
             if (disposabledChanged.size() > 0) {
                 boolean have = false;
                 for (int j = 0; j < disposabledChanged.size(); j++) {
-                    if (disposabledChanged.get(j).equals(config.conversations.get(i).id)) {
+                    if (disposabledChanged.get(j).equals(conversations.get(i).id)) {
                         have = true;
                         break;
                     }
                 }
                 if (!have) {
-                    disposabledChanged.add(config.conversations.get(i).id);
-                    clientChangedListen(config.conversations.get(i).id);
+                    disposabledChanged.add(conversations.get(i).id);
+                    clientChangedListen(conversations.get(i).id);
                 }
             } else {
-                disposabledChanged.add(config.conversations.get(i).id);
-                clientChangedListen(config.conversations.get(i).id);
+                disposabledChanged.add(conversations.get(i).id);
+                clientChangedListen(conversations.get(i).id);
             }
         }
     }
@@ -439,11 +457,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                                         if (config.messengerdata.isForceLogoutWhenResolve()) {
                                             config.Logout(ConversationListActivity.this);
                                         } else {
-                                            for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
-                                                    config.conversations.get(i).status = dataResponse.getData().conversationChanged().type();
-                                                    config.conversations.remove(i);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
+                                            for (int i = 0; i < conversations.size(); i++) {
+                                                if (conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
+                                                    conversations.get(i).status = dataResponse.getData().conversationChanged().type();
+                                                    conversations.remove(i);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null, null);
                                                     break;
                                                 }
                                             }
@@ -479,11 +497,11 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                                         if (config.messengerdata.isForceLogoutWhenResolve()) {
                                             config.Logout(ConversationListActivity.this);
                                         } else {
-                                            for (int i = 0; i < config.conversations.size(); i++) {
-                                                if (config.conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
-                                                    config.conversations.get(i).status = dataResponse.getData().conversationChanged().type();
-                                                    config.conversations.remove(i);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null);
+                                            for (int i = 0; i < conversations.size(); i++) {
+                                                if (conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
+                                                    conversations.get(i).status = dataResponse.getData().conversationChanged().type();
+                                                    conversations.remove(i);
+                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null, null);
                                                     break;
                                                 }
                                             }

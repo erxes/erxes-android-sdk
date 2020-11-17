@@ -6,23 +6,23 @@ import android.util.Log;
 
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
-
 import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.opens.type.CustomType;
-import com.newmedia.erxeslibrary.connection.GetKnowledge;
-import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
-import com.newmedia.erxeslibrary.utils.ErxesObserver;
-import com.newmedia.erxeslibrary.connection.GetIntegration;
-import com.newmedia.erxeslibrary.connection.GetLead;
-import com.newmedia.erxeslibrary.connection.GetSupporter;
+import com.newmedia.erxeslibrary.BuildConfig;
 import com.newmedia.erxeslibrary.connection.GetConversation;
+import com.newmedia.erxeslibrary.connection.GetConversationDetail;
+import com.newmedia.erxeslibrary.connection.GetIntegration;
+import com.newmedia.erxeslibrary.connection.GetKnowledge;
+import com.newmedia.erxeslibrary.connection.GetLead;
 import com.newmedia.erxeslibrary.connection.GetMessage;
+import com.newmedia.erxeslibrary.connection.GetSupporter;
 import com.newmedia.erxeslibrary.connection.InsertMessage;
 import com.newmedia.erxeslibrary.connection.SendLead;
 import com.newmedia.erxeslibrary.connection.SetConnect;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
+import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
-
+import com.newmedia.erxeslibrary.utils.ErxesObserver;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +37,7 @@ import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public final class ErxesRequest {
     public ApolloClient apolloClient;
@@ -75,15 +76,13 @@ public final class ErxesRequest {
     }
 
     private OkHttpClient getHttpClient() {
-//        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-//        logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
+        HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+        logging.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE);
 
         OkHttpClient.Builder client = new OkHttpClient.Builder()
-                .followRedirects(true)
-                .followSslRedirects(true)
-                .retryOnConnectionFailure(true)
-                .cache(null)
-//                .addInterceptor(logging)
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(15, TimeUnit.SECONDS)
                 .cookieJar(new CookieJar() {
                     @Override
                     public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -96,11 +95,8 @@ public final class ErxesRequest {
                         return cookies != null ? cookies : new ArrayList<>();
                     }
                 })
-                .connectTimeout(15, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .readTimeout(15, TimeUnit.SECONDS);
-
-        return enableTls12(client).build();
+                .addInterceptor(logging);
+        return client.build();
     }
 
     private OkHttpClient.Builder enableTls12(OkHttpClient.Builder client) {
@@ -174,6 +170,13 @@ public final class ErxesRequest {
         getSupporter.run();
     }
 
+    public void getConversationDetail() {
+        if (!config.isNetworkConnected())
+            return;
+        GetConversationDetail getConversationDetail = new GetConversationDetail(this, context);
+        getConversationDetail.run();
+    }
+
     public void getFAQ() {
         if (!config.isNetworkConnected()) {
             return;
@@ -211,10 +214,10 @@ public final class ErxesRequest {
         observers.clear();
     }
 
-    public void notefyAll(int returnType, String conversationId, String message) {
+    public void notefyAll(int returnType, String conversationId, String message, Object object) {
         if (observers == null) return;
         for (int i = 0; i < observers.size(); i++) {
-            observers.get(i).notify(returnType, conversationId, message);
+            observers.get(i).notify(returnType, conversationId, message, object);
         }
     }
 }

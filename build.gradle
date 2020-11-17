@@ -1,7 +1,4 @@
 buildscript {
-
-
-    
     repositories {
         google()
         jcenter()
@@ -11,11 +8,9 @@ buildscript {
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
-        classpath 'com.apollographql.apollo:apollo-gradle-plugin:2.2.3'
+        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.apollographql.apollo:apollo-gradle-plugin:2.4.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.1'
-//        classpath 'com.google.gms:google-services:4.3.3'
-
     }
 }
 
@@ -29,23 +24,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-//project.ext {
-//    if (project.hasProperty('preDexEnable')) {
-//        project.ext.preDexLibs = project.properties['preDexEnable'].equals('true')
-//    } else {
-//        project.ext.preDexLibs = true // pre dexing should be true by default
-//    }
-//    println('PREDEX ' + (project.ext.preDexLibs ? 'ENABLED' : 'DISABLED')) // goes to build log or console output
-//}
-
-//subprojects {
-//    project.configurations.all {
-//        resolutionStrategy.eachDependency { details ->
-//            if (details.requested.group == 'com.android.support'
-//                    && !details.requested.name.contains('multidex') ) {
-//                details.useVersion "28.0.0"
-//            }
-//        }
-//    }
-//}

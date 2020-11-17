@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -109,7 +113,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private class SentMessageHolder extends RecyclerView.ViewHolder {
         TextView messageText, timeText;
         RecyclerView fileRecyclerView;
-        LinearLayout textTypeLayout;
+        LinearLayout textTypeLayout, sendLayout;
         CardView vCallTypeLayout;
 
         SentMessageHolder(View itemView) {
@@ -119,9 +123,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
             textTypeLayout = itemView.findViewById(R.id.textType);
             vCallTypeLayout = itemView.findViewById(R.id.vCallType);
+            sendLayout = itemView.findViewById(R.id.sendLayout);
         }
 
         void bind(ConversationMessage message) {
+            Drawable drawable = activity.getDrawable(R.drawable.rounded_rectangle_blue);
+            drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
+            sendLayout.setBackground(drawable);
+
             if (message.contentType.equals(EnumUtil.TYPEVCALLREQUEST)) {
                 vCallTypeLayout.setVisibility(View.VISIBLE);
                 textTypeLayout.setVisibility(View.GONE);

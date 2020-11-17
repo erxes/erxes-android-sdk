@@ -17,5 +17,6 @@ public class ReturntypeUtil {
     public static final int FAQ = 11;
     public static final int SAVEDLEAD = 12;
     public static final int COMINGNEWMESSAGE = 13;
+    public static final int GETCONVERSATIONDETAIL = 14;
 
 }

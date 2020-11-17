@@ -42,7 +42,6 @@ public class ConversationMessage {
     private static SimpleDateFormat simpleDateFormat =
             new SimpleDateFormat("h:mm a");
 
-
     public static List<ConversationMessage> convert(Response<WidgetsMessagesQuery.Data> response, String conversationId) {
         List<WidgetsMessagesQuery.WidgetsMessage> data = response.getData().widgetsMessages();
         List<ConversationMessage> dataConverted = new ArrayList<>();

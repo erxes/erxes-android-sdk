@@ -32,9 +32,10 @@ public class FaqActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        config = Config.getInstance(this);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_faq);
-        config = Config.getInstance(this);
+
         config.setActivityConfig(this);
         load_findViewByid();
     }
@@ -98,11 +99,11 @@ public class FaqActivity extends AppCompatActivity {
         this.findViewById(R.id.backImageView).setOnClickListener(v -> finish());
         RecyclerView recyclerView = this.findViewById(R.id.recycler_view);
         TextView general = this.findViewById(R.id.general);
-        general.setTextColor(config.getInColor(config.colorCode));
+        general.setTextColor(config.textColorCode);
         TextView generalNumber = this.findViewById(R.id.general_number);
-        generalNumber.setTextColor(config.getInColorGray(config.colorCode));
+        generalNumber.setTextColor(config.textColorCode);
         TextView generalDescription = this.findViewById(R.id.general_description);
-        generalDescription.setTextColor(config.getInColorGray(config.colorCode));
+        generalDescription.setTextColor(config.textColorCode);
         String id = getIntent().getStringExtra("id");
         if( id != null) {
             KnowledgeBaseCategory knowledgeBaseCategory = null;
@@ -123,8 +124,8 @@ public class FaqActivity extends AppCompatActivity {
     }
 
     private void initIcon() {
-        Glide.with(this).load(config.getBackIcon(this,config.getInColor(config.colorCode))).into(backImageView);
-        Glide.with(this).load(config.getLogoutIcon(this,config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getBackIcon(this,config.textColorCode)).into(backImageView);
+        Glide.with(this).load(config.getLogoutIcon(this,config.textColorCode)).into(cancelImageView);
     }
 
     public void logout(){

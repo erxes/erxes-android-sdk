@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
@@ -32,7 +33,7 @@ public class InsertMessage {
         config = Config.getInstance(context);
     }
 
-    public void run(String mContent, final String conversationId, List<AttachmentInput> list, String type) {
+    public void run(String mContent, String conversationId, List<AttachmentInput> list, String type) {
         if (TextUtils.isEmpty(mContent) && list.size() > 0) {
             mContent = "This message has an attachment";
         }
@@ -59,25 +60,16 @@ public class InsertMessage {
                     @Override
                     public void onNext(Response<WidgetsInsertMessageMutation.Data> response) {
                         if (response.hasErrors()) {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.getErrors().get(0).getMessage());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.getErrors().get(0).getMessage(),null);
                         } else {
-                            if (response.data() != null) {
+                            if (response.getData() != null) {
                                 ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().widgetsInsertMessage(), finalMContent, config);
-                                if (conversationId != null) {
-                                    if (!config.conversationMessages.get(config.conversationMessages.size() - 1).id
-                                            .equals(conversationMessage.id) && !conversationMessage.internal) {
-                                        config.conversationMessages.add(conversationMessage);
-                                        erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null);
-                                    }
-                                } else {
-                                    Conversation conversation = Conversation.update(response.getData().widgetsInsertMessage(), finalMContent, config);
-                                    config.conversations.add(conversation);
-                                    config.conversationMessages.add(conversationMessage);
-
+                                if (conversationId == null) {
+                                    config.conversationId = conversationMessage.conversationId;
                                     config.intent.putExtra("id", config.conversationId);
                                     context.startService(config.intent);
-                                    erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null);
                                 }
+                                erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null, conversationMessage);
                             }
                         }
                     }
@@ -85,7 +77,7 @@ public class InsertMessage {
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(),null);
 
                     }
 

@@ -16,16 +16,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
             android:gravity="end"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/sendLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/rounded_rectangle_blue"
                 android:orientation="vertical">
 
                 <TextView
@@ -55,9 +53,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
             app:cardBackgroundColor="@color/vCallBlue"
             app:cardCornerRadius="5dp"
             app:cardElevation="2dp"
@@ -81,5 +77,5 @@
         android:layout_marginTop="3dp"
         android:gravity="end"
         android:textColor="@color/md_grey_600"
-        android:textSize="10sp" />
+        android:textSize="9sp" />
 </LinearLayout>

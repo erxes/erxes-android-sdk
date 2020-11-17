@@ -46,14 +46,14 @@ public class GetLead {
                         public void onNext(Response<WidgetsLeadConnectMutation.Data> response) {
                             if (!response.hasErrors()) {
                                 config.formConnect = FormConnect.convert(response);
-                                erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null);
+                                erxesRequest.notefyAll(ReturntypeUtil.LEAD, null, null,null);
                             }
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             e.printStackTrace();
-                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage());
+                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED,null,e.getMessage(),null);
                         }
 
                         @Override

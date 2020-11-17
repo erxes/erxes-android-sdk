@@ -72,18 +72,18 @@ public class SetConnect {
                             } else {
                                 if (config.messengerdata != null && config.messengerdata.isShowLauncher()) {
                                     prepareData(response);
-                                    erxesRequest.notefyAll(ReturntypeUtil.LOGINSUCCESS, null, null);
+                                    erxesRequest.notefyAll(ReturntypeUtil.LOGINSUCCESS, null, null,null);
                                 }
                             }
                         } else {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage());
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage(),null);
                         }
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         e.printStackTrace();
-                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage());
+                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(),null);
 
                     }
 
@@ -96,13 +96,17 @@ public class SetConnect {
 
 
     private void prepareData(Response<WidgetsMessengerConnectMutation.Data> response) {
-        config.customerId = response.data().widgetsMessengerConnect().customerId();
-        config.integrationId = response.data().widgetsMessengerConnect().integrationId();
+        config.customerId = response.getData().widgetsMessengerConnect().customerId();
+        config.integrationId = response.getData().widgetsMessengerConnect().integrationId();
+        if (response.getData().widgetsMessengerConnect().brand() != null) {
+            config.brandName = response.getData().widgetsMessengerConnect().brand().name();
+            config.brandDescription = response.getData().widgetsMessengerConnect().brand().description();
+        }
 
         dataManager.setData(DataManager.CUSTOMERID, config.customerId);
         dataManager.setData(DataManager.INTEGRATIONID, config.integrationId);
 
-        config.changeLanguage(response.data().widgetsMessengerConnect().languageCode());
-        ErxesHelper.load_uiOptions(response.data().widgetsMessengerConnect().uiOptions());
+        config.changeLanguage(response.getData().widgetsMessengerConnect().languageCode());
+        ErxesHelper.load_uiOptions(response.getData().widgetsMessengerConnect().uiOptions());
     }
 }

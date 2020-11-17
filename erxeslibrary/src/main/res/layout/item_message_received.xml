@@ -22,11 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
             android:layout_toEndOf="@+id/image_message_profile"
-            android:layout_toRightOf="@+id/image_message_profile"
             android:orientation="vertical">
 
             <LinearLayout
@@ -61,9 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
             android:layout_toEndOf="@+id/image_message_profile"
-            android:layout_toRightOf="@+id/image_message_profile"
             app:cardBackgroundColor="@color/vCallBlue"
             app:cardCornerRadius="5dp"
             app:cardElevation="2dp"
@@ -107,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:gravity="center"
-                    android:textSize="13sp"/>
+                    android:textSize="13sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -137,11 +132,18 @@
     </RelativeLayout>
 
 
-    <TextView
-        android:id="@+id/text_message_time"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:textColor="@color/md_grey_600"
-        android:textSize="10sp" />
+        android:layout_marginStart="8dp">
+
+        <TextView
+            android:id="@+id/text_message_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/image_size"
+            android:textColor="@color/md_grey_600"
+            android:textSize="9sp" />
+    </LinearLayout>
 </LinearLayout>

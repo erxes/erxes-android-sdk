@@ -1,5 +1,6 @@
 package com.newmedia.erxeslibrary.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
@@ -8,9 +9,11 @@ import androidx.cardview.widget.CardView;
 
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -63,7 +66,8 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         sendImageView = this.findViewById(R.id.sendImageView);
         cancelImageView = this.findViewById(R.id.cancelImageView);
         contact = this.findViewById(R.id.contact);
-        contact.setTextColor(config.getInColor(config.colorCode));
+
+        contact.setTextColor(config.textColorCode);
 
         config.setCursorColor(email,config.colorCode);
         config.setCursorColor(phone,config.colorCode);
@@ -92,7 +96,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     private void initIcon() {
         Glide.with(this).load(config.getsendIcon(this, 0)).into(sendImageView);
-        Glide.with(this).load(config.getCancelIcon(config.getInColor(config.colorCode))).into(cancelImageView);
+        Glide.with(this).load(config.getCancelIcon(config.textColorCode)).into(cancelImageView);
         Glide.with(this)
                 .load(config.getEmailIcon(this, getResources().getColor(R.color.md_white_1000)))
                 .into(mailImageView);
@@ -120,9 +124,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
         mailCardView.setCardBackgroundColor(config.colorCode);
         smsCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
-        emailButton.setTextColor(config.getInColor(config.colorCode));
+        emailButton.setTextColor(config.textColorCode);
         smsButton.setTextColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
-        changeEmailColor(config.getInColor(config.colorCode));
+        changeEmailColor(config.textColorCode);
         changePhoneColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
     }
 
@@ -132,9 +136,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
         smsCardView.setCardBackgroundColor(config.colorCode);
         mailCardView.setCardBackgroundColor(getResources().getColor(R.color.md_white_1000));
-        smsButton.setTextColor(config.getInColor(config.colorCode));
+        smsButton.setTextColor(config.textColorCode);
         emailButton.setTextColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
-        changePhoneColor(config.getInColor(config.colorCode));
+        changePhoneColor(config.textColorCode);
         changeEmailColor(config.getInColor(getResources().getColor(R.color.md_white_1000)));
     }
 
@@ -144,20 +148,34 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
     public void Connect_click(View v) {
         if (config.isNetworkConnected()) {
+            View view = this.getCurrentFocus();
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.PHONE, phone.getText().toString());
                     erxesRequest.setConnect( false, false, false, "", phone.getText().toString(), null);
+                    contact.setVisibility(View.GONE);
+                    loaderView.setVisibility(View.VISIBLE);
+
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                     phone.setError(null);
                 } else
-                    phone.setError(getResources().getString(R.string.Failed));
+                    phone.setError(ErxesHelper.getLocalizedResources(this,config.language).getString(R.string.Failed));
             } else {
                 if (config.isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.EMAIL, email.getText().toString());
                     erxesRequest.setConnect( false, false, false, email.getText().toString(), "", null);
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                    contact.setVisibility(View.GONE);
+                    loaderView.setVisibility(View.VISIBLE);
                 } else
-                    email.setError(getResources().getString(R.string.Failed));
+                    email.setError(ErxesHelper.getLocalizedResources(this,config.language).getString(R.string.Failed));
             }
         } else {
             Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
@@ -179,7 +197,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     }
 
     @Override
-    public void notify(final int returnType, String conversationId, final String message) {
+    public void notify(int returnType, String conversationId, String message, Object object) {
 
         this.runOnUiThread(new Runnable() {
             @Override
@@ -193,12 +211,14 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
 
                     case ReturntypeUtil.CONNECTIONFAILED:
                         Snackbar.make(container, R.string.Failed, Snackbar.LENGTH_SHORT).show();
-                        ErxesActivity.this.finish();
+                        contact.setVisibility(View.VISIBLE);
+                        loaderView.setVisibility(View.GONE);
                         break;
 
                     case ReturntypeUtil.SERVERERROR:
                         Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
-                        ErxesActivity.this.finish();
+                        contact.setVisibility(View.VISIBLE);
+                        loaderView.setVisibility(View.GONE);
                         break;
                     default:
                         break;
