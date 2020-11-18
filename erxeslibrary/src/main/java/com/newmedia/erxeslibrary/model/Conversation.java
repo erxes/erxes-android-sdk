@@ -64,25 +64,4 @@ public class Conversation {
         return dataConverted;
 
     }
-
-    static public Conversation update(WidgetsInsertMessageMutation.WidgetsInsertMessage insertMessage, String content, Config config) {
-        insertMessage.fragments().messageFragment().contentType();
-        config.conversationId = insertMessage.fragments().messageFragment().conversationId();
-        Conversation conversation = new Conversation();
-        conversation.id = config.conversationId;
-        conversation.content = content;
-        conversation.status = "open";
-        try {
-            Date date = ErxesHelper.sdf.parse(insertMessage.fragments().messageFragment().createdAt().toString());
-            conversation.date = outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            conversation.date = insertMessage.fragments().messageFragment().createdAt().toString();
-        }
-        conversation.customerId = config.customerId;
-        conversation.integrationId = config.integrationId;
-
-        return conversation;
-    }
-
 }

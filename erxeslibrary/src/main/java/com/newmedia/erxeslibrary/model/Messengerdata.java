@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Messengerdata {
-    private boolean isOnline, requireAuth, showChat, showLauncher, forceLogoutWhenResolve, showVideoCallRequest = false;
+    private boolean isOnline, requireAuth, showChat, showLauncher, forceLogoutWhenResolve, showVideoCallRequest = false,botShowInitialMessage;
     private String timezone, serverTime;
     private List<String> supporterIds;
     private String knowledgeBaseTopicId;
@@ -20,7 +20,7 @@ public class Messengerdata {
 
     public static Messengerdata convert(Json jsonObject, String languageCode) {
         Messengerdata messengerdata = new Messengerdata();
-        Map data = jsonObject.object;
+        Map data = (Map) jsonObject.object;
         if (data.containsKey("isOnline") && data.get("isOnline") != null) {
             messengerdata.setOnline((Boolean) data.get("isOnline"));
         }
@@ -40,6 +40,8 @@ public class Messengerdata {
             messengerdata.setShowLauncher((Boolean) data.get("showLauncher"));
         if (data.containsKey("forceLogoutWhenResolve"))
             messengerdata.setForceLogoutWhenResolve((Boolean) data.get("forceLogoutWhenResolve"));
+        if (data.containsKey("botShowInitialMessage"))
+            messengerdata.setBotShowInitialMessage((Boolean) data.get("botShowInitialMessage"));
 
         if (data.containsKey("knowledgeBaseTopicId"))
             messengerdata.setKnowledgeBaseTopicId((String) data.get("knowledgeBaseTopicId"));
@@ -288,5 +290,21 @@ public class Messengerdata {
 
     public void setShowVideoCallRequest(boolean showVideoCallRequest) {
         this.showVideoCallRequest = showVideoCallRequest;
+    }
+
+    public boolean isBotShowInitialMessage() {
+        return botShowInitialMessage;
+    }
+
+    public void setBotShowInitialMessage(boolean botShowInitialMessage) {
+        this.botShowInitialMessage = botShowInitialMessage;
+    }
+
+    public String getServerTime() {
+        return serverTime;
+    }
+
+    public void setServerTime(String serverTime) {
+        this.serverTime = serverTime;
     }
 }

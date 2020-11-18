@@ -320,21 +320,24 @@ public class Config {
 
     public CharSequence getHtml(String content) {
 
-        Spanned htmlDescription;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            htmlDescription = Html.fromHtml(
-                    customizeListTags(content),
-                    Html.FROM_HTML_MODE_LEGACY,
-                    null,
-                    new ListTagHandler());
-        } else {
-            htmlDescription = Html.fromHtml(
-                    customizeListTags(content),
-                    null,
-                    new ListTagHandler());
+        if (content != null) {
+            Spanned htmlDescription;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                htmlDescription = Html.fromHtml(
+                        customizeListTags(content),
+                        Html.FROM_HTML_MODE_LEGACY,
+                        null,
+                        new ListTagHandler());
+            } else {
+                htmlDescription = Html.fromHtml(
+                        customizeListTags(content),
+                        null,
+                        new ListTagHandler());
+            }
+            String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
+            return htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length());
         }
-        String descriptionWithOutExtraSpace = htmlDescription.toString().trim();
-        return htmlDescription.subSequence(0, descriptionWithOutExtraSpace.length());
+        return null;
     }
 
     private String customizeListTags(@Nullable String content) {

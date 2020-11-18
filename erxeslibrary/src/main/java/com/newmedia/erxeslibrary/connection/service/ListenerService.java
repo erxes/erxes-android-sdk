@@ -76,8 +76,6 @@ public class ListenerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-
         String id = null;
         if (intent != null) {
             Bundle bundle = intent.getExtras();
@@ -102,16 +100,14 @@ public class ListenerService extends Service {
 
     private boolean run_thread(final String conversationId) {
         if (!isNetworkConnected()) {
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Log.e(TAG, "subscribe thread running ");
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();
-                    }
-                    conversation_listen(conversationId);
+            new Thread(() -> {
+                try {
+                    Log.e(TAG, "subscribe thread running ");
+                    Thread.sleep(5000);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
                 }
+                conversation_listen(conversationId);
             }).start();
             return true;
         }

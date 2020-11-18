@@ -176,6 +176,10 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         }
 
         header_profile_change();
+        if (config.messengerdata.isBotShowInitialMessage()) {
+            erxesRequest.getBotInitialMessage();
+        }
+        erxesRequest.getConversationDetail();
 
         askPermissions();
     }
@@ -218,20 +222,22 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     }
                     break;
                 case ReturntypeUtil.GETMESSAGES:
-                    if (object instanceof List) {
-                        conversationMessages.clear();
-                        for (ConversationMessage conversationMessage : ((List<ConversationMessage>) object)) {
-                            if (!conversationMessage.internal)
-                                conversationMessages.add(conversationMessage);
-                        }
-                        messageListAdapter.notifyDataSetChanged();
+                    conversationMessages.clear();
+                    conversationMessages.addAll((List<ConversationMessage>) object);
+                    messageListAdapter.notifyDataSetChanged();
+                    if (messageListAdapter.getItemCount() > 0) {
                         mMessageRecycler.smoothScrollToPosition(messageListAdapter.getItemCount() - 1);
-                        swipeRefreshLayout.setRefreshing(false);
                     }
+                    swipeRefreshLayout.setRefreshing(false);
                     break;
                 case ReturntypeUtil.MUTATION:
                     if (object instanceof ConversationMessage) {
                         conversationMessages.add((ConversationMessage) object);
+                        if (conversationMessages.size() == 1) {
+                            erxesRequest.getConversationDetail();
+                            config.intent.putExtra("id", config.conversationId);
+                            startService(config.intent);
+                        }
                         if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome())) {
                             messageListAdapter.notifyItemInserted(conversationMessages.size());
                         } else {
@@ -257,11 +263,25 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                 case ReturntypeUtil.GETCONVERSATIONDETAIL:
                     participatedUsers.clear();
                     participatedUsers.addAll(((List<User>) object));
+
                     header_profile_change();
+                    break;
+                case ReturntypeUtil.GETSUPPORTERS:
+                    if (participatedUsers.size() == 0) {
+                        header_profile_change();
+                    }
+
+                    break;
+                case ReturntypeUtil.GETBOTINITIALMESSAGE:
+                    if (object != null) {
+                        config.conversationId = String.valueOf(object);
+                        erxesRequest.changeOperator(config.conversationId);
+                    }
                     break;
             }
         });
     }
+
 
     private void bind(User user, ImageView por) {
         por.setVisibility(View.VISIBLE);
@@ -340,7 +360,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         String mContent = edittextChatbox.getText().toString();
         if (!mContent.equalsIgnoreCase("") ||
                 gFilePart.get() != null && gFilePart.get().size() > 0) {
-            erxesRequest.InsertMessage(mContent, config.conversationId, gFilePart.get(), EnumUtil.TYPETEXT);
+            erxesRequest.InsertMessage(mContent, gFilePart.get(), EnumUtil.TYPETEXT);
         }
     }
 
@@ -354,6 +374,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+//        erxesRequest.remove(this);
         if (softKeyboard != null) {
             softKeyboard.closeSoftKeyboard();
             softKeyboard.unRegisterSoftKeyboardCallback();
@@ -364,21 +385,13 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        erxesRequest.remove(this);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         erxesRequest.add(this);
-        erxesRequest.getConversationDetail();
-        erxesRequest.getSupporters();
     }
 
     public void onVCall(View view) {
-        erxesRequest.InsertMessage(null, config.conversationId, new ArrayList<>(), EnumUtil.TYPEVCALLREQUEST);
+        erxesRequest.InsertMessage(null, new ArrayList<>(), EnumUtil.TYPEVCALLREQUEST);
     }
 
     public void onBrowse(View view) {

@@ -33,7 +33,7 @@ public class InsertMessage {
         config = Config.getInstance(context);
     }
 
-    public void run(String mContent, String conversationId, List<AttachmentInput> list, String type) {
+    public void run(String mContent, List<AttachmentInput> list, String type) {
         if (TextUtils.isEmpty(mContent) && list.size() > 0) {
             mContent = "This message has an attachment";
         }
@@ -44,7 +44,7 @@ public class InsertMessage {
                 .message(mContent)
                 .attachments(list)
                 .contentType(type)
-                .conversationId(conversationId);
+                .conversationId(config.conversationId);
 
         String finalMContent = mContent;
         Rx3Apollo.from(erxesRequest.apolloClient
@@ -60,16 +60,12 @@ public class InsertMessage {
                     @Override
                     public void onNext(Response<WidgetsInsertMessageMutation.Data> response) {
                         if (response.hasErrors()) {
-                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, conversationId, response.getErrors().get(0).getMessage(),null);
+                            erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, config.conversationId, response.getErrors().get(0).getMessage(),null);
                         } else {
                             if (response.getData() != null) {
                                 ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().widgetsInsertMessage(), finalMContent, config);
-                                if (conversationId == null) {
-                                    config.conversationId = conversationMessage.conversationId;
-                                    config.intent.putExtra("id", config.conversationId);
-                                    context.startService(config.intent);
-                                }
-                                erxesRequest.notefyAll(ReturntypeUtil.MUTATION, conversationId, null, conversationMessage);
+                                config.conversationId = conversationMessage.conversationId;
+                                erxesRequest.notefyAll(ReturntypeUtil.MUTATION, config.conversationId, null, conversationMessage);
                             }
                         }
                     }

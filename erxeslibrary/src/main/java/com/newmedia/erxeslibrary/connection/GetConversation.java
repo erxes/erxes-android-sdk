@@ -1,6 +1,7 @@
 package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;

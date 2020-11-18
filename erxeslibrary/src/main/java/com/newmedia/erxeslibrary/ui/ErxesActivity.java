@@ -186,7 +186,7 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     @Override
     protected void onPause() {
         super.onPause();
-        erxesRequest.remove(this);
+//        erxesRequest.remove(this);
     }
 
     @Override

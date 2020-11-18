@@ -28,7 +28,7 @@ public class GetLead {
     }
 
     public void run() {
-        if (!TextUtils.isEmpty(config.messengerdata.getFormCode())) {
+        if (config.messengerdata != null && config.messengerdata.getFormCode() != null) {
             Rx3Apollo.from(erxesRequest.apolloClient
                     .mutate(WidgetsLeadConnectMutation.builder()
                             .brandCode(config.brandCode)

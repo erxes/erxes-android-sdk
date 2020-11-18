@@ -9,6 +9,8 @@ import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.opens.type.CustomType;
 import com.newmedia.erxeslibrary.BuildConfig;
+import com.newmedia.erxeslibrary.connection.ChangeOperator;
+import com.newmedia.erxeslibrary.connection.GetBotInitialMessage;
 import com.newmedia.erxeslibrary.connection.GetConversation;
 import com.newmedia.erxeslibrary.connection.GetConversationDetail;
 import com.newmedia.erxeslibrary.connection.GetIntegration;
@@ -140,12 +142,12 @@ public final class ErxesRequest {
         getIntegration.run();
     }
 
-    public void InsertMessage(String message, String conversationId, List<AttachmentInput> list, String type) {
+    public void InsertMessage(String message, List<AttachmentInput> list, String type) {
         if (!config.isNetworkConnected()) {
             return;
         }
         InsertMessage insertmessage = new InsertMessage(this, context);
-        insertmessage.run(message, conversationId, list, type);
+        insertmessage.run(message, list, type);
     }
 
     public void getConversations() {
@@ -199,6 +201,22 @@ public final class ErxesRequest {
         }
         SendLead sendLead = new SendLead(this, context);
         sendLead.run();
+    }
+
+    public void changeOperator(String conversationid) {
+        if (!config.isNetworkConnected()) {
+            return;
+        }
+        ChangeOperator changeOperator = new ChangeOperator(this, context);
+        changeOperator.run(conversationid);
+    }
+
+    public void getBotInitialMessage() {
+        if (!config.isNetworkConnected()) {
+            return;
+        }
+        GetBotInitialMessage getBotInitialMessage = new GetBotInitialMessage(this, context);
+        getBotInitialMessage.run();
     }
 
     public void add(ErxesObserver e) {

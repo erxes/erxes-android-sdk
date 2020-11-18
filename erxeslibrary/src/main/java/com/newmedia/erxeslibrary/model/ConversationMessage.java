@@ -11,6 +11,7 @@ import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.saas.SaasConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.helper.Json;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,7 @@ public class ConversationMessage {
     public String vCallName;
     public String vCallStatus;
     public boolean internal = false;
+    public Json botData;
     public List<FileAttachment> attachments = new ArrayList<>();
     private static final SimpleDateFormat simpleDateFormat =
             new SimpleDateFormat("h:mm a");
@@ -88,6 +90,7 @@ public class ConversationMessage {
             }
 
             conversationMessage.conversationId = conversationId;
+            conversationMessage.botData = item.fragments().messageFragment().botData();
             dataConverted.add(conversationMessage);
         }
         return dataConverted;
@@ -206,7 +209,7 @@ public class ConversationMessage {
         conversationMessage.customerId = messageInserted.customerId();
         if (messageInserted.user() != null) {
             User user = new User();
-            Map userJson = messageInserted.user().object;
+            Map userJson = (Map) messageInserted.user().object;
             if (userJson != null) {
                 if (userJson.containsKey("_id"))
                     user.setId((String) userJson.get("_id"));

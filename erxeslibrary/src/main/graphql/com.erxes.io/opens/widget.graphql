@@ -42,6 +42,7 @@ fragment MessageFragment on ConversationMessage {
     createdAt
     internal
     fromBot
+    botData
     contentType
     videoCallData {
         url
@@ -72,6 +73,7 @@ query widgetsMessages($conversationId: String){
 query widgetsConversationDetail($id: String, $integ : String!){
     widgetsConversationDetail(_id: $id, integrationId: $integ) {
         isOnline
+        operatorStatus
         participatedUsers {
             _id
             details {
@@ -200,6 +202,14 @@ mutation widgetsSaveLead($integrationId: String!, $formId: String!, $submissions
         }
         messageId
     }
+}
+
+mutation changeConversationOperator($_id: String!, $operatorStatus: String!) {
+    changeConversationOperator(_id: $_id, operatorStatus: $operatorStatus)
+}
+
+mutation widgetGetBotInitialMessage($integrationId: String, $customerId: String) {
+    widgetGetBotInitialMessage(integrationId: $integrationId, customerId: $customerId)
 }
 
 subscription ConversationMessageInserted($id: String!){

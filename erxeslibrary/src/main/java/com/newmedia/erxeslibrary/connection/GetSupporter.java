@@ -1,7 +1,6 @@
 package com.newmedia.erxeslibrary.connection;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
@@ -27,50 +26,49 @@ public class GetSupporter {
     }
 
     public void run() {
-        WidgetsMessengerSupportersQuery query = WidgetsMessengerSupportersQuery.builder()
-                .integ(config.integrationId).build();
-        Rx3Apollo.from(erxesRequest.apolloClient
-                .query(query))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Response<WidgetsMessengerSupportersQuery.Data>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
+        if (config.integrationId != null) {
+            WidgetsMessengerSupportersQuery query = WidgetsMessengerSupportersQuery.builder()
+                    .integ(config.integrationId).build();
+            Rx3Apollo.from(erxesRequest.apolloClient
+                    .query(query))
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Response<WidgetsMessengerSupportersQuery.Data>>() {
+                        @Override
+                        public void onSubscribe(Disposable d) {
 
-                    }
-
-                    @Override
-                    public void onNext(Response<WidgetsMessengerSupportersQuery.Data> response) {
-                        if (!response.hasErrors()) {
-                            if (response.getData().widgetsMessengerSupporters().isOnline() != null)
-                                config.isOnline = response.getData().widgetsMessengerSupporters().isOnline();
-                            if (response.getData().widgetsMessengerSupporters().serverTime() != null)
-                                config.serverTime = config.now(Long.parseLong(response.getData().widgetsMessengerSupporters().serverTime()));
-
-                            if (config.supporters != null && config.supporters.size() > 0)
-                                config.supporters.clear();
-                            if (config.supporters != null) {
-                                config.supporters.addAll(User.convert(response.getData().widgetsMessengerSupporters().supporters()));
-                            }
-                            erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null,null);
-                        } else {
-                            if (response.getErrors() != null)
-                                erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage(),null);
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        e.printStackTrace();
-                        erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(),null);
+                        @Override
+                        public void onNext(Response<WidgetsMessengerSupportersQuery.Data> response) {
+                            if (!response.hasErrors()) {
+                                if (response.getData().widgetsMessengerSupporters().isOnline() != null)
+                                    config.isOnline = response.getData().widgetsMessengerSupporters().isOnline();
+                                if (response.getData().widgetsMessengerSupporters().serverTime() != null)
+                                    config.serverTime = config.now(Long.parseLong(response.getData().widgetsMessengerSupporters().serverTime()));
 
-                    }
+                                config.supporters.clear();
+                                config.supporters.addAll(User.convert(response.getData().widgetsMessengerSupporters().supporters()));
+                                erxesRequest.notefyAll(ReturntypeUtil.GETSUPPORTERS, null, null, null);
+                            } else {
+                                if (response.getErrors() != null)
+                                    erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, null, response.getErrors().get(0).getMessage(), null);
+                            }
+                        }
 
-                    @Override
-                    public void onComplete() {
+                        @Override
+                        public void onError(Throwable e) {
+                            e.printStackTrace();
+                            erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(), null);
 
-                    }
-                });
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
+        }
     }
 
 }

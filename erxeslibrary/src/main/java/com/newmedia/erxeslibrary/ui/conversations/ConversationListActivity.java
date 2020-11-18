@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -94,63 +95,60 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
     @Override
     public void notify(int returnType, String conversationId, String message, Object object) {
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (returnType) {
-                    case ReturntypeUtil.COMINGNEWMESSAGE:
-                        if (object instanceof ConversationMessage)
-                            for (int i = 0; i < conversations.size(); i++) {
-                                if (conversations.get(i).id.equals(((ConversationMessage) object).conversationId)) {
-                                    conversations.get(i).content = ((ConversationMessage) object).content;
-                                    conversations.get(i).isread = false;
-                                }
+        this.runOnUiThread(() -> {
+            switch (returnType) {
+                case ReturntypeUtil.COMINGNEWMESSAGE:
+                    if (object instanceof ConversationMessage)
+                        for (int i = 0; i < conversations.size(); i++) {
+                            if (conversations.get(i).id.equals(((ConversationMessage) object).conversationId)) {
+                                conversations.get(i).content = ((ConversationMessage) object).content;
+                                conversations.get(i).isread = false;
                             }
-                        if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
-                                .recyclerView != null) {
-                            ((SupportFragment) tabAdapter.getItem(0))
-                                    .recyclerView.getAdapter().notifyDataSetChanged();
                         }
-                        break;
-                    case ReturntypeUtil.GETCONVERSATION:
-                        if (object instanceof List) {
-                            conversations.clear();
-                            conversations.addAll((List<Conversation>) object);
-                        }
+                    if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
+                            .recyclerView != null) {
+                        ((SupportFragment) tabAdapter.getItem(0))
+                                .recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                    break;
+                case ReturntypeUtil.GETCONVERSATION:
+                    if (((List<Conversation>) object).size() > 0) {
+                        conversations.clear();
+                        conversations.addAll((List<Conversation>) object);
+                    }
 
-                        if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
-                                .recyclerView != null) {
-                            ((SupportFragment) tabAdapter.getItem(0))
-                                    .recyclerView.getAdapter().notifyDataSetChanged();
-                        }
-                        if (conversations.size() > 0) {
-                            initParentConversationChanged();
-                        }
-                        break;
-                    case ReturntypeUtil.SERVERERROR:
-                        Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
-                        break;
-                    case ReturntypeUtil.LEAD:
-                        if (tabAdapter != null)
-                            ((SupportFragment) tabAdapter.getItem(0)).setLead();
-                        break;
-                    case ReturntypeUtil.FAQ:
-                        if (tabAdapter != null) {
-                            tabsContainer.setVisibility(View.VISIBLE);
-                            ((FaqFragment) tabAdapter.getItem(1)).init();
-                        }
-                        break;
-                    case ReturntypeUtil.SAVEDLEAD:
-                        if (tabAdapter != null)
-                            ((SupportFragment) tabAdapter.getItem(0)).setLeadThank();
-                        break;
-                    case ReturntypeUtil.GETSUPPORTERS:
-                        if (supporterView != null && supporterView.getAdapter() != null)
-                            supporterView.getAdapter().notifyDataSetChanged();
-                        break;
-                    default:
-                        break;
-                }
+                    if (tabAdapter != null && ((SupportFragment) tabAdapter.getItem(0))
+                            .recyclerView != null) {
+                        ((SupportFragment) tabAdapter.getItem(0))
+                                .recyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                    if (conversations.size() > 0) {
+                        initParentConversationChanged();
+                    }
+                    break;
+                case ReturntypeUtil.SERVERERROR:
+                    Snackbar.make(container, message, Snackbar.LENGTH_SHORT).show();
+                    break;
+                case ReturntypeUtil.LEAD:
+                    if (tabAdapter != null)
+                        ((SupportFragment) tabAdapter.getItem(0)).setLead();
+                    break;
+                case ReturntypeUtil.FAQ:
+                    if (tabAdapter != null) {
+                        tabsContainer.setVisibility(View.VISIBLE);
+                        ((FaqFragment) tabAdapter.getItem(1)).init();
+                    }
+                    break;
+                case ReturntypeUtil.SAVEDLEAD:
+                    if (tabAdapter != null)
+                        ((SupportFragment) tabAdapter.getItem(0)).setLeadThank();
+                    break;
+                case ReturntypeUtil.GETSUPPORTERS:
+                    if (supporterView != null && supporterView.getAdapter() != null)
+                        supporterView.getAdapter().notifyDataSetChanged();
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -328,7 +326,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     @Override
     protected void onPause() {
         super.onPause();
-        erxesRequest.remove(this);
+//        erxesRequest.remove(this);
     }
 
     @Override
