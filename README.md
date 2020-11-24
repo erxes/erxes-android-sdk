@@ -11,6 +11,8 @@ erxes is a free and open fair-code licensed all-in-one growth marketing & manage
 [![CI Status](https://api.travis-ci.org/erxes/erxes-android-sdk.svg?branch=develop)](https://travis-ci.org/erxes/erxes-android-sdk)
 [![CocoaPods](https://img.shields.io/packagist/l/doctrine/orm.svg)](https://github.com/erxes/erxes-android-sdk/)
 
+[![](https://jitpack.io/v/erxes/erxes-android-sdk.svg)](https://jitpack.io/#erxes/erxes-android-sdk)
+
 <p align="center">
   <img src="https://erxes-os.s3-us-west-2.amazonaws.com/github/mobile/11.png" width="260">
   <img src="https://erxes-os.s3-us-west-2.amazonaws.com/github/mobile/22.png" width="260">
