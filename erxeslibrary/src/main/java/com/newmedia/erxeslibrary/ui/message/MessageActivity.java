@@ -2,6 +2,7 @@ package com.newmedia.erxeslibrary.ui.message;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -71,6 +72,9 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
         ErxesHelper.changeLanguage(this, config.language);

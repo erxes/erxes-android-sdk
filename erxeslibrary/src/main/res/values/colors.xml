@@ -10,7 +10,7 @@
     <color name="messageBackground">#faf9fb</color>
     <color name="messageItemBG">#eaebed</color>
     <color name="gray_greetings">#f7f4f4</color>
-    <color name="black_10">#19000000</color>
+    <color name="black_10">#4D000000</color>
     <color name="vCallBlue">#3b85f4</color>
     <color name="roundedBlue">#6569DF</color>
     <color name="transparent">#00000000</color>
@@ -24,6 +24,6 @@
     <color name="md_grey_500">#9E9E9E</color>
     <color name="md_grey_600">#757575</color>
     <color name="md_grey_700">#616161</color>
-    <color name="gray_dark_transparent">#ae858585</color>
+    <color name="gray_dark_transparent">#AEFFFFFF</color>
 
 </resources>

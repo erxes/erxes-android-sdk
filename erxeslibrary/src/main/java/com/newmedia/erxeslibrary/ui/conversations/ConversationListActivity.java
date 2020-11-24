@@ -3,9 +3,11 @@ package com.newmedia.erxeslibrary.ui.conversations;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -155,6 +157,9 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         erxesRequest = ErxesRequest.getInstance(config);
         config = Config.getInstance(this);

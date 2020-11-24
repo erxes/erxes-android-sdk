@@ -78,7 +78,8 @@ public class ErxesHelper {
         context.getWindow().setLayout(width, WindowManager.LayoutParams.MATCH_PARENT);
         Window window = context.getWindow();
         WindowManager.LayoutParams wlp = window.getAttributes();
-        window.setBackgroundDrawable(new ColorDrawable(Color.parseColor(color)));
+//        window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        window.setBackgroundDrawableResource(R.color.black_10);
         wlp.gravity = Gravity.BOTTOM;
         wlp.flags &= ~WindowManager.LayoutParams.FLAG_DIM_BEHIND;
         window.setAttributes(wlp);

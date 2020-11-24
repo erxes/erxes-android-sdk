@@ -1,7 +1,9 @@
 package com.newmedia.erxeslibrary.ui.faq;
 
 import android.app.Service;
+import android.content.pm.ActivityInfo;
 import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.Html;
@@ -42,6 +44,9 @@ public class FaqDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         config = Config.getInstance(this);
         ErxesHelper.changeLanguage(this, config.language);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);

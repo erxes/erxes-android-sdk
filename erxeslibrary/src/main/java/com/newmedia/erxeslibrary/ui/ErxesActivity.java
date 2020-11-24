@@ -2,6 +2,8 @@ package com.newmedia.erxeslibrary.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.os.Bundle;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,6 +47,9 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (android.os.Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
         dataManager = DataManager.getInstance(this);
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);

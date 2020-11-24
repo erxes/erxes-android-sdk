@@ -19,30 +19,30 @@
         <activity
             android:name=".ui.faq.FaqDetailActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+
             android:theme="@style/Theme_erxes_dialog" />
         <activity
             android:name=".ui.faq.FaqActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+
             android:theme="@style/Theme_erxes_dialog" />
         <activity
             android:name=".ui.ErxesActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme_erxes_dialog"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".ui.conversations.ConversationListActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme_erxes_dialog"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="adjustResize|stateHidden"/>
         <activity
             android:name=".ui.message.MessageActivity"
             android:launchMode="singleTask"
             android:theme="@style/Theme_erxes_dialog"
-            android:screenOrientation="portrait"
+
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <service android:name=".connection.service.ListenerService" />
