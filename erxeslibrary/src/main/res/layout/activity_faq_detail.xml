@@ -25,10 +25,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/main_margin"
-                android:layout_marginTop="@dimen/main_margin"
-                android:layout_marginRight="@dimen/main_margin"
+                android:layout_height="match_parent"
+                android:padding="@dimen/main_margin"
                 android:background="#fff"
                 android:orientation="vertical">
 
@@ -56,11 +54,18 @@
                     android:layout_marginBottom="10dp"
                     android:textColor="#494949" />
 
-                <TextView
-                    android:id="@+id/article_content2"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="#494949" />
+                    android:layout_height="match_parent">
+
+                    <WebView
+                        android:id="@+id/article_content2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
+
+                    <include layout="@layout/loader_view"/>
+                </RelativeLayout>
+
             </LinearLayout>
         </ScrollView>
 
