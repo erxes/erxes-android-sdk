@@ -127,6 +127,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
+            timeText.setText(message.createdAt);
             Drawable drawable = activity.getDrawable(R.drawable.rounded_rectangle_blue);
             drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
             sendLayout.setBackground(drawable);
@@ -139,35 +140,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 textTypeLayout.setVisibility(View.VISIBLE);
 
                 messageText.setText(config.getHtml(message.content));
-                if (message.attachments != null) {
-                    if (message.attachments.size() > 0) {
-                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                        for (int i = 0; i < message.attachments.size(); i++) {
-                            FileAttachment fileAttachment = new FileAttachment();
-                            fileAttachment.setName(message.attachments.get(i).getName());
-                            fileAttachment.setSize(message.attachments.get(i).getSize());
-                            fileAttachment.setType(message.attachments.get(i).getType());
-                            fileAttachment.setUrl(message.attachments.get(i).getUrl());
-                            fileAttachmentList.add(fileAttachment);
-                        }
-                        GridLayoutManager gridLayoutManager;
-                        if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(activity, 3);
-                        } else {
-                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
-                        }
-                        fileRecyclerView.setVisibility(View.VISIBLE);
-                        fileRecyclerView.setLayoutManager(gridLayoutManager);
-                        fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
-                    } else {
-                        fileRecyclerView.setVisibility(View.GONE);
-                    }
-                } else {
-                    fileRecyclerView.setVisibility(View.GONE);
-                }
+                bindAttachments(message, fileRecyclerView);
             }
-            timeText.setText(message.createdAt);
         }
     }
 
@@ -196,6 +170,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         void bind(ConversationMessage message) {
+            timeText.setText(message.createdAt);
             if (message.contentType.equals(EnumUtil.TYPEVCALL)) {
                 textTypeLayout.setVisibility(View.GONE);
 
@@ -237,36 +212,9 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                             .circleCrop()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(profileImage);
-
-                if (message.attachments != null) {
-                    if (message.attachments.size() > 0) {
-                        List<FileAttachment> fileAttachmentList = new ArrayList<>();
-                        for (int i = 0; i < message.attachments.size(); i++) {
-                            FileAttachment fileAttachment = new FileAttachment();
-                            fileAttachment.setName(message.attachments.get(i).getName());
-                            fileAttachment.setSize(message.attachments.get(i).getSize());
-                            fileAttachment.setType(message.attachments.get(i).getType());
-                            fileAttachment.setUrl(message.attachments.get(i).getUrl());
-                            fileAttachmentList.add(fileAttachment);
-                        }
-                        GridLayoutManager gridLayoutManager;
-                        if (fileAttachmentList.size() > 2) {
-                            gridLayoutManager = new GridLayoutManager(activity, 3);
-                        } else {
-                            gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
-                        }
-                        fileRecyclerView.setVisibility(View.VISIBLE);
-                        fileRecyclerView.setLayoutManager(gridLayoutManager);
-                        fileRecyclerView.setHasFixedSize(true);
-                        fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
-                    } else {
-                        fileRecyclerView.setVisibility(View.GONE);
-                    }
-                } else {
-                    fileRecyclerView.setVisibility(View.GONE);
-                }
+                bindAttachments(message, fileRecyclerView);
             }
-            timeText.setText(message.createdAt);
+
         }
     }
 
@@ -281,6 +229,36 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         void bind(ConversationMessage message) {
             messageText.setText(config.getHtml(message.content));
+        }
+    }
+
+    void bindAttachments(ConversationMessage message, RecyclerView fileRecyclerView) {
+        if (message.attachments != null) {
+            if (message.attachments.size() > 0) {
+                List<FileAttachment> fileAttachmentList = new ArrayList<>();
+                for (int i = 0; i < message.attachments.size(); i++) {
+                    FileAttachment fileAttachment = new FileAttachment();
+                    fileAttachment.setName(message.attachments.get(i).getName());
+                    fileAttachment.setSize(message.attachments.get(i).getSize());
+                    fileAttachment.setType(message.attachments.get(i).getType());
+                    fileAttachment.setUrl(message.attachments.get(i).getUrl());
+                    fileAttachmentList.add(fileAttachment);
+                }
+                GridLayoutManager gridLayoutManager;
+                if (fileAttachmentList.size() > 2) {
+                    gridLayoutManager = new GridLayoutManager(activity, 3);
+                } else {
+                    gridLayoutManager = new GridLayoutManager(activity, fileAttachmentList.size());
+                }
+                fileRecyclerView.setVisibility(View.VISIBLE);
+                fileRecyclerView.setLayoutManager(gridLayoutManager);
+                fileRecyclerView.setHasFixedSize(true);
+                fileRecyclerView.setAdapter(new FileAdapter(activity, fileAttachmentList));
+            } else {
+                fileRecyclerView.setVisibility(View.GONE);
+            }
+        } else {
+            fileRecyclerView.setVisibility(View.GONE);
         }
     }
 }
