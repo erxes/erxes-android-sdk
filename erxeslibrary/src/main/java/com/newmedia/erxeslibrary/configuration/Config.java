@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -30,9 +29,6 @@ import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.GenericFont;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
-import com.newmedia.erxeslibrary.connection.service.SaasListenerService;
-import com.newmedia.erxeslibrary.model.Conversation;
-import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FormConnect;
 import com.newmedia.erxeslibrary.model.KnowledgeBaseTopic;
 import com.newmedia.erxeslibrary.model.Messengerdata;
@@ -251,11 +247,7 @@ public class Config {
         dataManager.setData("hostUpload", this.hostUpload);
         dataManager.setData("BRANDCODE", this.brandCode);
         if (dataManager.getDataS("host3300") != null)
-            if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
-                intent = new Intent(context, ListenerService.class);
-            } else {
-                intent = new Intent(context, SaasListenerService.class);
-            }
+            intent = new Intent(context, ListenerService.class);
         LoadDefaultValues();
         erxesRequest.set_client();
     }
@@ -380,15 +372,6 @@ public class Config {
         } else {
             activity.finish();
         }
-    }
-
-    public boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
-
-    public boolean messenger_status_check() {
-        return isNetworkConnected() && isMessengerOnline;
     }
 
     public void changeLanguage(String language) {
@@ -676,5 +659,10 @@ public class Config {
             field.set(editor, drawables);
         } catch (Exception ignored) {
         }
+    }
+
+    public boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null;
     }
 }

@@ -8,7 +8,6 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -37,7 +36,6 @@ import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.connection.service.ListenerService;
-import com.newmedia.erxeslibrary.connection.service.SaasListenerService;
 import com.newmedia.erxeslibrary.helper.CustomViewPager;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
 import com.newmedia.erxeslibrary.helper.FileInfo;
@@ -184,11 +182,7 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
 
         dataManager = DataManager.getInstance(this);
 
-        if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
-            intent = new Intent(ConversationListActivity.this, ListenerService.class);
-        } else {
-            intent = new Intent(ConversationListActivity.this, SaasListenerService.class);
-        }
+        intent = new Intent(ConversationListActivity.this, ListenerService.class);
 
         viewpager.setPagingEnabled(false);
         tabAdapter = new TabAdapter(getSupportFragmentManager(), this);
@@ -452,18 +446,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             public void onNext(Response<ConversationChangedSubscription.Data> dataResponse) {
                                 if (!dataResponse.hasErrors()) {
                                     if (dataResponse.getData() != null && dataResponse.getData().conversationChanged().type().equalsIgnoreCase("closed")) {
-                                        if (config.messengerdata.isForceLogoutWhenResolve()) {
-                                            config.Logout(ConversationListActivity.this);
-                                        } else {
-                                            for (int i = 0; i < conversations.size(); i++) {
-                                                if (conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
-                                                    conversations.get(i).status = dataResponse.getData().conversationChanged().type();
-                                                    conversations.remove(i);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null, null);
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        onConversationChange(dataResponse.getData().conversationChanged().conversationId(),
+                                                dataResponse.getData().conversationChanged().type());
                                     }
                                 }
                             }
@@ -492,18 +476,8 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                             public void onNext(Response<SaasConversationChangedSubscription.Data> dataResponse) {
                                 if (!dataResponse.hasErrors()) {
                                     if (dataResponse.getData() != null && dataResponse.getData().conversationChanged().type().equals("closed")) {
-                                        if (config.messengerdata.isForceLogoutWhenResolve()) {
-                                            config.Logout(ConversationListActivity.this);
-                                        } else {
-                                            for (int i = 0; i < conversations.size(); i++) {
-                                                if (conversations.get(i).id.equals(dataResponse.getData().conversationChanged().conversationId())) {
-                                                    conversations.get(i).status = dataResponse.getData().conversationChanged().type();
-                                                    conversations.remove(i);
-                                                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null, null);
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        onConversationChange(dataResponse.getData().conversationChanged().conversationId(),
+                                                dataResponse.getData().conversationChanged().type());
                                     }
                                 }
                             }
@@ -519,6 +493,21 @@ public class ConversationListActivity extends AppCompatActivity implements Erxes
                         }
                 )
         );
+    }
+
+    private void onConversationChange(String conversationId, String status) {
+        if (config.messengerdata.isForceLogoutWhenResolve()) {
+            config.Logout(ConversationListActivity.this);
+        } else {
+            for (int i = 0; i < conversations.size(); i++) {
+                if (conversations.get(i).id.equals(conversationId)) {
+                    conversations.get(i).status = status;
+                    conversations.remove(i);
+                    erxesRequest.notefyAll(ReturntypeUtil.GETCONVERSATION, null, null, null);
+                    break;
+                }
+            }
+        }
     }
 
     private boolean runThreadInserted(final String conversationId) {

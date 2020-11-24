@@ -16,10 +16,12 @@ import com.apollographql.apollo.rx3.Rx3Apollo;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.opens.ConversationMessageInsertedSubscription;
 import com.erxes.io.opens.type.CustomType;
+import com.erxes.io.saas.SaasConversationMessageInsertedSubscription;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
+import com.newmedia.erxeslibrary.ui.conversations.ConversationListActivity;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
@@ -35,7 +37,8 @@ public class ListenerService extends Service {
     private ApolloClient apolloClient;
     private ErxesRequest erxesRequest;
     private final CompositeDisposable disposables = new CompositeDisposable();
-    Config config;
+    private Config config;
+    private DataManager dataManager;
 
     @Nullable
     @Override
@@ -49,10 +52,11 @@ public class ListenerService extends Service {
 
         config = Config.getInstance(this);
         erxesRequest = ErxesRequest.getInstance(config);
-        DataManager dataManager;
+
         dataManager = DataManager.getInstance(this);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .build();
         apolloClient = ApolloClient.builder()
                 .serverUrl(dataManager.getDataS("host3100"))
                 .okHttpClient(okHttpClient)
@@ -60,19 +64,6 @@ public class ListenerService extends Service {
                 .addCustomTypeAdapter(CustomType.JSON, new JsonCustomTypeAdapter())
                 .build();
     }
-
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null;
-    }
-
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -86,20 +77,18 @@ public class ListenerService extends Service {
             if (disposables.size() != config.conversationIds.size()) {
                 disposables.clear();
                 for (int i = 0; i < config.conversationIds.size(); i++) {
-                    conversation_listen(config.conversationIds.get(i));
+                    conversationListen(config.conversationIds.get(i));
                 }
             }
         } else {
-            conversation_listen(id);
+            conversationListen(id);
         }
 
         return super.onStartCommand(intent, flags, startId);
-
-
     }
 
     private boolean run_thread(final String conversationId) {
-        if (!isNetworkConnected()) {
+        if (!config.isNetworkConnected()) {
             new Thread(() -> {
                 try {
                     Log.e(TAG, "subscribe thread running ");
@@ -107,16 +96,25 @@ public class ListenerService extends Service {
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();
                 }
-                conversation_listen(conversationId);
+                conversationListen(conversationId);
             }).start();
             return true;
         }
         return false;
     }
 
-    public void conversation_listen(final String conversationId) {
+    public void conversationListen(final String conversationId) {
         if (run_thread(conversationId))
             return;
+        if (!dataManager.getDataS("host3300").contains("app.erxes.io")) {
+            listenOpensource(conversationId);
+        } else {
+            listenSaas(conversationId);
+        }
+
+    }
+
+    private void listenOpensource (final String conversationId) {
         ApolloSubscriptionCall<ConversationMessageInsertedSubscription.Data> subscriptionCall;
         if (apolloClient == null)
             return;
@@ -162,4 +160,49 @@ public class ListenerService extends Service {
         );
     }
 
+    private void listenSaas (final String conversationId) {
+        ApolloSubscriptionCall<SaasConversationMessageInsertedSubscription.Data> subscriptionCall;
+        if (apolloClient == null)
+            return;
+        subscriptionCall = apolloClient
+                .subscribe(SaasConversationMessageInsertedSubscription.builder()
+                        .id(conversationId)
+                        .build());
+        disposables.add(Rx3Apollo.from(subscriptionCall)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(
+                        new DisposableSubscriber<Response<SaasConversationMessageInsertedSubscription.Data>>() {
+
+                            @Override
+                            protected void onStart() {
+                                super.onStart();
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                e.printStackTrace();
+                                run_thread(conversationId);
+                            }
+
+                            @Override
+                            public void onNext(Response<SaasConversationMessageInsertedSubscription.Data> response) {
+                                if (!response.hasErrors()) {
+                                    if (response.getData().conversationMessageInserted() != null) {
+                                        DataManager dataManager = DataManager.getInstance(ListenerService.this);
+                                        if (dataManager.getDataB("chatIsGoing")) {
+                                            ConversationMessage conversationMessage = ConversationMessage.convertSaas(response.getData().conversationMessageInserted());
+                                            erxesRequest.notefyAll(ReturntypeUtil.COMINGNEWMESSAGE, null, null, conversationMessage);
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onComplete() {
+                            }
+                        }
+                )
+        );
+    }
 }

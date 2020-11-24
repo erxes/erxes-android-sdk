@@ -46,7 +46,6 @@
             android:windowSoftInputMode="adjustResize|stateHidden" />
 
         <service android:name=".connection.service.ListenerService" />
-        <service android:name=".connection.service.SaasListenerService" />
     </application>
 
 </manifest>
