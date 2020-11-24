@@ -16,7 +16,7 @@ public class Messengerdata {
     private String availabilityMethod;
     private String formCode;
     private String facebook, twitter, youtube;
-    private Messages messages;
+    private static Messages messages;
 
     public static Messengerdata convert(Json jsonObject, String languageCode) {
         Messengerdata messengerdata = new Messengerdata();
@@ -64,52 +64,60 @@ public class Messengerdata {
             Map messageJson = (Map) data.get("messages");
             if (messageJson != null) {
                 if (languageCode != null && messageJson.containsKey(languageCode)) {
-                    Map lanJson = (Map) messageJson.get(languageCode);
-                    if (lanJson != null) {
-                        Messages messages = new Messages();
-                        if (lanJson.containsKey("welcome"))
-                            messages.setWelcome((String) lanJson.get("welcome"));
-                        if (lanJson.containsKey("away"))
-                            messages.setAway((String) lanJson.get("away"));
-                        if (lanJson.containsKey("thank"))
-                            messages.setThank((String) lanJson.get("thank"));
-                        if (lanJson.containsKey("greetings")) {
-                            Greetings greetings = new Greetings();
-                            Map greetingsJson = (Map) lanJson.get("greetings");
-                            if (greetingsJson != null) {
-                                if (greetingsJson.containsKey("title"))
-                                    greetings.setTitle((String) greetingsJson.get("title"));
-                                if (greetingsJson.containsKey("message"))
-                                    greetings.setMessage((String) greetingsJson.get("message"));
-                                messages.setGreetings(greetings);
-                            }
-                        }
-                        messengerdata.setMessages(messages);
-                    }
+                    onMessages(messageJson,languageCode, messengerdata);
                 } else {
-                    Messages messages = new Messages();
-                    if (messageJson.containsKey("welcome"))
-                        messages.setWelcome((String) messageJson.get("welcome"));
-                    if (messageJson.containsKey("away"))
-                        messages.setAway((String) messageJson.get("away"));
-                    if (messageJson.containsKey("thank"))
-                        messages.setThank((String) messageJson.get("thank"));
-                    if (messageJson.containsKey("greetings")) {
-                        Greetings greetings = new Greetings();
-                        Map greetingsJson = (Map) messageJson.get("greetings");
-                        if (greetingsJson != null) {
-                            if (greetingsJson.containsKey("title"))
-                                greetings.setTitle((String) greetingsJson.get("title"));
-                            if (greetingsJson.containsKey("message"))
-                                greetings.setMessage((String) greetingsJson.get("message"));
-                            messages.setGreetings(greetings);
-                        }
-                    }
-                    messengerdata.setMessages(messages);
+                    onMessagesNonLan(messageJson,languageCode, messengerdata);
                 }
             }
         }
         return messengerdata;
+    }
+
+    private static void onMessagesNonLan(Map messageJson, String languageCode, Messengerdata messengerdata) {
+        Messages messages = new Messages();
+        if (messageJson.containsKey("welcome"))
+            messages.setWelcome((String) messageJson.get("welcome"));
+        if (messageJson.containsKey("away"))
+            messages.setAway((String) messageJson.get("away"));
+        if (messageJson.containsKey("thank"))
+            messages.setThank((String) messageJson.get("thank"));
+        if (messageJson.containsKey("greetings")) {
+            Greetings greetings = new Greetings();
+            Map greetingsJson = (Map) messageJson.get("greetings");
+            if (greetingsJson != null) {
+                if (greetingsJson.containsKey("title"))
+                    greetings.setTitle((String) greetingsJson.get("title"));
+                if (greetingsJson.containsKey("message"))
+                    greetings.setMessage((String) greetingsJson.get("message"));
+                messages.setGreetings(greetings);
+            }
+        }
+        messengerdata.setMessages(messages);
+    }
+
+    private static void onMessages(Map messageJson, String languageCode, Messengerdata messengerdata) {
+        Map lanJson = (Map) messageJson.get(languageCode);
+        if (lanJson != null) {
+            messengerdata.setMessages(messages);
+        }
+        Messages messages = new Messages();
+        if (lanJson.containsKey("welcome"))
+            messages.setWelcome((String) lanJson.get("welcome"));
+        if (lanJson.containsKey("away"))
+            messages.setAway((String) lanJson.get("away"));
+        if (lanJson.containsKey("thank"))
+            messages.setThank((String) lanJson.get("thank"));
+        if (lanJson.containsKey("greetings")) {
+            Greetings greetings = new Greetings();
+            Map greetingsJson = (Map) lanJson.get("greetings");
+            if (greetingsJson != null) {
+                if (greetingsJson.containsKey("title"))
+                    greetings.setTitle((String) greetingsJson.get("title"));
+                if (greetingsJson.containsKey("message"))
+                    greetings.setMessage((String) greetingsJson.get("message"));
+                messages.setGreetings(greetings);
+            }
+        }
     }
 
     public boolean isRequireAuth() {

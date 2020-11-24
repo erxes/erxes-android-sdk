@@ -528,32 +528,36 @@ public class SupportFragment extends Fragment {
         if (isDone) {
             sendLead();
         } else {
-            if (config.formConnect.getLead().getFields().get(position).getType() != null) {
-                if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("select")) {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.select)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("textarea")) {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.textarea)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("radio")) {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.radioGroup)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("check")) {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.checkList)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("file")) {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.file)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                } else {
-                    formFieldsLayout.getChildAt(position).findViewById(R.id.input)
-                            .setBackgroundResource(R.drawable.rounded_bg_error);
-                }
+            onSetBackground(position);
+        }
+    }
+
+    private void onSetBackground(int position) {
+        if (config.formConnect.getLead().getFields().get(position).getType() != null) {
+            if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("select")) {
+                formFieldsLayout.getChildAt(position).findViewById(R.id.select)
+                        .setBackgroundResource(R.drawable.rounded_bg_error);
+            } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("textarea")) {
+                formFieldsLayout.getChildAt(position).findViewById(R.id.textarea)
+                        .setBackgroundResource(R.drawable.rounded_bg_error);
+            } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("radio")) {
+                formFieldsLayout.getChildAt(position).findViewById(R.id.radioGroup)
+                        .setBackgroundResource(R.drawable.rounded_bg_error);
+            } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("check")) {
+                formFieldsLayout.getChildAt(position).findViewById(R.id.checkList)
+                        .setBackgroundResource(R.drawable.rounded_bg_error);
+            } else if (config.formConnect.getLead().getFields().get(position).getType().equalsIgnoreCase("file")) {
+                formFieldsLayout.getChildAt(position).findViewById(R.id.file)
+                        .setBackgroundResource(R.drawable.rounded_bg_error);
             } else {
                 formFieldsLayout.getChildAt(position).findViewById(R.id.input)
                         .setBackgroundResource(R.drawable.rounded_bg_error);
             }
-            parentLayout.scrollTo(0, (int) formFieldsLayout.getChildAt(position).getY());
+        } else {
+            formFieldsLayout.getChildAt(position).findViewById(R.id.input)
+                    .setBackgroundResource(R.drawable.rounded_bg_error);
         }
+        parentLayout.scrollTo(0, (int) formFieldsLayout.getChildAt(position).getY());
     }
 
     private void sendLead() {
