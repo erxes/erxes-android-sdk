@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -391,32 +392,50 @@ public class Config {
     public static class Builder {
         private final String brand;
         private String apiHost;
+        private String graphqlApiHost;
         private String subscriptionHost;
         private String uploadHost;
+        private String protocal = "https";
 
         public Builder(@NonNull String brand) {
-
             this.brand = brand;
         }
 
         public Builder setApiHost(String apiHost) {
-            this.apiHost = apiHost;
+            if (apiHost.contains("://")) {
+                this.protocal = apiHost.substring(0, apiHost.indexOf("://"));
+                this.apiHost = apiHost.substring(apiHost.indexOf("://") + 3);
+            } else {
+                this.apiHost = apiHost;
+            }
+
+            if (this.apiHost.contains("/")) {
+                this.apiHost = this.apiHost.substring(0, this.apiHost.indexOf("/"));
+            }
+
+            setGqlApiHost();
+            setSubscriptionHost();
+            setUploadHost();
             return this;
         }
 
-        public Builder setSubscriptionHost(String subscriptionHost) {
-            this.subscriptionHost = subscriptionHost;
-            return this;
+        private void setGqlApiHost() {
+            this.graphqlApiHost = protocal + "://" + this.apiHost + "/graphql";
         }
 
-        public Builder setUploadHost(String uploadHost) {
-            this.uploadHost = uploadHost;
-            return this;
+        private void setSubscriptionHost() {
+            if (protocal.contains("https"))
+                this.subscriptionHost = "wss://" + this.apiHost + "/subscriptions";
+            else this.subscriptionHost = "ws://" + this.apiHost + "/subscriptions";
+        }
+
+        public void setUploadHost() {
+            this.uploadHost = protocal + "://" + this.apiHost + "/upload-file";
         }
 
         public Config build(Context context) {
             Config config = Config.getInstance(context);
-            config.Init(this.brand, this.apiHost, this.subscriptionHost, this.uploadHost);
+            config.Init(this.brand, this.graphqlApiHost, this.subscriptionHost, this.uploadHost);
             return config;
         }
     }
