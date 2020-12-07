@@ -396,7 +396,6 @@ public class Config {
         private String subscriptionHost;
         private String uploadHost;
         private String protocal = "https";
-        private String organizationName;
 
         public Builder(@NonNull String brand) {
             this.brand = brand;
@@ -421,7 +420,6 @@ public class Config {
         }
 
         public Builder setOrganizationName(String organizationName) {
-            this.organizationName = organizationName;
             this.apiHost = organizationName + ".app.erxes.io/api";
             setGqlApiHost();
             setSubscriptionHost();
