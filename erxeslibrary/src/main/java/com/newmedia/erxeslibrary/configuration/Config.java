@@ -268,6 +268,7 @@ public class Config {
         dataManager.setData(DataManager.PHONE, phone);
         dataManager.setData(DataManager.CUSTOMDATA, customData);
         Intent a = new Intent(context, ErxesActivity.class);
+        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         a.putExtra("hasData", hasData);
         a.putExtra("customData", customData);
         a.putExtra("mEmail", email);
