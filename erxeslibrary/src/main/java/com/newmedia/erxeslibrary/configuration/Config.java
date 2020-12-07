@@ -396,6 +396,7 @@ public class Config {
         private String subscriptionHost;
         private String uploadHost;
         private String protocal = "https";
+        private String organizationName;
 
         public Builder(@NonNull String brand) {
             this.brand = brand;
@@ -409,10 +410,19 @@ public class Config {
                 this.apiHost = apiHost;
             }
 
-            if (this.apiHost.contains("/")) {
-                this.apiHost = this.apiHost.substring(0, this.apiHost.indexOf("/"));
+            if (this.apiHost.contains("/") && String.valueOf(this.apiHost.charAt(this.apiHost.length() - 1)).equals("/")) {
+                this.apiHost = this.apiHost.substring(0, this.apiHost.length() - 1);
             }
 
+            setGqlApiHost();
+            setSubscriptionHost();
+            setUploadHost();
+            return this;
+        }
+
+        public Builder setOrganizationName(String organizationName) {
+            this.organizationName = organizationName;
+            this.apiHost = organizationName + ".app.erxes.io/api";
             setGqlApiHost();
             setSubscriptionHost();
             setUploadHost();
@@ -429,7 +439,7 @@ public class Config {
             else this.subscriptionHost = "ws://" + this.apiHost + "/subscriptions";
         }
 
-        public void setUploadHost() {
+        private void setUploadHost() {
             this.uploadHost = protocal + "://" + this.apiHost + "/upload-file";
         }
 
