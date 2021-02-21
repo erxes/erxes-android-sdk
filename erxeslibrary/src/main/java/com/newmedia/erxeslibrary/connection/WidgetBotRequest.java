@@ -6,11 +6,11 @@ import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
+import com.erxes.io.opens.WidgetBotRequestMutation;
 import com.erxes.io.opens.WidgetsInsertMessageMutation;
 import com.erxes.io.opens.type.AttachmentInput;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
-import com.newmedia.erxeslibrary.model.Conversation;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
@@ -21,49 +21,49 @@ import io.reactivex.rxjava3.core.Observer;
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class InsertMessage {
-    final static String TAG = "InsertMessage";
+public class WidgetBotRequest {
+    final static String TAG = "widgetBotRequest";
     private final ErxesRequest erxesRequest;
     private final Config config;
     private final Context context;
 
-    public InsertMessage(ErxesRequest erxesRequest, Context context) {
+    public WidgetBotRequest(ErxesRequest erxesRequest, Context context) {
         this.erxesRequest = erxesRequest;
         this.context = context;
         config = Config.getInstance(context);
     }
 
-    public void run(String mContent, List<AttachmentInput> list, String type) {
-        if (TextUtils.isEmpty(mContent) && list.size() > 0) {
+    public void run(String mContent, String type,String payload) {
+        if (TextUtils.isEmpty(mContent) ) {
             mContent = "This message has an attachment";
         }
-
-        WidgetsInsertMessageMutation.Builder temp = WidgetsInsertMessageMutation.builder()
+        WidgetBotRequestMutation.Builder temp = WidgetBotRequestMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)
                 .message(mContent)
-                .attachments(list)
-                .contentType(type)
-                .conversationId(config.conversationId);
+                .conversationId(config.conversationId)
+                .payload(payload)
+                .type(type);
 
         String finalMContent = mContent;
         Rx3Apollo.from(erxesRequest.apolloClient
                 .mutate(temp.build()))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Response<WidgetsInsertMessageMutation.Data>>() {
+                .subscribe(new Observer<Response<WidgetBotRequestMutation.Data>>() {
                     @Override
-                    public void onSubscribe(Disposable d) { }
+                    public void onSubscribe(Disposable d) {
+
+                    }
 
                     @Override
-                    public void onNext(Response<WidgetsInsertMessageMutation.Data> response) {
+                    public void onNext(Response<WidgetBotRequestMutation.Data> response) {
                         if (response.hasErrors()) {
                             erxesRequest.notefyAll(ReturntypeUtil.SERVERERROR, config.conversationId, response.getErrors().get(0).getMessage(),null);
                         } else {
                             if (response.getData() != null) {
-                                ConversationMessage conversationMessage = ConversationMessage.convert(response.getData().widgetsInsertMessage(), finalMContent, config);
-                                config.conversationId = conversationMessage.conversationId;
-                                erxesRequest.notefyAll(ReturntypeUtil.MUTATION, config.conversationId, null, conversationMessage);
+                                Log.d("fuck","  xx  "+response.getData().widgetBotRequest().toString());
+                                erxesRequest.notefyAll(ReturntypeUtil.GETBOTINITIALMESSAGE, config.conversationId, null, response.getData().widgetBotRequest());
                             }
                         }
                     }
@@ -72,10 +72,14 @@ public class InsertMessage {
                     public void onError(Throwable e) {
                         e.printStackTrace();
                         erxesRequest.notefyAll(ReturntypeUtil.CONNECTIONFAILED, null, e.getMessage(),null);
+
                     }
 
                     @Override
-                    public void onComplete() { }
+                    public void onComplete() {
+
+                    }
                 });
     }
+
 }

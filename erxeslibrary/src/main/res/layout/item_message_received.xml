@@ -46,11 +46,19 @@
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:paddingBottom="10dp"
-                    android:visibility="gone">
+                    android:visibility="gone"/>
 
-                </androidx.recyclerview.widget.RecyclerView>
             </LinearLayout>
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/botData"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/botpress_background"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="10dp"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <androidx.cardview.widget.CardView

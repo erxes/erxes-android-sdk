@@ -49,7 +49,8 @@ public class GetMessage {
                             List<ConversationMessage> conversationMessages = ConversationMessage.convert(response, conversationid);
                             List<ConversationMessage> withoutBotList = new ArrayList<>();
                             for (ConversationMessage message : conversationMessages) {
-                                if (!message.internal && message.botData == null) {
+//                                if (!message.internal && message.botData == null) {
+                                    if (!message.internal ) {
                                     withoutBotList.add(message);
                                 }
                             }

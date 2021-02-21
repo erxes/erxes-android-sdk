@@ -1,5 +1,5 @@
-mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: String,$isUser:Boolean, $data: JSON){
-    widgetsMessengerConnect (brandCode: $brandCode, email: $email, phone: $phone,isUser:$isUser, data: $data){
+mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: String,$isUser:Boolean, $data: JSON,$visitorId:String){
+    widgetsMessengerConnect (brandCode: $brandCode, email: $email, phone: $phone,isUser:$isUser, data: $data,visitorId:$visitorId){
         integrationId
         uiOptions
         languageCode
@@ -15,6 +15,26 @@ mutation widgetsInsertMessage($integrationId: String!, $customerId: String!, $me
     widgetsInsertMessage(integrationId:$integrationId,customerId: $customerId,message: $message,conversationId: $conversationId,attachments: $attachments, contentType : $contentType){
         ...MessageFragment
     }
+}
+
+mutation widgetBotRequest(
+    $message: String!
+    $payload: String!
+    $type: String!
+    $conversationId: String
+    $customerId: String
+    $visitorId: String
+    $integrationId: String!
+) {
+    widgetBotRequest(
+        message: $message
+        payload: $payload
+        type: $type
+        conversationId: $conversationId
+        customerId: $customerId
+        visitorId: $visitorId
+        integrationId: $integrationId
+    )
 }
 
 query widgetsConversations($integrationId: String!,$customerId: String!){
@@ -208,8 +228,8 @@ mutation changeConversationOperator($_id: String!, $operatorStatus: String!) {
     changeConversationOperator(_id: $_id, operatorStatus: $operatorStatus)
 }
 
-mutation widgetGetBotInitialMessage($integrationId: String, $customerId: String) {
-    widgetGetBotInitialMessage(integrationId: $integrationId, customerId: $customerId)
+mutation widgetGetBotInitialMessage($integrationId: String) {
+    widgetGetBotInitialMessage(integrationId: $integrationId)
 }
 
 subscription ConversationMessageInserted($id: String!){

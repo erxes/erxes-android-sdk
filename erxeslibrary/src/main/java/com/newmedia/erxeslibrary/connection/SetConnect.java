@@ -1,6 +1,11 @@
 package com.newmedia.erxeslibrary.connection;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.rx3.Rx3Apollo;
@@ -14,6 +19,7 @@ import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 import com.newmedia.erxeslibrary.utils.DataManager;
 
 import java.util.Map;
+import java.util.Random;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observer;
@@ -34,16 +40,50 @@ public class SetConnect {
         dataManager = DataManager.getInstance(context);
     }
 
+    public String getDeviceIMEI() {
+        try {
+            return Settings.Secure.getString(config.context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        catch (Exception e){
+            return  null;
+        }
+    }
+
+    public String getRandom() {
+        int leftLimit = 97; // letter 'a'
+        int rightLimit = 122; // letter 'z'
+        int targetStringLength = 32;
+        Random random = new Random();
+        StringBuilder buffer = new StringBuilder(targetStringLength);
+        for (int i = 0; i < targetStringLength; i++) {
+            int randomLimitedInt = leftLimit + (int)
+                    (random.nextFloat() * (rightLimit - leftLimit + 1));
+            buffer.append((char) randomLimitedInt);
+        }
+        String generatedString = buffer.toString();
+        return generatedString;
+    }
     public void run(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
         this.customData = data;
         Gson gson = new Gson();
         Map customDataMap = gson.fromJson(data, Map.class);
+        String imei = getDeviceIMEI();
+
+        if(imei == null){
+            if(dataManager.getDataS(DataManager.ANDROID_UNIQUE)==null){
+                imei = getRandom();
+                dataManager.setData(DataManager.ANDROID_UNIQUE,imei);
+            } else {
+                imei = dataManager.getDataS(DataManager.ANDROID_UNIQUE);
+            }
+        }
 
         WidgetsMessengerConnectMutation mutate = WidgetsMessengerConnectMutation.builder()
                 .brandCode(config.brandCode)
                 .email(email)
                 .phone(phone)
                 .isUser(isUser)
+                .visitorId(imei)
                 .data(new Json(customDataMap))
                 .build();
         Rx3Apollo.from(erxesRequest.apolloClient
