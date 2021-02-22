@@ -83,7 +83,7 @@ public class SetConnect {
                 .email(email)
                 .phone(phone)
                 .isUser(isUser)
-                .visitorId(imei)
+//                .visitorId(imei)
                 .data(new Json(customDataMap))
                 .build();
         Rx3Apollo.from(erxesRequest.apolloClient
