@@ -11,7 +11,6 @@ import android.net.ConnectivityManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -40,6 +39,9 @@ import com.newmedia.erxeslibrary.ui.faq.FaqDetailActivity;
 import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ListTagHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.text.ParseException;
@@ -257,8 +259,16 @@ public class Config {
         checkRequired(false, null, null, null);
     }
 
-    public void Start(String email, String phone, String jsonObject) {
-        checkRequired(true, email, phone, jsonObject);
+    public void Start(String jsonString) {
+        String email = null, phone = null;
+        try {
+            JSONObject jsonObject1 = new JSONObject(jsonString);
+            email = jsonObject1.getString("email");
+            phone = jsonObject1.getString("phone");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        checkRequired(true, email, phone, jsonString);
     }
 
     public void initActivity(boolean hasData, String email, String phone, String customData) {
