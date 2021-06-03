@@ -17,6 +17,26 @@ mutation widgetsInsertMessage($integrationId: String!, $customerId: String!, $me
     }
 }
 
+mutation widgetBotRequest(
+    $message: String!
+    $payload: String!
+    $type: String!
+    $conversationId: String
+    $customerId: String
+    $visitorId: String
+    $integrationId: String!
+) {
+    widgetBotRequest(
+        message: $message
+        payload: $payload
+        type: $type
+        conversationId: $conversationId
+        customerId: $customerId
+        visitorId: $visitorId
+        integrationId: $integrationId
+    )
+}
+
 query widgetsConversations($integrationId: String!,$customerId: String!){
     widgetsConversations(integrationId: $integrationId,customerId: $customerId) {
         _id

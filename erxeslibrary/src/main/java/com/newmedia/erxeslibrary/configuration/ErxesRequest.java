@@ -21,6 +21,7 @@ import com.newmedia.erxeslibrary.connection.GetSupporter;
 import com.newmedia.erxeslibrary.connection.InsertMessage;
 import com.newmedia.erxeslibrary.connection.SendLead;
 import com.newmedia.erxeslibrary.connection.SetConnect;
+import com.newmedia.erxeslibrary.connection.WidgetBotRequest;
 import com.newmedia.erxeslibrary.connection.helper.JsonCustomTypeAdapter;
 import com.newmedia.erxeslibrary.connection.helper.Tls12SocketFactory;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
@@ -201,6 +202,13 @@ public final class ErxesRequest {
         }
         SendLead sendLead = new SendLead(this, context);
         sendLead.run();
+    }
+    public void sendWidgetBotRequest(String content,String type,String payload) {
+        if (!config.isNetworkConnected()) {
+            return;
+        }
+        WidgetBotRequest widgetBotRequest = new WidgetBotRequest(this, context);
+        widgetBotRequest.run(content,type,payload);
     }
 
     public void changeOperator(String conversationid) {

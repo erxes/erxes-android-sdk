@@ -30,6 +30,8 @@ public final class DataManager {
     public static final String ISUSER = "rxx_isUser";
     public static final String CUSTOMDATA = "rxx_customData";
     public static final String HASPROVIDER = "rxx_hasprovider";
+    public static final String ANDROID_UNIQUE = "rxx_ANDROID_UNIQUE";
+
 
     public static DataManager getInstance(Context context) {
         if (dataManager == null)

@@ -2,7 +2,9 @@ package com.newmedia.erxeslibrary.ui.message;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.PorterDuff;
@@ -23,12 +25,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
+import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.FileAttachment;
 import com.newmedia.erxeslibrary.utils.EnumUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MessageListAdapter extends RecyclerView.Adapter {
 
@@ -72,9 +76,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         if (!TextUtils.isEmpty(config.messengerdata.getMessages().getWelcome()))
             mPosition = mPosition - 1;
 
-        if (mMessageList.get(mPosition).user == null)
+        if (mMessageList.get(mPosition).user != null|| mMessageList.get(mPosition).botData!=null)
+            return VIEW_RECIEVED;
+        else
             return VIEW_SENT;
-        else return VIEW_RECIEVED;
     }
 
     @Override
@@ -132,13 +137,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             drawable.setColorFilter(config.colorCode, PorterDuff.Mode.SRC_ATOP);
             sendLayout.setBackground(drawable);
 
-            if (message.contentType.equals(EnumUtil.TYPEVCALLREQUEST)) {
+            if (message.contentType!=null && message.contentType.equals(EnumUtil.TYPEVCALLREQUEST)) {
                 vCallTypeLayout.setVisibility(View.VISIBLE);
                 textTypeLayout.setVisibility(View.GONE);
             } else {
                 vCallTypeLayout.setVisibility(View.GONE);
                 textTypeLayout.setVisibility(View.VISIBLE);
-
                 messageText.setText(config.getHtml(message.content));
                 bindAttachments(message, fileRecyclerView);
             }
@@ -150,6 +154,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView messageText;
         ImageView profileImage;
         RecyclerView fileRecyclerView;
+        RecyclerView botRecyclerView;
         LinearLayout textTypeLayout;
         CardView vCallTypeLayout;
         CardView vCallTypeEndLayout;
@@ -162,6 +167,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             timeText = itemView.findViewById(R.id.text_message_time);
             profileImage = itemView.findViewById(R.id.image_message_profile);
             fileRecyclerView = itemView.findViewById(R.id.fileRecyclerView);
+            botRecyclerView = itemView.findViewById(R.id.botData);
             textTypeLayout = itemView.findViewById(R.id.textType);
             vCallTypeLayout = itemView.findViewById(R.id.vCallType);
             vCallTypeEndLayout = itemView.findViewById(R.id.vCallTypeEnd);
@@ -171,7 +177,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
         void bind(ConversationMessage message) {
             timeText.setText(message.createdAt);
-            if (message.contentType.equals(EnumUtil.TYPEVCALL)) {
+            if (message.contentType!=null && message.contentType.equals(EnumUtil.TYPEVCALL)) {
                 textTypeLayout.setVisibility(View.GONE);
 
                 if (!message.vCallStatus.equalsIgnoreCase("end")) {
@@ -196,22 +202,60 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 textTypeLayout.setVisibility(View.VISIBLE);
 
                 messageText.setText(config.getHtml(message.content));
-                if (message.content.contains("href"))
+                if (message.content!=null&&message.content.contains("href"))
                     messageText.setMovementMethod(LinkMovementMethod.getInstance());
                 else messageText.setMovementMethod(null);
 
-                if (message.user != null) {
-                    Glide.with(activity).load(message.user.getAvatar())
+                if(message.botData!=null) {
+                    Glide.with(activity).load(R.drawable.botpress)
                             .placeholder(R.drawable.avatar)
                             .circleCrop()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(profileImage);
-                } else
-                    Glide.with(activity).load(R.drawable.avatar)
+                }
+                else if (message.user != null) {
+                        Glide.with(activity).load(message.user.getAvatar())
+                                .placeholder(R.drawable.avatar)
+                                .circleCrop()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(profileImage);
+                } else {
+                        Glide.with(activity).load(R.drawable.avatar)
                             .placeholder(R.drawable.avatar)
                             .circleCrop()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
                             .into(profileImage);
+                }
+                if(message.botData!=null) {
+                    Json data = message.botData;
+                    if (message.botData != null) {
+                        List<Map> maps = message.botData.array;
+                        if (data.is_object) {
+                            maps = (List) ((Map)message.botData.object).get("botData");
+                        }
+
+                        String title = "";
+                        List<Map> buttons = null;
+                        for (int i = 0; i < maps.size(); i++) {
+                            if (maps.get(i).containsKey("type")) {
+                                String type = (String) maps.get(i).get("type");
+                                if (type.contentEquals("text")) {
+                                    title = (String) maps.get(i).get("text");
+                                }
+                                else if(type.contentEquals("custom")){
+                                    try{
+                                        Map j1 = (Map) maps.get(i).get("wrapped");
+                                        title = (String) j1.get("text");
+                                    }catch (Exception e){}
+                                }
+                            }
+                        }
+                        messageText.setText(title);
+                    }
+                    bindBotData(message,botRecyclerView);
+                }else{
+                    messageText.setText(config.getHtml(message.content));
+                }
                 bindAttachments(message, fileRecyclerView);
             }
 
@@ -231,7 +275,43 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(config.getHtml(message.content));
         }
     }
-
+    void bindBotData(ConversationMessage message, RecyclerView botRecyclerView) {
+        if (message.botData != null) {
+            Json data = message.botData;
+            String title = "";
+            List<Map> buttons = null;
+            Map x = (Map) data.object;
+            List<Map> maps = message.botData.array;;
+            if(data.is_object){
+                maps = (List) x.get("botData");
+            }
+            for(int i = 0; i < maps.size(); i++){
+                if(maps.get(i).containsKey("type")){
+                    String type = (String) maps.get(i).get("type");
+                    if(type.contentEquals("text")){
+                        title = (String) maps.get(i).get("text");
+//                        buttons = maps;
+                    } else if(type.contentEquals("carousel")){
+                        List<Map> elements = (List) maps.get(i).get("elements");
+                        if(elements.size() == 1) {
+                            buttons = (List) elements.get(0).get("buttons");
+                        }
+                    } else if(type.contentEquals("custom")){
+                        buttons = (List) maps.get(i).get("quick_replies");
+                    }
+                }
+            }
+            if(buttons!=null) {
+                LinearLayoutManager layoutManager = new LinearLayoutManager(this.config.context, LinearLayoutManager.VERTICAL, false);
+//                botRecyclerView.addItemDecoration(new DividerItemDecoration(this.config.context, DividerItemDecoration.VERTICAL));
+                botRecyclerView.setLayoutManager(layoutManager);
+                botRecyclerView.setVisibility(View.VISIBLE);
+                botRecyclerView.setAdapter(new BotQuestionAdapter(activity, title, buttons));
+            }
+        } else {
+            botRecyclerView.setVisibility(View.GONE);
+        }
+    }
     void bindAttachments(ConversationMessage message, RecyclerView fileRecyclerView) {
         if (message.attachments != null) {
             if (message.attachments.size() > 0) {
@@ -261,4 +341,5 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             fileRecyclerView.setVisibility(View.GONE);
         }
     }
+
 }

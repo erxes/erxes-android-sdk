@@ -32,11 +32,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.erxes.io.opens.WidgetGetBotInitialMessageMutation;
 import com.google.android.material.snackbar.Snackbar;
 import com.newmedia.erxeslibrary.R;
 import com.newmedia.erxeslibrary.configuration.Config;
 import com.newmedia.erxeslibrary.configuration.ErxesRequest;
 import com.newmedia.erxeslibrary.helper.ErxesHelper;
+import com.newmedia.erxeslibrary.helper.Json;
 import com.newmedia.erxeslibrary.helper.SoftKeyboard;
 import com.newmedia.erxeslibrary.model.ConversationMessage;
 import com.newmedia.erxeslibrary.model.User;
@@ -44,8 +46,11 @@ import com.newmedia.erxeslibrary.utils.EnumUtil;
 import com.newmedia.erxeslibrary.utils.ErxesObserver;
 import com.newmedia.erxeslibrary.utils.ReturntypeUtil;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class MessageActivity extends AppCompatActivity implements ErxesObserver {
@@ -180,7 +185,7 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
         }
 
         header_profile_change();
-        if (config.messengerdata.isBotShowInitialMessage()) {
+        if ((config.conversationId==null||config.conversationId.contentEquals("")) &&config.messengerdata.isBotShowInitialMessage()) {
             erxesRequest.getBotInitialMessage();
         }
         erxesRequest.getConversationDetail();
@@ -277,9 +282,20 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
 
                     break;
                 case ReturntypeUtil.GETBOTINITIALMESSAGE:
+                    Json data = (Json)object;
+                    ConversationMessage message1 = new ConversationMessage();
+                    message1.botData = data;
+                    message1.user = new User();
+                    conversationMessages.add(message1);
+                    messageListAdapter.notifyItemInserted(conversationMessages.size() - 1);
+
+
                     if (object != null) {
-//                        config.conversationId = String.valueOf(object);
-//                        erxesRequest.changeOperator(config.conversationId);
+                        if(data.has("conversationId")) {
+                            String con_id = data.getString("conversationId");
+                            config.conversationId = con_id;
+                            erxesRequest.changeOperator(config.conversationId);
+                        }
                     }
                     break;
             }
