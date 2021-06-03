@@ -278,8 +278,8 @@ public class MessageActivity extends AppCompatActivity implements ErxesObserver 
                     break;
                 case ReturntypeUtil.GETBOTINITIALMESSAGE:
                     if (object != null) {
-                        config.conversationId = String.valueOf(object);
-                        erxesRequest.changeOperator(config.conversationId);
+//                        config.conversationId = String.valueOf(object);
+//                        erxesRequest.changeOperator(config.conversationId);
                     }
                     break;
             }

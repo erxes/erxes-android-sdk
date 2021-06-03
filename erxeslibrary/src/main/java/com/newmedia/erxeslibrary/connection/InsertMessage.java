@@ -38,6 +38,7 @@ public class InsertMessage {
             mContent = "This message has an attachment";
         }
 
+        Log.e(TAG, "run: "+config.conversationId);
         WidgetsInsertMessageMutation.Builder temp = WidgetsInsertMessageMutation.builder()
                 .integrationId(config.integrationId)
                 .customerId(config.customerId)

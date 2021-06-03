@@ -27,7 +27,6 @@ public class GetBotInitialMessage {
 
     public void run() {
         WidgetGetBotInitialMessageMutation mutate = WidgetGetBotInitialMessageMutation.builder()
-                .customerId(config.customerId)
                 .integrationId(config.integrationId)
                 .build();
         Rx3Apollo.from(erxesRequest.apolloClient

@@ -208,8 +208,8 @@ mutation changeConversationOperator($_id: String!, $operatorStatus: String!) {
     changeConversationOperator(_id: $_id, operatorStatus: $operatorStatus)
 }
 
-mutation widgetGetBotInitialMessage($integrationId: String, $customerId: String) {
-    widgetGetBotInitialMessage(integrationId: $integrationId, customerId: $customerId)
+mutation widgetGetBotInitialMessage($integrationId: String) {
+    widgetGetBotInitialMessage(integrationId: $integrationId)
 }
 
 subscription ConversationMessageInserted($id: String!){
