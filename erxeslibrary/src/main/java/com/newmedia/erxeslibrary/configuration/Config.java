@@ -420,28 +420,32 @@ public class Config {
         }
 
         public Builder setApiHost(String apiHost) {
-            if (apiHost.contains("://")) {
-                this.protocal = apiHost.substring(0, apiHost.indexOf("://"));
-                this.apiHost = apiHost.substring(apiHost.indexOf("://") + 3);
-            } else {
-                this.apiHost = apiHost;
-            }
+            if(apiHost != null) {
+                if (apiHost.contains("://")) {
+                    this.protocal = apiHost.substring(0, apiHost.indexOf("://"));
+                    this.apiHost = apiHost.substring(apiHost.indexOf("://") + 3);
+                } else {
+                    this.apiHost = apiHost;
+                }
 
-            if (this.apiHost.contains("/") && String.valueOf(this.apiHost.charAt(this.apiHost.length() - 1)).equals("/")) {
-                this.apiHost = this.apiHost.substring(0, this.apiHost.length() - 1);
-            }
+                if (this.apiHost.contains("/") && String.valueOf(this.apiHost.charAt(this.apiHost.length() - 1)).equals("/")) {
+                    this.apiHost = this.apiHost.substring(0, this.apiHost.length() - 1);
+                }
 
-            setGqlApiHost();
-            setSubscriptionHost();
-            setUploadHost();
+                setGqlApiHost();
+                setSubscriptionHost();
+                setUploadHost();
+            }
             return this;
         }
 
         public Builder setOrganizationName(String organizationName) {
-            this.apiHost = organizationName + ".app.erxes.io/api";
-            setGqlApiHost();
-            setSubscriptionHost();
-            setUploadHost();
+            if(organizationName != null) {
+                this.apiHost = organizationName + ".app.erxes.io/api";
+                setGqlApiHost();
+                setSubscriptionHost();
+                setUploadHost();
+            }
             return this;
         }
 
