@@ -63,27 +63,18 @@ public class SetConnect {
         String generatedString = buffer.toString();
         return generatedString;
     }
-    public void run(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
-        this.customData = data;
+    public void run(boolean isCheckRequired, boolean isUser) {
+        this.customData = config.data;
         Gson gson = new Gson();
-        Map customDataMap = gson.fromJson(data, Map.class);
-        String imei = getDeviceIMEI();
-
-        if(imei == null){
-            if(dataManager.getDataS(DataManager.ANDROID_UNIQUE)==null){
-                imei = getRandom();
-                dataManager.setData(DataManager.ANDROID_UNIQUE,imei);
-            } else {
-                imei = dataManager.getDataS(DataManager.ANDROID_UNIQUE);
-            }
-        }
+        Map customDataMap = gson.fromJson(config.data, Map.class);
+        Map customCompanyDataMap = gson.fromJson(config.companyData, Map.class);
 
         WidgetsMessengerConnectMutation mutate = WidgetsMessengerConnectMutation.builder()
                 .brandCode(config.brandCode)
-                .email(email)
-                .phone(phone)
+                .email(config.email)
+                .phone(config.phone)
                 .isUser(isUser)
-//                .visitorId(imei)
+                .companyData(new Json(customCompanyDataMap))
                 .data(new Json(customDataMap))
                 .build();
         Rx3Apollo.from(erxesRequest.apolloClient
@@ -104,9 +95,9 @@ public class SetConnect {
                                 if (config.messengerdata != null) {
                                     if (config.messengerdata.isShowLauncher()) {
                                         prepareData(response);
-                                        config.initActivity(hasData, email, phone, customData);
+                                        config.initActivity();
                                     } else {
-                                        erxesRequest.setConnect(!isCheckRequired, isUser, hasData, email, phone, customData);
+                                        erxesRequest.setConnect(!isCheckRequired,config.isUser());
                                     }
                                 }
                             } else {

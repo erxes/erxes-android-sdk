@@ -8,7 +8,6 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport;
 import com.erxes.io.opens.type.AttachmentInput;
 import com.erxes.io.opens.type.CustomType;
-import com.newmedia.erxeslibrary.BuildConfig;
 import com.newmedia.erxeslibrary.connection.ChangeOperator;
 import com.newmedia.erxeslibrary.connection.GetBotInitialMessage;
 import com.newmedia.erxeslibrary.connection.GetConversation;
@@ -127,12 +126,12 @@ public final class ErxesRequest {
         return client;
     }
 
-    public void setConnect(boolean isCheckRequired, boolean isUser, boolean hasData, String email, String phone, String data) {
+    public void setConnect(boolean isCheckRequired, boolean isUser) {
         if (!config.isNetworkConnected()) {
             return;
         }
         SetConnect setConnect = new SetConnect(this, context);
-        setConnect.run(isCheckRequired, isUser, hasData, email, phone, data);
+        setConnect.run(isCheckRequired, isUser);
     }
 
     void getIntegration() {
@@ -203,12 +202,13 @@ public final class ErxesRequest {
         SendLead sendLead = new SendLead(this, context);
         sendLead.run();
     }
-    public void sendWidgetBotRequest(String content,String type,String payload) {
+
+    public void sendWidgetBotRequest(String content, String type, String payload) {
         if (!config.isNetworkConnected()) {
             return;
         }
         WidgetBotRequest widgetBotRequest = new WidgetBotRequest(this, context);
-        widgetBotRequest.run(content,type,payload);
+        widgetBotRequest.run(content, type, payload);
     }
 
     public void changeOperator(String conversationid) {

@@ -40,9 +40,6 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
     private ErxesRequest erxesRequest;
     private DataManager dataManager;
     private LinearLayout loaderView;
-    private String customData, mEmail, mPhone;
-
-    private boolean hasData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +79,12 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
         cancelImageView.setOnClickListener(touchListener);
         initIcon();
 
-        hasData = getIntent().getBooleanExtra("hasData", false);
-        customData = getIntent().getStringExtra("customData");
-        mEmail = getIntent().getStringExtra("mEmail");
-        mPhone = getIntent().getStringExtra("mPhone");
         init();
     }
 
     private void init() {
-        if (hasData) {
-            erxesRequest.setConnect( false, true, hasData, mEmail, mPhone, customData);
+        if (config.isUser()) {
+            erxesRequest.setConnect( false, true);
         } else {
             change_color();
             contact.setVisibility(View.VISIBLE);
@@ -157,7 +150,8 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
             if (email.getVisibility() == View.GONE) {
                 if (phone.getText().toString().length() > 7) {
                     dataManager.setData(DataManager.PHONE, phone.getText().toString());
-                    erxesRequest.setConnect( false, false, false, "", phone.getText().toString(), null);
+                    config.phone = phone.getText().toString();
+                    erxesRequest.setConnect(false,false);
                     contact.setVisibility(View.GONE);
                     loaderView.setVisibility(View.VISIBLE);
 
@@ -172,7 +166,8 @@ public class ErxesActivity extends AppCompatActivity implements ErxesObserver {
                 if (config.isValidEmail(email.getText().toString())) {
                     email.setError(null);
                     dataManager.setData(DataManager.EMAIL, email.getText().toString());
-                    erxesRequest.setConnect( false, false, false, email.getText().toString(), "", null);
+                    config.email = email.getText().toString();
+                    erxesRequest.setConnect( false, false);
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);

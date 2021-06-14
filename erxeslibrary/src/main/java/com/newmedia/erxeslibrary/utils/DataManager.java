@@ -27,10 +27,8 @@ public final class DataManager {
     public static final String COLOR = "rxx_color";
     public static final String TEXTCOLOR = "rxx_textColor";
     public static final String LANGUAGE = "rxx_language";
-    public static final String ISUSER = "rxx_isUser";
-    public static final String CUSTOMDATA = "rxx_customData";
-    public static final String HASPROVIDER = "rxx_hasprovider";
-    public static final String ANDROID_UNIQUE = "rxx_ANDROID_UNIQUE";
+    public static final String COMPANYDATA = "rxx_companyData";
+    public static final String DATA = "rxx_data";
 
 
     public static DataManager getInstance(Context context) {

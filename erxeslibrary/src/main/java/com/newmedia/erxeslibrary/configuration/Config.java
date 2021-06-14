@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -40,9 +41,6 @@ import com.newmedia.erxeslibrary.ui.message.MessageActivity;
 import com.newmedia.erxeslibrary.utils.DataManager;
 import com.newmedia.erxeslibrary.utils.ListTagHandler;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -66,7 +64,7 @@ public class Config {
     public String brandCode;
     private final boolean isMessengerOnline = false;
     public boolean showVideoCallRequest = false;
-    private DataManager dataManager;
+    private static DataManager dataManager;
     private Activity activityConfig;
     public Context context;
     private ErxesRequest erxesRequest;
@@ -82,6 +80,8 @@ public class Config {
     public boolean isOnline;
     public String brandDescription, brandName, serverTime = "";
 
+    public String email, phone, companyData, data;
+
     private Config(Context context) {
         this.context = context;
         dataManager = DataManager.getInstance(context);
@@ -94,7 +94,15 @@ public class Config {
             if (config.host3100 != null)
                 config.erxesRequest.set_client();
         }
+        config.email = dataManager.getDataS(DataManager.EMAIL);
+        config.phone = dataManager.getDataS(DataManager.PHONE);
+        config.companyData = dataManager.getDataS(DataManager.COMPANYDATA);
+        config.data = dataManager.getDataS(DataManager.DATA);
         return config;
+    }
+
+    public boolean isUser() {
+        return email != null || phone != null;
     }
 
     public String convertDatetime(long createDate) {
@@ -240,15 +248,23 @@ public class Config {
         }
     }
 
-    private void Init(String brandCode, String host3100, String host3300, String hostUpload) {
+    private void Init(String brandCode, String host3100, String host3300, String hostUpload, String email, String phone, String companyData, String data) {
         this.host3100 = host3100;
         this.host3300 = host3300;
         this.hostUpload = hostUpload;
         this.brandCode = brandCode;
+        this.email = email;
+        this.phone = phone;
+        this.companyData = companyData;
+        this.data = data;
         dataManager.setData("host3100", this.host3100);
         dataManager.setData("host3300", this.host3300);
         dataManager.setData("hostUpload", this.hostUpload);
         dataManager.setData("BRANDCODE", this.brandCode);
+        dataManager.setData(DataManager.EMAIL, this.email);
+        dataManager.setData(DataManager.PHONE, this.phone);
+        dataManager.setData(DataManager.COMPANYDATA, this.companyData);
+        dataManager.setData(DataManager.DATA, this.data);
         if (dataManager.getDataS("host3300") != null)
             intent = new Intent(context, ListenerService.class);
         LoadDefaultValues();
@@ -256,39 +272,21 @@ public class Config {
     }
 
     public void Start() {
-        checkRequired(false, null, null, null);
+        checkRequired(isUser());
     }
 
-    public void Start(String jsonString) {
-        String email = null, phone = null;
-        try {
-            JSONObject jsonObject1 = new JSONObject(jsonString);
-            email = jsonObject1.getString("email");
-            phone = jsonObject1.getString("phone");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        checkRequired(true, email, phone, jsonString);
-    }
-
-    public void initActivity(boolean hasData, String email, String phone, String customData) {
+    public void initActivity() {
         initializeIcon();
         initializeFresco();
-        dataManager.setData(DataManager.ISUSER, hasData);
-        dataManager.setData(DataManager.EMAIL, email);
-        dataManager.setData(DataManager.PHONE, phone);
-        dataManager.setData(DataManager.CUSTOMDATA, customData);
+
         Intent a = new Intent(context, ErxesActivity.class);
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        a.putExtra("hasData", hasData);
-        a.putExtra("customData", customData);
-        a.putExtra("mEmail", email);
-        a.putExtra("mPhone", phone);
+
         context.startActivity(a);
     }
 
-    private void checkRequired(boolean hasData, String email, String phone, String jsonObject) {
-        if (hasData) erxesRequest.setConnect(true, true, hasData, email, phone, jsonObject);
+    private void checkRequired(boolean isUser) {
+        if (isUser) erxesRequest.setConnect(true, isUser());
         else erxesRequest.getIntegration();
     }
 
@@ -298,6 +296,10 @@ public class Config {
         host3300 = dataManager.getDataS("host3300");
         hostUpload = dataManager.getDataS("hostUpload");
         brandCode = dataManager.getDataS("BRANDCODE");
+        email = dataManager.getDataS("EMAIL");
+        phone = dataManager.getDataS("PHONE");
+        companyData = dataManager.getDataS("COMPANYDATA");
+        data = dataManager.getDataS("DATA");
 
         customerId = dataManager.getDataS(DataManager.CUSTOMERID);
         integrationId = dataManager.getDataS(DataManager.INTEGRATIONID);
@@ -407,8 +409,14 @@ public class Config {
         private String uploadHost;
         private String protocal = "https";
 
+        private String email;
+        private String phone;
+        private String companyData;
+        private String data;
+
         public Builder(@NonNull String brand) {
             this.brand = brand;
+
         }
 
         public Builder setApiHost(String apiHost) {
@@ -437,6 +445,26 @@ public class Config {
             return this;
         }
 
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder setCompanyData(String companyData) {
+            this.companyData = companyData;
+            return this;
+        }
+
+        public Builder setData(String data) {
+            this.data = data;
+            return this;
+        }
+
         private void setGqlApiHost() {
             this.graphqlApiHost = protocal + "://" + this.apiHost + "/graphql";
         }
@@ -453,7 +481,16 @@ public class Config {
 
         public Config build(Context context) {
             Config config = Config.getInstance(context);
-            config.Init(this.brand, this.graphqlApiHost, this.subscriptionHost, this.uploadHost);
+            config.Init(
+                    this.brand,
+                    this.graphqlApiHost,
+                    this.subscriptionHost,
+                    this.uploadHost,
+                    this.email,
+                    this.phone,
+                    this.companyData,
+                    this.data
+            );
             return config;
         }
     }

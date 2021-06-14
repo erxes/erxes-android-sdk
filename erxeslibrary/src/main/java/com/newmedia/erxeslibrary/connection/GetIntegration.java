@@ -46,7 +46,7 @@ public class GetIntegration {
                                 config.changeLanguage(dataResponse.getData().widgetsGetMessengerIntegration().languageCode());
                                 ErxesHelper.load_uiOptions(dataResponse.getData().widgetsGetMessengerIntegration().uiOptions());
                                 ErxesHelper.load_messengerData(dataResponse.getData().widgetsGetMessengerIntegration().messengerData());
-                                config.initActivity(false,null,null,null);
+                                config.initActivity();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
