@@ -1,5 +1,5 @@
-mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: String, $isUser:Boolean, $data: JSON, $companyData: JSON){
-    widgetsMessengerConnect (brandCode: $brandCode, email: $email, phone: $phone, isUser:$isUser, data: $data, companyData: $companyData){
+mutation widgetsMessengerConnect($brandCode: String!, $email: String, $phone: String, $isUser:Boolean, $data: JSON, $companyData: JSON, $code: String){
+    widgetsMessengerConnect (brandCode: $brandCode, email: $email, phone: $phone, isUser:$isUser, data: $data, companyData: $companyData, code: $code){
         integrationId
         uiOptions
         languageCode

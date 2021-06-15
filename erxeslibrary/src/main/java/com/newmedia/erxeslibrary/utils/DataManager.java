@@ -29,6 +29,7 @@ public final class DataManager {
     public static final String LANGUAGE = "rxx_language";
     public static final String COMPANYDATA = "rxx_companyData";
     public static final String DATA = "rxx_data";
+    public static final String CODE = "rxx_code";
 
 
     public static DataManager getInstance(Context context) {

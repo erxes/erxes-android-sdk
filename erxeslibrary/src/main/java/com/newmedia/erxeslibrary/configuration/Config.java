@@ -80,7 +80,7 @@ public class Config {
     public boolean isOnline;
     public String brandDescription, brandName, serverTime = "";
 
-    public String email, phone, companyData, data;
+    public String email, phone, companyData, data, code;
 
     private Config(Context context) {
         this.context = context;
@@ -98,6 +98,7 @@ public class Config {
         config.phone = dataManager.getDataS(DataManager.PHONE);
         config.companyData = dataManager.getDataS(DataManager.COMPANYDATA);
         config.data = dataManager.getDataS(DataManager.DATA);
+        config.code = dataManager.getDataS(DataManager.CODE);
         return config;
     }
 
@@ -248,7 +249,7 @@ public class Config {
         }
     }
 
-    private void Init(String brandCode, String host3100, String host3300, String hostUpload, String email, String phone, String companyData, String data) {
+    private void Init(String brandCode, String host3100, String host3300, String hostUpload, String email, String phone, String companyData, String data, String code) {
         this.host3100 = host3100;
         this.host3300 = host3300;
         this.hostUpload = hostUpload;
@@ -257,6 +258,7 @@ public class Config {
         this.phone = phone;
         this.companyData = companyData;
         this.data = data;
+        this.code = code;
         dataManager.setData("host3100", this.host3100);
         dataManager.setData("host3300", this.host3300);
         dataManager.setData("hostUpload", this.hostUpload);
@@ -265,6 +267,7 @@ public class Config {
         dataManager.setData(DataManager.PHONE, this.phone);
         dataManager.setData(DataManager.COMPANYDATA, this.companyData);
         dataManager.setData(DataManager.DATA, this.data);
+        dataManager.setData(DataManager.CODE, this.code);
         if (dataManager.getDataS("host3300") != null)
             intent = new Intent(context, ListenerService.class);
         LoadDefaultValues();
@@ -413,6 +416,7 @@ public class Config {
         private String phone;
         private String companyData;
         private String data;
+        private String code;
 
         public Builder(@NonNull String brand) {
             this.brand = brand;
@@ -469,6 +473,11 @@ public class Config {
             return this;
         }
 
+        public Builder setCode(String code) {
+            this.code = code;
+            return this;
+        }
+
         private void setGqlApiHost() {
             this.graphqlApiHost = protocal + "://" + this.apiHost + "/graphql";
         }
@@ -493,7 +502,8 @@ public class Config {
                     this.email,
                     this.phone,
                     this.companyData,
-                    this.data
+                    this.data,
+                    this.code
             );
             return config;
         }

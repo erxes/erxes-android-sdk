@@ -73,6 +73,7 @@ public class SetConnect {
                 .brandCode(config.brandCode)
                 .email(config.email)
                 .phone(config.phone)
+                .code(config.code)
                 .isUser(isUser)
                 .companyData(new Json(customCompanyDataMap))
                 .data(new Json(customDataMap))
