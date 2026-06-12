@@ -64,9 +64,12 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 > reachable schema), and OkHttp keeps the dependency surface small.
 
 ## Phase 4 — File upload & attachments
-- ☐ `FileUploader`: multipart POST to `/gateway/upload-file`, PNG/JPEG guard, plain-text key response
-- ☐ Image picker integration in sample + chat
-- ☐ Attachment URL resolution (`AttachmentUrl` util)
+- ☑ `FileUploader`: multipart POST to `/gateway/upload-file`, PNG/JPEG guard, plain-text key response
+- ☑ `UploadedAttachment` + `toAttachment()` bridge into `sendMessage`
+- ☑ Repository `uploadAttachment()`; shared `Call.await()` extracted to `HttpExt`
+- ☑ Unit tests: url build, multipart shape, plain-text key, mime/empty rejections — 20 total green
+- ☐ Image picker integration in sample + chat (lands with Phase 5 UI)
+- ☐ Attachment URL resolution (`AttachmentUrl` util — for rendering remote attachment urls)
 
 ## Phase 5 — UI (Compose, parity with SwiftUI)
 - ☐ `MessengerLauncher` draggable button, snaps to corners; shows after `isReady`

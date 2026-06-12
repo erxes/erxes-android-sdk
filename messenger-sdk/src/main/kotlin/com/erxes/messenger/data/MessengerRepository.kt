@@ -8,10 +8,12 @@ import com.erxes.messenger.data.model.Conversation
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.data.model.Supporter
 import com.erxes.messenger.network.ConnectParser
+import com.erxes.messenger.network.FileUploader
 import com.erxes.messenger.network.GraphQLClient
 import com.erxes.messenger.network.MessageParser
 import com.erxes.messenger.network.MessengerOperations
 import com.erxes.messenger.network.RealtimeClient
+import com.erxes.messenger.network.UploadedAttachment
 import com.erxes.messenger.session.SessionStore
 import com.erxes.messenger.util.SdkLog
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +42,7 @@ class MessengerRepository(
     private val graphQL: GraphQLClient = GraphQLClient(),
     // WebSocket lives on `endpoint` (not fileEndpoint), upgraded to ws/wss.
     private val realtime: RealtimeClient = RealtimeClient(config.endpoint),
+    private val fileUploader: FileUploader = FileUploader(),
 ) {
     /** GraphQL is served from the file endpoint (no `w.` subdomain). See docs/PROTOCOL.md. */
     private val endpoint: String get() = config.fileEndpoint
@@ -202,4 +205,14 @@ class MessengerRepository(
     /** Live bot typing indicator for [conversationId] (`true` while the bot is typing). */
     fun botTypingStream(conversationId: String): Flow<Boolean> =
         realtime.botTyping(conversationId).mapNotNull { (it["typing"] as? JsonPrimitive)?.booleanOrNull }
+
+    // ── File upload (Phase 4) ──────────────────────────────────────────────────
+
+    /**
+     * Uploads an image (PNG/JPEG) to the gateway and returns its attachment descriptor,
+     * ready to pass to [sendMessage]. Throws [com.erxes.messenger.network.UploadException]
+     * on rejection/failure.
+     */
+    suspend fun uploadAttachment(bytes: ByteArray, filename: String, mimeType: String): UploadedAttachment =
+        fileUploader.upload(bytes, filename, mimeType, config.fileEndpoint)
 }

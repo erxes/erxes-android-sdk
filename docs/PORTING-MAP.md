@@ -27,7 +27,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Config/MessengerConfig.swift`             | `config/MessengerConfig.kt`, `config/Appearance.kt` | ☑ |
 | `Network/NetworkClient.swift`              | `network/GraphQLClient.kt`                      | ☑ (OkHttp; Apollo in Phase 3) |
 | `Network/GraphQLClient.swift`              | `network/GraphQLClient.kt`                      | ☑ |
-| `Network/Upload/FileUploader.swift`        | `network/FileUploader.kt`                       | ☐ Phase 4 |
+| `Network/Upload/FileUploader.swift`        | `network/FileUploader.kt`                       | ☑ |
 | `Network/Operations/*.graphql`             | `network/MessengerOperations.kt` (raw strings)  | ◐ connect/supporters/browserInfo done |
 | `Network/TicketMutations.swift`            | `network/TicketMutations.kt`                     | ☐ Phase 6 |
 | `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☑ |

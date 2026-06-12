@@ -13,16 +13,10 @@ import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.jsonPrimitive
-import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
-import java.io.IOException
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 /** Thrown when a GraphQL response carries an `errors` array or cannot be parsed. */
 class GraphQLException(message: String) : Exception(message)
@@ -124,15 +118,3 @@ private fun JsonArray.firstMessage(): String? =
 
 private fun JsonObject.dataField(field: String): JsonElement? =
     (this["data"] as? JsonObject)?.get(field)
-
-private suspend fun Call.await(): Response = suspendCancellableCoroutine { cont ->
-    enqueue(object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            if (cont.isCancelled) return
-            cont.resumeWithException(e)
-        }
-
-        override fun onResponse(call: Call, response: Response) = cont.resume(response)
-    })
-    cont.invokeOnCancellation { runCatching { cancel() } }
-}
