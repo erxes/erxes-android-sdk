@@ -6,14 +6,18 @@ import androidx.compose.runtime.remember
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.ui.conversation.ChatScreen
 import com.erxes.messenger.ui.conversation.ConversationListScreen
+import com.erxes.messenger.ui.screens.CreateTicketScreen
 import com.erxes.messenger.ui.screens.HomeScreen
 import com.erxes.messenger.ui.screens.IdentityFormScreen
+import com.erxes.messenger.ui.screens.TicketsScreen
 
 /** Internal navigation target within the messenger. */
 internal sealed interface MessengerScreen {
     data object Home : MessengerScreen
     data object List : MessengerScreen
     data object Auth : MessengerScreen
+    data object Tickets : MessengerScreen
+    data object CreateTicket : MessengerScreen
     data class Chat(val conversationId: String?) : MessengerScreen
 }
 
@@ -49,6 +53,7 @@ internal fun MessengerRoot(
         is MessengerScreen.Home -> HomeScreen(
             onViewConversations = { push(MessengerScreen.List) },
             onNewConversation = { startNewConversation() },
+            onViewTickets = { push(MessengerScreen.Tickets) },
             onClose = onExit,
         )
 
@@ -61,6 +66,16 @@ internal fun MessengerRoot(
         is MessengerScreen.Auth -> IdentityFormScreen(
             // Replace the gate with the chat so back from chat returns to the previous screen.
             onIdentified = { replaceTop(MessengerScreen.Chat(null)) },
+            onBack = { pop() },
+        )
+
+        is MessengerScreen.Tickets -> TicketsScreen(
+            onCreate = { push(MessengerScreen.CreateTicket) },
+            onBack = { pop() },
+        )
+
+        is MessengerScreen.CreateTicket -> CreateTicketScreen(
+            onCreated = { pop() },
             onBack = { pop() },
         )
 

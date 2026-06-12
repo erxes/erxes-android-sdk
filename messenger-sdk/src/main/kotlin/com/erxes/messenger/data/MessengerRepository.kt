@@ -7,12 +7,15 @@ import com.erxes.messenger.data.model.ConnectResponse
 import com.erxes.messenger.data.model.Conversation
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.data.model.Supporter
+import com.erxes.messenger.data.model.Ticket
+import com.erxes.messenger.data.model.TicketTag
 import com.erxes.messenger.network.ConnectParser
 import com.erxes.messenger.network.FileUploader
 import com.erxes.messenger.network.GraphQLClient
 import com.erxes.messenger.network.MessageParser
 import com.erxes.messenger.network.MessengerOperations
 import com.erxes.messenger.network.RealtimeClient
+import com.erxes.messenger.network.TicketParser
 import com.erxes.messenger.network.UploadedAttachment
 import com.erxes.messenger.session.SessionStore
 import com.erxes.messenger.util.SdkLog
@@ -258,5 +261,69 @@ class MessengerRepository(
             put("value", value)
         }
         graphQL.send(endpoint, "widgetsSaveCustomerGetNotified", MessengerOperations.SAVE_GET_NOTIFIED, variables)
+    }
+
+    // ── Tickets (Phase 6b) ─────────────────────────────────────────────────────
+
+    /** Lists the current customer's tickets. Empty for anonymous visitors. */
+    suspend fun tickets(): List<Ticket> {
+        val customerId = session.cachedCustomerId() ?: return emptyList()
+        val variables = buildJsonObject { put("customerId", customerId) }
+        val array = graphQL.arrayField(
+            endpoint, "widgetTicketsByCustomer", MessengerOperations.TICKETS_BY_CUSTOMER, variables,
+            "widgetTicketsByCustomer",
+        )
+        return TicketParser.parseTickets(array.filterIsInstance<JsonObject>())
+    }
+
+    /** Selectable tags for the ticket create form. */
+    suspend fun ticketTags(configId: String, parentId: String?): List<TicketTag> {
+        val variables = buildJsonObject {
+            put("configId", configId)
+            parentId?.let { put("parentId", it) }
+        }
+        val array = graphQL.arrayField(
+            endpoint, "widgetsGetTicketTags", MessengerOperations.TICKET_TAGS, variables, "widgetsGetTicketTags",
+        )
+        return array.filterIsInstance<JsonObject>().mapNotNull(TicketParser::parseTag)
+    }
+
+    /**
+     * Creates a ticket in the configured pipeline/status for the current customer.
+     * Returns the new ticket id. Requires a registered customer (identify first if anonymous).
+     */
+    suspend fun createTicket(
+        name: String,
+        description: String?,
+        statusId: String,
+        tagIds: List<String> = emptyList(),
+        attachments: List<Attachment> = emptyList(),
+    ): String {
+        val customerId = session.cachedCustomerId()
+            ?: throw com.erxes.messenger.network.GraphQLException("No customer to create a ticket for")
+        val variables = buildJsonObject {
+            put("name", name)
+            put("statusId", statusId)
+            putJsonArray("customerIds") { add(customerId) }
+            description?.takeIf { it.isNotBlank() }?.let { put("description", it) }
+            if (tagIds.isNotEmpty()) putJsonArray("tagIds") { tagIds.forEach { add(it) } }
+            if (attachments.isNotEmpty()) {
+                putJsonArray("attachments") {
+                    attachments.forEach { att ->
+                        add(buildJsonObject {
+                            put("url", att.url)
+                            att.name?.let { put("name", it) }
+                            att.type?.let { put("type", it) }
+                            att.size?.let { put("size", it) }
+                        })
+                    }
+                }
+            }
+        }
+        val obj = graphQL.objectField(
+            endpoint, "widgetTicketCreated", MessengerOperations.TICKET_CREATE, variables, "widgetTicketCreated",
+        )
+        return (obj["_id"] as? JsonPrimitive)?.contentOrNull
+            ?: throw com.erxes.messenger.network.GraphQLException("Failed to parse widgetTicketCreated")
     }
 }

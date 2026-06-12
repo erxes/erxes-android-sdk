@@ -93,9 +93,16 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☑ Get-notified opt-in (`widgetsSaveCustomerGetNotified`) — repository method
 - ☑ `ErxesMessenger.isIdentified`/`requireAuth` + `identify()`/`saveGetNotified()` public API
 - ☑ Social links footer on Home (opens links in browser)
-### 6b/6c — Tickets & knowledge base (todo — needs more iOS source read first)
-- ☐ ticketConfig + websiteApps parsing in ConnectParser
-- ☐ Tickets (create + list) using `ticketConfig`
+### 6b — Tickets ☑
+- ☑ ticketConfig parsing in ConnectParser (top-level of connect; formFields)
+- ☑ Models: Ticket, TicketStatus, TicketAssignee, TicketTag, TicketConfig
+- ☑ Operations: widgetTicketsByCustomer, widgetTicketCreated, widgetsGetTicketTags
+- ☑ Repository: tickets(), createTicket(), ticketTags()
+- ☑ TicketsScreen (list + status chips) + CreateTicketScreen (form from formFields + tags)
+- ☑ Home shows "Support tickets" only when ticketConfig present
+- ☑ Unit tests: ticketConfig parse (+null guard), ticket parse — 23 total green
+### 6c — Knowledge base & leads (todo — needs more iOS source read first)
+- ☐ websiteApps parsing in ConnectParser
 - ☐ Knowledge base / Help (article browse + search)
 - ☐ Lead/form widget (`widgetsLeadConnect` / `widgetsSaveLead`)
 

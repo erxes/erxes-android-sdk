@@ -17,6 +17,7 @@ internal object MessengerOperations {
             languageCode
             uiOptions
             messengerData
+            ticketConfig
           }
         }
     """.trimIndent()
@@ -132,6 +133,36 @@ internal object MessengerOperations {
     val SAVE_GET_NOTIFIED = """
         mutation widgetsSaveCustomerGetNotified(${'$'}customerId: String, ${'$'}visitorId: String, ${'$'}type: String!, ${'$'}value: String!) {
           widgetsSaveCustomerGetNotified(customerId: ${'$'}customerId, visitorId: ${'$'}visitorId, type: ${'$'}type, value: ${'$'}value)
+        }
+    """.trimIndent()
+
+    /** `widgetTicketsByCustomer` — list this customer's tickets. */
+    val TICKETS_BY_CUSTOMER = """
+        query WidgetTicketsByCustomer(${'$'}customerId: String) {
+          widgetTicketsByCustomer(customerId: ${'$'}customerId) {
+            _id name description pipelineId statusId priority labelIds tagIds number
+            startDate targetDate createdAt updatedAt
+            status { _id color name description type }
+            assignee { _id details { avatar firstName lastName fullName } }
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetTicketCreated` — create a ticket; returns id + number. */
+    val TICKET_CREATE = """
+        mutation WidgetTicketCreated(${'$'}name: String!, ${'$'}statusId: String!, ${'$'}customerIds: [String!]!, ${'$'}description: String, ${'$'}attachments: [AttachmentInput], ${'$'}tagIds: [String!]) {
+          widgetTicketCreated(name: ${'$'}name, statusId: ${'$'}statusId, customerIds: ${'$'}customerIds, description: ${'$'}description, attachments: ${'$'}attachments, tagIds: ${'$'}tagIds) {
+            _id number
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetsGetTicketTags` — selectable tags for the ticket form. */
+    val TICKET_TAGS = """
+        query WidgetsGetTicketTags(${'$'}configId: String, ${'$'}parentId: String) {
+          widgetsGetTicketTags(configId: ${'$'}configId, parentId: ${'$'}parentId) {
+            _id name colorCode
+          }
         }
     """.trimIndent()
 }

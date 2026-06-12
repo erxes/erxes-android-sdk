@@ -37,10 +37,12 @@ import com.erxes.messenger.ErxesMessenger
 internal fun HomeScreen(
     onViewConversations: () -> Unit,
     onNewConversation: () -> Unit,
+    onViewTickets: () -> Unit,
     onClose: () -> Unit,
 ) {
     val connect by ErxesMessenger.connectResponse.collectAsStateWithLifecycle()
     val messages = connect?.messengerData?.messages
+    val hasTickets = connect?.messengerData?.ticketConfig != null
     val title = messages?.greetTitle?.takeIf { it.isNotBlank() } ?: "Hi there 👋"
     val subtitle = messages?.greet?.takeIf { it.isNotBlank() } ?: "How can we help you today?"
 
@@ -79,6 +81,11 @@ internal fun HomeScreen(
             }
             OutlinedButton(onClick = onViewConversations, modifier = Modifier.fillMaxWidth()) {
                 Text("View your conversations")
+            }
+            if (hasTickets) {
+                OutlinedButton(onClick = onViewTickets, modifier = Modifier.fillMaxWidth()) {
+                    Text("Support tickets")
+                }
             }
 
             connect?.messengerData?.links?.let { SocialLinksRow(it) }

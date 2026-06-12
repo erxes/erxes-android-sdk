@@ -35,6 +35,8 @@ data class MessengerData(
     val links: SocialLinks = SocialLinks(),
     val knowledgeBaseTopicId: String? = null,
     val responseRate: String? = null,
+    /** Ticket pipeline config; non-null enables the Tickets feature. */
+    val ticketConfig: TicketConfig? = null,
     val requireAuth: Boolean = false,
     val showChat: Boolean = true,
     val showLauncher: Boolean = true,

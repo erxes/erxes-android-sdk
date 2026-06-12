@@ -5,6 +5,9 @@ import com.erxes.messenger.data.model.GreetingMessages
 import com.erxes.messenger.data.model.MessengerData
 import com.erxes.messenger.data.model.OnlineHour
 import com.erxes.messenger.data.model.SocialLinks
+import com.erxes.messenger.data.model.TicketConfig
+import com.erxes.messenger.data.model.TicketFieldConfig
+import com.erxes.messenger.data.model.TicketFormFields
 import com.erxes.messenger.data.model.UiOptions
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -76,6 +79,8 @@ object ConnectParser {
             links = socialLinks,
             knowledgeBaseTopicId = md?.str("knowledgeBaseTopicId")?.takeIf { it.isNotEmpty() },
             responseRate = md?.str("responseRate"),
+            // ticketConfig lives at the TOP LEVEL of widgetsMessengerConnect, not in messengerData.
+            ticketConfig = parseTicketConfig(data?.obj("ticketConfig")),
             requireAuth = md?.bool("requireAuth") ?: false,
             showChat = md?.bool("showChat") ?: true,
             showLauncher = md?.bool("showLauncher") ?: true,
@@ -90,6 +95,38 @@ object ConnectParser {
             languageCode = data?.str("languageCode"),
             uiOptions = uiOptions,
             messengerData = messengerData,
+        )
+    }
+
+    /** Parses the top-level `ticketConfig`. Null unless the required ids are present. */
+    private fun parseTicketConfig(tc: JsonObject?): TicketConfig? {
+        if (tc == null) return null
+        val id = tc.str("_id") ?: return null
+        val pipelineId = tc.str("pipelineId") ?: return null
+        val statusId = tc.str("selectedStatusId") ?: return null
+        val ff = tc.obj("formFields")
+        fun field(key: String): TicketFieldConfig? {
+            val f = ff?.obj(key) ?: return null
+            return TicketFieldConfig(
+                isShow = f.bool("isShow") ?: false,
+                label = f.str("label"),
+                placeholder = f.str("placeholder"),
+                order = f.int("order") ?: 99,
+            )
+        }
+        return TicketConfig(
+            id = id,
+            name = tc.str("name").orEmpty(),
+            pipelineId = pipelineId,
+            channelId = tc.str("channelId"),
+            selectedStatusId = statusId,
+            parentId = tc.str("parentId"),
+            formFields = TicketFormFields(
+                name = field("name"),
+                description = field("description"),
+                attachment = field("attachment"),
+                tags = field("tags"),
+            ),
         )
     }
 }

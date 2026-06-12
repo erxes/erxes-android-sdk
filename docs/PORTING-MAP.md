@@ -29,7 +29,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Network/GraphQLClient.swift`              | `network/GraphQLClient.kt`                      | ☑ |
 | `Network/Upload/FileUploader.swift`        | `network/FileUploader.kt`                       | ☑ |
 | `Network/Operations/*.graphql`             | `network/MessengerOperations.kt` (raw strings)  | ◐ connect/supporters/browserInfo done |
-| `Network/TicketMutations.swift`            | `network/TicketMutations.kt`                     | ☐ Phase 6 |
+| `Network/TicketMutations.swift`            | repo `createTicket()` + `network/TicketParser.kt` | ☑ |
 | `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☑ |
 | `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☑ |
 | `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☑ |
@@ -41,7 +41,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Models/Message.swift`                    | `data/model/Message.kt`                          | ☑ |
 | `Models/MessengerUser.swift`              | `config/MessengerUser.kt`                        | ☑ |
 | `Models/Supporter.swift`                  | `data/model/Supporter.kt`                        | ☑ |
-| `Models/Ticket.swift`                     | `data/model/Ticket.kt`                           | ☐ Phase 6 |
+| `Models/Ticket.swift`                     | `data/model/Ticket.kt` + `TicketConfig.kt`       | ☑ |
 | `Messenger/ViewModels/AppViewModel.swift` | `ui/MessengerViewModel.kt` + `data/MessengerRepository.kt` | ◐ connect/supporters done; UI state Phase 5 |
 | `Messenger/ChatViewModel.swift`           | `ui/conversation/ChatViewModel.kt`               | ☑ |
 | `Messenger/ChatView.swift`                | `ui/conversation/ChatScreen.kt`                  | ☑ |
@@ -57,7 +57,8 @@ Android library. Use this to track which iOS source has been ported.
 | `Messenger/Screens/HomeView.swift`        | `ui/screens/HomeScreen.kt`                        | ☑ (+ social links) |
 | `Messenger/Screens/GetNotifiedView.swift` | `ui/screens/IdentityFormScreen.kt`                | ☑ requireAuth/get-notified |
 | `Messenger/Screens/HelpView.swift` + `HelpViewModel` | `ui/screens/HelpScreen.kt`             | ☐ Phase 6c |
-| `Messenger/Screens/TicketsView.swift` + `CreateTicketView` | `ui/screens/Tickets*.kt`        | ☐ Phase 6b |
+| `Messenger/Screens/TicketsView.swift` + `CreateTicketView` | `ui/screens/TicketsScreen.kt` + `CreateTicketScreen.kt` | ☑ |
+| `ViewModels/TicketListViewModel` + `TicketFormViewModel` | `ui/screens/TicketsViewModel.kt` | ☑ |
 | `Messenger/Components/*.swift`            | `ui/components/*.kt`                              | ☐ |
 
 > Mark a row ☑ when its Android target compiles and matches behaviour. Keep this
