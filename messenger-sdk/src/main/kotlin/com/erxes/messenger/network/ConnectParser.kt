@@ -6,10 +6,8 @@ import com.erxes.messenger.data.model.MessengerData
 import com.erxes.messenger.data.model.OnlineHour
 import com.erxes.messenger.data.model.SocialLinks
 import com.erxes.messenger.data.model.UiOptions
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 
 /**
@@ -95,10 +93,3 @@ object ConnectParser {
         )
     }
 }
-
-// ── JsonObject access helpers (null-tolerant) ──────────────────────────────────
-
-private fun JsonObject.obj(key: String): JsonObject? = (this[key] as? JsonObject)
-private fun JsonObject.arr(key: String): JsonArray? = (this[key] as? JsonArray)
-private fun JsonObject.str(key: String): String? = (this[key] as? JsonPrimitive)?.contentOrNull
-private fun JsonObject.bool(key: String): Boolean? = (this[key] as? JsonPrimitive)?.booleanOrNull

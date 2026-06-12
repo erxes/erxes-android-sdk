@@ -32,13 +32,13 @@ Android library. Use this to track which iOS source has been ported.
 | `Network/TicketMutations.swift`            | `network/TicketMutations.kt`                     | ☐ Phase 6 |
 | `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☑ |
 | `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☑ |
-| `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☐ |
+| `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☑ |
 | `Utils/MessageGrouper.swift`               | `util/MessageGrouper.kt`                         | ☐ |
 | `Utils/AttachmentURL.swift`                | `util/AttachmentUrl.kt`                          | ☐ |
 | `Utils/Logger.swift`                       | `util/SdkLog.kt`                                 | ☑ |
 | `Models/ConnectResponse.swift`            | `data/model/ConnectResponse.kt`                  | ☑ (ticketConfig/websiteApps deferred) |
-| `Models/Conversation.swift`               | `data/model/Conversation.kt`                     | ☐ Phase 2 |
-| `Models/Message.swift`                    | `data/model/Message.kt`                          | ☐ Phase 2 |
+| `Models/Conversation.swift`               | `data/model/Conversation.kt`                     | ☑ |
+| `Models/Message.swift`                    | `data/model/Message.kt`                          | ☑ |
 | `Models/MessengerUser.swift`              | `config/MessengerUser.kt`                        | ☑ |
 | `Models/Supporter.swift`                  | `data/model/Supporter.kt`                        | ☑ |
 | `Models/Ticket.swift`                     | `data/model/Ticket.kt`                           | ☐ Phase 6 |

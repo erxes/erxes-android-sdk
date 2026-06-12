@@ -38,11 +38,15 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 > because codegen needs a reachable schema; will migrate in Phase 3 for subscriptions.
 
 ## Phase 2 — Conversations & messaging (data layer)
-- ☐ Models: `ConnectResponse`, `Conversation`, `Message`, `Supporter`, `Ticket`, `MessengerUser`
-- ☐ `widgetsConversations` (list) + `widgetsConversationDetail` (thread)
-- ☐ `widgetsInsertMessage` (send) + optimistic local echo
-- ☐ `widgetsReadConversationMessages` + `widgetsTotalUnreadCount`
-- ☐ `MessengerRepository` exposing `StateFlow`s
+- ☑ Models: `Conversation`, `Message`, `Attachment`, `MessageUser`, `UserDetails`, `ParticipatedUser`
+- ☑ `widgetsConversations` (list) + `widgetsConversationDetail` (thread)
+- ☑ `widgetsInsertMessage` (send) — persists assigned conversationId
+- ☑ `widgetsReadConversationMessages` + `widgetsTotalUnreadCount`
+- ☑ `MessageParser` (pure) + `DateParsing` (epoch/ISO, no desugaring)
+- ☑ Repository methods: conversations/detail/send/markRead/totalUnread
+- ☑ Unit tests: MessageParser (customer vs agent, attachments, unread derivation) — 14 total green
+- ☐ Optimistic local echo + `StateFlow` exposure (lands with the ChatViewModel in Phase 5)
+- ☐ Verify against a live integration
 
 ## Phase 3 — Realtime (WebSocket subscriptions)
 - ☐ Apollo `graphql-ws` transport on `{base}/gateway/graphql`

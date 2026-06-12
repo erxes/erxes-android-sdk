@@ -41,4 +41,63 @@ internal object MessengerOperations {
           }
         }
     """.trimIndent()
+
+    /** `widgetsConversations` — list conversations for this customer/visitor. */
+    val CONVERSATIONS = """
+        query widgetsConversations(${'$'}integrationId: String!, ${'$'}customerId: String, ${'$'}visitorId: String) {
+          widgetsConversations(integrationId: ${'$'}integrationId, customerId: ${'$'}customerId, visitorId: ${'$'}visitorId) {
+            _id
+            content
+            createdAt
+            unreadCount
+            participatedUsers { _id details { avatar fullName } }
+            messages {
+              _id content createdAt customerId conversationId fromBot
+              attachments { url name type size }
+              user { _id details { avatar fullName } }
+            }
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetsConversationDetail` — full thread of one conversation. */
+    val CONVERSATION_DETAIL = """
+        query widgetsConversationDetail(${'$'}_id: String!, ${'$'}integrationId: String) {
+          widgetsConversationDetail(_id: ${'$'}_id, integrationId: ${'$'}integrationId) {
+            _id
+            messages {
+              _id conversationId customerId content createdAt internal fromBot contentType
+              attachments { url name size type }
+              user { _id details { avatar fullName } }
+            }
+            isOnline
+            supporters { _id details { avatar fullName } isOnline }
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetsInsertMessage` — send a chat message. */
+    val INSERT_MESSAGE = """
+        mutation widgetsInsertMessage(${'$'}integrationId: String!, ${'$'}customerId: String, ${'$'}visitorId: String, ${'$'}conversationId: String, ${'$'}message: String, ${'$'}contentType: String, ${'$'}attachments: [AttachmentInput]) {
+          widgetsInsertMessage(integrationId: ${'$'}integrationId, customerId: ${'$'}customerId, visitorId: ${'$'}visitorId, conversationId: ${'$'}conversationId, message: ${'$'}message, contentType: ${'$'}contentType, attachments: ${'$'}attachments) {
+            _id conversationId customerId content createdAt fromBot contentType
+            attachments { url name size type }
+            user { _id details { avatar fullName } }
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetsReadConversationMessages` — mark all messages in a conversation as read. */
+    val READ_MESSAGES = """
+        mutation widgetsReadConversationMessages(${'$'}conversationId: String!) {
+          widgetsReadConversationMessages(conversationId: ${'$'}conversationId)
+        }
+    """.trimIndent()
+
+    /** `widgetsTotalUnreadCount` — total unread badge count. */
+    val TOTAL_UNREAD = """
+        query widgetsTotalUnreadCount(${'$'}integrationId: String!, ${'$'}customerId: String, ${'$'}visitorId: String) {
+          widgetsTotalUnreadCount(integrationId: ${'$'}integrationId, customerId: ${'$'}customerId, visitorId: ${'$'}visitorId)
+        }
+    """.trimIndent()
 }
