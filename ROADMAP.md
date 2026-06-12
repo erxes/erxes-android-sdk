@@ -21,14 +21,21 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 > connect/UI/realtime are stubbed with `TODO(Phase N)` markers.
 
 ## Phase 1 — Core networking & session (no UI)
-- ☐ `MessengerConfig` + `Appearance` (endpoint, integrationId, fileEndpoint, cachedCustomerId)
-- ☐ `ObjectId` generator (Mongo 24-hex) → `visitorId`
-- ☐ `SessionStore` (DataStore): cachedCustomerId, visitorId, conversationId, integration binding reset, identified
-- ☐ `ApolloProvider` / `GraphQLClient`: build client, `{base}/gateway/graphql`, error handling
-- ☐ Apollo `.graphql` operations ported from iOS (`src/main/graphql`)
-- ☐ **Connect handshake**: `widgetsMessengerConnect` → parse uiOptions/messengerData/ticketConfig, persist customerId
-- ☐ `widgetsSaveBrowserInfo` + `widgetsMessengerSupporters` (fire-and-forget)
-- ☐ Unit test: connect against a real/staging integration, assert customerId persisted
+- ☑ `MessengerConfig` + `Appearance` (endpoint, integrationId, fileEndpoint, cachedCustomerId)
+- ☑ `ObjectId` generator (Mongo 24-hex) → `visitorId`
+- ☑ `SessionStore` (DataStore): cachedCustomerId, visitorId, conversationId, integration binding reset, identified
+- ☑ `GraphQLClient`: OkHttp + kotlinx.serialization, `{base}/gateway/graphql`, error handling
+- ☑ GraphQL operations ported from iOS (raw strings in `MessengerOperations`; Apollo codegen deferred to Phase 3)
+- ☑ **Connect handshake**: `widgetsMessengerConnect` → parse uiOptions/messengerData, persist customerId
+- ☑ `widgetsSaveBrowserInfo` + `widgetsMessengerSupporters` (fire-and-forget)
+- ☑ Unit tests: ObjectId, ConnectParser (real-shape JSON), GraphQLClient (MockWebServer) — 10 tests green
+- ☐ Verify connect against a real/staging integration (needs endpoint + integrationId)
+- ◐ ticketConfig + websiteApps parsing deferred to Phase 6 (their feature phase)
+
+> Phase 1 done (pending live verification): `ErxesMessenger.configure()` runs the
+> handshake on a background scope, flips `isReady`, exposes `connectResponse`/`connectError`
+> StateFlows, and persists `cachedCustomerId`. Chose raw HTTP+JSON over Apollo codegen
+> because codegen needs a reachable schema; will migrate in Phase 3 for subscriptions.
 
 ## Phase 2 — Conversations & messaging (data layer)
 - ☐ Models: `ConnectResponse`, `Conversation`, `Message`, `Supporter`, `Ticket`, `MessengerUser`

@@ -2,7 +2,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    // Apollo codegen plugin is added in Phase 1 once the schema + .graphql files land:
+    alias(libs.plugins.kotlin.serialization)
+    // Apollo codegen plugin is added in Phase 3 (subscriptions), once a reachable
+    // schema is available. Phase 1/2 use raw HTTP + JSON, mirroring the iOS SDK.
     // alias(libs.plugins.apollo)
 }
 
@@ -34,6 +36,10 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
 }
 
 dependencies {
@@ -50,11 +56,15 @@ dependencies {
 
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.datastore.preferences)
+    implementation(libs.okhttp)
     implementation(libs.apollo.runtime)
     implementation(libs.coil.compose)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.okhttp.mockwebserver)
 }

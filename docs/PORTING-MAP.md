@@ -23,26 +23,26 @@ Android library. Use this to track which iOS source has been ported.
 
 | iOS file                                   | Android target                                  | Status |
 |--------------------------------------------|-------------------------------------------------|--------|
-| `MessengerSDK.swift`                       | `ErxesMessenger.kt`                             | ☐ |
-| `Config/MessengerConfig.swift`             | `config/MessengerConfig.kt`, `config/Appearance.kt` | ☐ |
-| `Network/NetworkClient.swift`              | `network/ApolloProvider.kt`                     | ☐ |
-| `Network/GraphQLClient.swift`              | `network/GraphQLClient.kt`                      | ☐ |
-| `Network/Upload/FileUploader.swift`        | `network/FileUploader.kt`                       | ☐ |
-| `Network/Operations/*.graphql`             | `src/main/graphql/**` (Apollo codegen)          | ☐ |
-| `Network/TicketMutations.swift`            | `network/TicketMutations.kt`                     | ☐ |
-| `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☐ |
-| `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☐ |
+| `MessengerSDK.swift`                       | `ErxesMessenger.kt`                             | ◐ facade + connect wired; show() TODO |
+| `Config/MessengerConfig.swift`             | `config/MessengerConfig.kt`, `config/Appearance.kt` | ☑ |
+| `Network/NetworkClient.swift`              | `network/GraphQLClient.kt`                      | ☑ (OkHttp; Apollo in Phase 3) |
+| `Network/GraphQLClient.swift`              | `network/GraphQLClient.kt`                      | ☑ |
+| `Network/Upload/FileUploader.swift`        | `network/FileUploader.kt`                       | ☐ Phase 4 |
+| `Network/Operations/*.graphql`             | `network/MessengerOperations.kt` (raw strings)  | ◐ connect/supporters/browserInfo done |
+| `Network/TicketMutations.swift`            | `network/TicketMutations.kt`                     | ☐ Phase 6 |
+| `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☑ |
+| `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☑ |
 | `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☐ |
 | `Utils/MessageGrouper.swift`               | `util/MessageGrouper.kt`                         | ☐ |
 | `Utils/AttachmentURL.swift`                | `util/AttachmentUrl.kt`                          | ☐ |
-| `Utils/Logger.swift`                       | `util/SdkLog.kt`                                 | ☐ |
-| `Models/ConnectResponse.swift`            | `data/model/ConnectResponse.kt`                  | ☐ |
-| `Models/Conversation.swift`               | `data/model/Conversation.kt`                     | ☐ |
-| `Models/Message.swift`                    | `data/model/Message.kt`                          | ☐ |
-| `Models/MessengerUser.swift`              | `data/model/MessengerUser.kt`                    | ☐ |
-| `Models/Supporter.swift`                  | `data/model/Supporter.kt`                        | ☐ |
-| `Models/Ticket.swift`                     | `data/model/Ticket.kt`                           | ☐ |
-| `Messenger/ViewModels/AppViewModel.swift` | `ui/MessengerViewModel.kt` + `data/repository/MessengerRepository.kt` | ☐ |
+| `Utils/Logger.swift`                       | `util/SdkLog.kt`                                 | ☑ |
+| `Models/ConnectResponse.swift`            | `data/model/ConnectResponse.kt`                  | ☑ (ticketConfig/websiteApps deferred) |
+| `Models/Conversation.swift`               | `data/model/Conversation.kt`                     | ☐ Phase 2 |
+| `Models/Message.swift`                    | `data/model/Message.kt`                          | ☐ Phase 2 |
+| `Models/MessengerUser.swift`              | `config/MessengerUser.kt`                        | ☑ |
+| `Models/Supporter.swift`                  | `data/model/Supporter.kt`                        | ☑ |
+| `Models/Ticket.swift`                     | `data/model/Ticket.kt`                           | ☐ Phase 6 |
+| `Messenger/ViewModels/AppViewModel.swift` | `ui/MessengerViewModel.kt` + `data/MessengerRepository.kt` | ◐ connect/supporters done; UI state Phase 5 |
 | `Messenger/ChatViewModel.swift`           | `ui/conversation/ChatViewModel.kt`               | ☐ |
 | `Messenger/ConversationListViewModel.swift`| `ui/conversation/ConversationListViewModel.kt`  | ☐ |
 | `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☐ |
