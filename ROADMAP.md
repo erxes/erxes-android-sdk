@@ -114,11 +114,13 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☐ websiteApps parsing (deferred — secondary)
 
 ## Phase 7 — Packaging & docs
-- ☐ Publish AAR to Maven Local / a Maven repo (group `com.erxes`, artifact `messenger-sdk`)
-- ☐ Consumer ProGuard/R8 rules
-- ☐ README integration guide finalized
-- ☐ Sample app demonstrating every feature
-- ☐ Version `0.1.0` tag
+- ☑ Maven publishing (`maven-publish`): `com.erxes:messenger-sdk:0.30.0`, release variant + sources jar + POM
+- ☑ `publishToMavenLocal` verified (AAR/sources/POM/module land in ~/.m2)
+- ☑ Consumer ProGuard/R8 rules (keep public API + MessengerActivity)
+- ☑ CI workflow (`.github/workflows/build.yml`): unit tests + assemble on push/PR
+- ☑ README install snippet uses `0.30.0`
+- ◐ Remote Maven publishing (Maven Central / private repo) — add credentials + repository block when needed
+- ☐ Verify against a live integration before a public release
 
 ---
 

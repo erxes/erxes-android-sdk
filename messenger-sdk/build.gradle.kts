@@ -3,10 +3,15 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    `maven-publish`
     // Apollo codegen plugin is added in Phase 3 (subscriptions), once a reachable
     // schema is available. Phase 1/2 use raw HTTP + JSON, mirroring the iOS SDK.
     // alias(libs.plugins.apollo)
 }
+
+// Coordinates for the published artifact: com.erxes:messenger-sdk:<version>
+group = "com.erxes"
+version = "0.30.0"
 
 android {
     namespace = "com.erxes.messenger"
@@ -39,6 +44,39 @@ android {
 
     testOptions {
         unitTests.isReturnDefaultValues = true
+    }
+
+    // Expose a "release" variant for publishing, with a matching sources jar.
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
+    }
+}
+
+// Publish the release AAR to Maven (local or remote). `./gradlew :messenger-sdk:publishToMavenLocal`
+// installs it into ~/.m2 so a consumer app with `mavenLocal()` can `implementation("com.erxes:messenger-sdk:0.30.0")`.
+publishing {
+    publications {
+        register<MavenPublication>("release") {
+            groupId = project.group.toString()
+            artifactId = "messenger-sdk"
+            version = project.version.toString()
+
+            afterEvaluate { from(components["release"]) }
+
+            pom {
+                name.set("erxes Android Messenger SDK")
+                description.set("Native Android SDK for the erxes customer messenger (chat, tickets, knowledge base).")
+                url.set("https://github.com/Munkhorgilb/android-sdk")
+                licenses {
+                    license {
+                        name.set("AGPL-3.0")
+                        url.set("https://www.gnu.org/licenses/agpl-3.0.txt")
+                    }
+                }
+            }
+        }
     }
 }
 
