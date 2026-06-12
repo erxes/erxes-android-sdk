@@ -9,11 +9,16 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 ---
 
 ## Phase 0 — Project scaffolding
-- ☐ Gradle project: `messenger-sdk` library module + `app` sample module
-- ☐ Kotlin, Compose, AGP, version catalog (`libs.versions.toml`) configured
-- ☐ Dependencies: Apollo Kotlin, Coroutines, DataStore, Coil, Lifecycle/Compose
-- ☐ `git init`, `.gitignore`, base package `com.erxes.messenger`
+- ☑ Gradle project: `messenger-sdk` library module + `app` sample module
+- ☑ Kotlin, Compose, AGP, version catalog (`libs.versions.toml`) configured
+- ☑ Dependencies: Apollo Kotlin, Coroutines, DataStore, Coil, Lifecycle/Compose
+- ☑ `git init`, `.gitignore`, base package `com.erxes.messenger`
+- ☑ Gradle wrapper 8.11.1; `./gradlew :messenger-sdk:assembleDebug :app:assembleDebug` green
 - ☐ CI stub (build + lint)
+
+> Phase 0 done: AAR + sample APK build successfully. Skeleton public API
+> (`ErxesMessenger`, `MessengerConfig`, `MessengerUser`, `ObjectId`) in place;
+> connect/UI/realtime are stubbed with `TODO(Phase N)` markers.
 
 ## Phase 1 — Core networking & session (no UI)
 - ☐ `MessengerConfig` + `Appearance` (endpoint, integrationId, fileEndpoint, cachedCustomerId)
