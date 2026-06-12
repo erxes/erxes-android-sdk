@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Surface
 import com.erxes.messenger.ErxesMessenger
-import com.erxes.messenger.ui.conversation.ChatScreen
 import com.erxes.messenger.ui.theme.MessengerTheme
 
 /**
@@ -20,16 +19,18 @@ class MessengerActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Resume the last conversation if there is one, else start fresh.
+        // Open directly into a conversation when one was requested, else the home screen.
         val conversationId = intent.getStringExtra(EXTRA_CONVERSATION_ID)
+        val start = if (conversationId != null) {
+            MessengerScreen.Chat(conversationId)
+        } else {
+            MessengerScreen.Home
+        }
 
         setContent {
             MessengerTheme {
                 Surface {
-                    ChatScreen(
-                        conversationId = conversationId,
-                        onBack = { finish() },
-                    )
+                    MessengerRoot(start = start, onExit = { finish() })
                 }
             }
         }

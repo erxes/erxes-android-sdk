@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.config.MessengerConfig
+import com.erxes.messenger.ui.launcher.ErxesMessengerHost
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +35,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    SampleScreen(onOpen = { ErxesMessenger.show(this) })
+                    // ErxesMessengerHost overlays a draggable launcher button that
+                    // appears once the connect handshake succeeds.
+                    ErxesMessengerHost {
+                        SampleScreen(onOpen = { ErxesMessenger.show(this) })
+                    }
                 }
             }
         }

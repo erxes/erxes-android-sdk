@@ -49,11 +49,13 @@ Android library. Use this to track which iOS source has been ported.
 | `Messenger/MessengerContainerView.swift`  | `ui/MessengerActivity.kt`                        | ◐ chat only; host/list in 5b |
 | `Components/TypingStatusView.swift`       | `ui/components/TypingIndicator.kt`               | ☑ |
 | `Components/AvatarWithStatusView.swift`   | `ui/components/Avatar.kt`                         | ◐ avatar; online status in 5b |
-| `Messenger/ConversationListViewModel.swift`| `ui/conversation/ConversationListViewModel.kt`  | ☐ |
-| `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☐ |
-| `Messenger/LauncherWindow.swift`          | `ui/launcher/LauncherOverlay.kt`                 | ☐ |
-| `Messenger/MessengerContainerView.swift`  | `ui/MessengerHost.kt`                            | ☐ |
-| `Messenger/Screens/*.swift`               | `ui/screens/*.kt` (Home, Messages, Help, Tickets…) | ☐ |
+| `Messenger/ConversationListViewModel.swift`| `ui/conversation/ConversationListViewModel.kt`  | ☑ |
+| `Messenger/ConversationListView.swift`    | `ui/conversation/ConversationListScreen.kt`      | ☑ |
+| `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☑ |
+| `Messenger/LauncherWindow.swift`          | `ui/launcher/ErxesMessengerHost.kt` (in MessengerLauncher.kt) | ☑ |
+| `Messenger/MessengerContainerView.swift`  | `ui/MessengerRoot.kt` + `ui/MessengerActivity.kt`| ☑ |
+| `Messenger/Screens/HomeView.swift`        | `ui/screens/HomeScreen.kt`                        | ☑ |
+| `Messenger/Screens/*.swift` (Help, Tickets, GetNotified) | `ui/screens/*.kt`                | ☐ Phase 6 |
 | `Messenger/Components/*.swift`            | `ui/components/*.kt`                              | ☐ |
 
 > Mark a row ☑ when its Android target compiles and matches behaviour. Keep this

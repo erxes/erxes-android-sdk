@@ -80,11 +80,12 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☑ Components: `MessageBubble` (l/r align, attachments via Coil), `Avatar`, `TypingIndicator`
 - ☑ `AttachmentUrl.resolve` (read-file gateway) ported
 - ☑ `MessengerActivity` hosts chat; `ErxesMessenger.show()` launches it
-### 5b — Launcher & list (todo)
-- ☐ `MessengerLauncher` draggable button, snaps to corners; shows after `isReady`
-- ☐ Compose `ErxesMessengerHost` overlay
-- ☐ Home / Conversation list screens + navigation
-- ☐ Date separators, welcome header, supporters/online status, unread badges
+### 5b — Launcher & list ☑
+- ☑ `MessengerLauncher` draggable button, snaps to nearest edge; shows after `isReady`
+- ☑ Compose `ErxesMessengerHost` overlay (used in the sample)
+- ☑ `MessengerRoot` in-activity nav (Home → List → Chat) with a small back stack
+- ☑ `HomeScreen` (branded welcome header from greetings), `ConversationListScreen` (unread badges)
+- ◐ Date separators, supporters/online status (deferred — nice-to-have polish)
 
 ## Phase 6 — Auxiliary features
 - ☐ requireAuth identity form (`editCustomer` / `widgetsTicketCustomersEdit`)
