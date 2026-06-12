@@ -63,5 +63,9 @@ ErxesMessengerHost {
 | [`docs/PORTING-MAP.md`](docs/PORTING-MAP.md) | iOS → Android file mapping |
 | [`ROADMAP.md`](ROADMAP.md) | Phased implementation plan |
 
+## Contributing
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and our
+[Code of Conduct](CODE_OF_CONDUCT.md). To report a security issue, see [SECURITY.md](SECURITY.md).
+
 ## License
-AGPLv3 — matching the upstream erxes SDK.
+Licensed under **AGPL-3.0**, matching the upstream erxes SDK. See [LICENSE](LICENSE).
