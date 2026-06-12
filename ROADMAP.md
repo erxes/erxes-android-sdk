@@ -49,11 +49,19 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☐ Verify against a live integration
 
 ## Phase 3 — Realtime (WebSocket subscriptions)
-- ☐ Apollo `graphql-ws` transport on `{base}/gateway/graphql`
-- ☐ `conversationMessageInserted` → live append
-- ☐ `conversationBotTypingStatus` → typing indicator
-- ☐ `conversationClientMessageInserted` (dedup), `conversationAdminMessageInserted` (badge), `conversationChanged`
-- ☐ Reconnect/backoff handling
+- ☑ `graphql-transport-ws` transport on `wss://{base}/gateway/graphql` (OkHttp WebSocket, not Apollo)
+- ☑ `conversationMessageInserted` → `messageStream(conversationId): Flow<Message>`
+- ☑ `conversationBotTypingStatus` → `botTypingStream(conversationId): Flow<Boolean>`
+- ☑ Reconnect/backoff handling (1s → 30s cap via `retryWhen`)
+- ☑ Unit test: full init→ack→subscribe→next lifecycle via MockWebServer — 16 total green
+- ◐ Dedup-by-id + mark-read-on-inbound handled at the ChatViewModel layer (Phase 5)
+- ☐ `conversationClientMessageInserted` / `conversationAdminMessageInserted` (badge) / `conversationChanged` (deferred; not needed until multi-conversation UI)
+- ☐ Verify against a live integration
+
+> Phase 3 done: confirmed the iOS framing is `graphql-transport-ws` (ChatViewModel
+> implements it directly; only the Apollo NetworkClient was stubbed). Stayed on OkHttp
+> WebSocket rather than introducing Apollo codegen — same rationale as Phase 1 (no
+> reachable schema), and OkHttp keeps the dependency surface small.
 
 ## Phase 4 — File upload & attachments
 - ☐ `FileUploader`: multipart POST to `/gateway/upload-file`, PNG/JPEG guard, plain-text key response

@@ -11,9 +11,12 @@ import com.erxes.messenger.network.ConnectParser
 import com.erxes.messenger.network.GraphQLClient
 import com.erxes.messenger.network.MessageParser
 import com.erxes.messenger.network.MessengerOperations
+import com.erxes.messenger.network.RealtimeClient
 import com.erxes.messenger.session.SessionStore
 import com.erxes.messenger.util.SdkLog
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -35,6 +38,8 @@ class MessengerRepository(
     private val config: MessengerConfig,
     private val session: SessionStore,
     private val graphQL: GraphQLClient = GraphQLClient(),
+    // WebSocket lives on `endpoint` (not fileEndpoint), upgraded to ws/wss.
+    private val realtime: RealtimeClient = RealtimeClient(config.endpoint),
 ) {
     /** GraphQL is served from the file endpoint (no `w.` subdomain). See docs/PROTOCOL.md. */
     private val endpoint: String get() = config.fileEndpoint
@@ -187,4 +192,14 @@ class MessengerRepository(
         val json = graphQL.send(endpoint, "widgetsTotalUnreadCount", MessengerOperations.TOTAL_UNREAD, variables)
         return ((json["data"] as? JsonObject)?.get("widgetsTotalUnreadCount") as? JsonPrimitive)?.intOrNull ?: 0
     }
+
+    // ── Realtime (Phase 3) ─────────────────────────────────────────────────────
+
+    /** Live stream of new messages in [conversationId]. Cold; collecting opens the socket. */
+    fun messageStream(conversationId: String): Flow<Message> =
+        realtime.messageInserted(conversationId).mapNotNull { MessageParser.parseMessage(it) }
+
+    /** Live bot typing indicator for [conversationId] (`true` while the bot is typing). */
+    fun botTypingStream(conversationId: String): Flow<Boolean> =
+        realtime.botTyping(conversationId).mapNotNull { (it["typing"] as? JsonPrimitive)?.booleanOrNull }
 }

@@ -100,4 +100,22 @@ internal object MessengerOperations {
           widgetsTotalUnreadCount(integrationId: ${'$'}integrationId, customerId: ${'$'}customerId, visitorId: ${'$'}visitorId)
         }
     """.trimIndent()
+
+    /** `conversationMessageInserted` — realtime new message in a conversation (graphql-transport-ws). */
+    val SUB_MESSAGE_INSERTED = """
+        subscription conversationMessageInserted(${'$'}_id: String!) {
+          conversationMessageInserted(_id: ${'$'}_id) {
+            _id conversationId customerId content createdAt fromBot contentType
+            attachments { url name size type }
+            user { _id details { avatar fullName } }
+          }
+        }
+    """.trimIndent()
+
+    /** `conversationBotTypingStatus` — realtime bot typing indicator. */
+    val SUB_BOT_TYPING = """
+        subscription conversationBotTypingStatus(${'$'}_id: String!) {
+          conversationBotTypingStatus(_id: ${'$'}_id) { _id typing }
+        }
+    """.trimIndent()
 }

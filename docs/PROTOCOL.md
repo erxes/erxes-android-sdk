@@ -115,10 +115,13 @@ botData, messengerAppData, attachments{ url, name, size, type }`
 
 ## 5. Subscriptions (`graphql-ws` over WebSocket)
 
-Connect to `{base}/gateway/graphql` with `Sec-WebSocket-Protocol: graphql-ws`.
-Lifecycle: `connection_init` → `connection_ack` → `start`(id, payload{query,variables})
-→ `data` frames → `stop`/`complete`. (Use the modern `graphql-transport-ws` framing if
-the gateway negotiates it: `connection_init` → `subscribe` → `next` → `complete`.)
+Connect to `wss://{base}/gateway/graphql` (derive from `endpoint`, not fileEndpoint:
+`https://`→`wss://`, `http://`→`ws://`) with subprotocol `graphql-transport-ws`.
+Lifecycle (confirmed against the iOS `ChatViewModel`): `connection_init` →
+`connection_ack` → `subscribe`(id, payload{query,variables}) → `next` data frames →
+`error` / `complete`. To stop, send `{id, type:"complete"}`. Reconnect on drop with
+exponential backoff (1s → 30s cap). Dedup inbound messages by `_id` (the subscription
+echoes your own sent messages back).
 
 | Subscription                         | Variable        | Payload |
 |--------------------------------------|-----------------|---------|
@@ -128,9 +131,10 @@ the gateway negotiates it: `connection_init` → `subscribe` → `next` → `com
 | `conversationAdminMessageInserted`   | customerId!     | `{ customerId, unreadCount }` |
 | `conversationChanged`                | conversationId! | `{ conversationId, type }` status change |
 
-> The iOS SDK currently ships subscriptions defined but the WS transport stubbed out
-> at launch ("Connection invalid" avoidance). The Android port should implement the
-> WS transport properly (Apollo Kotlin handles `graphql-ws`).
+> Note: the iOS `NetworkClient` (Apollo) skips WS, but `ChatViewModel` implements the
+> subscription directly over `URLSessionWebSocketTask` with `graphql-transport-ws` —
+> that is the authoritative framing above. The Android port mirrors it on OkHttp's
+> WebSocket (`network/RealtimeClient.kt`), exposed as cold `Flow`s.
 
 ---
 
