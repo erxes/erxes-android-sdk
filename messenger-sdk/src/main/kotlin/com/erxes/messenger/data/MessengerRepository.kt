@@ -5,6 +5,7 @@ import com.erxes.messenger.config.MessengerUser
 import com.erxes.messenger.data.model.Attachment
 import com.erxes.messenger.data.model.ConnectResponse
 import com.erxes.messenger.data.model.Conversation
+import com.erxes.messenger.data.model.KbTopic
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.data.model.Supporter
 import com.erxes.messenger.data.model.Ticket
@@ -12,6 +13,7 @@ import com.erxes.messenger.data.model.TicketTag
 import com.erxes.messenger.network.ConnectParser
 import com.erxes.messenger.network.FileUploader
 import com.erxes.messenger.network.GraphQLClient
+import com.erxes.messenger.network.KbParser
 import com.erxes.messenger.network.MessageParser
 import com.erxes.messenger.network.MessengerOperations
 import com.erxes.messenger.network.RealtimeClient
@@ -325,5 +327,18 @@ class MessengerRepository(
         )
         return (obj["_id"] as? JsonPrimitive)?.contentOrNull
             ?: throw com.erxes.messenger.network.GraphQLException("Failed to parse widgetTicketCreated")
+    }
+
+    // ── Knowledge base (Phase 6c) ──────────────────────────────────────────────
+
+    /** Fetches a knowledge-base topic (categories + articles). Returns null when not found. */
+    suspend fun knowledgeBase(topicId: String): KbTopic? {
+        val variables = buildJsonObject { put("_id", topicId) }
+        val json = graphQL.send(
+            endpoint, "cpKnowledgeBaseTopicDetail", MessengerOperations.KB_TOPIC_DETAIL, variables,
+        )
+        val detail = (json["data"] as? JsonObject)?.get("cpKnowledgeBaseTopicDetail") as? JsonObject
+            ?: return null
+        return KbParser.parseTopic(detail)
     }
 }

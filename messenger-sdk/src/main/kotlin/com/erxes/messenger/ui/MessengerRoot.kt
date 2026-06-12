@@ -7,6 +7,7 @@ import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.ui.conversation.ChatScreen
 import com.erxes.messenger.ui.conversation.ConversationListScreen
 import com.erxes.messenger.ui.screens.CreateTicketScreen
+import com.erxes.messenger.ui.screens.HelpScreen
 import com.erxes.messenger.ui.screens.HomeScreen
 import com.erxes.messenger.ui.screens.IdentityFormScreen
 import com.erxes.messenger.ui.screens.TicketsScreen
@@ -18,6 +19,7 @@ internal sealed interface MessengerScreen {
     data object Auth : MessengerScreen
     data object Tickets : MessengerScreen
     data object CreateTicket : MessengerScreen
+    data object Help : MessengerScreen
     data class Chat(val conversationId: String?) : MessengerScreen
 }
 
@@ -54,6 +56,7 @@ internal fun MessengerRoot(
             onViewConversations = { push(MessengerScreen.List) },
             onNewConversation = { startNewConversation() },
             onViewTickets = { push(MessengerScreen.Tickets) },
+            onViewHelp = { push(MessengerScreen.Help) },
             onClose = onExit,
         )
 
@@ -78,6 +81,8 @@ internal fun MessengerRoot(
             onCreated = { pop() },
             onBack = { pop() },
         )
+
+        is MessengerScreen.Help -> HelpScreen(onBack = { pop() })
 
         is MessengerScreen.Chat -> ChatScreen(
             conversationId = current.conversationId,

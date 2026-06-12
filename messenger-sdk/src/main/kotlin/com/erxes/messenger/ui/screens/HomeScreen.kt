@@ -38,11 +38,13 @@ internal fun HomeScreen(
     onViewConversations: () -> Unit,
     onNewConversation: () -> Unit,
     onViewTickets: () -> Unit,
+    onViewHelp: () -> Unit,
     onClose: () -> Unit,
 ) {
     val connect by ErxesMessenger.connectResponse.collectAsStateWithLifecycle()
     val messages = connect?.messengerData?.messages
     val hasTickets = connect?.messengerData?.ticketConfig != null
+    val hasHelp = !connect?.messengerData?.knowledgeBaseTopicId.isNullOrBlank()
     val title = messages?.greetTitle?.takeIf { it.isNotBlank() } ?: "Hi there 👋"
     val subtitle = messages?.greet?.takeIf { it.isNotBlank() } ?: "How can we help you today?"
 
@@ -85,6 +87,11 @@ internal fun HomeScreen(
             if (hasTickets) {
                 OutlinedButton(onClick = onViewTickets, modifier = Modifier.fillMaxWidth()) {
                     Text("Support tickets")
+                }
+            }
+            if (hasHelp) {
+                OutlinedButton(onClick = onViewHelp, modifier = Modifier.fillMaxWidth()) {
+                    Text("Browse help articles")
                 }
             }
 

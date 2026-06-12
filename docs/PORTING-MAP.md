@@ -56,7 +56,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Messenger/MessengerContainerView.swift`  | `ui/MessengerRoot.kt` + `ui/MessengerActivity.kt`| ☑ |
 | `Messenger/Screens/HomeView.swift`        | `ui/screens/HomeScreen.kt`                        | ☑ (+ social links) |
 | `Messenger/Screens/GetNotifiedView.swift` | `ui/screens/IdentityFormScreen.kt`                | ☑ requireAuth/get-notified |
-| `Messenger/Screens/HelpView.swift` + `HelpViewModel` | `ui/screens/HelpScreen.kt`             | ☐ Phase 6c |
+| `Messenger/Screens/HelpView.swift` + `HelpViewModel` | `ui/screens/HelpScreen.kt` + `HelpViewModel.kt` + `network/KbParser.kt` | ☑ |
 | `Messenger/Screens/TicketsView.swift` + `CreateTicketView` | `ui/screens/TicketsScreen.kt` + `CreateTicketScreen.kt` | ☑ |
 | `ViewModels/TicketListViewModel` + `TicketFormViewModel` | `ui/screens/TicketsViewModel.kt` | ☑ |
 | `Messenger/Components/*.swift`            | `ui/components/*.kt`                              | ☐ |

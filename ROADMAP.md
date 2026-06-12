@@ -101,10 +101,17 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☑ TicketsScreen (list + status chips) + CreateTicketScreen (form from formFields + tags)
 - ☑ Home shows "Support tickets" only when ticketConfig present
 - ☑ Unit tests: ticketConfig parse (+null guard), ticket parse — 23 total green
-### 6c — Knowledge base & leads (todo — needs more iOS source read first)
-- ☐ websiteApps parsing in ConnectParser
-- ☐ Knowledge base / Help (article browse + search)
-- ☐ Lead/form widget (`widgetsLeadConnect` / `widgetsSaveLead`)
+### 6c — Knowledge base ☑
+- ☑ Models: KbTopic, KbCategory, KbArticle
+- ☑ Operation: cpKnowledgeBaseTopicDetail (uses messengerData.knowledgeBaseTopicId)
+- ☑ KbParser (pure) incl. articlesFor() child-category merge + dedup
+- ☑ Repository: knowledgeBase(topicId)
+- ☑ HelpScreen: categories → articles → article detail (HTML via TextView/HtmlCompat)
+- ☑ Home shows "Browse help articles" only when knowledgeBaseTopicId present
+- ☑ Unit tests: topic parse, articlesFor merge/dedup — 25 total green
+- ☐ Article full-text search (deferred polish)
+- ☐ Lead/form widget (`widgetsLeadConnect` / `widgetsSaveLead`) — iOS has no UI flow; deferred
+- ☐ websiteApps parsing (deferred — secondary)
 
 ## Phase 7 — Packaging & docs
 - ☐ Publish AAR to Maven Local / a Maven repo (group `com.erxes`, artifact `messenger-sdk`)

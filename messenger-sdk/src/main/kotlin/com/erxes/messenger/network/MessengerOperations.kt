@@ -165,4 +165,23 @@ internal object MessengerOperations {
           }
         }
     """.trimIndent()
+
+    /** `cpKnowledgeBaseTopicDetail` — knowledge base topic with categories + articles. */
+    val KB_TOPIC_DETAIL = """
+        query cpKnowledgeBaseTopicDetail(${'$'}_id: String!) {
+          cpKnowledgeBaseTopicDetail(_id: ${'$'}_id) {
+            _id title description color code
+            categories {
+              _id title description numOfArticles(status: "publish") countArticles
+              parentCategoryId icon
+              articles(status: "publish") { _id title summary content code viewCount categoryId publishedAt }
+            }
+            parentCategories {
+              _id title description numOfArticles(status: "publish") parentCategoryId icon
+              childrens { _id }
+              articles { _id title summary content code viewCount categoryId publishedAt }
+            }
+          }
+        }
+    """.trimIndent()
 }
