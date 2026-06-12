@@ -67,6 +67,19 @@ object ErxesMessenger {
     /** Last connect failure message, or null when connected/idle. */
     val connectError: StateFlow<String?> = _connectError.asStateFlow()
 
+    private val _isIdentified = MutableStateFlow(false)
+
+    /**
+     * True once the visitor has an identity: a host-provided email/phone, a contact
+     * captured via the requireAuth form on a previous launch, or a registered customer.
+     * Gates the requireAuth form.
+     */
+    val isIdentified: StateFlow<Boolean> = _isIdentified.asStateFlow()
+
+    /** Whether the connected integration requires a contact before starting a conversation. */
+    val requireAuth: Boolean
+        get() = _connectResponse.value?.messengerData?.requireAuth ?: false
+
     /** Initialize the SDK. Call once, e.g. from `Application.onCreate()`. Starts connect. */
     fun configure(context: Context, config: MessengerConfig) {
         this.appContext = context.applicationContext
@@ -99,6 +112,25 @@ object ErxesMessenger {
         activity.startActivity(MessengerActivity.intent(activity))
     }
 
+    /**
+     * Captures the visitor's email/phone for the requireAuth flow, marking them identified.
+     * Mirrors `AppViewModel.identify`. Throws on network/validation failure.
+     */
+    suspend fun identify(
+        kind: MessengerRepository.ContactKind,
+        value: String,
+        firstName: String? = null,
+        lastName: String? = null,
+    ) {
+        requireRepository().identify(kind, value, firstName, lastName)
+        _isIdentified.value = true
+    }
+
+    /** Stores an email/phone for follow-up notifications (get-notified opt-in). */
+    suspend fun saveGetNotified(kind: MessengerRepository.ContactKind, value: String) {
+        requireRepository().saveGetNotified(kind, value)
+    }
+
     private fun startConnect() {
         val repository = repository ?: return
         scope.launch {
@@ -107,6 +139,10 @@ object ErxesMessenger {
                 val response = repository.connect(user, scope)
                 _connectResponse.value = response
                 _isReady.value = true
+                // Host-provided email/phone, or a contact captured on a previous launch,
+                // counts as already identified — skip the requireAuth form then.
+                val hostIdentified = !user?.email.isNullOrEmpty() || !user?.phone.isNullOrEmpty()
+                _isIdentified.value = hostIdentified || (session?.isIdentified() ?: false)
                 SdkLog.d("connected: customerId=${response.customerId}")
             } catch (t: Throwable) {
                 SdkLog.e("connect() failed", t)

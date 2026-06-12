@@ -1,8 +1,12 @@
 package com.erxes.messenger.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -75,6 +80,44 @@ internal fun HomeScreen(
             OutlinedButton(onClick = onViewConversations, modifier = Modifier.fillMaxWidth()) {
                 Text("View your conversations")
             }
+
+            connect?.messengerData?.links?.let { SocialLinksRow(it) }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@Composable
+private fun SocialLinksRow(links: com.erxes.messenger.data.model.SocialLinks) {
+    val context = LocalContext.current
+    val entries = listOfNotNull(
+        links.facebook?.let { "Facebook" to it },
+        links.instagram?.let { "Instagram" to it },
+        links.twitter?.let { "X" to it },
+        links.youtube?.let { "YouTube" to it },
+        links.linkedin?.let { "LinkedIn" to it },
+        links.discord?.let { "Discord" to it },
+        links.github?.let { "GitHub" to it },
+    ).filter { it.second.isNotBlank() }
+    if (entries.isEmpty()) return
+
+    androidx.compose.foundation.layout.FlowRow(
+        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        entries.forEach { (label, url) ->
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.clickable {
+                    runCatching {
+                        context.startActivity(
+                            android.content.Intent(android.content.Intent.ACTION_VIEW, android.net.Uri.parse(url)),
+                        )
+                    }
+                },
+            )
         }
     }
 }

@@ -88,12 +88,16 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ◐ Date separators, supporters/online status (deferred — nice-to-have polish)
 
 ## Phase 6 — Auxiliary features
-- ☐ requireAuth identity form (`editCustomer` / `widgetsTicketCustomersEdit`)
-- ☐ Get-notified opt-in (`widgetsSaveCustomerGetNotified`)
-- ☐ Knowledge base / Help (article browse + search)
+### 6a — Identity, notifications, social ☑
+- ☑ requireAuth identity form (`widgetsTicketCustomersEdit`) — gates new conversations in `MessengerRoot`
+- ☑ Get-notified opt-in (`widgetsSaveCustomerGetNotified`) — repository method
+- ☑ `ErxesMessenger.isIdentified`/`requireAuth` + `identify()`/`saveGetNotified()` public API
+- ☑ Social links footer on Home (opens links in browser)
+### 6b/6c — Tickets & knowledge base (todo — needs more iOS source read first)
+- ☐ ticketConfig + websiteApps parsing in ConnectParser
 - ☐ Tickets (create + list) using `ticketConfig`
+- ☐ Knowledge base / Help (article browse + search)
 - ☐ Lead/form widget (`widgetsLeadConnect` / `widgetsSaveLead`)
-- ☐ Social links footer
 
 ## Phase 7 — Packaging & docs
 - ☐ Publish AAR to Maven Local / a Maven repo (group `com.erxes`, artifact `messenger-sdk`)

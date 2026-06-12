@@ -54,8 +54,10 @@ Android library. Use this to track which iOS source has been ported.
 | `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☑ |
 | `Messenger/LauncherWindow.swift`          | `ui/launcher/ErxesMessengerHost.kt` (in MessengerLauncher.kt) | ☑ |
 | `Messenger/MessengerContainerView.swift`  | `ui/MessengerRoot.kt` + `ui/MessengerActivity.kt`| ☑ |
-| `Messenger/Screens/HomeView.swift`        | `ui/screens/HomeScreen.kt`                        | ☑ |
-| `Messenger/Screens/*.swift` (Help, Tickets, GetNotified) | `ui/screens/*.kt`                | ☐ Phase 6 |
+| `Messenger/Screens/HomeView.swift`        | `ui/screens/HomeScreen.kt`                        | ☑ (+ social links) |
+| `Messenger/Screens/GetNotifiedView.swift` | `ui/screens/IdentityFormScreen.kt`                | ☑ requireAuth/get-notified |
+| `Messenger/Screens/HelpView.swift` + `HelpViewModel` | `ui/screens/HelpScreen.kt`             | ☐ Phase 6c |
+| `Messenger/Screens/TicketsView.swift` + `CreateTicketView` | `ui/screens/Tickets*.kt`        | ☐ Phase 6b |
 | `Messenger/Components/*.swift`            | `ui/components/*.kt`                              | ☐ |
 
 > Mark a row ☑ when its Android target compiles and matches behaviour. Keep this

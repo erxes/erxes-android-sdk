@@ -118,4 +118,20 @@ internal object MessengerOperations {
           conversationBotTypingStatus(_id: ${'$'}_id) { _id typing }
         }
     """.trimIndent()
+
+    /** `widgetsTicketCustomersEdit` — attach email/phone (+name) to the connect-created customer. */
+    val CUSTOMERS_EDIT = """
+        mutation CustomersEdit(${'$'}customerId: String!, ${'$'}firstName: String, ${'$'}lastName: String, ${'$'}emails: [String], ${'$'}phones: [String]) {
+          widgetsTicketCustomersEdit(customerId: ${'$'}customerId, firstName: ${'$'}firstName, lastName: ${'$'}lastName, emails: ${'$'}emails, phones: ${'$'}phones) {
+            _id firstName lastName primaryEmail primaryPhone emails phones
+          }
+        }
+    """.trimIndent()
+
+    /** `widgetsSaveCustomerGetNotified` — store an email/phone for follow-up notifications. */
+    val SAVE_GET_NOTIFIED = """
+        mutation widgetsSaveCustomerGetNotified(${'$'}customerId: String, ${'$'}visitorId: String, ${'$'}type: String!, ${'$'}value: String!) {
+          widgetsSaveCustomerGetNotified(customerId: ${'$'}customerId, visitorId: ${'$'}visitorId, type: ${'$'}type, value: ${'$'}value)
+        }
+    """.trimIndent()
 }

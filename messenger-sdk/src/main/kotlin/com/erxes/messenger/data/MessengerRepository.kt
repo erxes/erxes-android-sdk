@@ -215,4 +215,48 @@ class MessengerRepository(
      */
     suspend fun uploadAttachment(bytes: ByteArray, filename: String, mimeType: String): UploadedAttachment =
         fileUploader.upload(bytes, filename, mimeType, config.fileEndpoint)
+
+    // ── requireAuth identity & notifications (Phase 6) ──────────────────────────
+
+    /** Contact channel a visitor can be identified/notified by. */
+    enum class ContactKind { EMAIL, PHONE }
+
+    /**
+     * Attaches [value] (and optional name) to the connect-created customer via
+     * `widgetsTicketCustomersEdit`, persists the returned id, and marks the session
+     * identified. Used by the requireAuth form before a conversation can start.
+     */
+    suspend fun identify(kind: ContactKind, value: String, firstName: String?, lastName: String?) {
+        val customerId = session.cachedCustomerId()
+            ?: throw com.erxes.messenger.network.GraphQLException("No customer to identify")
+
+        val variables = buildJsonObject {
+            put("customerId", customerId)
+            firstName?.takeIf { it.isNotBlank() }?.let { put("firstName", it) }
+            lastName?.takeIf { it.isNotBlank() }?.let { put("lastName", it) }
+            when (kind) {
+                ContactKind.EMAIL -> putJsonArray("emails") { add(value) }
+                ContactKind.PHONE -> putJsonArray("phones") { add(value) }
+            }
+        }
+
+        val obj = graphQL.objectField(
+            endpoint, "widgetsTicketCustomersEdit", MessengerOperations.CUSTOMERS_EDIT, variables,
+            "widgetsTicketCustomersEdit",
+        )
+        (obj["_id"] as? JsonPrimitive)?.contentOrNull?.takeIf { it.isNotEmpty() }
+            ?.let { session.setCachedCustomerId(it) }
+        session.setIdentified(true)
+    }
+
+    /** Stores an email/phone for follow-up notifications (e.g. email opt-in when offline). */
+    suspend fun saveGetNotified(kind: ContactKind, value: String) {
+        val variables = buildJsonObject {
+            session.cachedCustomerId()?.let { put("customerId", it) }
+            put("visitorId", session.visitorId())
+            put("type", if (kind == ContactKind.EMAIL) "email" else "phone")
+            put("value", value)
+        }
+        graphQL.send(endpoint, "widgetsSaveCustomerGetNotified", MessengerOperations.SAVE_GET_NOTIFIED, variables)
+    }
 }
