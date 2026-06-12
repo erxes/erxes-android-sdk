@@ -7,6 +7,7 @@ import com.erxes.messenger.config.MessengerUser
 import com.erxes.messenger.data.MessengerRepository
 import com.erxes.messenger.data.model.ConnectResponse
 import com.erxes.messenger.session.SessionStore
+import com.erxes.messenger.ui.MessengerActivity
 import com.erxes.messenger.util.SdkLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +41,17 @@ object ErxesMessenger {
     @Volatile
     private var session: SessionStore? = null
 
+    @Volatile
+    private var repository: MessengerRepository? = null
+
+    /** Shared repository, available once [configure] has run. */
+    internal fun requireRepository(): MessengerRepository =
+        repository ?: error("ErxesMessenger not configured — call configure() first")
+
+    /** Persisted identity store, available once [configure] has run. */
+    internal fun requireSession(): SessionStore =
+        session ?: error("ErxesMessenger not configured — call configure() first")
+
     private val _isReady = MutableStateFlow(false)
 
     /** Flips true once the connect handshake succeeds. The launcher shows only after this. */
@@ -59,7 +71,9 @@ object ErxesMessenger {
     fun configure(context: Context, config: MessengerConfig) {
         this.appContext = context.applicationContext
         this.config = config
-        this.session = SessionStore(context.applicationContext)
+        val store = SessionStore(context.applicationContext)
+        this.session = store
+        this.repository = MessengerRepository(config, store)
         startConnect()
     }
 
@@ -82,16 +96,14 @@ object ErxesMessenger {
     /** Open the messenger UI. Mirrors `showMessenger(from:)`. */
     fun show(activity: Activity) {
         check(config != null) { "ErxesMessenger not configured — call configure() first" }
-        // TODO(Phase 5): launch the messenger activity / overlay.
+        activity.startActivity(MessengerActivity.intent(activity))
     }
 
     private fun startConnect() {
-        val config = config ?: return
-        val session = session ?: return
+        val repository = repository ?: return
         scope.launch {
             try {
                 _connectError.value = null
-                val repository = MessengerRepository(config, session)
                 val response = repository.connect(user, scope)
                 _connectResponse.value = response
                 _isReady.value = true

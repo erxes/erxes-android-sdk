@@ -72,12 +72,19 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☐ Attachment URL resolution (`AttachmentUrl` util — for rendering remote attachment urls)
 
 ## Phase 5 — UI (Compose, parity with SwiftUI)
+### 5a — Chat experience ☑
+- ☑ `MessengerTheme` from `uiOptions.color` (hex parse) + appearance fallback
+- ☑ `ChatViewModel`: load detail, send (optimistic id adoption for new conv), realtime
+      append (dedup-by-id) + mark-read-on-inbound, bot typing
+- ☑ `ChatScreen` (LazyColumn, input bar, ImeAction.Send, scroll-to-bottom, imePadding)
+- ☑ Components: `MessageBubble` (l/r align, attachments via Coil), `Avatar`, `TypingIndicator`
+- ☑ `AttachmentUrl.resolve` (read-file gateway) ported
+- ☑ `MessengerActivity` hosts chat; `ErxesMessenger.show()` launches it
+### 5b — Launcher & list (todo)
 - ☐ `MessengerLauncher` draggable button, snaps to corners; shows after `isReady`
-- ☐ `LauncherOverlay` window/host
-- ☐ Home / Conversation list / Chat screens
-- ☐ Components: message bubble, avatar+status, typing, date separators, attachments, welcome
-- ☐ Theming from `uiOptions` (primary color, background, logo, wallpaper)
-- ☐ Keyboard handling / scroll-to-bottom
+- ☐ Compose `ErxesMessengerHost` overlay
+- ☐ Home / Conversation list screens + navigation
+- ☐ Date separators, welcome header, supporters/online status, unread badges
 
 ## Phase 6 — Auxiliary features
 - ☐ requireAuth identity form (`editCustomer` / `widgetsTicketCustomersEdit`)

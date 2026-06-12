@@ -23,7 +23,7 @@ Android library. Use this to track which iOS source has been ported.
 
 | iOS file                                   | Android target                                  | Status |
 |--------------------------------------------|-------------------------------------------------|--------|
-| `MessengerSDK.swift`                       | `ErxesMessenger.kt`                             | ◐ facade + connect wired; show() TODO |
+| `MessengerSDK.swift`                       | `ErxesMessenger.kt`                             | ☑ facade + connect + show() |
 | `Config/MessengerConfig.swift`             | `config/MessengerConfig.kt`, `config/Appearance.kt` | ☑ |
 | `Network/NetworkClient.swift`              | `network/GraphQLClient.kt`                      | ☑ (OkHttp; Apollo in Phase 3) |
 | `Network/GraphQLClient.swift`              | `network/GraphQLClient.kt`                      | ☑ |
@@ -34,7 +34,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☑ |
 | `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☑ |
 | `Utils/MessageGrouper.swift`               | `util/MessageGrouper.kt`                         | ☐ |
-| `Utils/AttachmentURL.swift`                | `util/AttachmentUrl.kt`                          | ☐ |
+| `Utils/AttachmentURL.swift`                | `util/AttachmentUrl.kt`                          | ☑ |
 | `Utils/Logger.swift`                       | `util/SdkLog.kt`                                 | ☑ |
 | `Models/ConnectResponse.swift`            | `data/model/ConnectResponse.kt`                  | ☑ (ticketConfig/websiteApps deferred) |
 | `Models/Conversation.swift`               | `data/model/Conversation.kt`                     | ☑ |
@@ -43,7 +43,12 @@ Android library. Use this to track which iOS source has been ported.
 | `Models/Supporter.swift`                  | `data/model/Supporter.kt`                        | ☑ |
 | `Models/Ticket.swift`                     | `data/model/Ticket.kt`                           | ☐ Phase 6 |
 | `Messenger/ViewModels/AppViewModel.swift` | `ui/MessengerViewModel.kt` + `data/MessengerRepository.kt` | ◐ connect/supporters done; UI state Phase 5 |
-| `Messenger/ChatViewModel.swift`           | `ui/conversation/ChatViewModel.kt`               | ☐ |
+| `Messenger/ChatViewModel.swift`           | `ui/conversation/ChatViewModel.kt`               | ☑ |
+| `Messenger/ChatView.swift`                | `ui/conversation/ChatScreen.kt`                  | ☑ |
+| `Messenger/MessageBubble.swift`           | `ui/components/MessageBubble.kt`                  | ☑ |
+| `Messenger/MessengerContainerView.swift`  | `ui/MessengerActivity.kt`                        | ◐ chat only; host/list in 5b |
+| `Components/TypingStatusView.swift`       | `ui/components/TypingIndicator.kt`               | ☑ |
+| `Components/AvatarWithStatusView.swift`   | `ui/components/Avatar.kt`                         | ◐ avatar; online status in 5b |
 | `Messenger/ConversationListViewModel.swift`| `ui/conversation/ConversationListViewModel.kt`  | ☐ |
 | `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☐ |
 | `Messenger/LauncherWindow.swift`          | `ui/launcher/LauncherOverlay.kt`                 | ☐ |
