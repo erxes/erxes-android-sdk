@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.erxes.messenger.ErxesMessenger
+import com.erxes.messenger.config.DisplayMode
 import com.erxes.messenger.ui.MessengerActivity
 import kotlin.math.roundToInt
 
@@ -34,6 +35,10 @@ import kotlin.math.roundToInt
  */
 @Composable
 fun MessengerLauncher(modifier: Modifier = Modifier) {
+    // In chat mode there is no floating launcher — the host opens the full-screen shell
+    // via ErxesMessenger.show(). Mirrors iOS `showLauncher()` being a no-op in `.chat`.
+    if (ErxesMessenger.config?.displayMode == DisplayMode.CHAT) return
+
     val isReady by ErxesMessenger.isReady.collectAsStateWithLifecycle()
     if (!isReady) return
 

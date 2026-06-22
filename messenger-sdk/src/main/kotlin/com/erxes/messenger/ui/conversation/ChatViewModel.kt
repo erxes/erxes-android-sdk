@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.data.MessengerRepository
+import com.erxes.messenger.data.model.Attachment
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.util.SdkLog
 import kotlinx.coroutines.Job
@@ -13,12 +14,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * A locally-picked image attachment being staged in the composer. While [isUploading]
+ * is true the upload is in flight; once it completes [uploaded] holds the descriptor
+ * ready to send. [previewUri] is the local `content://` uri rendered as a thumbnail.
+ */
+data class PendingAttachment(
+    val id: String,
+    val previewUri: String,
+    val isUploading: Boolean = true,
+    val uploaded: Attachment? = null,
+)
+
 /** UI state for the chat screen. */
 data class ChatUiState(
     val messages: List<Message> = emptyList(),
     val isLoading: Boolean = true,
     val isSending: Boolean = false,
     val isBotTyping: Boolean = false,
+    val pendingAttachments: List<PendingAttachment> = emptyList(),
     val error: String? = null,
 )
 
@@ -85,13 +99,49 @@ class ChatViewModel(
         }
     }
 
+    /**
+     * Uploads a picked image in the background and stages it in the composer. [previewUri]
+     * is the local content uri (for the thumbnail); [bytes]/[filename]/[mimeType] are the
+     * already-decoded JPEG/PNG payload to upload. Mirrors `ChatViewModel.attachPhoto` (iOS).
+     */
+    fun attach(previewUri: String, bytes: ByteArray, filename: String, mimeType: String) {
+        val id = "$previewUri:${System.nanoTime()}"
+        _state.update {
+            it.copy(pendingAttachments = it.pendingAttachments + PendingAttachment(id, previewUri), error = null)
+        }
+        viewModelScope.launch {
+            try {
+                val uploaded = repository.uploadAttachment(bytes, filename, mimeType).toAttachment()
+                _state.update { st ->
+                    st.copy(pendingAttachments = st.pendingAttachments.map {
+                        if (it.id == id) it.copy(isUploading = false, uploaded = uploaded) else it
+                    })
+                }
+            } catch (t: Throwable) {
+                SdkLog.e("attachment upload failed", t)
+                _state.update { st ->
+                    st.copy(
+                        pendingAttachments = st.pendingAttachments.filterNot { it.id == id },
+                        error = t.message ?: "Upload failed",
+                    )
+                }
+            }
+        }
+    }
+
+    /** Removes a staged attachment before it is sent. */
+    fun removePending(id: String) {
+        _state.update { it.copy(pendingAttachments = it.pendingAttachments.filterNot { p -> p.id == id }) }
+    }
+
     fun send(text: String) {
         val trimmed = text.trim()
-        if (trimmed.isEmpty() || _state.value.isSending) return
+        val ready = _state.value.pendingAttachments.mapNotNull { it.uploaded }
+        if ((trimmed.isEmpty() && ready.isEmpty()) || _state.value.isSending) return
         _state.update { it.copy(isSending = true, error = null) }
         viewModelScope.launch {
             try {
-                val sent = repository.sendMessage(conversationId, trimmed)
+                val sent = repository.sendMessage(conversationId, trimmed, ready)
                 appendUnique(sent, fromAgentMarkRead = sent.conversationId ?: conversationId.orEmpty())
                 // First message in a new conversation — adopt the assigned id and subscribe.
                 if (conversationId == null) {
@@ -100,7 +150,7 @@ class ChatViewModel(
                         subscribe(newId)
                     }
                 }
-                _state.update { it.copy(isSending = false) }
+                _state.update { it.copy(isSending = false, pendingAttachments = emptyList()) }
             } catch (t: Throwable) {
                 SdkLog.e("send failed", t)
                 _state.update { it.copy(isSending = false, error = t.message) }

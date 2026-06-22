@@ -67,7 +67,10 @@ class MessengerRepository(
             if (cachedCustomerId != null) put("cachedCustomerId", cachedCustomerId)
             user?.email?.takeIf { it.isNotEmpty() }?.let { put("email", it) }
             user?.phone?.takeIf { it.isNotEmpty() }?.let { put("phone", it) }
-            user?.name?.takeIf { it.isNotEmpty() }?.let { put("name", it) }
+            // The schema has no top-level `name` arg; carry the name in `data`.
+            user?.name?.takeIf { it.isNotEmpty() }?.let {
+                put("data", buildJsonObject { put("name", it) })
+            }
         }
 
         val json = graphQL.send(endpoint, "connect", MessengerOperations.CONNECT, variables)

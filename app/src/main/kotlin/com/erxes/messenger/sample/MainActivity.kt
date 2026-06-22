@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.erxes.messenger.ErxesMessenger
+import com.erxes.messenger.config.DisplayMode
 import com.erxes.messenger.config.MessengerConfig
 import com.erxes.messenger.ui.launcher.ErxesMessengerHost
 
@@ -23,12 +24,16 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Replace with your real endpoint + integration id.
+        // Mirrors the values used by the upstream iOS example
+        // (Example/MessengerExample/MessengerExampleApp.swift).
         ErxesMessenger.configure(
             context = this,
             config = MessengerConfig(
-                endpoint = "https://app.example.io",
-                integrationId = "YOUR_INTEGRATION_ID",
+                endpoint = "https://officenext.erxes.io",
+                integrationId = "9S6seo9wawN6cou8v",
+                // Switch to the AI-assistant-style shell. The floating launcher is
+                // suppressed in chat mode; the "Open messenger" button opens it full-screen.
+                displayMode = DisplayMode.CHAT,
             ),
         )
 

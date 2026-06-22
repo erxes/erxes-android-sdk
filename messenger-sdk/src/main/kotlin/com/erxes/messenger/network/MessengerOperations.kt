@@ -7,10 +7,14 @@ package com.erxes.messenger.network
  */
 internal object MessengerOperations {
 
-    /** `widgetsMessengerConnect` — handshake run on every launch. */
+    /**
+     * `widgetsMessengerConnect` — handshake run on every launch. The customer name is
+     * passed inside the `data` JSON (the backend schema has no top-level `name` argument;
+     * see the iOS `connect` mutation).
+     */
     val CONNECT = """
-        mutation connect(${'$'}integrationId: String!, ${'$'}visitorId: String, ${'$'}cachedCustomerId: String, ${'$'}email: String, ${'$'}phone: String, ${'$'}name: String, ${'$'}data: JSON) {
-          widgetsMessengerConnect(integrationId: ${'$'}integrationId, visitorId: ${'$'}visitorId, cachedCustomerId: ${'$'}cachedCustomerId, email: ${'$'}email, phone: ${'$'}phone, name: ${'$'}name, data: ${'$'}data) {
+        mutation connect(${'$'}integrationId: String!, ${'$'}visitorId: String, ${'$'}cachedCustomerId: String, ${'$'}email: String, ${'$'}phone: String, ${'$'}data: JSON) {
+          widgetsMessengerConnect(integrationId: ${'$'}integrationId, visitorId: ${'$'}visitorId, cachedCustomerId: ${'$'}cachedCustomerId, email: ${'$'}email, phone: ${'$'}phone, data: ${'$'}data) {
             integrationId
             customerId
             visitorId

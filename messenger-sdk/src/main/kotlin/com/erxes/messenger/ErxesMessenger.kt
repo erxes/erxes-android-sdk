@@ -1,7 +1,10 @@
 package com.erxes.messenger
 
 import android.app.Activity
+import android.app.Application
 import android.content.Context
+import android.os.Bundle
+import com.erxes.messenger.config.DisplayMode
 import com.erxes.messenger.config.MessengerConfig
 import com.erxes.messenger.config.MessengerUser
 import com.erxes.messenger.data.MessengerRepository
@@ -88,6 +91,39 @@ object ErxesMessenger {
         this.session = store
         this.repository = MessengerRepository(config, store)
         startConnect()
+        // Chat mode is a full-screen, app-like experience: present it automatically as
+        // soon as a host activity is in the foreground (no launcher tap), mirroring iOS.
+        if (config.displayMode == DisplayMode.CHAT) {
+            registerChatAutoPresent(context.applicationContext)
+        }
+    }
+
+    @Volatile
+    private var autoPresented = false
+
+    /**
+     * Auto-opens [MessengerActivity] once, the first time a host activity resumes, when
+     * running in [DisplayMode.CHAT]. Mirrors iOS `autoPresentChatModeIfNeeded`.
+     */
+    private fun registerChatAutoPresent(appContext: Context) {
+        val app = appContext as? Application ?: return
+        autoPresented = false
+        app.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityResumed(activity: Activity) {
+                // Don't stack on top of the messenger itself, and present only once.
+                if (activity is MessengerActivity || autoPresented) return
+                autoPresented = true
+                activity.startActivity(MessengerActivity.intent(activity))
+                app.unregisterActivityLifecycleCallbacks(this)
+            }
+
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {}
+            override fun onActivityStarted(activity: Activity) {}
+            override fun onActivityPaused(activity: Activity) {}
+            override fun onActivityStopped(activity: Activity) {}
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {}
+            override fun onActivityDestroyed(activity: Activity) {}
+        })
     }
 
     /** Associate a signed-in user with conversations, then re-connect. Mirrors `setUser`. */

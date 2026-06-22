@@ -7,6 +7,7 @@
         <activity
             android:name="com.erxes.messenger.ui.MessengerActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@android:style/Theme.Material.Light.NoActionBar" />
     </application>
 

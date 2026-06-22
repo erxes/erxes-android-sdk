@@ -86,6 +86,20 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ☑ `MessengerRoot` in-activity nav (Home → List → Chat) with a small back stack
 - ☑ `HomeScreen` (branded welcome header from greetings), `ConversationListScreen` (unread badges)
 - ◐ Date separators, supporters/online status (deferred — nice-to-have polish)
+### 5c — Chat display mode (AI-assistant shell) ☑
+- ☑ `DisplayMode { CLASSIC, CHAT }` on `MessengerConfig` (default CLASSIC)
+- ☑ `ChatModeScreen`: new-chat home (greeting + composer), left drawer (conversation
+      list + New chat), inline chats; reuses `ChatContent` + `ConversationListViewModel`
+- ☑ `ChatContent` extracted from `ChatScreen` so both shells share the message list/composer
+- ☑ requireAuth gate before starting a new chat (reuses `IdentityFormScreen`)
+- ☑ `MessengerActivity` routes to `ChatModeScreen` in CHAT mode; launcher suppressed in CHAT
+- ☑ Image attachments in the composer (`ComposerBar` "+" → Photo Picker → JPEG upload →
+      staged thumbnail strip → send), shared by classic + chat shells; speech-to-text omitted
+- ☑ Theme parity with iOS `effective*`: primary from `uiOptions.color`, background/surface
+      from `uiOptions.backgroundColor`, light/dark scheme derived from background luminance
+- ☑ Clean chat-mode chrome: center-aligned transparent top bar, greeting hero, pill composer
+- ☐ `homeActions`/`drawerActions` + `onAction` callback (deferred follow-up)
+- ☐ Auto-present on connect (chose `show()`-driven open — idiomatic Android)
 
 ## Phase 6 — Auxiliary features
 ### 6a — Identity, notifications, social ☑

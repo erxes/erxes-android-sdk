@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.Color
  *   if your file server differs. Note: GraphQL is served from this host (see docs/PROTOCOL.md).
  * @property cachedCustomerId Optional customer id from a previous session.
  * @property appearance Visual customization.
+ * @property displayMode Which UI shell to present. Defaults to [DisplayMode.CLASSIC]
+ *   so existing hosts are unaffected.
  */
 data class MessengerConfig(
     val endpoint: String,
@@ -18,7 +20,22 @@ data class MessengerConfig(
     val fileEndpoint: String = endpoint,
     val cachedCustomerId: String? = null,
     val appearance: Appearance = Appearance(),
+    val displayMode: DisplayMode = DisplayMode.CLASSIC,
 )
+
+/**
+ * Which UI shell the messenger presents. Mirrors `DisplayMode` in the iOS SDK.
+ */
+enum class DisplayMode {
+    /** The classic widget (Home / Messages / Help / Tickets) with a floating launcher. */
+    CLASSIC,
+
+    /**
+     * An AI-assistant-style shell: a new-chat home, a left drawer holding the
+     * conversation list, and inline full-screen chats.
+     */
+    CHAT,
+}
 
 /** Visual customization for the launcher and messenger. Mirrors `MessengerConfig.Appearance`. */
 data class Appearance(
