@@ -136,6 +136,46 @@ Legend: ☐ todo · ◐ in progress · ☑ done
 - ◐ Remote Maven publishing (Maven Central / private repo) — add credentials + repository block when needed
 - ☐ Verify against a live integration before a public release
 
+## Phase 8 — Chat-mode parity with iOS
+Bring `DisplayMode.CHAT` to parity with the current iOS chat-mode shell
+(`MessengerChatModeView` + `ChatContentView`). Chat mode only; classic shell untouched.
+**Speech-to-text dictation is intentionally excluded.** `persistentMenu` is dropped —
+it is dead code on iOS (declared, never populated).
+
+### 8a — Message list fidelity
+- ☑ `util/MessageGrouper.kt` (pure): `ChatRow` (date separator | message + isFirst/isLast),
+      5-min same-sender grouping, Today/Yesterday/medium-date labels
+- ☑ `ChatViewModel`: expose `chatRows` + `isBot` on `ChatUiState`, rebuilt on message change
+- ☑ `ui/components/DateSeparator.kt` + `WelcomeMessage.kt` (welcome from `messages.welcome`)
+- ☑ `MessageBubble` grouped corner radii (isFirst/isLast); avatar only on group's last message
+- ☑ `ChatContent` renders `chatRows` (separator vs. bubble) instead of a flat list
+- ☑ Unit test: `MessageGrouperTest` (window, day-change separators, attachment-only retention)
+
+### 8b — Chat title (agent / bot / online)
+- ☑ `ui/components/AvatarWithStatus.kt` (online green dot overlay over `Avatar`)
+- ☑ `ui/components/ChatTitle.kt`: agent (avatar + Online/Offline) / "AI agent" badge / fallback
+- ☑ `ChatModeScreen` top bar shows `ChatTitle` for the active conversation, "New chat" otherwise
+
+### 8c — Scroll affordances + timestamps
+- ☑ Scroll-to-bottom FAB driven by `LazyListState`
+- ☑ Swipe-to-reveal timestamp column (fallback: long-press timestamp if it fights drawer swipe)
+
+### 8d — Long-press copy
+- ☑ `MessageBubble` long-press → copy to clipboard → transient "Copied" toast
+
+### 8e — Host actions API
+- ☑ `config/ActionItem.kt` (id, title, icon as `ImageVector`/`@DrawableRes`)
+- ☑ `MessengerConfig.homeActions`/`drawerActions`; `ErxesMessenger.onAction: ((String)->Unit)?`
+- ☑ `ChatModeScreen`: home-only top-bar action icons + drawer action rows, both fire `onAction`
+
+### 8f — Drawer polish
+- ☑ Rich drawer rows (avatar + last-message preview + active highlight)
+- ☑ Floating "New chat" pill (iOS style)
+- ☑ Confirm ChatViewModel instances survive conversation switches
+
+### 8g — (Optional) Audio attachment playback
+- ☐ Port `AudioMessageView` (MediaPlayer/ExoPlayer) for audio-type attachments
+
 ---
 
 ### Milestones

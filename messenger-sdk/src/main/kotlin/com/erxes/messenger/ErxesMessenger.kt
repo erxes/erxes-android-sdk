@@ -83,6 +83,10 @@ object ErxesMessenger {
     val requireAuth: Boolean
         get() = _connectResponse.value?.messengerData?.requireAuth ?: false
 
+    /** Chat-mode host action callback. Receives the tapped [com.erxes.messenger.config.ActionItem.id]. */
+    @Volatile
+    var onAction: ((String) -> Unit)? = null
+
     /** Initialize the SDK. Call once, e.g. from `Application.onCreate()`. Starts connect. */
     fun configure(context: Context, config: MessengerConfig) {
         this.appContext = context.applicationContext

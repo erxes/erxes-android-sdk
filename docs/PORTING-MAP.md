@@ -33,7 +33,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Session/SessionManager.swift`             | `session/SessionStore.kt`                        | ☑ |
 | `Utils/ObjectId.swift`                     | `session/ObjectId.kt`                            | ☑ |
 | `Utils/DateParsing.swift`                  | `util/DateParsing.kt`                            | ☑ |
-| `Utils/MessageGrouper.swift`               | `util/MessageGrouper.kt`                         | ☐ |
+| `Utils/MessageGrouper.swift`               | `util/MessageGrouper.kt`                         | ☑ |
 | `Utils/AttachmentURL.swift`                | `util/AttachmentUrl.kt`                          | ☑ |
 | `Utils/Logger.swift`                       | `util/SdkLog.kt`                                 | ☑ |
 | `Models/ConnectResponse.swift`            | `data/model/ConnectResponse.kt`                  | ☑ (ticketConfig/websiteApps deferred) |
@@ -51,7 +51,7 @@ Android library. Use this to track which iOS source has been ported.
 | `Messenger/MessageBubble.swift`           | `ui/components/MessageBubble.kt`                  | ☑ |
 | `Messenger/MessengerContainerView.swift`  | `ui/MessengerActivity.kt`                        | ◐ chat only; host/list in 5b |
 | `Components/TypingStatusView.swift`       | `ui/components/TypingIndicator.kt`               | ☑ |
-| `Components/AvatarWithStatusView.swift`   | `ui/components/Avatar.kt`                         | ◐ avatar; online status in 5b |
+| `Components/AvatarWithStatusView.swift`   | `ui/components/AvatarWithStatus.kt`               | ☑ |
 | `Messenger/ConversationListViewModel.swift`| `ui/conversation/ConversationListViewModel.kt`  | ☑ |
 | `Messenger/ConversationListView.swift`    | `ui/conversation/ConversationListScreen.kt`      | ☑ |
 | `Messenger/MessengerLaunchButton.swift`   | `ui/launcher/MessengerLauncher.kt`               | ☑ |

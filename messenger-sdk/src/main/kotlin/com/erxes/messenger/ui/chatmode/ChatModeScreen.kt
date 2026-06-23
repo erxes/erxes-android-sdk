@@ -1,29 +1,39 @@
 package com.erxes.messenger.ui.chatmode
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -40,17 +50,24 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.erxes.messenger.ErxesMessenger
+import com.erxes.messenger.config.ActionItem
 import com.erxes.messenger.data.model.Conversation
+import com.erxes.messenger.ui.components.AvatarWithStatus
+import com.erxes.messenger.ui.components.ChatTitle
 import com.erxes.messenger.ui.components.ComposerBar
 import com.erxes.messenger.ui.conversation.ChatContent
+import com.erxes.messenger.ui.conversation.ChatViewModel
 import com.erxes.messenger.ui.conversation.ConversationListViewModel
 import com.erxes.messenger.ui.screens.IdentityFormScreen
+import com.erxes.messenger.util.AttachmentUrl
 import kotlinx.coroutines.launch
 
 /** What the main pane is currently showing. */
@@ -157,6 +174,11 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
             ChatDrawer(
                 listVM = listVM,
                 activeId = (target as? ChatTarget.Existing)?.conversation?.id,
+                drawerActions = ErxesMessenger.config?.drawerActions.orEmpty(),
+                onAction = { id ->
+                    ErxesMessenger.onAction?.invoke(id)
+                    closeDrawer()
+                },
                 onNewChat = { goHome() },
                 onOpenConversation = { conv ->
                     target = ChatTarget.Existing(conv)
@@ -170,9 +192,10 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
             topBar = {
                 Column {
                     ChatModeTopBar(
-                        title = target.title(),
+                        target = target,
                         onMenu = { scope.launch { drawerState.open() } },
                         onClose = onExit,
+                        homeActions = ErxesMessenger.config?.homeActions.orEmpty(),
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                 }
@@ -192,11 +215,13 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
                         vmKey = "draft-${t.nonce}",
                         autoSendText = t.autoSend,
                         autoOpenPicker = t.openPicker,
+                        chatModeAffordances = true,
                     )
 
                     is ChatTarget.Existing -> ChatContent(
                         conversationId = t.conversation.id,
                         vmKey = t.conversation.id,
+                        chatModeAffordances = true,
                     )
                 }
             }
@@ -204,44 +229,75 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
     }
 }
 
-private fun ChatTarget.title(): String = when (this) {
-    is ChatTarget.Existing -> "Conversation"
-    else -> "New chat"
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChatModeTopBar(
-    title: String,
+    target: ChatTarget,
     onMenu: () -> Unit,
     onClose: () -> Unit,
+    homeActions: List<ActionItem>,
 ) {
-    CenterAlignedTopAppBar(
-        title = {
-            Text(
-                title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.SemiBold,
-            )
-        },
-        navigationIcon = {
-            IconButton(onClick = onMenu) {
+    Surface(
+        color = MaterialTheme.colorScheme.background,
+        tonalElevation = 2.dp,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 12.dp),
+        ) {
+            FilledTonalIconButton(
+                onClick = onMenu,
+                modifier = Modifier.align(Alignment.CenterStart).size(42.dp),
+                shape = CircleShape,
+                colors = IconButtonDefaults.filledTonalIconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                ),
+            ) {
                 Icon(Icons.Filled.Menu, contentDescription = "Conversations")
             }
-        },
-        actions = {
-            IconButton(onClick = onClose) {
-                Icon(Icons.Filled.Close, contentDescription = "Close")
+
+            Box(modifier = Modifier.align(Alignment.Center)) {
+                when (target) {
+                    is ChatTarget.Existing -> {
+                        val chatVM: ChatViewModel = viewModel(key = target.conversation.id)
+                        val chatState by chatVM.state.collectAsStateWithLifecycle()
+                        ChatTitle(
+                            conversation = target.conversation,
+                            isBot = chatState.isBot,
+                            fileEndpoint = ErxesMessenger.config?.fileEndpoint.orEmpty(),
+                        )
+                    }
+                    else -> Text(
+                        text = "New chat",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                }
             }
-        },
-        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
-            navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
-            actionIconContentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-    )
+
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (target is ChatTarget.Home) {
+                    homeActions.forEach { item ->
+                        IconButton(onClick = { ErxesMessenger.onAction?.invoke(item.id) }) {
+                            ActionIcon(item)
+                        }
+                    }
+                }
+                IconButton(onClick = onClose) {
+                    Icon(Icons.Filled.Close, contentDescription = "Close")
+                }
+            }
+        }
+    }
 }
 
 /** New-chat home: greeting headline/subtitle (from the connect payload) + a composer. */
@@ -252,20 +308,27 @@ private fun NewChatHome(onSend: (String) -> Unit, onAttach: () -> Unit) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 32.dp),
+            modifier = Modifier.weight(1f).fillMaxWidth().padding(horizontal = 28.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Icon(
-                imageVector = Icons.Filled.Star,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(40.dp).padding(bottom = 16.dp),
-            )
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                tonalElevation = 4.dp,
+                modifier = Modifier.padding(bottom = 18.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Star,
+                    contentDescription = null,
+                    modifier = Modifier.padding(14.dp).size(28.dp),
+                )
+            }
             Text(
                 text = messages?.greetTitle?.takeIf { it.isNotBlank() } ?: "How can I help?",
                 style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.SemiBold,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
             )
             messages?.greet?.takeIf { it.isNotBlank() }?.let { greet ->
@@ -274,7 +337,7 @@ private fun NewChatHome(onSend: (String) -> Unit, onAttach: () -> Unit) {
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier.padding(top = 10.dp),
                 )
             }
         }
@@ -303,67 +366,160 @@ private fun HomeComposer(onSend: (String) -> Unit, onAttach: () -> Unit) {
 private fun ChatDrawer(
     listVM: ConversationListViewModel,
     activeId: String?,
+    drawerActions: List<ActionItem>,
+    onAction: (String) -> Unit,
     onNewChat: () -> Unit,
     onOpenConversation: (Conversation) -> Unit,
 ) {
     val state by listVM.state.collectAsStateWithLifecycle()
 
-    ModalDrawerSheet {
-        Text(
-            text = "Chats",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 28.dp, top = 24.dp, bottom = 12.dp),
-        )
-
-        NavigationDrawerItem(
-            icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-            label = { Text("New chat") },
-            selected = false,
-            onClick = onNewChat,
-            modifier = Modifier.padding(horizontal = 12.dp),
-        )
-
-        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
-
-        when {
-            state.isLoading -> Box(
-                modifier = Modifier.fillMaxWidth().padding(24.dp),
-                contentAlignment = Alignment.Center,
-            ) { CircularProgressIndicator() }
-            state.conversations.isEmpty() -> Text(
-                text = state.error ?: "No conversations yet",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
-            )
-            else -> {
+    ModalDrawerSheet(
+        modifier = Modifier.fillMaxWidth(0.9f),
+        drawerContainerColor = MaterialTheme.colorScheme.surface,
+        drawerContentColor = MaterialTheme.colorScheme.onSurface,
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().padding(bottom = 88.dp)) {
                 Text(
-                    text = "RECENTS",
-                    style = MaterialTheme.typography.labelSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(start = 28.dp, bottom = 4.dp),
+                    text = "Chats",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(start = 24.dp, top = 26.dp, bottom = 14.dp),
                 )
-                LazyColumn {
-                    items(state.conversations, key = { it.id }) { conv ->
-                        NavigationDrawerItem(
-                            label = {
-                                Text(
-                                    text = conv.lastMessage?.content?.takeIf { it.isNotBlank() }
-                                        ?: conv.content?.takeIf { it.isNotBlank() }
-                                        ?: "Conversation",
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            },
-                            selected = conv.id == activeId,
-                            onClick = { onOpenConversation(conv) },
-                            modifier = Modifier.padding(horizontal = 12.dp),
+
+                drawerActions.forEach { item ->
+                    NavigationDrawerItem(
+                        icon = { ActionIcon(item) },
+                        label = { Text(item.title) },
+                        selected = false,
+                        onClick = { onAction(item.id) },
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.65f),
+                )
+
+                when {
+                    state.isLoading -> Box(
+                        modifier = Modifier.fillMaxWidth().padding(24.dp),
+                        contentAlignment = Alignment.Center,
+                    ) { CircularProgressIndicator() }
+                    state.conversations.isEmpty() -> Text(
+                        text = state.error ?: "No conversations yet",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 28.dp, vertical = 8.dp),
+                    )
+                    else -> {
+                        Text(
+                            text = "RECENTS",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.padding(start = 28.dp, bottom = 4.dp),
                         )
+                        LazyColumn {
+                            items(state.conversations, key = { it.id }) { conv ->
+                                DrawerConversationRow(
+                                    conversation = conv,
+                                    selected = conv.id == activeId,
+                                    onClick = { onOpenConversation(conv) },
+                                )
+                            }
+                        }
                     }
                 }
             }
+
+            ExtendedFloatingActionButton(
+                onClick = onNewChat,
+                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                text = { Text("New chat") },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 24.dp),
+            )
         }
+    }
+}
+
+@Composable
+private fun DrawerConversationRow(
+    conversation: Conversation,
+    selected: Boolean,
+    onClick: () -> Unit,
+) {
+    val fileEndpoint = ErxesMessenger.config?.fileEndpoint.orEmpty()
+    val user = conversation.participatedUsers.firstOrNull()
+    val lastMessage = conversation.lastMessage
+    val title = user?.details?.displayName
+        ?: if (conversation.messages.any { it.fromBot }) "AI agent" else "Conversation"
+    val preview = lastMessage?.content?.takeIf { it.isNotBlank() }
+        ?: conversation.content?.takeIf { it.isNotBlank() }
+        ?: if (lastMessage?.attachments?.isNotEmpty() == true) "Attachment" else "No messages yet"
+    val avatarUrl = AttachmentUrl.resolve(user?.details?.avatar ?: lastMessage?.user?.details?.avatar, fileEndpoint)
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 3.dp),
+        shape = RoundedCornerShape(18.dp),
+        color = if (selected) MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.72f) else Color.Transparent,
+        contentColor = if (selected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
+        tonalElevation = if (selected) 2.dp else 0.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick)
+                .padding(horizontal = 12.dp, vertical = 11.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            AvatarWithStatus(
+                url = avatarUrl,
+                name = title,
+                isOnline = user?.isOnline ?: false,
+                sizeDp = 38,
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = preview,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (selected) MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.76f)
+                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            if (conversation.unreadCount > 0) {
+                Badge(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.padding(start = 8.dp),
+                ) {
+                    Text(conversation.unreadCount.coerceAtMost(99).toString())
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ActionIcon(item: ActionItem) {
+    when {
+        item.imageVector != null -> Icon(item.imageVector, contentDescription = item.title)
+        item.drawableRes != null -> Icon(painterResource(item.drawableRes), contentDescription = item.title)
+        else -> Icon(Icons.Filled.Star, contentDescription = item.title)
     }
 }

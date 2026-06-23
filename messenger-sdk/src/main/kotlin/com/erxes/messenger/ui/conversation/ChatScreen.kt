@@ -8,13 +8,17 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -26,14 +30,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,21 +49,33 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.ui.components.ComposerBar
+import com.erxes.messenger.ui.components.DateSeparator
 import com.erxes.messenger.ui.components.MessageBubble
 import com.erxes.messenger.ui.components.TypingIndicator
+import com.erxes.messenger.ui.components.WelcomeMessage
+import com.erxes.messenger.util.ChatRow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /** Full chat screen for one conversation (classic shell: provides its own top bar). */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -108,13 +128,31 @@ internal fun ChatContent(
     modifier: Modifier = Modifier,
     autoSendText: String? = null,
     autoOpenPicker: Boolean = false,
+    chatModeAffordances: Boolean = false,
 ) {
     val viewModel: ChatViewModel = viewModel(key = vmKey)
     val state by viewModel.state.collectAsStateWithLifecycle()
     val fileEndpoint = ErxesMessenger.config?.fileEndpoint.orEmpty()
+    val welcome = ErxesMessenger.connectResponse.collectAsStateWithLifecycle().value
+        ?.messengerData?.messages?.welcome?.takeIf { it.isNotBlank() }
     val listState = rememberLazyListState()
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val density = LocalDensity.current
+    val timestampColumnWidth = 72.dp
+    val maxSwipePx = with(density) { timestampColumnWidth.toPx() }
+    var swipeOffsetPx by remember { mutableFloatStateOf(0f) }
+    val timestampAlpha by remember {
+        derivedStateOf { (abs(swipeOffsetPx) / with(density) { 30.dp.toPx() }).coerceIn(0f, 1f) }
+    }
+    val isAtBottom by remember {
+        derivedStateOf {
+            val info = listState.layoutInfo
+            val total = info.totalItemsCount
+            if (total == 0) true
+            else info.visibleItemsInfo.lastOrNull()?.index?.let { it >= total - 1 } == true
+        }
+    }
 
     val picker = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia()
@@ -138,9 +176,10 @@ internal fun ChatContent(
         if (autoOpenPicker) openPicker()
     }
 
-    // Keep the newest message in view.
-    LaunchedEffect(state.messages.size, state.isBotTyping) {
-        val count = state.messages.size + if (state.isBotTyping) 1 else 0
+    // Keep the newest message in view. Item count = welcome (if any) + grouped rows + typing.
+    LaunchedEffect(state.chatRows.size, state.isBotTyping) {
+        val count = (if (welcome != null) 1 else 0) +
+            state.chatRows.size + (if (state.isBotTyping) 1 else 0)
         if (count > 0) listState.animateScrollToItem(count - 1)
     }
 
@@ -152,16 +191,46 @@ internal fun ChatContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) { CircularProgressIndicator() }
         } else {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                items(state.messages, key = { it.id }) { msg ->
-                    MessageBubble(message = msg, fileEndpoint = fileEndpoint)
+            Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                LazyColumn(
+                    state = listState,
+                    contentPadding = PaddingValues(top = 10.dp, bottom = 8.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .chatTimestampSwipe(
+                            enabled = chatModeAffordances,
+                            maxSwipePx = maxSwipePx,
+                            onOffset = { swipeOffsetPx = it },
+                        ),
+                ) {
+                    if (welcome != null) {
+                        item(key = "welcome") { WelcomeMessage(message = welcome) }
+                    }
+                    items(state.chatRows, key = { it.id }) { row ->
+                        when (row) {
+                            is ChatRow.DateSeparator -> DateSeparator(label = row.label)
+                            is ChatRow.MessageRow -> MessageRowWithTimestamp(
+                                row = row,
+                                fileEndpoint = fileEndpoint,
+                                swipeOffsetPx = if (chatModeAffordances) swipeOffsetPx else 0f,
+                                timestampAlpha = if (chatModeAffordances) timestampAlpha else 0f,
+                                timestampColumnWidth = timestampColumnWidth,
+                            )
+                        }
+                    }
+                    if (state.isBotTyping) {
+                        item(key = "typing") { TypingIndicator() }
+                    }
                 }
-                if (state.isBotTyping) {
-                    item(key = "typing") { TypingIndicator() }
+                if (chatModeAffordances) {
+                    ScrollToBottomButton(
+                        visible = !isAtBottom,
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 8.dp),
+                        onClick = {
+                            val count = listState.layoutInfo.totalItemsCount
+                            if (count > 0) scope.launch { listState.animateScrollToItem(count - 1) }
+                        },
+                    )
                 }
             }
         }
@@ -190,6 +259,99 @@ internal fun ChatContent(
         )
     }
 }
+
+private fun Modifier.chatTimestampSwipe(
+    enabled: Boolean,
+    maxSwipePx: Float,
+    onOffset: (Float) -> Unit,
+): Modifier {
+    if (!enabled) return this
+    return pointerInput(maxSwipePx) {
+        var offset = 0f
+        var totalX = 0f
+        var totalY = 0f
+        var lockedHorizontal = false
+        detectDragGestures(
+            onDragStart = {
+                totalX = 0f
+                totalY = 0f
+                lockedHorizontal = false
+            },
+            onDragCancel = {
+                offset = 0f
+                onOffset(0f)
+            },
+            onDragEnd = {
+                offset = 0f
+                onOffset(0f)
+            },
+        ) { change, dragAmount ->
+            totalX += dragAmount.x
+            totalY += dragAmount.y
+            if (!lockedHorizontal) {
+                val h = abs(totalX)
+                val v = abs(totalY)
+                if (h <= 8f && v <= 8f) return@detectDragGestures
+                if (v >= h) return@detectDragGestures
+                lockedHorizontal = true
+            }
+            change.consume()
+            offset = (offset + dragAmount.x).coerceIn(-maxSwipePx, 0f)
+            onOffset(offset)
+        }
+    }
+}
+
+@Composable
+private fun MessageRowWithTimestamp(
+    row: ChatRow.MessageRow,
+    fileEndpoint: String,
+    swipeOffsetPx: Float,
+    timestampAlpha: Float,
+    timestampColumnWidth: androidx.compose.ui.unit.Dp,
+) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = shortTime(row.message.createdAt),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .width(timestampColumnWidth)
+                .alpha(timestampAlpha),
+        )
+        Box(modifier = Modifier.offset { IntOffset(swipeOffsetPx.roundToInt(), 0) }) {
+            MessageBubble(
+                message = row.message,
+                fileEndpoint = fileEndpoint,
+                isFirstInGroup = row.isFirstInGroup,
+                isLastInGroup = row.isLastInGroup,
+            )
+        }
+    }
+}
+
+@Composable
+private fun ScrollToBottomButton(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    if (!visible) return
+    SmallFloatingActionButton(
+        onClick = onClick,
+        modifier = modifier.size(36.dp),
+        containerColor = Color.Black.copy(alpha = 0.62f),
+        contentColor = Color.White,
+    ) {
+        Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Scroll to latest")
+    }
+}
+
+private val timeFormat = SimpleDateFormat("h:mm a", Locale.getDefault())
+
+private fun shortTime(epochMillis: Long): String = timeFormat.format(Date(epochMillis))
 
 @Composable
 private fun ChatComposer(

@@ -38,15 +38,30 @@ class MessageParserTest {
                 { "_id": "m2", "content": "hi", "createdAt": "2023-01-02T03:04:05.000Z",
                   "fromBot": false,
                   "attachments": [{ "url": "a.png", "name": "a", "type": "image/png", "size": 12 }],
-                  "user": { "_id": "u1", "details": { "fullName": "Jane", "avatar": "j.png" } } }
+                  "user": { "_id": "u1", "isOnline": true, "details": { "fullName": "Jane", "avatar": "j.png" } } }
                 """.trimIndent()
             )
         )!!
         assertFalse(msg.isFromCustomer)            // no customerId
         assertEquals("Jane", msg.user?.details?.fullName)
+        assertEquals(true, msg.user?.isOnline)
         assertEquals(1, msg.attachments.size)
         assertEquals("a.png", msg.attachments[0].url)
         assertEquals("a.png", msg.attachments[0].id)   // id defaults to url
+    }
+
+    @Test
+    fun `bot message preserves fromBot flag`() {
+        val msg = MessageParser.parseMessage(
+            obj(
+                """
+                { "_id": "bot1", "content": "automated", "createdAt": "1700000000000",
+                  "fromBot": true }
+                """.trimIndent()
+            )
+        )!!
+        assertTrue(msg.fromBot)
+        assertFalse(msg.isFromCustomer)
     }
 
     @Test
@@ -83,5 +98,23 @@ class MessageParserTest {
             )
         )!!
         assertEquals(1, conv.unreadCount)             // one agent message, not read-tracked
+    }
+
+    @Test
+    fun `conversation parses participated user online status`() {
+        val conv = MessageParser.parseConversation(
+            obj(
+                """
+                { "_id": "conv3", "createdAt": "1",
+                  "participatedUsers": [
+                    { "_id": "u1", "isOnline": true, "details": { "fullName": "Agent", "avatar": "a.png" } }
+                  ],
+                  "messages": [] }
+                """.trimIndent()
+            )
+        )!!
+        assertEquals(1, conv.participatedUsers.size)
+        assertEquals("Agent", conv.participatedUsers[0].details?.displayName)
+        assertTrue(conv.participatedUsers[0].isOnline)
     }
 }

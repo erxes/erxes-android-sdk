@@ -6,6 +6,8 @@ import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.data.MessengerRepository
 import com.erxes.messenger.data.model.Attachment
 import com.erxes.messenger.data.model.Message
+import com.erxes.messenger.util.ChatRow
+import com.erxes.messenger.util.MessageGrouper
 import com.erxes.messenger.util.SdkLog
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,11 +31,25 @@ data class PendingAttachment(
 /** UI state for the chat screen. */
 data class ChatUiState(
     val messages: List<Message> = emptyList(),
+    /** Grouped rows (date separators + grouped messages) derived from [messages]. */
+    val chatRows: List<ChatRow> = emptyList(),
+    /** True once any message in the thread came from a bot (sticky, mirrors iOS). */
+    val isBot: Boolean = false,
     val isLoading: Boolean = true,
     val isSending: Boolean = false,
     val isBotTyping: Boolean = false,
     val pendingAttachments: List<PendingAttachment> = emptyList(),
     val error: String? = null,
+)
+
+/**
+ * Replaces [ChatUiState.messages] and recomputes the derived [ChatUiState.chatRows] /
+ * [ChatUiState.isBot] in one place, so every message mutation stays in sync.
+ */
+private fun ChatUiState.withMessages(newMessages: List<Message>): ChatUiState = copy(
+    messages = newMessages,
+    chatRows = MessageGrouper.buildChatRows(newMessages),
+    isBot = isBot || newMessages.any { it.fromBot },
 )
 
 /**
@@ -55,7 +71,7 @@ class ChatViewModel(
     fun open(conversationId: String?) {
         this.conversationId = conversationId
         if (conversationId == null) {
-            _state.update { it.copy(isLoading = false, messages = emptyList()) }
+            _state.update { it.withMessages(emptyList()).copy(isLoading = false) }
             return
         }
         loadHistory(conversationId)
@@ -66,7 +82,7 @@ class ChatViewModel(
         viewModelScope.launch {
             try {
                 val detail = repository.conversationDetail(id)
-                _state.update { it.copy(messages = detail?.messages.orEmpty(), isLoading = false) }
+                _state.update { it.withMessages(detail?.messages.orEmpty()).copy(isLoading = false) }
                 repository.markRead(id)
             } catch (t: Throwable) {
                 SdkLog.e("loadHistory failed", t)
@@ -91,7 +107,7 @@ class ChatViewModel(
         var added = false
         _state.update { current ->
             if (current.messages.any { it.id == message.id }) current
-            else { added = true; current.copy(messages = current.messages + message) }
+            else { added = true; current.withMessages(current.messages + message) }
         }
         // An inbound (agent/bot) message while the chat is open should be marked read.
         if (added && !message.isFromCustomer) {

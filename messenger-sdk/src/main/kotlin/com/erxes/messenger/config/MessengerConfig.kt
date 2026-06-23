@@ -13,6 +13,8 @@ import androidx.compose.ui.graphics.Color
  * @property appearance Visual customization.
  * @property displayMode Which UI shell to present. Defaults to [DisplayMode.CLASSIC]
  *   so existing hosts are unaffected.
+ * @property homeActions Chat-mode header actions shown on the new-chat home.
+ * @property drawerActions Chat-mode drawer action rows shown above recents.
  */
 data class MessengerConfig(
     val endpoint: String,
@@ -21,6 +23,8 @@ data class MessengerConfig(
     val cachedCustomerId: String? = null,
     val appearance: Appearance = Appearance(),
     val displayMode: DisplayMode = DisplayMode.CLASSIC,
+    val homeActions: List<ActionItem> = emptyList(),
+    val drawerActions: List<ActionItem> = emptyList(),
 )
 
 /**

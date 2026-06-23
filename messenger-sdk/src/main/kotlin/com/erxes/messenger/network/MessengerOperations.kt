@@ -55,7 +55,7 @@ internal object MessengerOperations {
             content
             createdAt
             unreadCount
-            participatedUsers { _id details { avatar fullName } }
+            participatedUsers { _id details { avatar fullName } isOnline }
             messages {
               _id content createdAt customerId conversationId fromBot
               attachments { url name type size }
