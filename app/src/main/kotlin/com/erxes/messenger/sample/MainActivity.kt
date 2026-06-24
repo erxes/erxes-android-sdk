@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.config.DisplayMode
 import com.erxes.messenger.config.MessengerConfig
+import com.erxes.messenger.config.MessengerUser
 import com.erxes.messenger.ui.launcher.ErxesMessengerHost
 
 class MainActivity : ComponentActivity() {
@@ -35,6 +36,11 @@ class MainActivity : ComponentActivity() {
                 // suppressed in chat mode; the "Open messenger" button opens it full-screen.
                 displayMode = DisplayMode.CHAT,
             ),
+        )
+
+        // Identify the visitor so the conversation attaches to a known customer.
+        ErxesMessenger.setUser(
+            MessengerUser(email = "monkhorgilbayarbaatar@gmail.com"),
         )
 
         setContent {

@@ -11,7 +11,7 @@ plugins {
 
 // Coordinates for the published artifact: com.erxes:messenger-sdk:<version>
 group = "com.erxes"
-version = "0.30.0"
+version = "0.30.1"
 
 android {
     namespace = "com.erxes.messenger"
@@ -55,7 +55,7 @@ android {
 }
 
 // Publish the release AAR to Maven (local or remote). `./gradlew :messenger-sdk:publishToMavenLocal`
-// installs it into ~/.m2 so a consumer app with `mavenLocal()` can `implementation("com.erxes:messenger-sdk:0.30.0")`.
+// installs it into ~/.m2 so a consumer app with `mavenLocal()` can `implementation("com.erxes:messenger-sdk:0.30.1")`.
 publishing {
     publications {
         register<MavenPublication>("release") {

@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
  *   so existing hosts are unaffected.
  * @property homeActions Chat-mode header actions shown on the new-chat home.
  * @property drawerActions Chat-mode drawer action rows shown above recents.
+ * @property showCloseButton Whether the chat-mode home shows a top-right close (X). Mirrors
+ *   iOS `showsCloseButton` — hosts that embed the messenger without a launcher to return to
+ *   leave this off. Defaults to `false`.
  */
 data class MessengerConfig(
     val endpoint: String,
@@ -25,6 +28,7 @@ data class MessengerConfig(
     val displayMode: DisplayMode = DisplayMode.CLASSIC,
     val homeActions: List<ActionItem> = emptyList(),
     val drawerActions: List<ActionItem> = emptyList(),
+    val showCloseButton: Boolean = false,
 )
 
 /**

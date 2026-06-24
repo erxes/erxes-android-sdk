@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Badge
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +37,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
@@ -61,6 +61,8 @@ import com.erxes.messenger.ErxesMessenger
 import com.erxes.messenger.config.ActionItem
 import com.erxes.messenger.data.model.Conversation
 import com.erxes.messenger.ui.components.AvatarWithStatus
+import com.erxes.messenger.ui.components.BotAvatar
+import com.erxes.messenger.ui.components.BotBadge
 import com.erxes.messenger.ui.components.ChatTitle
 import com.erxes.messenger.ui.components.ComposerBar
 import com.erxes.messenger.ui.conversation.ChatContent
@@ -195,7 +197,9 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
                         target = target,
                         onMenu = { scope.launch { drawerState.open() } },
                         onClose = onExit,
+                        onNewChat = { goHome() },
                         homeActions = ErxesMessenger.config?.homeActions.orEmpty(),
+                        showCloseButton = ErxesMessenger.config?.showCloseButton == true,
                     )
                     HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
                 }
@@ -235,7 +239,9 @@ private fun ChatModeTopBar(
     target: ChatTarget,
     onMenu: () -> Unit,
     onClose: () -> Unit,
+    onNewChat: () -> Unit,
     homeActions: List<ActionItem>,
+    showCloseButton: Boolean,
 ) {
     Surface(
         color = MaterialTheme.colorScheme.background,
@@ -285,15 +291,35 @@ private fun ChatModeTopBar(
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (target is ChatTarget.Home) {
+                // Mirrors iOS `MessengerChatModeView.topBar`: with no active conversation
+                // (home or draft) we show the host-configured home actions; inside an
+                // existing conversation we swap to a single new-chat affordance.
+                if (target is ChatTarget.Existing) {
+                    FilledTonalIconButton(
+                        onClick = onNewChat,
+                        modifier = Modifier.size(42.dp),
+                        shape = CircleShape,
+                        colors = IconButtonDefaults.filledTonalIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.72f),
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                    ) {
+                        Icon(Icons.Filled.Edit, contentDescription = "New chat")
+                    }
+                } else {
                     homeActions.forEach { item ->
                         IconButton(onClick = { ErxesMessenger.onAction?.invoke(item.id) }) {
                             ActionIcon(item)
                         }
                     }
                 }
-                IconButton(onClick = onClose) {
-                    Icon(Icons.Filled.Close, contentDescription = "Close")
+
+                // Close the full-screen messenger — only when there's a launcher to return
+                // to (hidden in launcher-less chat mode). Mirrors iOS `showsCloseButton`.
+                if (showCloseButton) {
+                    IconButton(onClick = onClose) {
+                        Icon(Icons.Filled.Close, contentDescription = "Close")
+                    }
                 }
             }
         }
@@ -455,8 +481,13 @@ private fun DrawerConversationRow(
     val fileEndpoint = ErxesMessenger.config?.fileEndpoint.orEmpty()
     val user = conversation.participatedUsers.firstOrNull()
     val lastMessage = conversation.lastMessage
-    val title = user?.details?.displayName
-        ?: if (conversation.messages.any { it.fromBot }) "AI agent" else "Conversation"
+    // Mirror iOS: a conversation reads as a bot thread when its newest message came from the bot.
+    val isBot = lastMessage?.fromBot == true
+    val title = when {
+        isBot -> "AI Agent"
+        user != null -> user.details?.displayName ?: "Support"
+        else -> "Conversation"
+    }
     val preview = lastMessage?.content?.takeIf { it.isNotBlank() }
         ?: conversation.content?.takeIf { it.isNotBlank() }
         ?: if (lastMessage?.attachments?.isNotEmpty() == true) "Attachment" else "No messages yet"
@@ -478,21 +509,31 @@ private fun DrawerConversationRow(
                 .padding(horizontal = 12.dp, vertical = 11.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AvatarWithStatus(
-                url = avatarUrl,
-                name = title,
-                isOnline = user?.isOnline ?: false,
-                sizeDp = 38,
-            )
+            if (isBot) {
+                BotAvatar(sizeDp = 38)
+            } else {
+                AvatarWithStatus(
+                    url = avatarUrl,
+                    name = title,
+                    isOnline = user?.isOnline ?: false,
+                    sizeDp = 38,
+                )
+            }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                    if (isBot) {
+                        BotBadge(modifier = Modifier.padding(start = 6.dp))
+                    }
+                }
                 Text(
                     text = preview,
                     style = MaterialTheme.typography.bodySmall,
@@ -501,15 +542,6 @@ private fun DrawerConversationRow(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            }
-            if (conversation.unreadCount > 0) {
-                Badge(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(start = 8.dp),
-                ) {
-                    Text(conversation.unreadCount.coerceAtMost(99).toString())
-                }
             }
         }
     }

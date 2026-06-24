@@ -24,7 +24,7 @@ of the [erxes iOS SDK](https://github.com/erxes/erxes-ios-sdk).
 ```kotlin
 // settings.gradle.kts → repositories { mavenCentral(); mavenLocal() }
 dependencies {
-    implementation("com.erxes:messenger-sdk:0.30.0")
+    implementation("com.erxes:messenger-sdk:0.30.1")
 }
 ```
 
