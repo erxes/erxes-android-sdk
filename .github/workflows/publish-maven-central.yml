@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p ~/.gradle
           cat > ~/.gradle/gradle.properties <<EOF
+          org.gradle.configuration-cache=false
           mavenCentralUsername=${MAVEN_CENTRAL_USERNAME}
           mavenCentralPassword=${MAVEN_CENTRAL_PASSWORD}
           signingInMemoryKey=${SIGNING_IN_MEMORY_KEY}
@@ -42,4 +43,4 @@ jobs:
           SIGNING_IN_MEMORY_KEY_PASSWORD: ${{ secrets.SIGNING_IN_MEMORY_KEY_PASSWORD }}
 
       - name: Publish and release to Maven Central
-        run: ./gradlew :messenger-sdk:publishAndReleaseToMavenCentral --no-daemon
+        run: ./gradlew :messenger-sdk:publishAndReleaseToMavenCentral --no-configuration-cache --no-daemon
