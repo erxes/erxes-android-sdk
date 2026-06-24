@@ -154,6 +154,10 @@ object ErxesMessenger {
     /** Open the messenger UI. Mirrors `showMessenger(from:)`. */
     fun show(activity: Activity) {
         check(config != null) { "ErxesMessenger not configured — call configure() first" }
+        // We're presenting now, so the chat-mode auto-present (which fires on the
+        // next host-activity resume) must not present a second copy when the user
+        // closes this one and the host resumes.
+        autoPresented = true
         activity.startActivity(MessengerActivity.intent(activity))
     }
 
