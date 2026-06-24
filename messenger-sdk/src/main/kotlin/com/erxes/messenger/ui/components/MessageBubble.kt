@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,6 +22,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.util.AttachmentUrl
+import com.erxes.messenger.util.ContentParser
 
 /**
  * A single chat message row: customer messages align right, agent/bot left with avatar.
@@ -47,7 +54,9 @@ internal fun MessageBubble(
     val fromCustomer = message.isFromCustomer
     val clipboard = LocalClipboardManager.current
     val context = LocalContext.current
-    val copyText = message.content.trim()
+    // Message content can arrive as HTML or BlockNote JSON — flatten to display text.
+    val displayText = ContentParser.toPlainText(message.content)
+    val copyText = displayText.trim()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -60,12 +69,16 @@ internal fun MessageBubble(
         // so stacked bubbles stay left-aligned.
         if (!fromCustomer) {
             if (isLastInGroup) {
-                Avatar(
-                    url = AttachmentUrl.resolve(message.user?.details?.avatar, fileEndpoint),
-                    name = message.user?.details?.fullName,
-                    sizeDp = 28,
-                    modifier = Modifier.padding(end = 8.dp),
-                )
+                if (message.fromBot) {
+                    BotAvatar(sizeDp = 28, modifier = Modifier.padding(end = 8.dp))
+                } else {
+                    Avatar(
+                        url = AttachmentUrl.resolve(message.user?.details?.avatar, fileEndpoint),
+                        name = message.user?.details?.fullName,
+                        sizeDp = 28,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                }
             } else {
                 Spacer(Modifier.width(36.dp))
             }
@@ -125,9 +138,9 @@ internal fun MessageBubble(
                         )
                     }
                 }
-                if (message.content.isNotBlank()) {
+                if (displayText.isNotBlank()) {
                     Text(
-                        text = message.content,
+                        text = displayText,
                         color = textColor,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.bodyMedium,

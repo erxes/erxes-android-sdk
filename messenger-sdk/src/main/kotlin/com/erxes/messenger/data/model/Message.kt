@@ -12,6 +12,8 @@ data class Message(
     val fromBot: Boolean = false,
     val customerId: String? = null,
     val conversationId: String? = null,
+    /** Whether the customer has read this (agent) message. Used to derive unread counts. */
+    val isCustomerRead: Boolean = false,
     /** Agent who sent the message, if any. */
     val user: MessageUser? = null,
 )

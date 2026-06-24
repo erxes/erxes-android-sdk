@@ -8,8 +8,6 @@ data class Conversation(
     val createdAt: Long,
     val participatedUsers: List<ParticipatedUser> = emptyList(),
     val messages: List<Message> = emptyList(),
-    /** Server-provided unread count when present (list query); else derived from [messages]. */
-    private val serverUnreadCount: Int? = null,
 ) {
     val lastMessage: Message? get() = messages.lastOrNull()
 
@@ -22,7 +20,7 @@ data class Conversation(
 
     /** Unread = agent messages the customer hasn't read. Falls back to the server count. */
     val unreadCount: Int
-        get() = serverUnreadCount ?: messages.count { !it.isFromCustomer }
+        get() = messages.count { !it.isFromCustomer && !it.isCustomerRead }
 }
 
 /** A participant (agent) in a conversation. */

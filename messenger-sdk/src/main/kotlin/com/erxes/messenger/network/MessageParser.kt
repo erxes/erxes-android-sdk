@@ -32,6 +32,7 @@ object MessageParser {
             fromBot = json.bool("fromBot") ?: false,
             customerId = customerId,
             conversationId = json.str("conversationId"),
+            isCustomerRead = json.bool("isCustomerRead") ?: false,
             user = parseUser(json.obj("user")),
         )
     }
@@ -64,7 +65,6 @@ object MessageParser {
                 )
             },
             messages = (json.arr("messages")).orEmpty().mapNotNull { (it as? JsonObject)?.let(::parseMessage) },
-            serverUnreadCount = json.int("unreadCount"),
         )
     }
 

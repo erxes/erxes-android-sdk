@@ -2,9 +2,13 @@ package com.erxes.messenger.ui.chatmode
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -50,7 +55,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -70,6 +82,7 @@ import com.erxes.messenger.ui.conversation.ChatViewModel
 import com.erxes.messenger.ui.conversation.ConversationListViewModel
 import com.erxes.messenger.ui.screens.IdentityFormScreen
 import com.erxes.messenger.util.AttachmentUrl
+import com.erxes.messenger.util.ContentParser
 import kotlinx.coroutines.launch
 
 /** What the main pane is currently showing. */
@@ -109,6 +122,18 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
     val listVM: ConversationListViewModel = viewModel()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    // Dismiss the keyboard when the user taps outside the composer or scrolls the
+    // content — mirrors iOS `dismissKeyboardOnTap()` / `dismissKeyboardOnVerticalDrag()`.
+    val focusManager = LocalFocusManager.current
+    val dismissKeyboardOnScroll = remember(focusManager) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (available.y != 0f) focusManager.clearFocus()
+                return Offset.Zero
+            }
+        }
+    }
 
     var target by remember { mutableStateOf<ChatTarget>(ChatTarget.Home) }
     var nonce by remember { mutableIntStateOf(0) }
@@ -165,9 +190,13 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
     }
 
     // Refresh the conversation list whenever the drawer opens so a just-created
-    // conversation shows up under RECENTS.
-    LaunchedEffect(drawerState.currentValue) {
-        if (drawerState.currentValue == DrawerValue.Open) listVM.refresh()
+    // conversation shows up under RECENTS. Also dismiss the keyboard as the drawer
+    // starts opening (covers the edge-swipe gesture, not just the menu button).
+    LaunchedEffect(drawerState.targetValue) {
+        if (drawerState.targetValue == DrawerValue.Open) {
+            focusManager.clearFocus()
+            listVM.refresh()
+        }
     }
 
     ModalNavigationDrawer(
@@ -195,7 +224,10 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
                 Column {
                     ChatModeTopBar(
                         target = target,
-                        onMenu = { scope.launch { drawerState.open() } },
+                        onMenu = {
+                            focusManager.clearFocus()
+                            scope.launch { drawerState.open() }
+                        },
                         onClose = onExit,
                         onNewChat = { goHome() },
                         homeActions = ErxesMessenger.config?.homeActions.orEmpty(),
@@ -205,7 +237,17 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
                 }
             },
         ) { inner ->
-            Box(modifier = Modifier.fillMaxSize().padding(inner)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(inner)
+                    .consumeWindowInsets(inner)
+                    .imePadding()
+                    .nestedScroll(dismissKeyboardOnScroll)
+                    .pointerInput(Unit) {
+                        detectTapGestures(onTap = { focusManager.clearFocus() })
+                    },
+            ) {
                 when (val t = target) {
                     is ChatTarget.Home -> NewChatHome(
                         onSend = { startFromHome(autoSend = it, openPicker = false) },
@@ -250,6 +292,7 @@ private fun ChatModeTopBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .statusBarsPadding()
                 .height(64.dp)
                 .padding(horizontal = 12.dp),
         ) {
@@ -400,11 +443,12 @@ private fun ChatDrawer(
     val state by listVM.state.collectAsStateWithLifecycle()
 
     ModalDrawerSheet(
-        modifier = Modifier.fillMaxWidth(0.9f),
+        modifier = Modifier.fillMaxWidth(),
+        drawerShape = RectangleShape,
         drawerContainerColor = MaterialTheme.colorScheme.surface,
         drawerContentColor = MaterialTheme.colorScheme.onSurface,
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize().statusBarsPadding()) {
             Column(modifier = Modifier.fillMaxSize().padding(bottom = 88.dp)) {
                 Text(
                     text = "Chats",
@@ -460,13 +504,18 @@ private fun ChatDrawer(
                 }
             }
 
+            // Floating "New chat" pill, bottom-right — mirrors iOS
+            // (square.and.pencil compose icon + label).
             ExtendedFloatingActionButton(
                 onClick = onNewChat,
-                icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                icon = { Icon(Icons.Filled.Edit, contentDescription = null) },
                 text = { Text("New chat") },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary,
-                modifier = Modifier.align(Alignment.BottomEnd).padding(end = 20.dp, bottom = 24.dp),
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .navigationBarsPadding()
+                    .padding(end = 20.dp, bottom = 24.dp),
             )
         }
     }
@@ -488,8 +537,8 @@ private fun DrawerConversationRow(
         user != null -> user.details?.displayName ?: "Support"
         else -> "Conversation"
     }
-    val preview = lastMessage?.content?.takeIf { it.isNotBlank() }
-        ?: conversation.content?.takeIf { it.isNotBlank() }
+    val preview = lastMessage?.content?.let { ContentParser.toPlainText(it) }?.takeIf { it.isNotBlank() }
+        ?: conversation.content?.let { ContentParser.toPlainText(it) }?.takeIf { it.isNotBlank() }
         ?: if (lastMessage?.attachments?.isNotEmpty() == true) "Attachment" else "No messages yet"
     val avatarUrl = AttachmentUrl.resolve(user?.details?.avatar ?: lastMessage?.user?.details?.avatar, fileEndpoint)
 

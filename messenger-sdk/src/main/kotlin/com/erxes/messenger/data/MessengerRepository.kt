@@ -130,8 +130,15 @@ class MessengerRepository(
     suspend fun conversations(): List<Conversation> {
         val variables = buildJsonObject {
             put("integrationId", config.integrationId)
-            session.cachedCustomerId()?.let { put("customerId", it) }
-            put("visitorId", session.visitorId())
+            // Identity rule (mirrors iOS): prefer the registered customerId, fall
+            // back to the guest visitorId. They are mutually exclusive on the
+            // backend — sending both makes it key off the empty guest id.
+            val customerId = session.cachedCustomerId()
+            if (!customerId.isNullOrEmpty()) {
+                put("customerId", customerId)
+            } else {
+                put("visitorId", session.visitorId())
+            }
         }
         val array = graphQL.arrayField(
             endpoint, "widgetsConversations", MessengerOperations.CONVERSATIONS, variables, "widgetsConversations",
@@ -149,6 +156,7 @@ class MessengerRepository(
         val json = graphQL.send(
             endpoint, "widgetsConversationDetail", MessengerOperations.CONVERSATION_DETAIL, variables,
         )
+        json["errors"]?.let { SdkLog.e("conversationDetail errors: $it") }
         val detail = (json["data"] as? JsonObject)?.get("widgetsConversationDetail") as? JsonObject
             ?: return null
         return MessageParser.parseConversation(detail)

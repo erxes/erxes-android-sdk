@@ -56,7 +56,7 @@ internal object MessengerOperations {
             createdAt
             participatedUsers { _id details { avatar fullName } isOnline }
             messages {
-              _id content createdAt customerId conversationId fromBot botData
+              _id content createdAt customerId conversationId fromBot botData isCustomerRead
               attachments { url name type size }
               user { _id details { avatar fullName } }
             }
@@ -66,7 +66,7 @@ internal object MessengerOperations {
 
     /** `widgetsConversationDetail` — full thread of one conversation. */
     val CONVERSATION_DETAIL = """
-        query widgetsConversationDetail(${'$'}_id: String!, ${'$'}integrationId: String) {
+        query widgetsConversationDetail(${'$'}_id: String, ${'$'}integrationId: String!) {
           widgetsConversationDetail(_id: ${'$'}_id, integrationId: ${'$'}integrationId) {
             _id
             messages {
@@ -74,8 +74,6 @@ internal object MessengerOperations {
               attachments { url name size type }
               user { _id details { avatar fullName } }
             }
-            isOnline
-            supporters { _id details { avatar fullName } isOnline }
           }
         }
     """.trimIndent()

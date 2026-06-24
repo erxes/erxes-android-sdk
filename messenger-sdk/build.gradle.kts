@@ -14,7 +14,7 @@ plugins {
 
 // Coordinates for the published artifact: io.github.munkhorgilb:messenger-sdk:<version>
 group = "io.github.munkhorgilb"
-version = "0.30.2"
+version = "0.30.3"
 
 android {
     namespace = "com.erxes.messenger"
@@ -52,7 +52,7 @@ android {
 
 // Publishing to Maven Central via the Central Portal (Sonatype), plus `publishToMavenLocal`
 // for local testing. The vanniktech plugin builds the sources + javadoc jars, signs every
-// artifact, and uploads the bundle. Consumers: `implementation("io.github.munkhorgilb:messenger-sdk:0.30.2")`.
+// artifact, and uploads the bundle. Consumers: `implementation("io.github.munkhorgilb:messenger-sdk:0.30.3")`.
 //
 // Credentials are read from ~/.gradle/gradle.properties (NEVER commit them) — see PUBLISHING.md:
 //   mavenCentralUsername / mavenCentralPassword  (Central Portal user token)
