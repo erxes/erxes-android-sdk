@@ -7,6 +7,7 @@ of the [erxes iOS SDK](https://github.com/erxes/erxes-ios-sdk).
 > **Status: in development.** See [`ROADMAP.md`](ROADMAP.md) for what works today.
 
 ## Features (target parity)
+
 - 🔴 Real-time chat over WebSocket (`graphql-ws`) with auto-reconnect
 - 🤖 Bot conversations with typing indicators
 - 🎈 Draggable launcher button that snaps to screen corners
@@ -16,19 +17,22 @@ of the [erxes iOS SDK](https://github.com/erxes/erxes-ios-sdk).
 - 👤 Optional user identification
 
 ## Requirements
+
 - Android 7.0 (API 24)+
 - Kotlin · Jetpack Compose
 - An erxes backend endpoint + integration ID (Dashboard → Settings → Integrations)
 
 ## Install
+
 ```kotlin
 // settings.gradle.kts → repositories { mavenCentral(); mavenLocal() }
 dependencies {
-    implementation("com.erxes:messenger-sdk:0.30.1")
+    implementation("com.erxes:messenger-sdk:0.30.2")
 }
 ```
 
 ## Quick start
+
 ```kotlin
 // Application.onCreate()
 ErxesMessenger.configure(
@@ -45,6 +49,7 @@ ErxesMessenger.clearUser() // on logout
 ```
 
 Open the messenger:
+
 ```kotlin
 // Imperative
 ErxesMessenger.show(activity)
@@ -56,16 +61,19 @@ ErxesMessengerHost {
 ```
 
 ## Documentation
-| Doc | What |
-|-----|------|
-| [`docs/PROTOCOL.md`](docs/PROTOCOL.md) | Backend contract: endpoints, GraphQL ops, WebSocket flow |
-| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Module layout, tech stack, public API |
-| [`docs/PORTING-MAP.md`](docs/PORTING-MAP.md) | iOS → Android file mapping |
-| [`ROADMAP.md`](ROADMAP.md) | Phased implementation plan |
+
+| Doc                                            | What                                                     |
+| ---------------------------------------------- | -------------------------------------------------------- |
+| [`docs/PROTOCOL.md`](docs/PROTOCOL.md)         | Backend contract: endpoints, GraphQL ops, WebSocket flow |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Module layout, tech stack, public API                    |
+| [`docs/PORTING-MAP.md`](docs/PORTING-MAP.md)   | iOS → Android file mapping                               |
+| [`ROADMAP.md`](ROADMAP.md)                     | Phased implementation plan                               |
 
 ## Contributing
+
 Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) and our
 [Code of Conduct](CODE_OF_CONDUCT.md). To report a security issue, see [SECURITY.md](SECURITY.md).
 
 ## License
+
 Licensed under **AGPL-3.0**, matching the upstream erxes SDK. See [LICENSE](LICENSE).

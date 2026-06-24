@@ -12,6 +12,7 @@ coil = "2.7.0"
 okhttp = "4.12.0"
 serialization = "1.7.3"
 junit = "4.13.2"
+mavenPublish = "0.30.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -44,3 +45,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 apollo = { id = "com.apollographql.apollo", version.ref = "apollo" }
+maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "mavenPublish" }
