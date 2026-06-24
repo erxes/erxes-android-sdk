@@ -54,7 +54,6 @@ internal object MessengerOperations {
             _id
             content
             createdAt
-            unreadCount
             participatedUsers { _id details { avatar fullName } isOnline }
             messages {
               _id content createdAt customerId conversationId fromBot botData
