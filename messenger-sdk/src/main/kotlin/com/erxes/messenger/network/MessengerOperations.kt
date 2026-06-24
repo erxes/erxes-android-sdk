@@ -57,7 +57,7 @@ internal object MessengerOperations {
             unreadCount
             participatedUsers { _id details { avatar fullName } isOnline }
             messages {
-              _id content createdAt customerId conversationId fromBot
+              _id content createdAt customerId conversationId fromBot botData
               attachments { url name type size }
               user { _id details { avatar fullName } }
             }
@@ -71,7 +71,7 @@ internal object MessengerOperations {
           widgetsConversationDetail(_id: ${'$'}_id, integrationId: ${'$'}integrationId) {
             _id
             messages {
-              _id conversationId customerId content createdAt internal fromBot contentType
+              _id conversationId customerId content createdAt internal fromBot botData contentType
               attachments { url name size type }
               user { _id details { avatar fullName } }
             }
@@ -110,7 +110,7 @@ internal object MessengerOperations {
     val SUB_MESSAGE_INSERTED = """
         subscription conversationMessageInserted(${'$'}_id: String!) {
           conversationMessageInserted(_id: ${'$'}_id) {
-            _id conversationId customerId content createdAt fromBot contentType
+            _id conversationId customerId content createdAt fromBot botData contentType
             attachments { url name size type }
             user { _id details { avatar fullName } }
           }

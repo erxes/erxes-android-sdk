@@ -136,12 +136,17 @@ object ErxesMessenger {
         startConnect()
     }
 
-    /** Clear the current user, e.g. on logout, then re-connect anonymously. Mirrors `clearUser`. */
+    /**
+     * Clear the current user on logout, then re-connect anonymously. Drops the in-memory user
+     * *and* the persisted identity (cachedCustomerId, conversation, visitorId, …) so the next
+     * connect starts as a fresh anonymous visitor rather than re-identifying the logged-out
+     * customer and surfacing their old conversations. Mirrors `clearUser`.
+     */
     fun clearUser() {
         this.user = null
         val session = session ?: return
         scope.launch {
-            runCatching { session.clearCustomer() }
+            runCatching { session.clearIdentity() }
             startConnect()
         }
     }

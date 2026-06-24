@@ -13,6 +13,13 @@ data class Conversation(
 ) {
     val lastMessage: Message? get() = messages.lastOrNull()
 
+    /**
+     * Time used to order the "Recent" list: the newest message's time, or the conversation's
+     * creation time when it has no messages yet. Sorting by this (not [createdAt]) keeps a
+     * freshly-replied old conversation above a newer but idle one.
+     */
+    val lastActivityAt: Long get() = lastMessage?.createdAt ?: createdAt
+
     /** Unread = agent messages the customer hasn't read. Falls back to the server count. */
     val unreadCount: Int
         get() = serverUnreadCount ?: messages.count { !it.isFromCustomer }

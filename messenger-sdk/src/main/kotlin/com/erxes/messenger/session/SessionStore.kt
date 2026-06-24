@@ -27,6 +27,7 @@ class SessionStore(private val context: Context) {
         val conversationId = stringPreferencesKey("conversationId")
         val integrationId = stringPreferencesKey("integrationId")
         val identified = booleanPreferencesKey("identified")
+        val identity = stringPreferencesKey("identity")
     }
 
     /** Clears persisted identity when the integration changed since it was stored. */
@@ -38,6 +39,27 @@ class SessionStore(private val context: Context) {
                 prefs.remove(Keys.conversationId)
                 prefs.remove(Keys.identified)
                 prefs[Keys.integrationId] = integrationId
+            }
+        }
+    }
+
+    /**
+     * Resets the cached customer when the host connects with a *different* email/phone.
+     * The stale `cachedCustomerId` still points at the previous person, so the server would
+     * re-identify them and surface their old conversations; clear it so connect resolves or
+     * creates a customer for the new identity instead. A blank identity (anonymous re-open)
+     * leaves the session untouched. Call after [bind] and before seeding `cachedCustomerId`.
+     */
+    suspend fun bind(email: String?, phone: String?) {
+        val identity = listOfNotNull(email, phone)
+            .map { it.trim() }
+            .firstOrNull { it.isNotEmpty() } ?: return
+        store.edit { prefs ->
+            if (prefs[Keys.identity] != identity) {
+                prefs.remove(Keys.customerId)
+                prefs.remove(Keys.conversationId)
+                prefs.remove(Keys.identified)
+                prefs[Keys.identity] = identity
             }
         }
     }
@@ -79,6 +101,22 @@ class SessionStore(private val context: Context) {
             prefs.remove(Keys.customerId)
             prefs.remove(Keys.conversationId)
             prefs.remove(Keys.identified)
+        }
+    }
+
+    /**
+     * Full logout reset. Unlike [clearCustomer], this also drops the bound identity and the
+     * `visitorId`, so the next session starts as a brand-new anonymous visitor instead of
+     * re-identifying the logged-out customer (cachedCustomerId) or inheriting their anonymous
+     * thread (visitorId). The next [visitorId] access regenerates a fresh id.
+     */
+    suspend fun clearIdentity() {
+        store.edit { prefs ->
+            prefs.remove(Keys.customerId)
+            prefs.remove(Keys.conversationId)
+            prefs.remove(Keys.identified)
+            prefs.remove(Keys.identity)
+            prefs.remove(Keys.visitorId)
         }
     }
 }

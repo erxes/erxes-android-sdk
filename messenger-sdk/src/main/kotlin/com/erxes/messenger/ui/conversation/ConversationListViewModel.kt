@@ -29,7 +29,9 @@ class ConversationListViewModel(
     init { refresh() }
 
     fun refresh() {
-        _state.update { it.copy(isLoading = true, error = null) }
+        // Only spin on the first load; a re-fetch (e.g. when the chat-mode drawer reopens)
+        // keeps the existing rows visible instead of blanking the list to a spinner.
+        _state.update { it.copy(isLoading = it.conversations.isEmpty(), error = null) }
         viewModelScope.launch {
             try {
                 val list = repository.conversations()

@@ -65,6 +65,34 @@ class MessageParserTest {
     }
 
     @Test
+    fun `bot message falls back to botData text when content is empty`() {
+        val msg = MessageParser.parseMessage(
+            obj(
+                """
+                { "_id": "bot2", "content": null, "createdAt": "1700000000000",
+                  "fromBot": true,
+                  "botData": [{ "type": "text", "text": "line one" }, { "type": "text", "text": "line two" }] }
+                """.trimIndent()
+            )
+        )!!
+        assertTrue(msg.fromBot)
+        assertEquals("line one\nline two", msg.content)
+    }
+
+    @Test
+    fun `content wins over botData when both present`() {
+        val msg = MessageParser.parseMessage(
+            obj(
+                """
+                { "_id": "bot3", "content": "real content", "createdAt": "1700000000000",
+                  "botData": [{ "type": "text", "text": "ignored" }] }
+                """.trimIndent()
+            )
+        )!!
+        assertEquals("real content", msg.content)
+    }
+
+    @Test
     fun `conversation derives unread from server count`() {
         val conv = MessageParser.parseConversation(
             obj(

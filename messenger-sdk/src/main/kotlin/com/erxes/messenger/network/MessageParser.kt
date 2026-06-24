@@ -21,7 +21,7 @@ object MessageParser {
         val customerId = json.str("customerId")
         return Message(
             id = id,
-            content = json.str("content").orEmpty(),
+            content = botContent(json),
             createdAt = DateParsing.toEpochMillis(json.str("createdAt")),
             isFromCustomer = customerId != null,
             attachments = (json.arr("attachments")).orEmpty().mapNotNull { el ->
@@ -34,6 +34,19 @@ object MessageParser {
             conversationId = json.str("conversationId"),
             user = parseUser(json.obj("user")),
         )
+    }
+
+    /**
+     * Message text, falling back to `botData` when `content` is empty. Bot messages arrive
+     * with `content: null` and carry their text in a `botData` array of `{ type, text }`
+     * entries, so join those so they render in chat and list previews.
+     */
+    private fun botContent(json: JsonObject): String {
+        val content = json.str("content").orEmpty()
+        if (content.isNotEmpty()) return content
+        return json.arr("botData").orEmpty()
+            .mapNotNull { (it as? JsonObject)?.str("text") }
+            .joinToString("\n")
     }
 
     fun parseConversation(json: JsonObject): Conversation? {

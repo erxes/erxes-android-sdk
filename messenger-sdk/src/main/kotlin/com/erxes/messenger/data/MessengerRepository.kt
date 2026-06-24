@@ -58,6 +58,11 @@ class MessengerRepository(
      */
     suspend fun connect(user: MessengerUser?, scope: CoroutineScope): ConnectResponse {
         session.bind(config.integrationId)
+        // Reset the cached customer when the host connects with a different email/phone,
+        // otherwise the stale cachedCustomerId re-identifies the previous person and surfaces
+        // their old conversations. Runs before cachedCustomerId is read below so a different
+        // identity drops the stale id first.
+        session.bind(user?.email, user?.phone)
         val visitorId = session.visitorId()
         val cachedCustomerId = session.cachedCustomerId()
 
@@ -121,7 +126,7 @@ class MessengerRepository(
 
     // ── Conversations & messaging (Phase 2) ────────────────────────────────────
 
-    /** Lists this customer/visitor's conversations, newest activity first as returned. */
+    /** Lists this customer/visitor's conversations, ordered by latest activity (newest first). */
     suspend fun conversations(): List<Conversation> {
         val variables = buildJsonObject {
             put("integrationId", config.integrationId)
@@ -132,6 +137,7 @@ class MessengerRepository(
             endpoint, "widgetsConversations", MessengerOperations.CONVERSATIONS, variables, "widgetsConversations",
         )
         return MessageParser.parseConversations(array.filterIsInstance<JsonObject>())
+            .sortedByDescending { it.lastActivityAt }
     }
 
     /** Full thread for one conversation. Returns null when not found. */
