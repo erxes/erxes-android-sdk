@@ -27,6 +27,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
@@ -124,11 +125,21 @@ internal fun MessageBubble(
                 message.attachments.forEach { att ->
                     val url = AttachmentUrl.resolve(att.url, fileEndpoint)
                     if (att.type?.startsWith("image") == true) {
-                        AsyncImage(
-                            model = url,
-                            contentDescription = att.name,
-                            modifier = Modifier.fillMaxWidth(),
-                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(8.dp))
+                        ) {
+                            AsyncImage(
+                                model = url,
+                                contentDescription = att.name,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .size(maxWidth = 260.dp, maxHeight = 360.dp),
+                                contentScale = ContentScale.Crop,
+                                alignment = Alignment.Center,
+                            )
+                        }
                     } else {
                         Text(
                             text = att.name ?: "Attachment",
