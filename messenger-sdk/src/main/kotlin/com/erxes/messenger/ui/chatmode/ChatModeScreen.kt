@@ -1,5 +1,6 @@
 package com.erxes.messenger.ui.chatmode
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -70,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.erxes.messenger.ErxesMessenger
+import com.erxes.messenger.R
 import com.erxes.messenger.config.ActionItem
 import com.erxes.messenger.data.model.Conversation
 import com.erxes.messenger.ui.components.AvatarWithStatus
@@ -173,6 +175,12 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
     }
 
     if (showAuth) {
+        fun cancelAuth() {
+            showAuth = false
+            pendingAuthText = null
+            pendingAuthPicker = false
+        }
+        BackHandler { cancelAuth() }
         IdentityFormScreen(
             onIdentified = {
                 showAuth = false
@@ -180,13 +188,19 @@ internal fun ChatModeScreen(onExit: () -> Unit) {
                 pendingAuthText = null
                 pendingAuthPicker = false
             },
-            onBack = {
-                showAuth = false
-                pendingAuthText = null
-                pendingAuthPicker = false
-            },
+            onBack = { cancelAuth() },
         )
         return
+    }
+
+    // System back walks the shell's layers: close the drawer, then return from an
+    // open chat to the new-chat home, and only hide the messenger from home itself.
+    BackHandler {
+        when {
+            drawerState.isOpen -> closeDrawer()
+            target !is ChatTarget.Home -> goHome()
+            else -> onExit()
+        }
     }
 
     // Refresh the conversation list whenever the drawer opens so a just-created
@@ -389,7 +403,7 @@ private fun NewChatHome(onSend: (String) -> Unit, onAttach: () -> Unit) {
                 modifier = Modifier.padding(bottom = 18.dp),
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Star,
+                    painter = painterResource(R.drawable.ic_auto_awesome),
                     contentDescription = null,
                     modifier = Modifier.padding(14.dp).size(28.dp),
                 )

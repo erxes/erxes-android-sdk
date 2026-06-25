@@ -8,7 +8,7 @@ The library publishes to **Maven Central via the Sonatype Central Portal** using
   no extra repository, no credentials.
 
   ```kotlin
-  implementation("io.github.munkhorgilb:messenger-sdk:0.30.3")
+  implementation("io.github.munkhorgilb:messenger-sdk:0.30.4")
   ```
 
 ## One-time setup
@@ -58,7 +58,7 @@ signingInMemoryKeyPassword=<your-gpg-passphrase>
 
 ## Releasing a version
 
-1. Bump `version` in `messenger-sdk/build.gradle.kts` (e.g. `0.30.3` → `0.30.3`).
+1. Bump `version` in `messenger-sdk/build.gradle.kts` (e.g. `0.30.4` → `0.30.5`).
    Use a non-`SNAPSHOT` version — Central only accepts release versions.
 2. Smoke-test locally first (installs into `~/.m2`):
    ```bash
@@ -78,6 +78,6 @@ signingInMemoryKeyPassword=<your-gpg-passphrase>
 
 ## Notes
 
-- A published version is **immutable** — you cannot overwrite `0.30.3`, only release a new one.
+- A published version is **immutable** — you cannot overwrite `0.30.4`, only release a new one.
 - Tag releases in git to match (`git tag v0.30.2`) so the `scm` POM metadata lines up.
 - The same artifact serves native Android, Flutter, and React Native consumers; publish once here.

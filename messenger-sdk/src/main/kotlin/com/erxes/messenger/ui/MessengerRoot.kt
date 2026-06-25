@@ -1,5 +1,6 @@
 package com.erxes.messenger.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,10 @@ internal fun MessengerRoot(
     fun pop() {
         if (backStack.size <= 1) onExit() else backStack.removeAt(backStack.lastIndex)
     }
+
+    // System back (gesture / nav-bar button) walks the internal stack first,
+    // only hiding the messenger once we're back at the root screen.
+    BackHandler { pop() }
 
     // Starting a new conversation goes through the requireAuth gate when needed.
     fun startNewConversation() {

@@ -1,7 +1,12 @@
 package com.erxes.messenger.ui.components
 
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +15,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,6 +43,9 @@ import coil.compose.AsyncImage
 import com.erxes.messenger.data.model.Message
 import com.erxes.messenger.util.AttachmentUrl
 import com.erxes.messenger.util.ContentParser
+
+/** Link tint for agent/bot bubbles — iOS messenger blue. */
+private val MessengerLinkBlue = Color(0xFF0A84FF)
 
 /**
  * A single chat message row: customer messages align right, agent/bot left with avatar.
@@ -129,13 +138,14 @@ internal fun MessageBubble(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
+                                .clickable { openAttachment(context, url) }
                         ) {
                             AsyncImage(
                                 model = url,
                                 contentDescription = att.name,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .size(maxWidth = 260.dp, maxHeight = 360.dp),
+                                    .sizeIn(maxWidth = 260.dp, maxHeight = 360.dp),
                                 contentScale = ContentScale.Crop,
                                 alignment = Alignment.Center,
                             )
@@ -145,13 +155,21 @@ internal fun MessageBubble(
                             text = att.name ?: "Attachment",
                             color = textColor,
                             style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
+                            modifier = Modifier
+                                .clickable { openAttachment(context, url) }
+                                .padding(horizontal = 12.dp, vertical = 7.dp),
                         )
                     }
                 }
                 if (displayText.isNotBlank()) {
+                    // Customer bubbles are primary-tinted, so keep their links readable in
+                    // the bubble's text color; agent/bot bubbles use the iOS-style blue.
+                    val linkColor = if (fromCustomer) textColor else MessengerLinkBlue
+                    val annotated = remember(message.content, linkColor) {
+                        ContentParser.toAnnotatedString(message.content, linkColor)
+                    }
                     Text(
-                        text = displayText,
+                        text = annotated,
                         color = textColor,
                         textAlign = TextAlign.Start,
                         style = MaterialTheme.typography.bodyMedium,
@@ -167,5 +185,18 @@ private fun Modifier.copyOnLongPress(text: String, onCopy: () -> Unit): Modifier
     if (text.isBlank()) return this
     return pointerInput(text) {
         detectTapGestures(onLongPress = { onCopy() })
+    }
+}
+
+/** Opens an attachment URL in an external viewer (gallery/browser). */
+private fun openAttachment(context: Context, url: String?) {
+    if (url.isNullOrBlank()) return
+    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "No app available to open this attachment", Toast.LENGTH_SHORT).show()
     }
 }
