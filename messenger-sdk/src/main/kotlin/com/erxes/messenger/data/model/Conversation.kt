@@ -17,10 +17,6 @@ data class Conversation(
      * freshly-replied old conversation above a newer but idle one.
      */
     val lastActivityAt: Long get() = lastMessage?.createdAt ?: createdAt
-
-    /** Unread = agent messages the customer hasn't read. Falls back to the server count. */
-    val unreadCount: Int
-        get() = messages.count { !it.isFromCustomer && !it.isCustomerRead }
 }
 
 /** A participant (agent) in a conversation. */

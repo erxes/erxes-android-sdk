@@ -93,12 +93,11 @@ class MessageParserTest {
     }
 
     @Test
-    fun `conversation derives unread from server count`() {
+    fun `conversation parses id messages and last message`() {
         val conv = MessageParser.parseConversation(
             obj(
                 """
                 { "_id": "conv1", "content": "last", "createdAt": "1700000000000",
-                  "unreadCount": 3,
                   "messages": [
                     { "_id": "a", "content": "x", "createdAt": "1", "customerId": "c1" },
                     { "_id": "b", "content": "y", "createdAt": "2", "user": { "_id": "u1" } }
@@ -108,24 +107,7 @@ class MessageParserTest {
         )!!
         assertEquals("conv1", conv.id)
         assertEquals(2, conv.messages.size)
-        assertEquals(3, conv.unreadCount)             // server-provided wins
         assertEquals("b", conv.lastMessage?.id)
-    }
-
-    @Test
-    fun `conversation derives unread from agent messages when server count absent`() {
-        val conv = MessageParser.parseConversation(
-            obj(
-                """
-                { "_id": "conv2", "createdAt": "1",
-                  "messages": [
-                    { "_id": "a", "content": "x", "createdAt": "1", "customerId": "c1" },
-                    { "_id": "b", "content": "y", "createdAt": "2", "user": { "_id": "u1" } }
-                  ] }
-                """.trimIndent()
-            )
-        )!!
-        assertEquals(1, conv.unreadCount)             // one agent message, not read-tracked
     }
 
     @Test
